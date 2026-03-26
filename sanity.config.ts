@@ -16,6 +16,7 @@ import home from '@/sanity/schemas/singletons/home'
  * Added gallery
  */
 import gallery from '@/sanity/schemas/documents/gallery'
+import experience from '@/sanity/schemas/documents/experience'
 import settings from '@/sanity/schemas/singletons/settings'
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
@@ -42,6 +43,7 @@ export default defineConfig({
       page,
       project,
       gallery,
+      experience,
       // Objects
       milestone,
       timeline,

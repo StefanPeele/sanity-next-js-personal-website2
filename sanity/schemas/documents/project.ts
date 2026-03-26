@@ -90,6 +90,28 @@ export default defineType({
         layout: 'tags',
       },
     }),
+
+    // --- YOUR NEW FIELDS START HERE ---
+    defineField({
+      name: 'techStack',
+      title: 'Tech Stack',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Press enter after each one (e.g., React, Next.js, Sanity)',
+    }),
+    defineField({
+      name: 'githubUrl',
+      title: 'GitHub Repository URL',
+      type: 'url',
+    }),
+    defineField({
+      name: 'liveUrl',
+      title: 'Live Demo URL',
+      type: 'url',
+      description: 'You can use this or the existing "Site" field above.',
+    }),
+    // --- YOUR NEW FIELDS END HERE ---
+
     defineField({
       name: 'description',
       title: 'Project Description',
