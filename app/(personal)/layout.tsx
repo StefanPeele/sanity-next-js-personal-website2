@@ -38,23 +38,27 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#000',
+  // Changed from harsh #000 to our new warm Stone-50 hex code
+  themeColor: '#fafaf9',
 }
 
 export default async function IndexRoute({children}: {children: React.ReactNode}) {
   const {data} = await sanityFetch({query: settingsQuery})
   return (
     <>
-      <div className="flex min-h-screen flex-col bg-white text-black">
+      {/* NEW: Swapped bg-white text-black for bg-stone-50 text-stone-800 */}
+      <div className="flex min-h-screen flex-col bg-stone-50 text-stone-800">
         <Navbar data={data} />
         <div className="mt-20 flex-grow px-4 md:px-16 lg:px-32">{children}</div>
-        <footer className="bottom-0 w-full bg-white py-12 text-center md:py-20">
+        
+        {/* NEW: Updated the footer background to match */}
+        <footer className="bottom-0 w-full bg-stone-50 py-12 text-center md:py-20">
           {data?.footer && (
             <CustomPortableText
               id={data._id}
               type={data._type}
               path={['footer']}
-              paragraphClasses="text-md md:text-xl"
+              paragraphClasses="text-md md:text-xl text-stone-600"
               value={data.footer as unknown as PortableTextBlock[]}
             />
           )}
