@@ -15,6 +15,9 @@ export const homePageQuery = defineQuery(`
         "slug": slug.current,
         tags,
         title,
+        techStack,
+    githubUrl,
+    liveUrl
       }
     },
     title,
@@ -45,6 +48,9 @@ export const projectBySlugQuery = defineQuery(`
     "slug": slug.current,
     tags,
     title,
+    techStack,
+    githubUrl,
+    liveUrl
   }
 `)
 
