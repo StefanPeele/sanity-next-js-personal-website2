@@ -65,8 +65,8 @@ export default async function ProjectSlugRoute({params}: Props) {
         })
       : null
 
-  // Default to an empty object to allow previews on non-existent documents
-  const {client, coverImage, description, duration, overview, site, tags, title} = data ?? {}
+  // NEW: We added techStack, githubUrl, and liveUrl to the data extraction!
+  const {client, coverImage, description, duration, overview, site, tags, title, techStack, githubUrl, liveUrl} = data ?? {}
 
   const startYear = duration?.start ? new Date(duration.start).getFullYear() : undefined
   const endYear = duration?.end ? new Date(duration?.end).getFullYear() : 'Now'
@@ -139,6 +139,35 @@ export default async function ProjectSlugRoute({params}: Props) {
             </div>
           </div>
         </div>
+
+        {/* NEW: Tech Stack & Links Section */}
+        {((techStack && techStack.length > 0) || githubUrl || liveUrl) && (
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 py-4">
+            
+            {/* Tech Stack */}
+            <div className="flex flex-wrap gap-2">
+              {techStack?.map((tech: string, index: number) => (
+                <span key={index} className="px-3 py-1.5 text-sm font-semibold bg-black text-white rounded-md">
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-row gap-4">
+              {githubUrl && (
+                <Link href={githubUrl} target="_blank" rel="noreferrer" className="px-6 py-2.5 text-sm font-bold bg-gray-200 hover:bg-gray-300 transition rounded-md text-black">
+                  GitHub Repository
+                </Link>
+              )}
+              {liveUrl && (
+                <Link href={liveUrl} target="_blank" rel="noreferrer" className="px-6 py-2.5 text-sm font-bold bg-black hover:bg-gray-800 transition rounded-md text-white">
+                  Live Demo
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Description */}
         {description && (
