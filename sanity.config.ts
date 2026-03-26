@@ -15,7 +15,7 @@ import home from '@/sanity/schemas/singletons/home'
 /**
  * Added gallery
  */
-import gallery from '@/sanity/schemas/documents/gallery''
+import gallery from '@/sanity/schemas/documents/gallery'
 import settings from '@/sanity/schemas/singletons/settings'
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
