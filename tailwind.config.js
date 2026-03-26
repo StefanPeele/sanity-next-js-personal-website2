@@ -9,11 +9,11 @@ module.exports = {
   ],
   theme: {
     ...theme,
-    // Overriding fontFamily to use @next/font loaded families
+    // Overriding fontFamily to use our new custom Google Fonts
     fontFamily: {
-      mono: 'var(--font-mono)',
-      sans: 'var(--font-sans)',
-      serif: 'var(--font-serif)',
+      mono: 'var(--font-mono)',   // Keeps default for any code blocks
+      sans: 'var(--font-inter)',  // Now uses Inter for normal text!
+      serif: 'var(--font-lora)',  // Now uses Lora for headings!
     },
   },
   plugins: [require('@tailwindcss/typography')],
