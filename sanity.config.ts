@@ -12,6 +12,10 @@ import duration from '@/sanity/schemas/objects/duration'
 import milestone from '@/sanity/schemas/objects/milestone'
 import timeline from '@/sanity/schemas/objects/timeline'
 import home from '@/sanity/schemas/singletons/home'
+/**
+ * Added gallery
+ */
+import gallery from '@/sanity/schemas/documents/gallery''
 import settings from '@/sanity/schemas/singletons/settings'
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
@@ -37,6 +41,7 @@ export default defineConfig({
       duration,
       page,
       project,
+      gallery,
       // Objects
       milestone,
       timeline,
