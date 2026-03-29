@@ -13,19 +13,20 @@ export default async function PhotographyPage() {
   const photos = await client.fetch(galleryQuery)
 
   return (
-    <main className="container mx-auto px-5 py-20 min-h-screen">
+    // We are forcing a deep stone-950 background and light text specifically for this page!
+    <main className="bg-stone-950 min-h-screen text-stone-50 pt-24 pb-20 px-4 md:px-8 transition-colors duration-500">
       
       {/* High-End Editorial Header */}
-      <div className="max-w-3xl mx-auto text-center mb-16">
-        <h1 className="text-5xl md:text-7xl font-bold text-stone-800 font-serif mb-6">
+      <div className="max-w-4xl mx-auto text-center mb-16 mt-10">
+        <h1 className="text-5xl md:text-7xl font-bold font-serif mb-6 tracking-tight">
           The Gallery
         </h1>
-        <p className="text-lg text-stone-500 font-sans leading-relaxed">
+        <p className="text-lg md:text-xl text-stone-400 font-sans leading-relaxed max-w-2xl mx-auto">
           A curated collection of cinematic moments, capturing the essence of sports, portraits, and live events.
         </p>
       </div>
 
-      {/* Render our interactive Client Component */}
+      {/* Render our upgraded interactive Client Component */}
       <CinematicGallery photos={photos} />
       
     </main>
