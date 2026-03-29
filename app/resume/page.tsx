@@ -78,6 +78,8 @@ export default async function ResumePage() {
             <a 
               // The ?dl parameter forces a clean download of the binary file data
               href={page?.resumeUrl ? `${page.resumeUrl}?dl=Stefan_Peele_Resume.pdf` : "#"} 
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-block bg-white text-black font-mono text-[10px] tracking-[0.2em] uppercase px-8 py-4 rounded-sm hover:invert transition-all active:scale-95"
             >
               Download PDF →
@@ -89,8 +91,8 @@ export default async function ResumePage() {
 
           <div className="px-2 opacity-40">
             <p className="font-mono text-[9px] text-stone-500 uppercase tracking-widest mb-2">Education</p>
-            <p className="text-xs text-stone-300">NJIT / B.S. IT - Security Specialization [cite: 4]</p>
-            <p className="text-[10px] text-stone-600">Expected 2028 [cite: 6]</p>
+            <p className="text-xs text-stone-300">NJIT / B.S. IT - Security Specialization</p>
+            <p className="text-[10px] text-stone-600">Expected 2028</p>
           </div>
         </aside>
       </main>
