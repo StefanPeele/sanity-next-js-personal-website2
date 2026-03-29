@@ -14,8 +14,9 @@ import post from '@/sanity/schemas/documents/post'
 import experience from '@/sanity/schemas/documents/experience'
 import settings from '@/sanity/schemas/singletons/settings'
 
-// 1. IMPORT THE SKILL SCHEMA HERE
+// IMPORT THE SKILL & CATEGORY SCHEMAS HERE
 import skill from '@/sanity/schemas/objects/skill' 
+import category from '@/sanity/schemas/documents/category' // <-- NEW!
 
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
@@ -43,11 +44,10 @@ export default defineConfig({
       gallery,
       experience,
       post,
+      category, // <-- ADDED TO THE TYPES ARRAY!
       
-      // 2. ADD SKILL TO THE TYPES ARRAY
-      skill, 
-
       // Objects
+      skill, 
       milestone,
       timeline,
     ],

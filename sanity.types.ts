@@ -88,6 +88,23 @@ export type Skill = {
   }>
 }
 
+export type Category = {
+  _id: string
+  _type: 'category'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title?: string
+  description?: string
+}
+
+export type CategoryReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'category'
+}
+
 export type Post = {
   _id: string
   _type: 'post'
@@ -96,6 +113,12 @@ export type Post = {
   _rev: string
   title?: string
   slug?: Slug
+  isFeatured?: boolean
+  categories?: Array<
+    {
+      _key: string
+    } & CategoryReference
+  >
   publishedAt?: string
   mainImage?: {
     asset?: SanityImageAssetReference
@@ -343,6 +366,7 @@ export type Page = {
         _key: string
       }
   >
+  activeDirective?: string
   resumeFile?: {
     asset?: SanityFileAssetReference
     media?: unknown
@@ -548,6 +572,8 @@ export type AllSanitySchemaTypes =
   | SanityImageAssetReference
   | Milestone
   | Skill
+  | Category
+  | CategoryReference
   | Post
   | SanityImageCrop
   | SanityImageHotspot
