@@ -1,8 +1,5 @@
 'use client'
 
-/**
- * This config is used to set up Sanity Studio that's mounted on the `app/studio/[[...index]]/page.tsx` route
- */
 import {apiVersion, dataset, projectId, studioUrl} from '@/sanity/lib/api'
 import * as resolve from '@/sanity/plugins/resolve'
 import {pageStructure, singletonPlugin} from '@/sanity/plugins/settings'
@@ -12,13 +9,14 @@ import duration from '@/sanity/schemas/objects/duration'
 import milestone from '@/sanity/schemas/objects/milestone'
 import timeline from '@/sanity/schemas/objects/timeline'
 import home from '@/sanity/schemas/singletons/home'
-/**
- * Added gallery
- */
 import gallery from '@/sanity/schemas/documents/gallery'
 import post from '@/sanity/schemas/documents/post'
 import experience from '@/sanity/schemas/documents/experience'
 import settings from '@/sanity/schemas/singletons/settings'
+
+// 1. IMPORT THE SKILL SCHEMA HERE
+import skill from '@/sanity/schemas/objects/skill' 
+
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
@@ -26,7 +24,7 @@ import {presentationTool} from 'sanity/presentation'
 import {structureTool} from 'sanity/structure'
 
 const title =
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Next.js Personal Website with Sanity.io'
+  process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Stefan Peele II | Digital Archive'
 
 export default defineConfig({
   basePath: studioUrl,
@@ -34,7 +32,6 @@ export default defineConfig({
   dataset: dataset || '',
   title,
   schema: {
-    // If you want more content types, you can add them to this array
     types: [
       // Singletons
       home,
@@ -46,6 +43,10 @@ export default defineConfig({
       gallery,
       experience,
       post,
+      
+      // 2. ADD SKILL TO THE TYPES ARRAY
+      skill, 
+
       // Objects
       milestone,
       timeline,
@@ -59,12 +60,8 @@ export default defineConfig({
       resolve,
       previewUrl: {previewMode: {enable: '/api/draft-mode/enable'}},
     }),
-    // Configures the global "new document" button, and document actions, to suit the Settings document singleton
     singletonPlugin([home.name, settings.name]),
-    // Add an image asset source for Unsplash
     unsplashImageAsset(),
-    // Vision lets you query your content with GROQ in the studio
-    // https://www.sanity.io/docs/the-vision-plugin
     visionTool({defaultApiVersion: apiVersion}),
   ],
 })
