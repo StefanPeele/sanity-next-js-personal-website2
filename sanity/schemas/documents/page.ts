@@ -105,6 +105,14 @@ export default defineType({
         }),
       ],
     }),
+    // ADDED: Active Directive / Currently Learning field
+    defineField({
+      name: 'activeDirective',
+      title: 'Active Directive (Currently Learning)',
+      type: 'text',
+      description: 'A short sentence or two about what you are currently studying or working on.',
+      rows: 3,
+    }),
     // ADDED: A specific field for the Resume PDF download
     defineField({
       name: 'resumeFile',

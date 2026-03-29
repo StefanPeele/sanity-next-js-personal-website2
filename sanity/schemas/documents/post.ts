@@ -16,11 +16,23 @@ export default defineType({
       title: 'Slug URL',
       type: 'slug',
       description: 'Click "Generate" to automatically create a URL from the title',
-      options: {
-        source: 'title',
-        maxLength: 96,
-      },
+      options: { source: 'title', maxLength: 96 },
       validation: (rule) => rule.required(),
+    }),
+    // NEW: Featured Toggle for the Hero Section
+    defineField({
+      name: 'isFeatured',
+      title: 'Feature this post?',
+      description: 'Turn this on to make this the massive hero article at the top of the blog.',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    // NEW: Categories / Topics
+    defineField({
+      name: 'categories',
+      title: 'Categories & Topics',
+      type: 'array',
+      of: [{ type: 'reference', to: { type: 'category' } }],
     }),
     defineField({
       name: 'publishedAt',
@@ -31,9 +43,7 @@ export default defineType({
       name: 'mainImage',
       title: 'Cover Image',
       type: 'image',
-      options: {
-        hotspot: true,
-      },
+      options: { hotspot: true },
     }),
     defineField({
       name: 'excerpt',
@@ -45,7 +55,7 @@ export default defineType({
       name: 'body',
       title: 'Article Content',
       type: 'array',
-      of: [{ type: 'block' }], // This enables the Rich Text Editor!
+      of: [{ type: 'block' }], 
     }),
   ],
 })
