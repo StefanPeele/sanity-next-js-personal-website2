@@ -1,4 +1,4 @@
-import {DocumentIcon, ImageIcon} from '@sanity/icons'
+import {DocumentIcon, ImageIcon, TagIcon} from '@sanity/icons'
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
 export default defineType({
@@ -29,20 +29,13 @@ export default defineType({
       title: 'Overview',
       type: 'array',
       of: [
-        // Paragraphs
         defineArrayMember({
           lists: [],
           marks: {
             annotations: [],
             decorators: [
-              {
-                title: 'Italic',
-                value: 'em',
-              },
-              {
-                title: 'Strong',
-                value: 'strong',
-              },
+              { title: 'Italic', value: 'em' },
+              { title: 'Strong', value: 'strong' },
             ],
           },
           styles: [],
@@ -56,9 +49,8 @@ export default defineType({
       name: 'body',
       title: 'Body',
       description:
-        "This is where you can write the page's content. Including custom blocks like timelines for more a more visual display of information.",
+        "Main content area. You can now add Technical Skills (toggles) and Timelines here.",
       of: [
-        // Paragraphs
         defineArrayMember({
           type: 'block',
           marks: {
@@ -79,6 +71,14 @@ export default defineType({
           },
           styles: [],
         }),
+        // ADVANCED: Reference your Skill documents directly in the page body
+        defineArrayMember({
+          name: 'skillReference',
+          title: 'Technical Skill Toggle',
+          type: 'reference',
+          to: [{ type: 'skill' }],
+          icon: TagIcon,
+        }),
         // Custom blocks
         defineArrayMember({
           name: 'timeline',
@@ -89,15 +89,7 @@ export default defineType({
           icon: ImageIcon,
           name: 'image',
           title: 'Image',
-          options: {
-            hotspot: true,
-          },
-          preview: {
-            select: {
-              media: 'asset',
-              title: 'caption',
-            },
-          },
+          options: { hotspot: true },
           fields: [
             defineField({
               title: 'Caption',
@@ -108,11 +100,20 @@ export default defineType({
               name: 'alt',
               type: 'string',
               title: 'Alt text',
-              description: 'Alternative text for screenreaders. Falls back on caption if not set',
             }),
           ],
         }),
       ],
+    }),
+    // ADDED: A specific field for the Resume PDF download
+    defineField({
+      name: 'resumeFile',
+      title: 'Resume PDF',
+      type: 'file',
+      description: 'Upload the PDF version of your resume here for people to download.',
+      options: {
+        accept: '.pdf'
+      }
     }),
   ],
   preview: {

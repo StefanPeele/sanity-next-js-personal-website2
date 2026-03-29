@@ -5,28 +5,17 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { PortableText } from '@portabletext/react'
 
-// 1. Define custom rendering for Sanity blocks
 const portableTextComponents = {
   marks: {
-    // Styles links found in your "overview" array
-    link: ({ children, value }: any) => {
-      const rel = !value.href.startsWith('/') ? 'noreferrer noopener' : undefined
-      return (
-        <a 
-          href={value.href} 
-          rel={rel} 
-          className="text-white underline decoration-stone-600 underline-offset-4 hover:decoration-white transition-colors"
-        >
-          {children}
-        </a>
-      )
-    },
-    // Styles bold text
-    strong: ({ children }: any) => <strong className="font-bold text-stone-200">{children}</strong>,
+    link: ({ children, value }: any) => (
+      <a href={value.href} className="text-white underline decoration-stone-600 underline-offset-4 hover:decoration-white transition-colors">
+        {children}
+      </a>
+    ),
+    strong: ({ children }: any) => <strong className="font-bold text-stone-100">{children}</strong>,
   },
   block: {
-    // Adds spacing between paragraphs if you have multiple blocks
-    normal: ({ children }: any) => <p className="mb-4 last:mb-0">{children}</p>,
+    normal: ({ children }: any) => <p className="mb-2 last:mb-0">{children}</p>,
   },
 }
 
@@ -38,92 +27,89 @@ const destinations = [
 ]
 
 export function HomePage({ data }: { data: any }) {
-  const siteTitle = data?.title || "Stefs Test"
-  const bio = data?.overview
-  const currently = data?.currently || "Exploring light & architecture"
-  const location = data?.location || "New York City"
-  const manifesto = data?.manifesto || "I believe in capturing the quiet moments between the noise."
-
   const [isHoveringName, setIsHoveringName] = useState(false)
 
+  // Use fabshots2026051.jpg for the thoughtful vibe
+  const hoverImage = "/fabshots2026051.jpg" 
+
   return (
-    <div className="w-full flex flex-col items-center">
-      <main className="relative w-full min-h-[85vh] overflow-hidden bg-black flex items-center justify-center p-8 md:p-16 select-none shadow-2xl rounded-sm">
+    <div className="w-full flex flex-col items-center bg-[#0a0a0a]">
+      <main className="relative w-full min-h-screen overflow-hidden flex items-center justify-center p-6 md:p-12 lg:p-20 select-none">
         
         {/* Hover Portrait Background */}
         <motion.div
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ 
-            opacity: isHoveringName ? 0.35 : 0, 
-            scale: isHoveringName ? 1 : 1.05 
-          }}
+          animate={{ opacity: isHoveringName ? 0.4 : 0, scale: isHoveringName ? 1 : 1.05 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="absolute inset-0 z-10 pointer-events-none mix-blend-lighten"
           style={{
-            backgroundImage: 'url("/fabshots2026018.jpg")', 
+            backgroundImage: `url("${hoverImage}")`, 
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'grayscale(100%) contrast(120%) brightness(1.2)' 
+            filter: 'grayscale(100%) contrast(110%) brightness(1.1)' 
           }}
         />
 
-        <div className="relative z-30 w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center pb-12">
-          <div className="flex flex-col items-start justify-center space-y-8 pr-0 lg:pr-12">
-            <span className="text-stone-500 font-mono text-xs tracking-[0.4em] uppercase block mb-4 border-l border-stone-500 pl-4">Directory / Index</span>
+        <div className="relative z-30 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
+          
+          {/* LEFT CONTENT */}
+          <div className="lg:col-span-2 flex flex-col items-start space-y-6">
+            <span className="text-stone-500 font-mono text-[10px] tracking-[0.4em] uppercase border-l border-stone-700 pl-4">
+              Directory / Index
+            </span>
             
             <motion.h1 
               onMouseEnter={() => setIsHoveringName(true)}
               onMouseLeave={() => setIsHoveringName(false)}
-              className="text-stone-50 text-5xl md:text-7xl font-serif tracking-wide font-bold leading-tight cursor-default relative z-20"
+              className="text-stone-50 text-4xl md:text-6xl lg:text-7xl font-serif tracking-tight font-bold leading-[0.9] cursor-default"
             >
-              {siteTitle}
+              {data?.title || "Stefan Peele"}
             </motion.h1>
 
-            <div className="text-stone-400 font-sans text-sm md:text-base leading-relaxed max-w-md relative z-20">
-              {/* 2. Pass the custom components here */}
-              {bio ? <PortableText value={bio} components={portableTextComponents} /> : "No bio provided."}
+            <div className="text-stone-400 font-sans text-xs md:text-sm leading-relaxed max-w-xs opacity-80">
+              {data?.overview ? <PortableText value={data.overview} components={portableTextComponents} /> : "Personal / Portfolio Page"}
             </div>
           </div>
 
-          <div className="flex flex-col w-full group/list relative z-20">
+          {/* RIGHT NAVIGATION */}
+          <div className="lg:col-span-3 flex flex-col w-full group/list">
             {destinations.map((item) => (
-              <Link key={item.name} href={item.href} className="group relative flex items-center justify-between py-8 border-b border-white/10 transition-all duration-500 hover:border-white/40 hover:pl-6">
+              <Link key={item.name} href={item.href} className="group relative flex items-center justify-between py-6 md:py-8 border-b border-white/5 hover:border-white/20 transition-all duration-500 hover:pl-4">
                 <div className="flex flex-col">
-                  <span className="text-white text-3xl md:text-4xl font-serif">{item.name}</span>
-                  <span className="text-stone-500 font-mono text-[10px] sm:text-xs tracking-[0.3em] uppercase mt-2 opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">{item.desc}</span>
+                  <span className="text-white text-2xl md:text-4xl font-serif">{item.name}</span>
+                  <span className="text-stone-600 font-mono text-[9px] tracking-[0.3em] uppercase mt-1 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
+                    {item.desc}
+                  </span>
                 </div>
-                <svg className="w-6 h-6 text-stone-600 group-hover:text-white transition-all duration-500 transform -translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+                <div className="w-8 h-[1px] bg-stone-700 group-hover:w-12 group-hover:bg-white transition-all" />
               </Link>
             ))}
           </div>
         </div>
 
-        {/* Dynamic Status Bar */}
-        <div className="absolute bottom-6 left-8 right-8 md:bottom-10 md:left-16 md:right-16 flex flex-col md:flex-row justify-between text-[10px] sm:text-xs font-mono tracking-widest text-stone-500 uppercase border-t border-white/10 pt-4 z-30">
-          <div className="flex gap-4">
-            <span className="text-stone-300">Currently:</span>
-            <span>{currently}</span>
+        {/* REFINED STATUS BAR */}
+        <div className="absolute bottom-8 left-8 right-8 md:left-12 md:right-12 flex flex-col md:flex-row justify-between items-end md:items-center text-[9px] font-mono tracking-widest text-stone-500 uppercase border-t border-white/5 pt-6 z-30">
+          <div className="flex flex-col md:flex-row gap-2 md:gap-8 mb-4 md:mb-0">
+            <p><span className="text-stone-600 mr-2">Currently:</span> {data?.currently}</p>
+            <p><span className="text-stone-600 mr-2">Location:</span> {data?.location}</p>
           </div>
-          <div className="flex gap-4">
-            <span className="text-stone-300">Location:</span>
-            <span>{location}</span>
-          </div>
+          <span className="opacity-40">2026 ARCHIVE — NJIT</span>
         </div>
       </main>
 
-      {/* Dynamic Manifesto Section */}
-      <section className="w-full max-w-4xl mx-auto py-32 px-8 text-center flex flex-col items-center justify-center">
-        <motion.p 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          className="text-2xl md:text-4xl font-serif leading-relaxed text-stone-800"
-        >
-          "{manifesto}"
-        </motion.p>
-        <span className="block mt-12 font-mono text-xs tracking-[0.3em] uppercase text-stone-400 border-b border-stone-300 pb-2">The Philosophy</span>
-      </section>
+      {/* Trajectory Grid */}
+      {data?.expertisePillars && (
+        <section className="w-full bg-stone-50 py-24 px-8 border-t border-stone-200">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
+            {data.expertisePillars.map((p: any, i: number) => (
+              <div key={i} className="space-y-4">
+                <span className="text-stone-300 font-mono text-xs">0{i+1}</span>
+                <h3 className="text-lg font-serif font-bold text-stone-900">{p.title}</h3>
+                <p className="text-stone-600 text-sm leading-relaxed">{p.description}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }

@@ -5,10 +5,16 @@ export const homePageQuery = defineQuery(`
     _id,
     _type,
     overview,
-    // Add the new fields here
     currently,
     location,
     manifesto,
+    // --- NEW FIELDS ---
+    aspirations,
+    expertisePillars[]{
+      title,
+      description
+    },
+    // ------------------
     showcaseProjects[]{
       _key,
       ...@->{
@@ -28,16 +34,26 @@ export const homePageQuery = defineQuery(`
   }
 `)
 
-// ... keep the rest of your queries (pagesBySlugQuery, etc.) as they are
-
 export const pagesBySlugQuery = defineQuery(`
   *[_type == "page" && slug.current == $slug][0] {
     _id,
     _type,
-    body,
-    overview,
     title,
     "slug": slug.current,
+    overview,
+    body[]{
+      ...,
+      // This dereferences the skill document so you get the actual content
+      _type == "skillReference" => {
+        "skill": @->{
+          title,
+          category,
+          description
+        }
+      }
+    },
+    // This gets the direct URL for the PDF file you upload in the Studio
+    "resumeUrl": resumeFile.asset->url
   }
 `)
 

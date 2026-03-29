@@ -16,8 +16,7 @@ export default defineType({
     }),
     defineField({
       name: 'overview',
-      description:
-        'Used both for the <meta> description tag for SEO, and the personal website subheader.',
+      description: 'Used for the <meta> description tag and the personal website subheader.',
       title: 'Description',
       type: 'array',
       of: [
@@ -29,13 +28,7 @@ export default defineType({
                 name: 'link',
                 type: 'object',
                 title: 'Link',
-                fields: [
-                  {
-                    name: 'href',
-                    type: 'url',
-                    title: 'Url',
-                  },
-                ],
+                fields: [{ name: 'href', type: 'url', title: 'Url' }],
               },
             ],
             decorators: [
@@ -50,34 +43,55 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
 
-    // --- NEW DYNAMIC CONTENT FIELDS ---
+    // --- DYNAMIC STATUS & LOCATION ---
     defineField({
       name: 'currently',
       title: 'Currently Status',
       type: 'string',
-      description: 'What are you up to right now? (e.g., Exploring light & architecture)',
       initialValue: 'Exploring light & architecture',
     }),
     defineField({
       name: 'location',
       title: 'Current Location',
       type: 'string',
-      description: 'Your current city or base.',
       initialValue: 'New York City',
     }),
+
+    // --- PHILOSOPHY & GOALS ---
     defineField({
       name: 'manifesto',
       title: 'Manifesto Text',
       type: 'text',
-      description: 'Your creative philosophy shown at the bottom of the page.',
-      initialValue: 'I believe in capturing the quiet moments between the noise. My work bridges raw, analog imperfection with precise digital engineering.',
+      description: 'Your creative philosophy shown at the bottom of the cinematic box.',
     }),
-    // ----------------------------------
+    defineField({
+      name: 'aspirations',
+      title: 'Career Aspirations',
+      type: 'text',
+      description: 'A forward-looking statement about where you want to take your work.',
+    }),
+
+    // --- EXPERTISE PILLARS (The "Trajectory" Section) ---
+    defineField({
+      name: 'expertisePillars',
+      title: 'Expertise Pillars',
+      description: 'Define 3 core strengths or focus areas (e.g., Narrative, Tech, Vision).',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            { name: 'title', type: 'string', title: 'Pillar Title' },
+            { name: 'description', type: 'string', title: 'Pillar Description' },
+          ],
+        }),
+      ],
+      validation: (rule) => rule.max(3),
+    }),
 
     defineField({
       name: 'showcaseProjects',
       title: 'Showcase projects',
-      description: 'These are the projects that will appear first on your landing page.',
       type: 'array',
       of: [
         defineArrayMember({
@@ -88,14 +102,9 @@ export default defineType({
     }),
   ],
   preview: {
-    select: {
-      title: 'title',
-    },
+    select: { title: 'title' },
     prepare({title}) {
-      return {
-        subtitle: 'Home',
-        title,
-      }
+      return { subtitle: 'Home', title }
     },
   },
 })
