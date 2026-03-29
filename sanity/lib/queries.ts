@@ -5,6 +5,10 @@ export const homePageQuery = defineQuery(`
     _id,
     _type,
     overview,
+    // Add the new fields here
+    currently,
+    location,
+    manifesto,
     showcaseProjects[]{
       _key,
       ...@->{
@@ -16,13 +20,15 @@ export const homePageQuery = defineQuery(`
         tags,
         title,
         techStack,
-    githubUrl,
-    liveUrl
+        githubUrl,
+        liveUrl
       }
     },
     title,
   }
 `)
+
+// ... keep the rest of your queries (pagesBySlugQuery, etc.) as they are
 
 export const pagesBySlugQuery = defineQuery(`
   *[_type == "page" && slug.current == $slug][0] {

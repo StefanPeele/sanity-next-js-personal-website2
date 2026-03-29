@@ -1,13 +1,14 @@
 // app/photography/page.tsx
 import { client } from '@/sanity/lib/client'
 import CinematicGallery from '@/components/CinematicGallery'
-import AnimatedHero from '@/components/AnimatedHero' // <-- Import the new hero
+import AnimatedHero from '@/components/AnimatedHero'
 import Link from 'next/link'
 
 const galleryQuery = `*[_type == "gallery"] | order(_createdAt desc) {
   _id,
   title,
   "imageUrl": image.asset->url,
+  "lqip": image.asset->metadata.lqip, // <-- NEW: Fetch the blur placeholder
   caption,
   category
 }`

@@ -6,8 +6,6 @@ export default defineType({
   title: 'Home',
   type: 'document',
   icon: HomeIcon,
-  // Uncomment below to have edits publish automatically as you type
-  // liveEdit: true,
   fields: [
     defineField({
       name: 'title',
@@ -23,7 +21,6 @@ export default defineType({
       title: 'Description',
       type: 'array',
       of: [
-        // Paragraphs
         defineArrayMember({
           lists: [],
           marks: {
@@ -42,22 +39,41 @@ export default defineType({
               },
             ],
             decorators: [
-              {
-                title: 'Italic',
-                value: 'em',
-              },
-              {
-                title: 'Strong',
-                value: 'strong',
-              },
+              {title: 'Italic', value: 'em'},
+              {title: 'Strong', value: 'strong'},
             ],
           },
           styles: [],
           type: 'block',
         }),
       ],
-      validation: (rule) => rule.max(155).required(),
+      validation: (rule) => rule.required(),
     }),
+
+    // --- NEW DYNAMIC CONTENT FIELDS ---
+    defineField({
+      name: 'currently',
+      title: 'Currently Status',
+      type: 'string',
+      description: 'What are you up to right now? (e.g., Exploring light & architecture)',
+      initialValue: 'Exploring light & architecture',
+    }),
+    defineField({
+      name: 'location',
+      title: 'Current Location',
+      type: 'string',
+      description: 'Your current city or base.',
+      initialValue: 'New York City',
+    }),
+    defineField({
+      name: 'manifesto',
+      title: 'Manifesto Text',
+      type: 'text',
+      description: 'Your creative philosophy shown at the bottom of the page.',
+      initialValue: 'I believe in capturing the quiet moments between the noise. My work bridges raw, analog imperfection with precise digital engineering.',
+    }),
+    // ----------------------------------
+
     defineField({
       name: 'showcaseProjects',
       title: 'Showcase projects',
