@@ -76,8 +76,8 @@ export default async function ResumePage() {
           <div className="p-8 border border-dashed border-stone-800 rounded-lg text-center group hover:border-stone-400 transition-all duration-500">
             <p className="font-mono text-[9px] text-stone-500 uppercase tracking-widest mb-4">Hard Copy Access</p>
             <a 
-              href={page?.resumeUrl || "#"} 
-              download="Stefan_Peele_Resume.pdf"
+              // The ?dl parameter forces a clean download of the binary file data
+              href={page?.resumeUrl ? `${page.resumeUrl}?dl=Stefan_Peele_Resume.pdf` : "#"} 
               className="inline-block bg-white text-black font-mono text-[10px] tracking-[0.2em] uppercase px-8 py-4 rounded-sm hover:invert transition-all active:scale-95"
             >
               Download PDF →
