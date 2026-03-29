@@ -1,131 +1,317 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 
 export default function CinematicGallery({ photos }: { photos: any[] }) {
-  const [selectedImage, setSelectedImage] = useState<any | null>(null)
+  // Navigation State
   const [activeCategory, setActiveCategory] = useState('All')
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  
+  // Custom Cursor State
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const [isHoveringImage, setIsHoveringImage] = useState(false)
 
-  // Automatically extract unique categories from your Sanity photos!
+  // Track mouse position for custom cursor
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  // Filter photos
+  const filteredPhotos = useMemo(() => {
+    return photos.filter(photo => 
+      activeCategory === 'All' ? true : photo.category === activeCategory
+    )
+  }, [photos, activeCategory])
+
   const categories = useMemo(() => {
     const cats = photos.map(p => p.category).filter(Boolean)
     return ['All', ...Array.from(new Set(cats))]
   }, [photos])
 
-  // Filter the photos based on the clicked category
-  const filteredPhotos = photos.filter(photo => 
-    activeCategory === 'All' ? true : photo.category === activeCategory
-  )
+  // Keyboard Lightbox Navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedIndex === null) return;
+      if (e.key === 'ArrowRight') {
+        setSelectedIndex((prev) => (prev! + 1) % filteredPhotos.length)
+      } else if (e.key === 'ArrowLeft') {
+        setSelectedIndex((prev) => (prev! - 1 + filteredPhotos.length) % filteredPhotos.length)
+      } else if (e.key === 'Escape') {
+        setSelectedIndex(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedIndex, filteredPhotos.length])
+
+  // Parallax Scroll Physics
+  const containerRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  })
+
+  const yMiddle = useTransform(scrollYProgress, [0, 1], [0, -150])
+
+  const columns = [
+    filteredPhotos.filter((_, i) => i % 3 === 0),
+    filteredPhotos.filter((_, i) => i % 3 === 1),
+    filteredPhotos.filter((_, i) => i % 3 === 2),
+  ]
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto relative cursor-none sm:cursor-auto">
       
-      {/* CATEGORY FILTERS */}
-      <div className="flex flex-wrap justify-center gap-4 mb-12">
+      {/* Custom Blend Cursor */}
+      <motion.div 
+        className="fixed top-0 left-0 w-4 h-4 bg-white rounded-full pointer-events-none z-[110] mix-blend-difference hidden md:flex items-center justify-center text-black font-bold tracking-widest overflow-hidden"
+        animate={{
+          x: mousePos.x - (isHoveringImage ? 32 : 8),
+          y: mousePos.y - (isHoveringImage ? 32 : 8),
+          width: isHoveringImage ? 64 : 16,
+          height: isHoveringImage ? 64 : 16,
+          opacity: 1
+        }}
+        transition={{ type: "tween", ease: "backOut", duration: 0.3 }}
+      >
+        <AnimatePresence>
+          {isHoveringImage && (
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.5 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              exit={{ opacity: 0, scale: 0.5 }}
+              className="text-[10px]"
+            >
+              VIEW
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Minimalist Category Pills */}
+      <div className="flex flex-wrap justify-center gap-8 mb-16 relative z-10">
         {categories.map((category) => (
           <button
             key={category}
             onClick={() => setActiveCategory(category)}
-            className={`px-6 py-2 rounded-full text-sm font-semibold tracking-widest uppercase transition-all duration-300 ${
-              activeCategory === category 
-                ? 'bg-stone-100 text-stone-900 shadow-[0_0_20px_rgba(255,255,255,0.1)]' 
-                : 'bg-stone-900 text-stone-400 hover:text-stone-100 hover:bg-stone-800'
+            className={`relative px-2 py-1 text-xs sm:text-sm font-semibold tracking-widest uppercase transition-colors duration-500 ${
+              activeCategory === category ? 'text-white' : 'text-stone-500 hover:text-stone-300'
             }`}
           >
             {category}
+            {activeCategory === category && (
+              <motion.div 
+                layoutId="activeCategoryIndicator"
+                className="absolute -bottom-2 left-0 right-0 h-[1px] bg-white"
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              />
+            )}
           </button>
         ))}
       </div>
 
       {/* MASONRY GRID */}
-      {/* Added motion.div wrapper so the whole grid animates when filtering */}
-      <motion.div 
-        layout 
-        className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
-      >
-        <AnimatePresence>
-          {filteredPhotos.map((photo, index) => (
-            <motion.div
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.4 }}
-              key={photo._id}
-              className="break-inside-avoid relative group cursor-pointer overflow-hidden rounded-xl bg-stone-900"
-              onClick={() => setSelectedImage(photo)}
-            >
-              {photo.imageUrl && (
-                <>
-                  <Image
-                    src={photo.imageUrl}
-                    alt={photo.caption || photo.title || 'Photography'}
-                    width={800}
-                    height={1200}
-                    className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  
-                  {/* THE HOVER OVERLAY (Darker and sleeker) */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
-                    <h2 className="text-white text-2xl font-serif font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                      {photo.title}
-                    </h2>
-                    {photo.category && (
-                      <span className="text-stone-300 text-xs font-bold uppercase tracking-widest mt-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
-                        {photo.category}
-                      </span>
-                    )}
-                  </div>
-                </>
-              )}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </motion.div>
+      <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+        {columns.map((col, colIndex) => (
+          <motion.div 
+            key={`col-${colIndex}`} 
+            className="flex flex-col gap-6"
+            style={{ y: colIndex === 1 ? yMiddle : 0 }} 
+          >
+            <AnimatePresence mode="popLayout">
+              {col.map((photo) => {
+                const originalIndex = filteredPhotos.findIndex(p => p._id === photo._id);
 
-      {/* FULLSCREEN IMMERSIVE LIGHTBOX */}
-      {/* Upped the z-index and forced a pure black background to hide everything else */}
+                return (
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0, y: 50, filter: "brightness(2) sepia(100%) blur(10px)" }}
+                    whileInView={{ opacity: 1, y: 0, filter: "brightness(1) sepia(0%) blur(0px)" }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    key={photo._id}
+                    className="relative overflow-hidden rounded-xl group cursor-none bg-black shadow-[0_0_20px_rgba(0,0,0,0.6)]"
+                    onClick={() => {
+                      setSelectedIndex(originalIndex);
+                      setIsHoveringImage(false); // Fix 1: Reset cursor state on click
+                    }}
+                    onMouseEnter={() => setIsHoveringImage(true)}
+                    onMouseLeave={() => setIsHoveringImage(false)}
+                  >
+                    {photo.imageUrl && (
+                      <>
+                        <Image
+                          src={photo.imageUrl}
+                          alt={photo.caption || photo.title || 'Photography'}
+                          width={800}
+                          height={1200}
+                          className="w-full h-auto object-cover transform transition-all duration-700 ease-out opacity-60 grayscale-[60%] group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col justify-end p-6 md:p-8">
+                          <h2 className="text-white text-2xl md:text-3xl font-serif font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out drop-shadow-lg">
+                            {photo.title}
+                          </h2>
+                        </div>
+                      </>
+                    )}
+                  </motion.div>
+                )
+              })}
+            </AnimatePresence>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* IMMERSIVE EXHIBITION LIGHTBOX */}
       <AnimatePresence>
-        {selectedImage && (
+        {selectedIndex !== null && (
           <motion.div
+            key="lightbox-overlay" // Fix 2: Key ensures proper unmounting
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/98 backdrop-blur-xl p-4 md:p-8 cursor-zoom-out"
-            onClick={() => setSelectedImage(null)}
+            className="fixed inset-0 z-[100] flex bg-black/95 backdrop-blur-xl cursor-auto"
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-6xl max-h-screen flex flex-col items-center justify-center"
-              onClick={(e) => e.stopPropagation()} 
-            >
-              {/* Sleek, minimal close button */}
-              <button 
-                className="absolute top-4 right-4 md:-top-12 md:right-0 text-stone-500 hover:text-white transition-colors p-2 z-50"
-                onClick={() => setSelectedImage(null)}
-              >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-              </button>
+            {/* Editorial Pagination */}
+            <div className="absolute top-6 left-6 md:top-8 md:left-8 text-stone-500 font-mono text-xs tracking-[0.3em] z-50 mix-blend-difference">
+              {(selectedIndex + 1).toString().padStart(2, '0')} — {filteredPhotos.length.toString().padStart(2, '0')}
+            </div>
 
-              <img
-                src={selectedImage.imageUrl}
-                alt={selectedImage.title}
-                className="max-w-full max-h-[80vh] object-contain shadow-2xl rounded-sm"
-              />
-              
-              <div className="mt-8 text-center">
-                <h3 className="text-white text-3xl font-serif tracking-wide">{selectedImage.title}</h3>
-                {selectedImage.caption && (
-                  <p className="text-stone-400 mt-3 font-sans max-w-2xl mx-auto text-sm md:text-base leading-relaxed">{selectedImage.caption}</p>
-                )}
+            {/* Close Button */}
+            <button 
+              className="absolute top-6 right-6 md:top-8 md:right-8 text-stone-500 hover:text-white transition-colors p-2 z-50 group"
+              onClick={() => setSelectedIndex(null)}
+            >
+              <svg className="w-8 h-8 group-hover:rotate-90 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div className="flex flex-col md:flex-row w-full h-full">
+              {/* Left Side: Image */}
+              <div className="flex-1 relative flex items-center justify-center p-4 md:p-12 h-[60vh] md:h-full overflow-hidden">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setSelectedIndex((selectedIndex - 1 + filteredPhotos.length) % filteredPhotos.length); }}
+                  className="absolute left-4 md:left-8 p-4 text-stone-600 hover:text-white transition-colors hidden sm:block z-20"
+                >
+                  <svg className="w-8 h-8 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+
+                <motion.div
+                  key={selectedIndex}
+                  initial={{ opacity: 0, filter: "blur(10px)", scale: 0.95 }}
+                  animate={{ 
+                    opacity: 1, 
+                    filter: "blur(0px)", 
+                    scale: [1, 1.05], 
+                    x: [0, 15]        
+                  }}
+                  exit={{ opacity: 0, filter: "blur(10px)", scale: 1 }}
+                  transition={{ 
+                    opacity: { duration: 0.4 },
+                    filter: { duration: 0.4 },
+                    scale: { duration: 25, ease: "linear" }, 
+                    x: { duration: 25, ease: "linear" }
+                  }}
+                  className="relative w-full h-full flex items-center justify-center z-10 origin-center"
+                  onClick={() => setSelectedIndex(null)}
+                >
+                  <img
+                    src={filteredPhotos[selectedIndex].imageUrl}
+                    alt={filteredPhotos[selectedIndex].title}
+                    className="max-w-full max-h-full object-contain drop-shadow-[0_0_40px_rgba(0,0,0,0.8)]"
+                  />
+                </motion.div>
+
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setSelectedIndex((selectedIndex + 1) % filteredPhotos.length); }}
+                  className="absolute right-4 md:right-8 p-4 text-stone-600 hover:text-white transition-colors hidden sm:block z-20"
+                >
+                  <svg className="w-8 h-8 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 5l7 7-7 7"></path></svg>
+                </button>
               </div>
-              
-            </motion.div>
+
+              {/* Right Side: Metadata Placard */}
+              <motion.div 
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="w-full md:w-[400px] lg:w-[450px] bg-stone-950/80 border-l border-white/5 p-8 md:p-12 flex flex-col justify-center shrink-0 h-[40vh] md:h-full overflow-y-auto"
+              >
+                <div className="space-y-8">
+                  <div>
+                    {filteredPhotos[selectedIndex].category && (
+                      <span className="text-stone-500 text-xs font-bold uppercase tracking-[0.3em] block mb-4">
+                        {filteredPhotos[selectedIndex].category}
+                      </span>
+                    )}
+                    <h3 className="text-white text-3xl md:text-5xl font-serif tracking-wide leading-tight">
+                      {filteredPhotos[selectedIndex].title}
+                    </h3>
+                  </div>
+                  
+                  {filteredPhotos[selectedIndex].caption && (
+                    <p className="text-stone-400 font-sans text-sm md:text-base leading-relaxed tracking-wide">
+                      {filteredPhotos[selectedIndex].caption}
+                    </p>
+                  )}
+
+                  <div className="pt-8 mt-8 border-t border-white/10 space-y-5">
+                    <p className="text-stone-600 text-[10px] uppercase tracking-[0.2em] font-semibold">Technical Profile</p>
+                    <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+                      <div className="flex items-center gap-3 text-stone-300">
+                        <svg className="w-6 h-6 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10" strokeWidth="1"></circle>
+                          <polygon points="12 4 18.9 8 18.9 16 12 20 5.1 16 5.1 8 12 4" strokeWidth="1"></polygon>
+                          <circle cx="12" cy="12" r="3" strokeWidth="1"></circle>
+                        </svg>
+                        <div className="flex flex-col">
+                          <span className="text-[9px] text-stone-600 tracking-widest uppercase">Aperture</span>
+                          <span className="text-sm font-mono tracking-tight">f/1.4</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-stone-300">
+                        <svg className="w-6 h-6 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10" strokeWidth="1" strokeDasharray="4 4"></circle>
+                          <path d="M12 12L16 8" strokeWidth="1.5" strokeLinecap="round"></path>
+                        </svg>
+                        <div className="flex flex-col">
+                          <span className="text-[9px] text-stone-600 tracking-widest uppercase">Shutter</span>
+                          <span className="text-sm font-mono tracking-tight">1/250s</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-stone-300">
+                        <svg className="w-6 h-6 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <rect x="4" y="4" width="16" height="16" rx="2" strokeWidth="1"></rect>
+                          <path d="M8 12h8M12 8v8" strokeWidth="1" opacity="0.5"></path>
+                        </svg>
+                        <div className="flex flex-col">
+                          <span className="text-[9px] text-stone-600 tracking-widest uppercase">Film / ISO</span>
+                          <span className="text-sm font-mono tracking-tight">ISO 100</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-stone-300">
+                        <svg className="w-6 h-6 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path d="M4 8V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2M4 8v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8M4 8h16M12 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"></path>
+                        </svg>
+                        <div className="flex flex-col">
+                          <span className="text-[9px] text-stone-600 tracking-widest uppercase">System</span>
+                          <span className="text-sm font-mono tracking-tight">SONY A7III</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

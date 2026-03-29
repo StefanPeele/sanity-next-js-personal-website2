@@ -8,12 +8,16 @@ module.exports = {
     './intro-template/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    ...theme,
-    // Overriding fontFamily to use our new custom Google Fonts
-    fontFamily: {
-      mono: 'var(--font-mono)',   // Keeps default for any code blocks
-      sans: 'var(--font-inter)',  // Now uses Inter for normal text!
-      serif: 'var(--font-lora)',  // Now uses Lora for headings!
+    // 🚨 We added the "extend" wrapper here! 
+    // This keeps all default Tailwind colors (like stone-950) intact.
+    extend: {
+      ...theme,
+      // Overriding fontFamily to use our new custom Google Fonts
+      fontFamily: {
+        mono: 'var(--font-mono)',   // Keeps default for any code blocks
+        sans: 'var(--font-inter)',  // Now uses Inter for normal text!
+        serif: 'var(--font-lora)',  // Now uses Lora for headings!
+      },
     },
   },
   plugins: [require('@tailwindcss/typography')],
