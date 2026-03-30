@@ -8,13 +8,11 @@ export const homePageQuery = defineQuery(`
     currently,
     location,
     manifesto,
-    // --- NEW FIELDS ---
     aspirations,
     expertisePillars[]{
       title,
       description
     },
-    // ------------------
     showcaseProjects[]{
       _key,
       ...@->{
@@ -43,7 +41,6 @@ export const pagesBySlugQuery = defineQuery(`
     overview,
     body[]{
       ...,
-      // This dereferences the skill document so you get the actual content
       _type == "skillReference" => {
         "skill": @->{
           title,
@@ -52,7 +49,6 @@ export const pagesBySlugQuery = defineQuery(`
         }
       }
     },
-    // This gets the direct URL for the PDF file you upload in the Studio
     "resumeUrl": resumeFile.asset->url
   }
 `)
@@ -72,7 +68,9 @@ export const projectBySlugQuery = defineQuery(`
     title,
     techStack,
     githubUrl,
-    liveUrl
+    liveUrl,
+    boardUrl,
+    architecture
   }
 `)
 
@@ -95,4 +93,18 @@ export const settingsQuery = defineQuery(`
 
 export const slugsByTypeQuery = defineQuery(`
   *[_type == $type && defined(slug.current)]{"slug": slug.current}
+`)
+
+// --- NEW QUERY: Fetches all projects for your new Projects Index Page ---
+export const projectsQuery = defineQuery(`
+  *[_type == "project"] | order(duration.end desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    coverImage,
+    overview,
+    tags,
+    techStack,
+    duration
+  }
 `)

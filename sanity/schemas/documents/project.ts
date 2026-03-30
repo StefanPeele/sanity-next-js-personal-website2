@@ -6,8 +6,6 @@ export default defineType({
   title: 'Project',
   type: 'document',
   icon: DocumentIcon,
-  // Uncomment below to have edits publish automatically as you type
-  // liveEdit: true,
   fields: [
     defineField({
       name: 'title',
@@ -33,37 +31,27 @@ export default defineType({
       title: 'Overview',
       type: 'array',
       of: [
-        // Paragraphs
         defineArrayMember({
           lists: [],
           marks: {
             annotations: [],
             decorators: [
-              {
-                title: 'Italic',
-                value: 'em',
-              },
-              {
-                title: 'Strong',
-                value: 'strong',
-              },
+              { title: 'Italic', value: 'em' },
+              { title: 'Strong', value: 'strong' },
             ],
           },
           styles: [],
           type: 'block',
         }),
       ],
-      validation: (rule) => rule.max(155).required(),
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'coverImage',
       title: 'Cover Image',
-      description:
-        'This image will be used as the cover image for the project. If you choose to add it to the show case projects, this is the image displayed in the list within the homepage.',
+      description: 'The massive cinematic image used on the project list and hero section.',
       type: 'image',
-      options: {
-        hotspot: true,
-      },
+      options: { hotspot: true },
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -73,31 +61,17 @@ export default defineType({
     }),
     defineField({
       name: 'client',
-      title: 'Client',
+      title: 'Client / Course / Organization',
       type: 'string',
     }),
-    defineField({
-      name: 'site',
-      title: 'Site',
-      type: 'url',
-    }),
-    defineField({
-      name: 'tags',
-      title: 'Tags',
-      type: 'array',
-      of: [{type: 'string'}],
-      options: {
-        layout: 'tags',
-      },
-    }),
-
-    // --- YOUR NEW FIELDS START HERE ---
+    
+    // --- IT INFRASTRUCTURE & DEV FIELDS ---
     defineField({
       name: 'techStack',
-      title: 'Tech Stack',
+      title: 'Tech Stack & Tools',
       type: 'array',
       of: [{ type: 'string' }],
-      description: 'Press enter after each one (e.g., React, Next.js, Sanity)',
+      description: 'Press enter after each one (e.g., Cisco, AWS, React, Python)',
     }),
     defineField({
       name: 'githubUrl',
@@ -106,15 +80,37 @@ export default defineType({
     }),
     defineField({
       name: 'liveUrl',
-      title: 'Live Demo URL',
+      title: 'Live Demo or Production URL',
       type: 'url',
-      description: 'You can use this or the existing "Site" field above.',
     }),
-    // --- YOUR NEW FIELDS END HERE ---
+    defineField({
+      name: 'boardUrl',
+      title: 'Project Board URL (Trello, Jira, Notion)',
+      type: 'url',
+    }),
+    
+    // --- TOPOLOGIES & DIAGRAMS ---
+    defineField({
+      name: 'architecture',
+      title: 'Architecture & Topologies',
+      description: 'Upload your network diagrams, database schemas, or system topologies here.',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            { name: 'caption', type: 'string', title: 'Caption' },
+            { name: 'alt', type: 'string', title: 'Alt Text' },
+          ]
+        }
+      ]
+    }),
 
+    // --- CASE STUDY CONTENT ---
     defineField({
       name: 'description',
-      title: 'Project Description',
+      title: 'Full Case Study',
       type: 'array',
       of: [
         defineArrayMember({
@@ -125,51 +121,27 @@ export default defineType({
                 name: 'link',
                 type: 'object',
                 title: 'Link',
-                fields: [
-                  {
-                    name: 'href',
-                    type: 'url',
-                    title: 'Url',
-                  },
-                ],
+                fields: [{ name: 'href', type: 'url', title: 'Url' }],
               },
             ],
           },
           styles: [],
         }),
-        // Custom blocks
-        defineArrayMember({
-          name: 'timeline',
-          type: 'timeline',
-        }),
+        defineArrayMember({ name: 'timeline', type: 'timeline' }),
+        // Standard in-line images
         defineField({
           type: 'image',
           icon: ImageIcon,
           name: 'image',
           title: 'Image',
-          options: {
-            hotspot: true,
-          },
-          preview: {
-            select: {
-              media: 'asset',
-              title: 'caption',
-            },
-          },
+          options: { hotspot: true },
           fields: [
-            defineField({
-              title: 'Caption',
-              name: 'caption',
-              type: 'string',
-            }),
-            defineField({
-              name: 'alt',
-              type: 'string',
-              title: 'Alt text',
-              description: 'Alternative text for screenreaders. Falls back on caption if not set',
-            }),
+            defineField({ title: 'Caption', name: 'caption', type: 'string' }),
+            defineField({ name: 'alt', type: 'string', title: 'Alt text' }),
           ],
         }),
+        // NEW: Code snippets for your case studies!
+        { type: 'code' },
       ],
     }),
   ],

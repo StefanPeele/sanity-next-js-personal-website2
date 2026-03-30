@@ -6,8 +6,6 @@ export default defineType({
   title: 'Settings',
   type: 'document',
   icon: CogIcon,
-  // Uncomment below to have edits publish automatically as you type
-  // liveEdit: true,
   fields: [
     defineField({
       name: 'menuItems',
@@ -19,22 +17,41 @@ export default defineType({
           title: 'Reference',
           type: 'reference',
           to: [
-            {
-              type: 'home',
-            },
-            {
-              type: 'page',
-            },
-            {
-              type: 'project',
-            },
+            { type: 'home' },
+            { type: 'page' },
+            { type: 'project' },
           ],
         },
       ],
     }),
+
+    // --- NEW SOCIAL & CONTACT FIELDS ---
+    defineField({
+      name: 'email',
+      title: 'Contact Email',
+      type: 'string',
+      description: 'The email address used in the "Initiate Contact" footer button.',
+    }),
+    defineField({
+      name: 'github',
+      title: 'GitHub URL',
+      type: 'url',
+    }),
+    defineField({
+      name: 'linkedin',
+      title: 'LinkedIn URL',
+      type: 'url',
+    }),
+    defineField({
+      name: 'trello',
+      title: 'Trello URL',
+      type: 'url',
+      description: 'Link to your public project board or portfolio tracking.',
+    }),
+
     defineField({
       name: 'footer',
-      description: 'This is a block of text that will be displayed at the bottom of the page.',
+      description: 'This is a block of text that will be displayed at the bottom of the page (Legacy/Additional info).',
       title: 'Footer Info',
       type: 'array',
       of: [
@@ -73,7 +90,7 @@ export default defineType({
     prepare() {
       return {
         title: 'Settings',
-        subtitle: 'Menu Items, Footer Info, and Open Graph Image',
+        subtitle: 'Menu, Social Links, and Metadata',
       }
     },
   },

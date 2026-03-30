@@ -2,15 +2,23 @@
 import { client } from '@/sanity/lib/client'
 import CinematicGallery from '@/components/CinematicGallery'
 import AnimatedHero from '@/components/AnimatedHero'
+import BookingSection from '@/components/BookingSection' // <-- NEW: Import the booking section
 import Link from 'next/link'
 
 const galleryQuery = `*[_type == "gallery"] | order(_createdAt desc) {
   _id,
   title,
   "imageUrl": image.asset->url,
-  "lqip": image.asset->metadata.lqip, // <-- NEW: Fetch the blur placeholder
+  "lqip": image.asset->metadata.lqip,
   caption,
-  category
+  category,
+  system,
+  lens,
+  aperture,
+  shutter,
+  iso,
+  location,
+  notes
 }`
 
 export default async function PhotographyPage() {
@@ -35,8 +43,10 @@ export default async function PhotographyPage() {
         <span className="text-xs tracking-[0.3em] uppercase font-semibold hidden sm:block">Return</span>
       </Link>
 
-      {/* THE UPGRADE: Replace static text with AnimatedHero */}
       <AnimatedHero />
+
+      {/* NEW: Insert the Booking Section here */}
+      <BookingSection />
 
       <CinematicGallery photos={photos} />
       

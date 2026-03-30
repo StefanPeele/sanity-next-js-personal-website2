@@ -14,6 +14,16 @@ export default defineType({
       type: 'string',
       validation: (rule) => rule.required(),
     }),
+    // --- PROFILE IMAGE FIELD ---
+    defineField({
+      name: 'profileImage',
+      title: 'Profile Image',
+      description: 'Your professional/editorial portrait used for the hero hover and about section.',
+      type: 'image',
+      options: {
+        hotspot: true, // Enables UI for cropping and focal point
+      },
+    }),
     defineField({
       name: 'overview',
       description: 'Used for the <meta> description tag and the personal website subheader.',
@@ -71,7 +81,7 @@ export default defineType({
       description: 'A forward-looking statement about where you want to take your work.',
     }),
 
-    // --- EXPERTISE PILLARS (The "Trajectory" Section) ---
+    // --- EXPERTISE PILLARS ---
     defineField({
       name: 'expertisePillars',
       title: 'Expertise Pillars',
@@ -102,9 +112,12 @@ export default defineType({
     }),
   ],
   preview: {
-    select: { title: 'title' },
-    prepare({title}) {
-      return { subtitle: 'Home', title }
+    select: { 
+      title: 'title',
+      media: 'profileImage' // Shows the uploaded photo in the Sanity sidebar
+    },
+    prepare({title, media}) {
+      return { subtitle: 'Home', title, media }
     },
   },
 })
