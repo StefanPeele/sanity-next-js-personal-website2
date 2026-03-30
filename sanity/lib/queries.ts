@@ -1,16 +1,20 @@
-import {defineQuery} from 'next-sanity'
+import { defineQuery } from 'next-sanity'
+
+// --- SHARED FRAGMENTS ---
+// This helps keep the image logic consistent across all queries
+const imageFields = `
+  ...,
+  "url": asset->url,
+  "alt": coalesce(asset->altText, "Image"),
+  "metadata": asset->metadata { lqip, dimensions }
+`
 
 export const homePageQuery = defineQuery(`
   *[_type == "home"][0]{
     _id,
     _type,
     title,
-    profileImage {
-      ...,
-      "url": asset->url,
-      "alt": asset->altText,
-      "metadata": asset->metadata
-    },
+    profileImage { ${imageFields} },
     overview,
     currently,
     location,
@@ -25,13 +29,9 @@ export const homePageQuery = defineQuery(`
       ...@->{
         _id,
         _type,
-        coverImage {
-          ...,
-          "url": asset->url,
-          "alt": asset->altText
-        },
+        coverImage { ${imageFields} },
         overview,
-        "slug": slug.current,
+        "slug": coalesce(slug.current, ""),
         tags,
         title,
         techStack,
@@ -68,16 +68,12 @@ export const projectBySlugQuery = defineQuery(`
     _id,
     _type,
     client,
-    coverImage {
-      ...,
-      "url": asset->url,
-      "alt": asset->altText
-    },
+    coverImage { ${imageFields} },
     description,
     duration,
     overview,
     site,
-    "slug": slug.current,
+    "slug": coalesce(slug.current, ""),
     tags,
     title,
     techStack,
@@ -104,14 +100,11 @@ export const settingsQuery = defineQuery(`
       _key,
       ...@->{
         _type,
-        "slug": slug.current,
+        "slug": coalesce(slug.current, ""),
         title
       }
     },
-    ogImage {
-      ...,
-      "url": asset->url
-    },
+    ogImage { ${imageFields} },
   }
 `)
 
@@ -119,17 +112,12 @@ export const slugsByTypeQuery = defineQuery(`
   *[_type == $type && defined(slug.current)]{"slug": slug.current}
 `)
 
-// --- NEW QUERY: Fetches all projects for your new Projects Index Page ---
 export const projectsQuery = defineQuery(`
   *[_type == "project"] | order(duration.end desc) {
     _id,
     title,
-    "slug": slug.current,
-    coverImage {
-      ...,
-      "url": asset->url,
-      "alt": asset->altText
-    },
+    "slug": coalesce(slug.current, ""),
+    coverImage { ${imageFields} },
     overview,
     tags,
     techStack,
@@ -137,42 +125,70 @@ export const projectsQuery = defineQuery(`
   }
 `)
 
-// --- UPDATED: Fetches all galleries AND their nested images/specs for the main archive ---
+// --- PHOTOGRAPHY QUERIES ---
+
 export const galleriesQuery = defineQuery(`
   *[_type == "gallery"] | order(_createdAt desc) {
     _id,
-    title,
-    "slug": slug.current,
-    mainImage { ..., "metadata": asset->metadata },
-    category->{ title, "slug": slug.current, themeColor },
+    "title": coalesce(title, "Untitled Volume"),
+    "slug": coalesce(slug.current, ""),
+    mainImage { 
+      ..., 
+      asset->{ url, metadata { lqip } } 
+    },
+    category->{ 
+      "title": coalesce(title, "Uncategorized"), 
+      "slug": coalesce(slug.current, ""), 
+      themeColor 
+    },
     system,
     lens,
     location,
-    images[] { 
+    "images": coalesce(images[] { 
       ..., 
-      "metadata": asset->metadata 
-    }
+      "imageUrl": asset->url,
+      "lqip": asset->metadata.lqip,
+      asset->{ url, metadata { lqip } }
+    }, [])
   }
 `)
 
-// --- UPDATED: Added 'description' to fix the TypeScript error on the individual Album page ---
 export const galleryBySlugQuery = defineQuery(`
   *[_type == "gallery" && slug.current == $slug][0] {
     _id,
-    title,
-    "slug": slug.current,
-    mainImage { ..., "metadata": asset->metadata },
-    images[] { 
+    "title": coalesce(title, "Untitled Volume"),
+    "slug": coalesce(slug.current, ""),
+    mainImage { 
       ..., 
-      "metadata": asset->metadata 
+      asset->{ url, metadata { lqip } } 
     },
+    "images": coalesce(images[] { 
+      ..., 
+      "imageUrl": asset->url,
+      "lqip": asset->metadata.lqip,
+      asset->{ url, metadata { lqip } } 
+    }, []),
     description,
     overview,
-    category->{ title, "slug": slug.current, themeColor },
+    category->{ 
+      "title": coalesce(title, "Uncategorized"), 
+      "slug": coalesce(slug.current, ""), 
+      themeColor 
+    },
     system,
     lens,
     iso,
     location,
     notes
+  }
+`)
+
+// NEW: Used for the filter bar on the photography page
+export const categoriesQuery = defineQuery(`
+  *[_type == "category" && count(*[_type == "gallery" && references(^._id)]) > 0] {
+    _id,
+    title,
+    "slug": slug.current,
+    themeColor
   }
 `)
