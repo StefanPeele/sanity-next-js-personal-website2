@@ -19,7 +19,7 @@ export default defineType({
       options: { source: 'title', maxLength: 96 },
       validation: (rule) => rule.required(),
     }),
-    // NEW: Featured Toggle for the Hero Section
+    // Featured Toggle for the Hero Section
     defineField({
       name: 'isFeatured',
       title: 'Feature this post?',
@@ -27,7 +27,7 @@ export default defineType({
       type: 'boolean',
       initialValue: false,
     }),
-    // NEW: Categories / Topics
+    // Categories / Topics
     defineField({
       name: 'categories',
       title: 'Categories & Topics',
@@ -55,7 +55,11 @@ export default defineType({
       name: 'body',
       title: 'Article Content',
       type: 'array',
-      of: [{ type: 'block' }], 
+      of: [
+        { type: 'block' },
+        { type: 'image' }, // Added image support for inline article images
+        { type: 'code' },  // Added the new code block support!
+      ], 
     }),
   ],
 })

@@ -16,7 +16,10 @@ import settings from '@/sanity/schemas/singletons/settings'
 
 // IMPORT THE SKILL & CATEGORY SCHEMAS HERE
 import skill from '@/sanity/schemas/objects/skill' 
-import category from '@/sanity/schemas/documents/category' // <-- NEW!
+import category from '@/sanity/schemas/documents/category' 
+
+// <-- NEW: IMPORT THE CODE PLUGIN -->
+import {codeInput} from '@sanity/code-input'
 
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
@@ -44,7 +47,7 @@ export default defineConfig({
       gallery,
       experience,
       post,
-      category, // <-- ADDED TO THE TYPES ARRAY!
+      category, 
       
       // Objects
       skill, 
@@ -63,5 +66,8 @@ export default defineConfig({
     singletonPlugin([home.name, settings.name]),
     unsplashImageAsset(),
     visionTool({defaultApiVersion: apiVersion}),
+    
+    // <-- NEW: ADD THE CODE PLUGIN TO THE ARRAY -->
+    codeInput(),
   ],
 })
