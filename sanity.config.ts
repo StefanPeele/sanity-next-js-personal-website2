@@ -13,7 +13,8 @@ import gallery from '@/sanity/schemas/documents/gallery'
 import post from '@/sanity/schemas/documents/post'
 import experience from '@/sanity/schemas/documents/experience'
 import settings from '@/sanity/schemas/singletons/settings'
-
+// IMPORT THE MEDIA PLUGIN
+import { media } from 'sanity-plugin-media'
 // IMPORT THE SKILL & CATEGORY SCHEMAS HERE
 import skill from '@/sanity/schemas/objects/skill' 
 import category from '@/sanity/schemas/documents/category' 
@@ -69,5 +70,8 @@ export default defineConfig({
     
     // <-- NEW: ADD THE CODE PLUGIN TO THE ARRAY -->
     codeInput(),
+    
+    // <-- NEW: ADD THE MEDIA PLUGIN HERE -->
+    media(),
   ],
 })

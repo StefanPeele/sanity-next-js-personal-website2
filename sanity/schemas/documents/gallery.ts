@@ -1,17 +1,18 @@
+import { ImageIcon } from '@sanity/icons' // Optional: adds a nice icon in the studio
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'gallery',
   title: 'Photography Gallery',
   type: 'document',
-  // --- NEW: Define a fieldset with a 2-column grid layout ---
+  icon: ImageIcon,
   fieldsets: [
     {
       name: 'technical',
-      title: 'Technical Profile',
+      title: 'Shoot Technical Profile',
       options: {
-        columns: 2, // Forces fields in this set to sit side-by-side
-        collapsible: true, // Lets you collapse the whole section if you don't need it
+        columns: 2,
+        collapsible: true,
         collapsed: false,
       },
     },
@@ -19,81 +20,110 @@ export default defineType({
   fields: [
     defineField({
       name: 'title',
-      title: 'Title',
+      title: 'Gallery Title',
       type: 'string',
-      description: 'The name of this photo or shoot.',
+      description: 'The name of the event or editorial volume (e.g., "NJIT Tech Summit 2025")',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'image',
-      title: 'Image',
-      type: 'image',
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      description: 'Used for the URL. Click "Generate" based on the title.',
       options: {
-        hotspot: true,
+        source: 'title',
+        maxLength: 96,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'mainImage',
+      title: 'Cover Image',
+      type: 'image',
+      description: 'This image will represent the gallery on the main photography index page.',
+      options: { hotspot: true },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'images',
+      title: 'Gallery Images',
+      type: 'array',
+      description: 'DRAG AND DROP MULTIPLE IMAGES HERE FOR BULK UPLOAD.',
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alternative Text',
+            },
+            {
+              name: 'caption',
+              type: 'string',
+              title: 'Specific Photo Caption (Optional)',
+            }
+          ],
+        },
+      ],
+      options: {
+        layout: 'grid', // This makes the array look like a contact sheet in the studio
       },
     }),
     defineField({
-      name: 'caption',
-      title: 'Caption',
+      name: 'overview',
+      title: 'The Story / Context',
       type: 'text',
-      description: 'A quick description of the photo, equipment used, etc.',
+      description: 'Briefly describe the intent or narrative behind this volume.',
     }),
     defineField({
       name: 'category',
       title: 'Category',
-      type: 'string',
-      description: 'e.g., Portraits, Events, Landscapes',
+      type: 'reference',
+      to: [{ type: 'category' }], // Linking to your existing category document
+      description: 'e.g., Editorial, Architecture, Portraits',
     }),
     
-    // --- ASSIGN TECHNICAL FIELDS TO THE FIELDSET ---
-    defineField({
-      name: 'aperture',
-      title: 'Aperture',
-      type: 'string',
-      fieldset: 'technical',
-      description: 'e.g., f/1.4',
-    }),
-    defineField({
-      name: 'shutter',
-      title: 'Shutter Speed',
-      type: 'string',
-      fieldset: 'technical',
-      description: 'e.g., 1/250s',
-    }),
-    defineField({
-      name: 'iso',
-      title: 'Film Stock / ISO',
-      type: 'string',
-      fieldset: 'technical',
-      description: 'e.g., ISO 100 or Portra 400',
-    }),
+    // --- TECHNICAL PROFILE (General specs for the whole shoot) ---
     defineField({
       name: 'system',
       title: 'Camera System',
       type: 'string',
       fieldset: 'technical',
-      description: 'e.g., SONY A7III',
+      initialValue: 'SONY A7III',
     }),
     defineField({
       name: 'lens',
       title: 'Lens / Gear',
       type: 'string',
       fieldset: 'technical',
-      description: 'e.g., 35mm f/1.4 GM',
+      description: 'Primary glass used for this volume.',
+    }),
+    defineField({
+      name: 'iso',
+      title: 'Film Stock / ISO',
+      type: 'string',
+      fieldset: 'technical',
     }),
     defineField({
       name: 'location',
       title: 'Location',
       type: 'string',
       fieldset: 'technical',
-      description: 'e.g., Tokyo, Japan',
     }),
-    // Notes stays outside the columns since it's a wider text box
     defineField({
       name: 'notes',
       title: 'Extra Notes / Conditions',
       type: 'text',
       fieldset: 'technical',
-      description: 'Any extra details, lighting conditions, or thoughts.',
+      rows: 3,
     }),
   ],
+  preview: {
+    select: {
+      title: 'title',
+      media: 'mainImage',
+    },
+  },
 })

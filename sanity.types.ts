@@ -88,16 +88,6 @@ export type Skill = {
   }>
 }
 
-export type Category = {
-  _id: string
-  _type: 'category'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title?: string
-  description?: string
-}
-
 export type CategoryReference = {
   _ref: string
   _type: 'reference'
@@ -219,22 +209,41 @@ export type Gallery = {
   _updatedAt: string
   _rev: string
   title?: string
-  image?: {
+  slug?: Slug
+  mainImage?: {
     asset?: SanityImageAssetReference
     media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
   }
-  caption?: string
-  category?: string
-  aperture?: string
-  shutter?: string
-  iso?: string
+  images?: Array<{
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+    _key: string
+  }>
+  overview?: string
+  category?: CategoryReference
   system?: string
   lens?: string
+  iso?: string
   location?: string
   notes?: string
+}
+
+export type Category = {
+  _id: string
+  _type: 'category'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title?: string
+  description?: string
 }
 
 export type Project = {
@@ -514,6 +523,15 @@ export type Home = {
   >
 }
 
+export type MediaTag = {
+  _id: string
+  _type: 'media.tag'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: Slug
+}
+
 export type Code = {
   _type: 'code'
   language?: string
@@ -624,7 +642,6 @@ export type AllSanitySchemaTypes =
   | SanityImageAssetReference
   | Milestone
   | Skill
-  | Category
   | CategoryReference
   | Post
   | SanityImageCrop
@@ -632,6 +649,7 @@ export type AllSanitySchemaTypes =
   | Slug
   | Experience
   | Gallery
+  | Category
   | Project
   | Duration
   | SkillReference
@@ -642,6 +660,7 @@ export type AllSanitySchemaTypes =
   | ProjectReference
   | Settings
   | Home
+  | MediaTag
   | Code
   | SanityImagePaletteSwatch
   | SanityImagePalette

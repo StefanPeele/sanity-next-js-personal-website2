@@ -1,24 +1,28 @@
-import type {PortableTextBlock} from 'next-sanity'
-import type {Image} from 'sanity'
+import type { PortableTextBlock } from 'next-sanity'
+import type { Image } from 'sanity'
 
-export interface MilestoneItem {
-  _key: string
-  description?: string
-  duration?: {
-    start?: string
-    end?: string
-  }
-  image?: Image
-  tags?: string[]
+// ... existing MilestoneItem and ShowcaseProject interfaces ...
+
+export interface Category {
   title?: string
+  slug?: string
+  themeColor?: {
+    hex: string
+  }
 }
 
-export interface ShowcaseProject {
+export interface Gallery {
   _id: string
-  _type: string
-  coverImage?: Image
-  overview?: PortableTextBlock[]
-  slug?: string
-  tags?: string[]
   title?: string
+  slug?: string
+  mainImage?: Image & { alt?: string; metadata?: { lqip: string } }
+  images?: Array<Image & { _key: string; alt?: string; caption?: string; metadata?: { lqip: string } }>
+  overview?: string
+  category?: Category
+  // Technical Profile
+  system?: string
+  lens?: string
+  iso?: string
+  location?: string
+  notes?: string
 }

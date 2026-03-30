@@ -134,3 +134,34 @@ export const projectsQuery = defineQuery(`
     duration
   }
 `)
+// ... existing queries ...
+
+export const galleriesQuery = defineQuery(`
+  *[_type == "gallery"] | order(_createdAt desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    mainImage { ..., "metadata": asset->metadata },
+    category->{ title, "slug": slug.current, themeColor }
+  }
+`)
+
+export const galleryBySlugQuery = defineQuery(`
+  *[_type == "gallery" && slug.current == $slug][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    mainImage { ..., "metadata": asset->metadata },
+    images[] { 
+      ..., 
+      "metadata": asset->metadata 
+    },
+    overview,
+    category->{ title, "slug": slug.current, themeColor },
+    system,
+    lens,
+    iso,
+    location,
+    notes
+  }
+`)
