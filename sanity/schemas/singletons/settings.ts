@@ -48,6 +48,14 @@ export default defineType({
       type: 'url',
       description: 'Link to your public project board or portfolio tracking.',
     }),
+    
+    // --- NEW DYNAMIC FOOTER HEADLINE ---
+    defineField({
+      name: 'footerHeadline',
+      title: 'Footer Headline',
+      type: 'string',
+      description: 'The giant text next to the contact button. (e.g., "Let\'s bring intent & logic to your next project.")',
+    }),
 
     defineField({
       name: 'footer',

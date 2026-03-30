@@ -2741,6 +2741,13 @@
         },
         "optional": true
       },
+      "footerHeadline": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "footer": {
         "type": "objectAttribute",
         "value": {

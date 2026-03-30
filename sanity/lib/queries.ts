@@ -4,6 +4,13 @@ export const homePageQuery = defineQuery(`
   *[_type == "home"][0]{
     _id,
     _type,
+    title,
+    profileImage {
+      ...,
+      "url": asset->url,
+      "alt": asset->altText,
+      "metadata": asset->metadata
+    },
     overview,
     currently,
     location,
@@ -18,7 +25,11 @@ export const homePageQuery = defineQuery(`
       ...@->{
         _id,
         _type,
-        coverImage,
+        coverImage {
+          ...,
+          "url": asset->url,
+          "alt": asset->altText
+        },
         overview,
         "slug": slug.current,
         tags,
@@ -27,8 +38,7 @@ export const homePageQuery = defineQuery(`
         githubUrl,
         liveUrl
       }
-    },
-    title,
+    }
   }
 `)
 
@@ -58,7 +68,11 @@ export const projectBySlugQuery = defineQuery(`
     _id,
     _type,
     client,
-    coverImage,
+    coverImage {
+      ...,
+      "url": asset->url,
+      "alt": asset->altText
+    },
     description,
     duration,
     overview,
@@ -79,6 +93,11 @@ export const settingsQuery = defineQuery(`
     _id,
     _type,
     footer,
+    email,
+    github,
+    linkedin,
+    trello,
+    footerHeadline,
     menuItems[]{
       _key,
       ...@->{
@@ -87,7 +106,10 @@ export const settingsQuery = defineQuery(`
         title
       }
     },
-    ogImage,
+    ogImage {
+      ...,
+      "url": asset->url
+    },
   }
 `)
 
@@ -101,7 +123,11 @@ export const projectsQuery = defineQuery(`
     _id,
     title,
     "slug": slug.current,
-    coverImage,
+    coverImage {
+      ...,
+      "url": asset->url,
+      "alt": asset->altText
+    },
     overview,
     tags,
     techStack,

@@ -31,7 +31,8 @@ export function Navbar({ data }: NavbarProps) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 py-4 md:px-16 ${
+      // CHANGED: Added print:hidden and bumped z-50 to z-[999]
+      className={`print:hidden fixed top-0 left-0 right-0 z-[999] transition-all duration-500 px-6 py-4 md:px-16 ${
         scrolled 
           ? 'bg-black/90 backdrop-blur-md py-3 border-b border-white/5' 
           : 'bg-transparent'

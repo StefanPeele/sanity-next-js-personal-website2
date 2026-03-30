@@ -438,6 +438,7 @@ export type Settings = {
   github?: string
   linkedin?: string
   trello?: string
+  footerHeadline?: string
   footer?: Array<{
     children?: Array<{
       marks?: Array<string>
@@ -680,10 +681,21 @@ export type CommandCenterQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: homePageQuery
-// Query: *[_type == "home"][0]{    _id,    _type,    overview,    currently,    location,    manifesto,    aspirations,    expertisePillars[]{      title,      description    },    showcaseProjects[]{      _key,      ...@->{        _id,        _type,        coverImage,        overview,        "slug": slug.current,        tags,        title,        techStack,        githubUrl,        liveUrl      }    },    title,  }
+// Query: *[_type == "home"][0]{    _id,    _type,    title,    profileImage {      ...,      "url": asset->url,      "alt": asset->altText,      "metadata": asset->metadata    },    overview,    currently,    location,    manifesto,    aspirations,    expertisePillars[]{      title,      description    },    showcaseProjects[]{      _key,      ...@->{        _id,        _type,        coverImage {          ...,          "url": asset->url,          "alt": asset->altText        },        overview,        "slug": slug.current,        tags,        title,        techStack,        githubUrl,        liveUrl      }    }  }
 export type HomePageQueryResult = {
   _id: string
   _type: 'home'
+  title: string | null
+  profileImage: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+    url: string | null
+    alt: string | null
+    metadata: SanityImageMetadata | null
+  } | null
   overview: Array<{
     children?: Array<{
       marks?: Array<string>
@@ -720,6 +732,8 @@ export type HomePageQueryResult = {
       hotspot?: SanityImageHotspot
       crop?: SanityImageCrop
       _type: 'image'
+      url: string | null
+      alt: string | null
     } | null
     overview: Array<{
       children?: Array<{
@@ -742,7 +756,6 @@ export type HomePageQueryResult = {
     githubUrl: string | null
     liveUrl: string | null
   }> | null
-  title: string | null
 } | null
 
 // Source: sanity/lib/queries.ts
@@ -822,7 +835,7 @@ export type PagesBySlugQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: projectBySlugQuery
-// Query: *[_type == "project" && slug.current == $slug][0] {    _id,    _type,    client,    coverImage,    description,    duration,    overview,    site,    "slug": slug.current,    tags,    title,    techStack,    githubUrl,    liveUrl,    boardUrl,    architecture  }
+// Query: *[_type == "project" && slug.current == $slug][0] {    _id,    _type,    client,    coverImage {      ...,      "url": asset->url,      "alt": asset->altText    },    description,    duration,    overview,    site,    "slug": slug.current,    tags,    title,    techStack,    githubUrl,    liveUrl,    boardUrl,    architecture  }
 export type ProjectBySlugQueryResult = {
   _id: string
   _type: 'project'
@@ -833,6 +846,8 @@ export type ProjectBySlugQueryResult = {
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
+    url: string | null
+    alt: string | null
   } | null
   description: Array<
     | ({
@@ -907,7 +922,7 @@ export type ProjectBySlugQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0]{    _id,    _type,    footer,    menuItems[]{      _key,      ...@->{        _type,        "slug": slug.current,        title      }    },    ogImage,  }
+// Query: *[_type == "settings"][0]{    _id,    _type,    footer,    email,    github,    linkedin,    trello,    footerHeadline,    menuItems[]{      _key,      ...@->{        _type,        "slug": slug.current,        title      }    },    ogImage {      ...,      "url": asset->url    },  }
 export type SettingsQueryResult = {
   _id: string
   _type: 'settings'
@@ -929,6 +944,11 @@ export type SettingsQueryResult = {
     _type: 'block'
     _key: string
   }> | null
+  email: string | null
+  github: string | null
+  linkedin: string | null
+  trello: string | null
+  footerHeadline: string | null
   menuItems: Array<
     | {
         _key: null
@@ -955,6 +975,7 @@ export type SettingsQueryResult = {
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
+    url: string | null
   } | null
 } | null
 
@@ -967,7 +988,7 @@ export type SlugsByTypeQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: projectsQuery
-// Query: *[_type == "project"] | order(duration.end desc) {    _id,    title,    "slug": slug.current,    coverImage,    overview,    tags,    techStack,    duration  }
+// Query: *[_type == "project"] | order(duration.end desc) {    _id,    title,    "slug": slug.current,    coverImage {      ...,      "url": asset->url,      "alt": asset->altText    },    overview,    tags,    techStack,    duration  }
 export type ProjectsQueryResult = Array<{
   _id: string
   title: string | null
@@ -978,6 +999,8 @@ export type ProjectsQueryResult = Array<{
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
+    url: string | null
+    alt: string | null
   } | null
   overview: Array<{
     children?: Array<{
@@ -1001,11 +1024,11 @@ export type ProjectsQueryResult = Array<{
 declare module '@sanity/client' {
   interface SanityQueries {
     '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] {\n    title,\n    slug,\n    publishedAt,\n    excerpt,\n    mainImage,\n    "categories": categories[]->title\n  },\n  "recentPosts": *[_type == "post" && isFeatured != true] | order(publishedAt desc)[0...3] {\n    title,\n    slug,\n    publishedAt,\n    excerpt,\n    "categories": categories[]->title\n  }\n}': CommandCenterQueryResult
-    '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage,\n        overview,\n        "slug": slug.current,\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl\n      }\n    },\n    title,\n  }\n': HomePageQueryResult
+    '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage {\n      ...,\n      "url": asset->url,\n      "alt": asset->altText,\n      "metadata": asset->metadata\n    },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage {\n          ...,\n          "url": asset->url,\n          "alt": asset->altText\n        },\n        overview,\n        "slug": slug.current,\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl\n      }\n    }\n  }\n': HomePageQueryResult
     '\n  *[_type == "page" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    overview,\n    body[]{\n      ...,\n      _type == "skillReference" => {\n        "skill": @->{\n          title,\n          category,\n          description\n        }\n      }\n    },\n    "resumeUrl": resumeFile.asset->url\n  }\n': PagesBySlugQueryResult
-    '\n  *[_type == "project" && slug.current == $slug][0] {\n    _id,\n    _type,\n    client,\n    coverImage,\n    description,\n    duration,\n    overview,\n    site,\n    "slug": slug.current,\n    tags,\n    title,\n    techStack,\n    githubUrl,\n    liveUrl,\n    boardUrl,\n    architecture\n  }\n': ProjectBySlugQueryResult
-    '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage,\n  }\n': SettingsQueryResult
+    '\n  *[_type == "project" && slug.current == $slug][0] {\n    _id,\n    _type,\n    client,\n    coverImage {\n      ...,\n      "url": asset->url,\n      "alt": asset->altText\n    },\n    description,\n    duration,\n    overview,\n    site,\n    "slug": slug.current,\n    tags,\n    title,\n    techStack,\n    githubUrl,\n    liveUrl,\n    boardUrl,\n    architecture\n  }\n': ProjectBySlugQueryResult
+    '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    footerHeadline,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage {\n      ...,\n      "url": asset->url\n    },\n  }\n': SettingsQueryResult
     '\n  *[_type == $type && defined(slug.current)]{"slug": slug.current}\n': SlugsByTypeQueryResult
-    '\n  *[_type == "project"] | order(duration.end desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    coverImage,\n    overview,\n    tags,\n    techStack,\n    duration\n  }\n': ProjectsQueryResult
+    '\n  *[_type == "project"] | order(duration.end desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    coverImage {\n      ...,\n      "url": asset->url,\n      "alt": asset->altText\n    },\n    overview,\n    tags,\n    techStack,\n    duration\n  }\n': ProjectsQueryResult
   }
 }

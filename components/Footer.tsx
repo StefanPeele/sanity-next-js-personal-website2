@@ -2,14 +2,14 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Github, Mail, Globe, Cpu, Layout, ArrowUpRight, Linkedin } from 'lucide-react'
+import { Mail, ArrowUpRight } from 'lucide-react'
+import { FaGithub, FaLinkedin, FaTrello } from 'react-icons/fa' 
 
 // Define the component to accept 'data' from Sanity
 export default function Footer({ data }: { data: any }) {
   const currentYear = new Date().getFullYear()
 
   // Dynamic social links mapping
-  // This assumes you have fields like 'github', 'linkedin', etc. in your Sanity Settings
   const socialLinks = [
     { 
       name: 'Email', 
@@ -20,28 +20,29 @@ export default function Footer({ data }: { data: any }) {
     { 
       name: 'GitHub', 
       href: data?.github || 'https://github.com', 
-      icon: <Github size={14} />, 
+      icon: <FaGithub size={14} />, 
       label: 'Source Code' 
     },
     { 
       name: 'Trello', 
       href: data?.trello || '#', 
-      icon: <Layout size={14} />, 
+      icon: <FaTrello size={14} />, 
       label: 'Project Tracking' 
     },
     { 
       name: 'LinkedIn', 
       href: data?.linkedin || '#', 
-      icon: <Linkedin size={14} />, 
+      icon: <FaLinkedin size={14} />, 
       label: 'Network' 
     },
   ]
 
+  // Updated directory map
   const siteMap = [
-    { name: 'Index', href: '/' },
-    { name: 'Infrastructure', href: '/projects' },
-    { name: 'Visuals', href: '/photography' },
-    { name: 'Intelligence', href: '/blog' },
+    { name: 'Projects', href: '/projects' },
+    { name: 'Photography', href: '/photography' },
+    { name: 'Editorial', href: '/blog' },
+    { name: 'Resume', href: '/resume' },
   ]
 
   return (
@@ -58,7 +59,15 @@ export default function Footer({ data }: { data: any }) {
               viewport={{ once: true }}
               className="text-stone-50 text-4xl md:text-6xl font-serif font-bold leading-tight"
             >
-              Ready to build <br /> the next <span className="text-stone-500 italic text-3xl md:text-5xl font-light">infrastructure?</span>
+              {data?.footerHeadline ? (
+                // If you put text in Sanity Studio, it renders it here
+                data.footerHeadline
+              ) : (
+                // If Sanity field is empty, it uses this styled fallback
+                <>
+                  Let's bring <span className="text-stone-500 italic text-3xl md:text-5xl font-light">intent & logic</span> <br /> to your next project.
+                </>
+              )}
             </motion.h2>
           </div>
           

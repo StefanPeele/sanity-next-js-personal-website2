@@ -1,12 +1,11 @@
+// app/(personal)/resume/page.tsx
 import { client } from '@/sanity/lib/client'
 import { PortableText } from '@portabletext/react'
-import { Navbar } from '@/components/Navbar'
 
-// Updated Query: Fetches the timestamp and the new activeDirective field
+// Updated Query: Fetches the timestamp and the new activeDirective field (removed settings)
 const resumeQuery = `{
   "experiences": *[_type == "experience"] | order(duration desc),
   "skills": *[_type == "skill"] | order(category asc),
-  "settings": *[_type == "settings"][0],
   "page": *[_type == "page" && slug.current == "resume"][0] {
     _updatedAt,
     activeDirective,
@@ -15,7 +14,7 @@ const resumeQuery = `{
 }`
 
 export default async function ResumePage() {
-  const { experiences, skills, settings, page } = await client.fetch(resumeQuery)
+  const { experiences, skills, page } = await client.fetch(resumeQuery)
 
   // Format the "Last Updated" date dynamically from Sanity
   const lastUpdated = page?._updatedAt 
@@ -23,15 +22,9 @@ export default async function ResumePage() {
     : 'Recently'
 
   return (
-    // Added print:bg-white and print:text-black to force a clean white background on print
-    <div className="min-h-screen bg-[#1a1a1a] text-stone-300 selection:bg-stone-500/30 print:bg-white print:text-black">
+    <div className="min-h-screen bg-[#1a1a1a] rounded-xl text-stone-300 selection:bg-stone-500/30 print:bg-white print:text-black">
       
-      {/* Hide navbar when printing */}
-      <div className="print:hidden">
-        <Navbar data={settings} />
-      </div>
-
-      <main className="max-w-7xl mx-auto px-6 pt-32 pb-24 grid grid-cols-1 lg:grid-cols-12 gap-16 print:pt-10 print:gap-8">
+      <main className="max-w-7xl mx-auto px-6 pt-16 pb-24 grid grid-cols-1 lg:grid-cols-12 gap-16 print:pt-10 print:gap-8">
         
         {/* LEFT: WORK LOG */}
         <div className="lg:col-span-8">
