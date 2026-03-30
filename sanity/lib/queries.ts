@@ -148,7 +148,10 @@ export const galleriesQuery = defineQuery(`
       ..., 
       "imageUrl": asset->url,
       "lqip": asset->metadata.lqip,
-      asset->{ url, metadata { lqip } }
+      "aperture": aperture, // Added for Lightbox
+      "shutter": shutter,   // Added for Lightbox
+      "iso": iso,           // Added for Lightbox
+      "notes": notes        // Added for Lightbox
     }, [])
   }
 `)

@@ -702,7 +702,7 @@ export type CommandCenterQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: homePageQuery
-// Query: *[_type == "home"][0]{    _id,    _type,    title,    profileImage {      ...,      "url": asset->url,      "alt": asset->altText,      "metadata": asset->metadata    },    overview,    currently,    location,    manifesto,    aspirations,    expertisePillars[]{      title,      description    },    showcaseProjects[]{      _key,      ...@->{        _id,        _type,        coverImage {          ...,          "url": asset->url,          "alt": asset->altText        },        overview,        "slug": slug.current,        tags,        title,        techStack,        githubUrl,        liveUrl      }    }  }
+// Query: *[_type == "home"][0]{    _id,    _type,    title,    profileImage {   ...,  "url": asset->url,  "alt": coalesce(asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },    overview,    currently,    location,    manifesto,    aspirations,    expertisePillars[]{      title,      description    },    showcaseProjects[]{      _key,      ...@->{        _id,        _type,        coverImage {   ...,  "url": asset->url,  "alt": coalesce(asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },        overview,        "slug": coalesce(slug.current, ""),        tags,        title,        techStack,        githubUrl,        liveUrl      }    }  }
 export type HomePageQueryResult = {
   _id: string
   _type: 'home'
@@ -714,8 +714,11 @@ export type HomePageQueryResult = {
     crop?: SanityImageCrop
     _type: 'image'
     url: string | null
-    alt: string | null
-    metadata: SanityImageMetadata | null
+    alt: string | 'Image'
+    metadata: {
+      lqip: string | null
+      dimensions: SanityImageDimensions | null
+    } | null
   } | null
   overview: Array<{
     children?: Array<{
@@ -754,7 +757,11 @@ export type HomePageQueryResult = {
       crop?: SanityImageCrop
       _type: 'image'
       url: string | null
-      alt: string | null
+      alt: string | 'Image'
+      metadata: {
+        lqip: string | null
+        dimensions: SanityImageDimensions | null
+      } | null
     } | null
     overview: Array<{
       children?: Array<{
@@ -770,7 +777,7 @@ export type HomePageQueryResult = {
       _type: 'block'
       _key: string
     }> | null
-    slug: string | null
+    slug: string | ''
     tags: null
     title: string | null
     techStack: Array<string> | null
@@ -856,7 +863,7 @@ export type PagesBySlugQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: projectBySlugQuery
-// Query: *[_type == "project" && slug.current == $slug][0] {    _id,    _type,    client,    coverImage {      ...,      "url": asset->url,      "alt": asset->altText    },    description,    duration,    overview,    site,    "slug": slug.current,    tags,    title,    techStack,    githubUrl,    liveUrl,    boardUrl,    architecture  }
+// Query: *[_type == "project" && slug.current == $slug][0] {    _id,    _type,    client,    coverImage {   ...,  "url": asset->url,  "alt": coalesce(asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },    description,    duration,    overview,    site,    "slug": coalesce(slug.current, ""),    tags,    title,    techStack,    githubUrl,    liveUrl,    boardUrl,    architecture  }
 export type ProjectBySlugQueryResult = {
   _id: string
   _type: 'project'
@@ -868,7 +875,11 @@ export type ProjectBySlugQueryResult = {
     crop?: SanityImageCrop
     _type: 'image'
     url: string | null
-    alt: string | null
+    alt: string | 'Image'
+    metadata: {
+      lqip: string | null
+      dimensions: SanityImageDimensions | null
+    } | null
   } | null
   description: Array<
     | ({
@@ -922,7 +933,7 @@ export type ProjectBySlugQueryResult = {
     _key: string
   }> | null
   site: null
-  slug: string | null
+  slug: string | ''
   tags: null
   title: string | null
   techStack: Array<string> | null
@@ -943,7 +954,7 @@ export type ProjectBySlugQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0]{    _id,    _type,    footer,    email,    github,    linkedin,    trello,    footerHeadline,    archiveTitle,    archiveSubtitle,    menuItems[]{      _key,      ...@->{        _type,        "slug": slug.current,        title      }    },    ogImage {      ...,      "url": asset->url    },  }
+// Query: *[_type == "settings"][0]{    _id,    _type,    footer,    email,    github,    linkedin,    trello,    footerHeadline,    archiveTitle,    archiveSubtitle,    menuItems[]{      _key,      ...@->{        _type,        "slug": coalesce(slug.current, ""),        title      }    },    ogImage {   ...,  "url": asset->url,  "alt": coalesce(asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },  }
 export type SettingsQueryResult = {
   _id: string
   _type: 'settings'
@@ -976,19 +987,19 @@ export type SettingsQueryResult = {
     | {
         _key: null
         _type: 'home'
-        slug: null
+        slug: ''
         title: string | null
       }
     | {
         _key: null
         _type: 'page'
-        slug: string | null
+        slug: string | ''
         title: string | null
       }
     | {
         _key: null
         _type: 'project'
-        slug: string | null
+        slug: string | ''
         title: string | null
       }
   > | null
@@ -999,6 +1010,11 @@ export type SettingsQueryResult = {
     crop?: SanityImageCrop
     _type: 'image'
     url: string | null
+    alt: string | 'Image'
+    metadata: {
+      lqip: string | null
+      dimensions: SanityImageDimensions | null
+    } | null
   } | null
 } | null
 
@@ -1011,11 +1027,11 @@ export type SlugsByTypeQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: projectsQuery
-// Query: *[_type == "project"] | order(duration.end desc) {    _id,    title,    "slug": slug.current,    coverImage {      ...,      "url": asset->url,      "alt": asset->altText    },    overview,    tags,    techStack,    duration  }
+// Query: *[_type == "project"] | order(duration.end desc) {    _id,    title,    "slug": coalesce(slug.current, ""),    coverImage {   ...,  "url": asset->url,  "alt": coalesce(asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },    overview,    tags,    techStack,    duration  }
 export type ProjectsQueryResult = Array<{
   _id: string
   title: string | null
-  slug: string | null
+  slug: string | ''
   coverImage: {
     asset?: SanityImageAssetReference
     media?: unknown
@@ -1023,7 +1039,11 @@ export type ProjectsQueryResult = Array<{
     crop?: SanityImageCrop
     _type: 'image'
     url: string | null
-    alt: string | null
+    alt: string | 'Image'
+    metadata: {
+      lqip: string | null
+      dimensions: SanityImageDimensions | null
+    } | null
   } | null
   overview: Array<{
     children?: Array<{
@@ -1046,71 +1066,95 @@ export type ProjectsQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: galleriesQuery
-// Query: *[_type == "gallery"] | order(_createdAt desc) {    _id,    title,    "slug": slug.current,    mainImage { ..., "metadata": asset->metadata },    category->{ title, "slug": slug.current, themeColor },    system,    lens,    location,    images[] {       ...,       "metadata": asset->metadata     }  }
+// Query: *[_type == "gallery"] | order(_createdAt desc) {    _id,    "title": coalesce(title, "Untitled Volume"),    "slug": coalesce(slug.current, ""),    mainImage {       ...,       asset->{ url, metadata { lqip } }     },    category->{       "title": coalesce(title, "Uncategorized"),       "slug": coalesce(slug.current, ""),       themeColor     },    system,    lens,    location,    "images": coalesce(images[] {       ...,       "imageUrl": asset->url,      "lqip": asset->metadata.lqip,      asset->{ url, metadata { lqip } }    }, [])  }
 export type GalleriesQueryResult = Array<{
   _id: string
-  title: string | null
-  slug: string | null
+  title: string | 'Untitled Volume'
+  slug: string | ''
   mainImage: {
-    asset?: SanityImageAssetReference
+    asset: {
+      url: string | null
+      metadata: {
+        lqip: string | null
+      } | null
+    } | null
     media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
-    metadata: SanityImageMetadata | null
   } | null
   category: {
-    title: string | null
-    slug: null
+    title: string | 'Uncategorized'
+    slug: ''
     themeColor: null
   } | null
   system: string | null
   lens: string | null
   location: string | null
-  images: Array<{
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    caption?: string
-    _type: 'image'
-    _key: string
-    metadata: SanityImageMetadata | null
-  }> | null
+  images:
+    | Array<{
+        asset: {
+          url: string | null
+          metadata: {
+            lqip: string | null
+          } | null
+        } | null
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        alt?: string
+        caption?: string
+        _type: 'image'
+        _key: string
+        imageUrl: string | null
+        lqip: string | null
+      }>
+    | Array<never>
 }>
 
 // Source: sanity/lib/queries.ts
 // Variable: galleryBySlugQuery
-// Query: *[_type == "gallery" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    mainImage { ..., "metadata": asset->metadata },    images[] {       ...,       "metadata": asset->metadata     },    description,    overview,    category->{ title, "slug": slug.current, themeColor },    system,    lens,    iso,    location,    notes  }
+// Query: *[_type == "gallery" && slug.current == $slug][0] {    _id,    "title": coalesce(title, "Untitled Volume"),    "slug": coalesce(slug.current, ""),    mainImage {       ...,       asset->{ url, metadata { lqip } }     },    "images": coalesce(images[] {       ...,       "imageUrl": asset->url,      "lqip": asset->metadata.lqip,      asset->{ url, metadata { lqip } }     }, []),    description,    overview,    category->{       "title": coalesce(title, "Uncategorized"),       "slug": coalesce(slug.current, ""),       themeColor     },    system,    lens,    iso,    location,    notes  }
 export type GalleryBySlugQueryResult = {
   _id: string
-  title: string | null
-  slug: string | null
+  title: string | 'Untitled Volume'
+  slug: string | ''
   mainImage: {
-    asset?: SanityImageAssetReference
+    asset: {
+      url: string | null
+      metadata: {
+        lqip: string | null
+      } | null
+    } | null
     media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
-    metadata: SanityImageMetadata | null
   } | null
-  images: Array<{
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    caption?: string
-    _type: 'image'
-    _key: string
-    metadata: SanityImageMetadata | null
-  }> | null
+  images:
+    | Array<{
+        asset: {
+          url: string | null
+          metadata: {
+            lqip: string | null
+          } | null
+        } | null
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        alt?: string
+        caption?: string
+        _type: 'image'
+        _key: string
+        imageUrl: string | null
+        lqip: string | null
+      }>
+    | Array<never>
   description: null
   overview: string | null
   category: {
-    title: string | null
-    slug: null
+    title: string | 'Uncategorized'
+    slug: ''
     themeColor: null
   } | null
   system: string | null
@@ -1120,16 +1164,27 @@ export type GalleryBySlugQueryResult = {
   notes: string | null
 } | null
 
+// Source: sanity/lib/queries.ts
+// Variable: categoriesQuery
+// Query: *[_type == "category" && count(*[_type == "gallery" && references(^._id)]) > 0] {    _id,    title,    "slug": slug.current,    themeColor  }
+export type CategoriesQueryResult = Array<{
+  _id: string
+  title: string | null
+  slug: null
+  themeColor: null
+}>
+
 declare module '@sanity/client' {
   interface SanityQueries {
     '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] {\n    title,\n    slug,\n    publishedAt,\n    excerpt,\n    mainImage,\n    "categories": categories[]->title\n  },\n  "recentPosts": *[_type == "post" && isFeatured != true] | order(publishedAt desc)[0...3] {\n    title,\n    slug,\n    publishedAt,\n    excerpt,\n    "categories": categories[]->title\n  }\n}': CommandCenterQueryResult
-    '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage {\n      ...,\n      "url": asset->url,\n      "alt": asset->altText,\n      "metadata": asset->metadata\n    },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage {\n          ...,\n          "url": asset->url,\n          "alt": asset->altText\n        },\n        overview,\n        "slug": slug.current,\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl\n      }\n    }\n  }\n': HomePageQueryResult
+    '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n        overview,\n        "slug": coalesce(slug.current, ""),\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl\n      }\n    }\n  }\n': HomePageQueryResult
     '\n  *[_type == "page" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    overview,\n    body[]{\n      ...,\n      _type == "skillReference" => {\n        "skill": @->{\n          title,\n          category,\n          description\n        }\n      }\n    },\n    "resumeUrl": resumeFile.asset->url\n  }\n': PagesBySlugQueryResult
-    '\n  *[_type == "project" && slug.current == $slug][0] {\n    _id,\n    _type,\n    client,\n    coverImage {\n      ...,\n      "url": asset->url,\n      "alt": asset->altText\n    },\n    description,\n    duration,\n    overview,\n    site,\n    "slug": slug.current,\n    tags,\n    title,\n    techStack,\n    githubUrl,\n    liveUrl,\n    boardUrl,\n    architecture\n  }\n': ProjectBySlugQueryResult
-    '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    footerHeadline,\n    archiveTitle,\n    archiveSubtitle,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage {\n      ...,\n      "url": asset->url\n    },\n  }\n': SettingsQueryResult
+    '\n  *[_type == "project" && slug.current == $slug][0] {\n    _id,\n    _type,\n    client,\n    coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    description,\n    duration,\n    overview,\n    site,\n    "slug": coalesce(slug.current, ""),\n    tags,\n    title,\n    techStack,\n    githubUrl,\n    liveUrl,\n    boardUrl,\n    architecture\n  }\n': ProjectBySlugQueryResult
+    '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    footerHeadline,\n    archiveTitle,\n    archiveSubtitle,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": coalesce(slug.current, ""),\n        title\n      }\n    },\n    ogImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n  }\n': SettingsQueryResult
     '\n  *[_type == $type && defined(slug.current)]{"slug": slug.current}\n': SlugsByTypeQueryResult
-    '\n  *[_type == "project"] | order(duration.end desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    coverImage {\n      ...,\n      "url": asset->url,\n      "alt": asset->altText\n    },\n    overview,\n    tags,\n    techStack,\n    duration\n  }\n': ProjectsQueryResult
-    '\n  *[_type == "gallery"] | order(_createdAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    mainImage { ..., "metadata": asset->metadata },\n    category->{ title, "slug": slug.current, themeColor },\n    system,\n    lens,\n    location,\n    images[] { \n      ..., \n      "metadata": asset->metadata \n    }\n  }\n': GalleriesQueryResult
-    '\n  *[_type == "gallery" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    mainImage { ..., "metadata": asset->metadata },\n    images[] { \n      ..., \n      "metadata": asset->metadata \n    },\n    description,\n    overview,\n    category->{ title, "slug": slug.current, themeColor },\n    system,\n    lens,\n    iso,\n    location,\n    notes\n  }\n': GalleryBySlugQueryResult
+    '\n  *[_type == "project"] | order(duration.end desc) {\n    _id,\n    title,\n    "slug": coalesce(slug.current, ""),\n    coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    tags,\n    techStack,\n    duration\n  }\n': ProjectsQueryResult
+    '\n  *[_type == "gallery"] | order(_createdAt desc) {\n    _id,\n    "title": coalesce(title, "Untitled Volume"),\n    "slug": coalesce(slug.current, ""),\n    mainImage { \n      ..., \n      asset->{ url, metadata { lqip } } \n    },\n    category->{ \n      "title": coalesce(title, "Uncategorized"), \n      "slug": coalesce(slug.current, ""), \n      themeColor \n    },\n    system,\n    lens,\n    location,\n    "images": coalesce(images[] { \n      ..., \n      "imageUrl": asset->url,\n      "lqip": asset->metadata.lqip,\n      asset->{ url, metadata { lqip } }\n    }, [])\n  }\n': GalleriesQueryResult
+    '\n  *[_type == "gallery" && slug.current == $slug][0] {\n    _id,\n    "title": coalesce(title, "Untitled Volume"),\n    "slug": coalesce(slug.current, ""),\n    mainImage { \n      ..., \n      asset->{ url, metadata { lqip } } \n    },\n    "images": coalesce(images[] { \n      ..., \n      "imageUrl": asset->url,\n      "lqip": asset->metadata.lqip,\n      asset->{ url, metadata { lqip } } \n    }, []),\n    description,\n    overview,\n    category->{ \n      "title": coalesce(title, "Uncategorized"), \n      "slug": coalesce(slug.current, ""), \n      themeColor \n    },\n    system,\n    lens,\n    iso,\n    location,\n    notes\n  }\n': GalleryBySlugQueryResult
+    '\n  *[_type == "category" && count(*[_type == "gallery" && references(^._id)]) > 0] {\n    _id,\n    title,\n    "slug": slug.current,\n    themeColor\n  }\n': CategoriesQueryResult
   }
 }

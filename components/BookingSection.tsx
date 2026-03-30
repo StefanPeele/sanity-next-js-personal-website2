@@ -11,7 +11,6 @@ export default function BookingSection() {
     e.preventDefault()
     setStatus('submitting')
 
-    // FIX: Save reference immediately to avoid null pointer after async fetch
     const form = e.currentTarget
     const formData = new FormData(form)
     const data = Object.fromEntries(formData.entries())
@@ -28,7 +27,7 @@ export default function BookingSection() {
 
       if (response.ok) {
         setStatus('success')
-        form.reset() // Success: Reset using the captured reference
+        form.reset() 
         
         setTimeout(() => {
           setIsOpen(false)
@@ -44,12 +43,12 @@ export default function BookingSection() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto mb-16 relative z-20 px-4 flex flex-col items-center">
+    <div className="relative flex flex-col items-center">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group flex items-center gap-3 px-6 py-3 border border-stone-700/50 hover:border-stone-400 bg-stone-900/50 backdrop-blur-md rounded-full text-stone-300 hover:text-white transition-all duration-500"
+        className="group flex items-center justify-center gap-3 px-6 py-3 border border-stone-700/50 hover:border-stone-400 bg-stone-900/50 backdrop-blur-md rounded-full text-stone-300 hover:text-white transition-all duration-500"
       >
-        <span className="text-xs tracking-[0.2em] uppercase font-semibold">
+        <span className="text-xs tracking-[0.2em] uppercase font-semibold whitespace-nowrap">
           {isOpen ? 'Close Inquiry' : 'Book a Session'}
         </span>
         <motion.svg 
@@ -69,9 +68,9 @@ export default function BookingSection() {
             animate={{ height: "auto", opacity: 1, y: 0 }}
             exit={{ height: 0, opacity: 0, y: -10 }}
             transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="w-full overflow-hidden"
+            className="absolute top-full mt-4 w-[calc(100vw-2rem)] sm:w-[32rem] max-w-[90vw] overflow-hidden origin-top z-50 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto"
           >
-            <div className="mt-6 p-8 md:p-10 border border-white/10 bg-stone-900/80 backdrop-blur-xl rounded-2xl shadow-2xl relative">
+            <div className="p-8 md:p-10 border border-white/10 bg-stone-900/90 backdrop-blur-2xl rounded-2xl shadow-2xl relative">
               
               {status === 'success' ? (
                 <motion.div 
@@ -86,8 +85,8 @@ export default function BookingSection() {
                 </motion.div>
               ) : (
                 <motion.form initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={handleSubmit}>
-                  <h3 className="text-2xl font-serif text-white mb-2">Let's capture something special.</h3>
-                  <p className="text-stone-400 text-sm mb-8 leading-relaxed">
+                  <h3 className="text-2xl font-serif text-white mb-2 text-left">Let's capture something special.</h3>
+                  <p className="text-stone-400 text-sm mb-8 leading-relaxed text-left">
                     Available for editorial, portrait, and commercial commissions. Provide a brief overview of your vision, timeline, and location.
                   </p>
 

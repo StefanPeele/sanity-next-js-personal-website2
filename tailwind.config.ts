@@ -1,24 +1,15 @@
-const {theme} = require('@sanity/demo/tailwind')
+import type { Config } from "tailwindcss";
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+const config: Config = {
   content: [
-    './app/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
-    './intro-template/**/*.{js,ts,jsx,tsx}',
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    // 🚨 We added the "extend" wrapper here! 
-    // This keeps all default Tailwind colors (like stone-950) intact.
-    extend: {
-      ...theme,
-      // Overriding fontFamily to use our new custom Google Fonts
-      fontFamily: {
-        mono: 'var(--font-mono)',   // Keeps default for any code blocks
-        sans: 'var(--font-inter)',  // Now uses Inter for normal text!
-        serif: 'var(--font-lora)',  // Now uses Lora for headings!
-      },
-    },
+    extend: {},
   },
-  plugins: [require('@tailwindcss/typography')],
-}
+  plugins: [],
+};
+
+export default config;

@@ -88,20 +88,28 @@ export default function AnimatedHero() {
         className="h-[1px] w-12 bg-stone-700 mt-8 mb-8"
       />
 
-      {/* NEW: Action Button (Albums) */}
+      {/* NEW: Action Buttons (Albums & Book Now) */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         // DELAYED: Fades in half a second after the divider draws itself
         transition={{ delay: 4.5, duration: 1, ease: "easeOut" }}
-        className="flex justify-center"
+        className="flex flex-col sm:flex-row gap-4 justify-center items-center"
       >
-        {/* The entry point to your Collections */}
+        {/* View Albums Button */}
         <Link 
           href="/photography/albums"
           className="px-6 py-3 border border-white/20 rounded-full text-stone-300 font-mono text-[10px] tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all duration-500 ease-out"
         >
           View Albums
+        </Link>
+        
+        {/* Book Now Button */}
+        <Link 
+          href="#"
+          className="px-6 py-3 bg-white text-black rounded-full font-mono text-[10px] tracking-[0.2em] uppercase hover:bg-stone-300 transition-all duration-500 ease-out"
+        >
+          Book Now
         </Link>
       </motion.div>
     </motion.div>
