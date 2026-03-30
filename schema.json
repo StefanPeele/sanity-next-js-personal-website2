@@ -2818,6 +2818,20 @@
         },
         "optional": true
       },
+      "archiveTitle": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "archiveSubtitle": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "footer": {
         "type": "objectAttribute",
         "value": {

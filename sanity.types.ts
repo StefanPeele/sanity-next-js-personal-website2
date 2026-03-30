@@ -448,6 +448,8 @@ export type Settings = {
   linkedin?: string
   trello?: string
   footerHeadline?: string
+  archiveTitle?: string
+  archiveSubtitle?: string
   footer?: Array<{
     children?: Array<{
       marks?: Array<string>
@@ -941,7 +943,7 @@ export type ProjectBySlugQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0]{    _id,    _type,    footer,    email,    github,    linkedin,    trello,    footerHeadline,    menuItems[]{      _key,      ...@->{        _type,        "slug": slug.current,        title      }    },    ogImage {      ...,      "url": asset->url    },  }
+// Query: *[_type == "settings"][0]{    _id,    _type,    footer,    email,    github,    linkedin,    trello,    footerHeadline,    archiveTitle,    archiveSubtitle,    menuItems[]{      _key,      ...@->{        _type,        "slug": slug.current,        title      }    },    ogImage {      ...,      "url": asset->url    },  }
 export type SettingsQueryResult = {
   _id: string
   _type: 'settings'
@@ -968,6 +970,8 @@ export type SettingsQueryResult = {
   linkedin: string | null
   trello: string | null
   footerHeadline: string | null
+  archiveTitle: string | null
+  archiveSubtitle: string | null
   menuItems: Array<
     | {
         _key: null
@@ -1040,14 +1044,92 @@ export type ProjectsQueryResult = Array<{
   duration: Duration | null
 }>
 
+// Source: sanity/lib/queries.ts
+// Variable: galleriesQuery
+// Query: *[_type == "gallery"] | order(_createdAt desc) {    _id,    title,    "slug": slug.current,    mainImage { ..., "metadata": asset->metadata },    category->{ title, "slug": slug.current, themeColor },    system,    lens,    location,    images[] {       ...,       "metadata": asset->metadata     }  }
+export type GalleriesQueryResult = Array<{
+  _id: string
+  title: string | null
+  slug: string | null
+  mainImage: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+    metadata: SanityImageMetadata | null
+  } | null
+  category: {
+    title: string | null
+    slug: null
+    themeColor: null
+  } | null
+  system: string | null
+  lens: string | null
+  location: string | null
+  images: Array<{
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+    _key: string
+    metadata: SanityImageMetadata | null
+  }> | null
+}>
+
+// Source: sanity/lib/queries.ts
+// Variable: galleryBySlugQuery
+// Query: *[_type == "gallery" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    mainImage { ..., "metadata": asset->metadata },    images[] {       ...,       "metadata": asset->metadata     },    description,    overview,    category->{ title, "slug": slug.current, themeColor },    system,    lens,    iso,    location,    notes  }
+export type GalleryBySlugQueryResult = {
+  _id: string
+  title: string | null
+  slug: string | null
+  mainImage: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+    metadata: SanityImageMetadata | null
+  } | null
+  images: Array<{
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+    _key: string
+    metadata: SanityImageMetadata | null
+  }> | null
+  description: null
+  overview: string | null
+  category: {
+    title: string | null
+    slug: null
+    themeColor: null
+  } | null
+  system: string | null
+  lens: string | null
+  iso: string | null
+  location: string | null
+  notes: string | null
+} | null
+
 declare module '@sanity/client' {
   interface SanityQueries {
     '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] {\n    title,\n    slug,\n    publishedAt,\n    excerpt,\n    mainImage,\n    "categories": categories[]->title\n  },\n  "recentPosts": *[_type == "post" && isFeatured != true] | order(publishedAt desc)[0...3] {\n    title,\n    slug,\n    publishedAt,\n    excerpt,\n    "categories": categories[]->title\n  }\n}': CommandCenterQueryResult
     '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage {\n      ...,\n      "url": asset->url,\n      "alt": asset->altText,\n      "metadata": asset->metadata\n    },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage {\n          ...,\n          "url": asset->url,\n          "alt": asset->altText\n        },\n        overview,\n        "slug": slug.current,\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl\n      }\n    }\n  }\n': HomePageQueryResult
     '\n  *[_type == "page" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    overview,\n    body[]{\n      ...,\n      _type == "skillReference" => {\n        "skill": @->{\n          title,\n          category,\n          description\n        }\n      }\n    },\n    "resumeUrl": resumeFile.asset->url\n  }\n': PagesBySlugQueryResult
     '\n  *[_type == "project" && slug.current == $slug][0] {\n    _id,\n    _type,\n    client,\n    coverImage {\n      ...,\n      "url": asset->url,\n      "alt": asset->altText\n    },\n    description,\n    duration,\n    overview,\n    site,\n    "slug": slug.current,\n    tags,\n    title,\n    techStack,\n    githubUrl,\n    liveUrl,\n    boardUrl,\n    architecture\n  }\n': ProjectBySlugQueryResult
-    '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    footerHeadline,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage {\n      ...,\n      "url": asset->url\n    },\n  }\n': SettingsQueryResult
+    '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    footerHeadline,\n    archiveTitle,\n    archiveSubtitle,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": slug.current,\n        title\n      }\n    },\n    ogImage {\n      ...,\n      "url": asset->url\n    },\n  }\n': SettingsQueryResult
     '\n  *[_type == $type && defined(slug.current)]{"slug": slug.current}\n': SlugsByTypeQueryResult
     '\n  *[_type == "project"] | order(duration.end desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    coverImage {\n      ...,\n      "url": asset->url,\n      "alt": asset->altText\n    },\n    overview,\n    tags,\n    techStack,\n    duration\n  }\n': ProjectsQueryResult
+    '\n  *[_type == "gallery"] | order(_createdAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    mainImage { ..., "metadata": asset->metadata },\n    category->{ title, "slug": slug.current, themeColor },\n    system,\n    lens,\n    location,\n    images[] { \n      ..., \n      "metadata": asset->metadata \n    }\n  }\n': GalleriesQueryResult
+    '\n  *[_type == "gallery" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    mainImage { ..., "metadata": asset->metadata },\n    images[] { \n      ..., \n      "metadata": asset->metadata \n    },\n    description,\n    overview,\n    category->{ title, "slug": slug.current, themeColor },\n    system,\n    lens,\n    iso,\n    location,\n    notes\n  }\n': GalleryBySlugQueryResult
   }
 }

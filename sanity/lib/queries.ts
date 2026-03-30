@@ -98,6 +98,8 @@ export const settingsQuery = defineQuery(`
     linkedin,
     trello,
     footerHeadline,
+    archiveTitle,
+    archiveSubtitle,
     menuItems[]{
       _key,
       ...@->{
@@ -134,18 +136,26 @@ export const projectsQuery = defineQuery(`
     duration
   }
 `)
-// ... existing queries ...
 
+// --- UPDATED: Fetches all galleries AND their nested images/specs for the main archive ---
 export const galleriesQuery = defineQuery(`
   *[_type == "gallery"] | order(_createdAt desc) {
     _id,
     title,
     "slug": slug.current,
     mainImage { ..., "metadata": asset->metadata },
-    category->{ title, "slug": slug.current, themeColor }
+    category->{ title, "slug": slug.current, themeColor },
+    system,
+    lens,
+    location,
+    images[] { 
+      ..., 
+      "metadata": asset->metadata 
+    }
   }
 `)
 
+// --- UPDATED: Added 'description' to fix the TypeScript error on the individual Album page ---
 export const galleryBySlugQuery = defineQuery(`
   *[_type == "gallery" && slug.current == $slug][0] {
     _id,
@@ -156,6 +166,7 @@ export const galleryBySlugQuery = defineQuery(`
       ..., 
       "metadata": asset->metadata 
     },
+    description,
     overview,
     category->{ title, "slug": slug.current, themeColor },
     system,

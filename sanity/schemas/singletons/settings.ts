@@ -57,6 +57,22 @@ export default defineType({
       description: 'The giant text next to the contact button. (e.g., "Let\'s bring intent & logic to your next project.")',
     }),
 
+    // --- NEW PHOTOGRAPHY ARCHIVE FIELDS ---
+    defineField({
+      name: 'archiveTitle',
+      title: 'Photography Archive Title',
+      type: 'string',
+      description: 'The main title on the photography albums page.',
+      initialValue: 'The Archives',
+    }),
+    defineField({
+      name: 'archiveSubtitle',
+      title: 'Photography Archive Subtitle',
+      type: 'string',
+      description: 'The small mono-spaced subtitle on the photography albums page.',
+      initialValue: 'STRUCTURED VOLUMES AND EDITORIAL COLLECTIONS.',
+    }),
+
     defineField({
       name: 'footer',
       description: 'This is a block of text that will be displayed at the bottom of the page (Legacy/Additional info).',
@@ -98,7 +114,7 @@ export default defineType({
     prepare() {
       return {
         title: 'Settings',
-        subtitle: 'Menu, Social Links, and Metadata',
+        subtitle: 'Menu, Social Links, Metadata, and Titles',
       }
     },
   },

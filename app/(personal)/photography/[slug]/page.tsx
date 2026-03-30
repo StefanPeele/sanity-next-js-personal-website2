@@ -1,101 +1,112 @@
 import { sanityFetch } from '@/sanity/lib/live'
+import Link from 'next/link'
+import CinematicGallery from '@/components/CinematicGallery' 
 import { galleryBySlugQuery } from '@/sanity/lib/queries'
-import { urlForImage } from '@/sanity/lib/utils'
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
-type Props = {
-  params: Promise<{ slug: string }>
-}
+// 1. UPDATE: params is now a Promise in Next.js 15+
+export default async function AlbumPage({ params }: { params: Promise<{ slug: string }> }) {
+  
+  // 2. UPDATE: Await the params to extract the slug correctly
+  const resolvedParams = await params
 
-export default async function GalleryPage({ params }: Props) {
-  const { slug } = await params
-  const { data: gallery } = await sanityFetch({
-    query: galleryBySlugQuery,
-    params: { slug },
+  // Fetch the specific gallery based on the URL slug
+  const { data: gallery } = await sanityFetch({ 
+    query: galleryBySlugQuery, 
+    params: { slug: resolvedParams.slug } // Now it has the actual string!
   })
 
   if (!gallery) {
     notFound()
   }
 
-  const themeColor = gallery.category?.themeColor?.hex || '#d6d3d1'
+  // Map the gallery's images so they perfectly match what your 
+  // CinematicGallery component expects
+  const formattedImages = (gallery.images || []).map((img: any) => ({
+    ...img,
+    _id: img._key,
+    imageUrl: img.asset?.url,
+    lqip: img.asset?.metadata?.lqip,
+    category: gallery.category?.title,
+    title: gallery.title,
+    system: gallery.system,
+    lens: gallery.lens,
+    location: gallery.location,
+    aperture: img.aperture,
+    shutter: img.shutter,
+    iso: img.iso,
+  }))
 
   return (
-    <div className="space-y-12 pb-20">
-      {/* HEADER SECTION */}
-      <header className="space-y-4">
-        <div 
-          className="inline-block px-3 py-1 text-[10px] font-bold tracking-[0.2em] uppercase border rounded-full"
-          style={{ 
-            color: themeColor, 
-            borderColor: `${themeColor}33`, 
-            backgroundColor: `${themeColor}10` 
-          }}
+    <main className="min-h-screen bg-black text-stone-50 pt-32 pb-20 relative overflow-hidden rounded-xl">
+      
+      {/* Cinematic Film Grain Overlay */}
+      <div 
+        className="pointer-events-none fixed inset-0 z-[100] h-full w-full opacity-[0.04] mix-blend-overlay" 
+        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+      ></div>
+
+      <div className="max-w-7xl mx-auto px-6 mb-20 relative z-10">
+        
+        {/* Navigation */}
+        <Link 
+          href="/photography/albums" 
+          className="inline-flex items-center gap-2 text-stone-500 font-mono text-[10px] tracking-[0.3em] uppercase hover:text-white transition-colors mb-16"
         >
-          {gallery.category?.title || 'Editorial'}
-        </div>
-        
-        {/* Using font-serif here will hook into your Lora font from layout.tsx */}
-        <h1 className="text-5xl md:text-8xl font-serif text-white leading-tight tracking-tight">
-          {gallery.title}
-        </h1>
-        
-        <p className="max-w-2xl text-lg text-stone-400 leading-relaxed font-sans">
-          {gallery.overview}
-        </p>
-      </header>
+          <span>←</span> Return to Archives
+        </Link>
 
-      {/* TECHNICAL SPECS BAR */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-y border-white/10 text-[11px] uppercase tracking-[0.15em] font-sans">
-        <div>
-          <span className="block text-stone-500 mb-2">System</span>
-          <span className="text-stone-200">{gallery.system || '—'}</span>
-        </div>
-        <div>
-          <span className="block text-stone-500 mb-2">Lens</span>
-          <span className="text-stone-200">{gallery.lens || '—'}</span>
-        </div>
-        <div>
-          <span className="block text-stone-500 mb-2">Film / ISO</span>
-          <span className="text-stone-200">{gallery.iso || '—'}</span>
-        </div>
-        <div>
-          <span className="block text-stone-500 mb-2">Location</span>
-          <span className="text-stone-200">{gallery.location || '—'}</span>
-        </div>
-      </section>
-
-      {/* IMAGE GRID - High fidelity layout */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {gallery.images?.map((img) => (
-          <div key={img._key} className="relative group overflow-hidden bg-stone-950 rounded-sm">
-            <Image
-              src={urlForImage(img)?.url() || ''}
-              alt={img.alt || gallery.title || 'Gallery Image'}
-              width={1600}
-              height={1200}
-              className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
-              placeholder="blur"
-              blurDataURL={img.metadata?.lqip}
-            />
-            {img.caption && (
-               <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 text-[10px] uppercase tracking-widest text-white bg-black/40 px-3 py-2 backdrop-blur-md border border-white/10">
-                 {img.caption}
-               </div>
+        {/* Editorial Header */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end border-b border-white/10 pb-16">
+          
+          {/* Title & Category (Left side) */}
+          <div className="lg:col-span-8">
+            <span className="text-red-500 font-mono text-[10px] tracking-[0.4em] uppercase mb-4 block">
+              {gallery.category?.title || 'Volume'}
+            </span>
+            <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-white mb-6">
+              {gallery.title}
+            </h1>
+            {gallery.description && (
+              <p className="text-stone-400 max-w-2xl font-serif text-lg italic leading-relaxed">
+                {gallery.description}
+              </p>
             )}
           </div>
-        ))}
-      </section>
-      
-      {gallery.notes && (
-        <footer className="pt-16 border-t border-white/10">
-           <span className="block text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-6">Field Notes</span>
-           <p className="text-stone-400 font-serif italic text-xl max-w-3xl leading-loose">
-             "{gallery.notes}"
-           </p>
-        </footer>
-      )}
-    </div>
+
+          {/* Technical Readout (Right side) */}
+          <div className="lg:col-span-4 flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
+              <div>
+                <span className="block text-stone-600 font-mono text-[8px] uppercase tracking-widest mb-1">Location</span>
+                <span className="block text-stone-300 font-mono text-[10px] uppercase tracking-wider">{gallery.location || 'Undisclosed'}</span>
+              </div>
+              <div>
+                <span className="block text-stone-600 font-mono text-[8px] uppercase tracking-widest mb-1">Frames</span>
+                <span className="block text-stone-300 font-mono text-[10px] uppercase tracking-wider">{formattedImages.length} Captures</span>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
+              <div>
+                <span className="block text-stone-600 font-mono text-[8px] uppercase tracking-widest mb-1">System</span>
+                <span className="block text-stone-300 font-mono text-[10px] uppercase tracking-wider">{gallery.system || 'Digital Format'}</span>
+              </div>
+              <div>
+                <span className="block text-stone-600 font-mono text-[8px] uppercase tracking-widest mb-1">Primary Lens</span>
+                <span className="block text-stone-300 font-mono text-[10px] uppercase tracking-wider">{gallery.lens || 'Prime Array'}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* The Gallery Drop-in */}
+      <div className="relative z-10">
+        <CinematicGallery photos={formattedImages} />
+      </div>
+
+    </main>
   )
 }

@@ -1,8 +1,8 @@
-// components/AnimatedHero.tsx
 'use client'
 
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import Link from 'next/link'
 
 export default function AnimatedHero() {
   const title = "The Gallery"
@@ -37,7 +37,7 @@ export default function AnimatedHero() {
     show: { 
       y: "0%", 
       opacity: 1, 
-      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } 
+      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } 
     }
   }
 
@@ -85,8 +85,25 @@ export default function AnimatedHero() {
         animate={{ scaleX: 1, opacity: 1, y: 0 }} // <-- 3. Explicitly set y: 0 here too
         // DELAYED: Bumping from 2s -> 4s
         transition={{ delay: 4, duration: 1, ease: "easeOut" }}
-        className="h-[1px] w-12 bg-stone-700 mt-8"
+        className="h-[1px] w-12 bg-stone-700 mt-8 mb-8"
       />
+
+      {/* NEW: Action Button (Albums) */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        // DELAYED: Fades in half a second after the divider draws itself
+        transition={{ delay: 4.5, duration: 1, ease: "easeOut" }}
+        className="flex justify-center"
+      >
+        {/* The entry point to your Collections */}
+        <Link 
+          href="/photography/albums"
+          className="px-6 py-3 border border-white/20 rounded-full text-stone-300 font-mono text-[10px] tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-all duration-500 ease-out"
+        >
+          View Albums
+        </Link>
+      </motion.div>
     </motion.div>
   )
 }
