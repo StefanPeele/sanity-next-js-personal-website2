@@ -1,10 +1,9 @@
 import ImageBox from '@/components/ImageBox'
-import type {MilestoneItem} from '@/types'
 
-export function TimelineItem({milestone}: {milestone: MilestoneItem}) {
+export function TimelineItem({milestone}: {milestone: any}) {
   const {description, duration, image, tags, title} = milestone
   const startYear = duration?.start ? new Date(duration.start).getFullYear() : undefined
-  const endYear = duration?.end ? new Date(duration.end).getFullYear() : 'Now'
+  const endYear = duration?.end ? new Date(duration?.end).getFullYear() : 'Now'
 
   return (
     <div className="flex min-h-[200px] font-sans last:pb-2">
@@ -30,7 +29,7 @@ export function TimelineItem({milestone}: {milestone: MilestoneItem}) {
         <div className="font-bold text-black">{title}</div>
         {/* Tags */}
         <div className="text-sm text-gray-600">
-          {tags?.map((tag, key) => (
+          {tags?.map((tag: string, key: number) => (
             <span key={key}>
               {tag}
               <span className="mx-1">●</span>

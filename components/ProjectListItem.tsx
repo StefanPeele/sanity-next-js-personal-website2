@@ -1,10 +1,11 @@
 import {CustomPortableText} from '@/components/CustomPortableText'
 import ImageBox from '@/components/ImageBox'
-import type {ShowcaseProject} from '@/types'
 import type {PortableTextBlock} from 'next-sanity'
 
-// We extend the existing type here so TypeScript doesn't get mad about our new fields!
-type ExtendedProject = ShowcaseProject & {
+// We use an index signature [key: string]: any to allow all Sanity fields
+// without needing to import the broken ShowcaseProject type!
+interface ExtendedProject {
+  [key: string]: any;
   techStack?: string[];
   githubUrl?: string;
   liveUrl?: string;
@@ -56,7 +57,7 @@ function TextBox({project}: {project: ExtendedProject}) {
       <div className="mt-4 flex flex-col gap-y-4">
         {/* Tags */}
         <div className="flex flex-row flex-wrap gap-x-2">
-          {project.tags?.map((tag, key) => (
+          {project.tags?.map((tag: string, key: number) => (
             <div className="text-sm font-medium lowercase md:text-lg text-stone-400" key={key}>
               #{tag}
             </div>
@@ -66,7 +67,7 @@ function TextBox({project}: {project: ExtendedProject}) {
         {/* UPGRADED: Tech Stack Badges - Soft Navy Tint */}
         {project.techStack && project.techStack.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {project.techStack.map((tech, index) => (
+            {project.techStack.map((tech: string, index: number) => (
               <span key={index} className="bg-[#4A5D6E]/10 text-[#4A5D6E] text-xs font-bold px-4 py-1.5 rounded-full">
                 {tech}
               </span>
