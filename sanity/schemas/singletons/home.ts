@@ -103,6 +103,7 @@ export default defineType({
       name: 'showcaseProjects',
       title: 'Showcase projects',
       type: 'array',
+      readOnly: false, // <--- WE FORCEFULLY UNLOCKED THE FIELD HERE
       of: [
         defineArrayMember({
           type: 'reference',
