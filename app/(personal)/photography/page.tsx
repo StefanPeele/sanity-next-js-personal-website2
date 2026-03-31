@@ -47,7 +47,7 @@ interface SanityGallery {
       metadata?: { lqip: string | null }
     }
   } | null
-  category?: { title: string | null; slug: string | null; themeColor?: string } | null
+  category?: { title?: string | null; slug: string | null; themeColor?: string } | null
   images?: any[] | null
 }
 
