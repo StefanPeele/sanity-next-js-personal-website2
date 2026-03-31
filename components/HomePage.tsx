@@ -41,8 +41,7 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
   const recents = intelData?.recentPosts || []
 
   return (
-    <div className="w-full flex flex-col items-center bg-[#0a0a0a]">
-      
+<div className="w-full flex flex-col items-center bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-900/40 via-black to-black">      
       {/* 1. HERO DIRECTORY */}
       <main className="relative w-full min-h-screen overflow-hidden flex items-center justify-center p-6 md:p-12 lg:p-20 select-none">
         
