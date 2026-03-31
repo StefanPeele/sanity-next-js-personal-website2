@@ -23,18 +23,14 @@ export default async function AlbumPage({ params }: { params: Promise<{ slug: st
   // Map the gallery's images so they perfectly match what your 
   // CinematicGallery component expects
   const formattedImages = (gallery.images || []).map((img: any) => ({
-    ...img,
+    ...img, // This safely brings in imageUrl, lqip, aperture, shutter, iso, etc!
     _id: img._key,
-    imageUrl: img.asset?.url,
-    lqip: img.asset?.metadata?.lqip,
     category: gallery.category?.title,
     title: gallery.title,
-    system: gallery.system,
-    lens: gallery.lens,
+    // Use the specific override if it exists, otherwise fall back to the album settings
+    system: img.systemOverride || gallery.system,
+    lens: img.lensOverride || gallery.lens,
     location: gallery.location,
-    aperture: img.aperture,
-    shutter: img.shutter,
-    iso: img.iso,
   }))
 
   return (
