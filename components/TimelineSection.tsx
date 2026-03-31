@@ -1,14 +1,14 @@
 import {TimelineItem} from '@/components/TimelineItem'
 import {studioUrl} from '@/sanity/lib/api'
-import type {MilestoneItem} from '@/types'
 import type {StudioPathLike} from '@sanity/client/csm'
 import {createDataAttribute, stegaClean} from 'next-sanity'
 import {OptimisticSortOrder} from './OptimisticSortOrder'
 
-interface TimelineItem {
+// Renamed this to TimelineEntry to avoid clashing with the Component name!
+interface TimelineEntry {
   _key: string
   title: string
-  milestones: MilestoneItem[]
+  milestones: any[] // Using any here to bypass the missing MilestoneItem type
 }
 
 export function TimelineSection({
@@ -17,7 +17,7 @@ export function TimelineSection({
   type,
   path,
 }: {
-  timelines: TimelineItem[]
+  timelines: TimelineEntry[]
   id: string | null
   type: string | null
   path: StudioPathLike
@@ -48,7 +48,7 @@ export function TimelineSection({
             >
               <div className="pb-5 font-sans text-xl font-bold">{stegaClean(title)}</div>
               <OptimisticSortOrder id={id} path={[...path, {_key}, 'milestones']}>
-                {milestones?.map((experience) => (
+                {milestones?.map((experience: any) => (
                   <div
                     key={experience._key}
                     data-sanity={dataAttribute?.([{_key}, 'milestones', {_key: experience._key}])}
