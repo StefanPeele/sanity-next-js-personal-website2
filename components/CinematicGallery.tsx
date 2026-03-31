@@ -211,7 +211,6 @@ export default function CinematicGallery({ photos }: { photos: GalleryPhoto[] })
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ layout: { type: "spring", stiffness: 200, damping: 25 }, duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                       key={photo._id}
-                      // 👇 FIX: Added w-full and strict aspect-[3/4] to stop the squishing bug
                       className="relative w-full aspect-[3/4] overflow-hidden rounded-xl group cursor-none bg-stone-900 shadow-[0_0_20px_rgba(0,0,0,0.6)] block"
                       onClick={() => {
                         playShutterSound(); 
@@ -223,7 +222,6 @@ export default function CinematicGallery({ photos }: { photos: GalleryPhoto[] })
                     >
                       {photo.imageUrl && (
                         <>
-                          {/* 👇 FIX: Changed to fill with Next.js Image */}
                           <Image
                             src={photo.imageUrl}
                             alt={photo.caption || photo.title || 'Photography'}

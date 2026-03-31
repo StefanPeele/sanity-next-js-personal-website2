@@ -4,12 +4,23 @@ import CinematicGallery from '@/components/CinematicGallery'
 import BookingSection from '@/components/BookingSection'
 import Link from 'next/link'
 
-// 1. Locally defined GalleryPhoto to fix the TS export error
+// --- HELPER FUNCTION: Fisher-Yates Shuffle ---
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
+// 1. Locally defined GalleryPhoto 
 export interface GalleryPhoto {
   _id: string
   title: string
   imageUrl: string
   lqip?: string
+  caption?: string | null
   category?: string
   location?: string | null
   system?: string | null
@@ -20,7 +31,7 @@ export interface GalleryPhoto {
   notes?: string | null
 }
 
-// 2. Updated Interface to fix the SanityGallery property errors
+// 2. Updated Interface
 interface SanityGallery {
   _id: string
   title: string | null
@@ -28,6 +39,8 @@ interface SanityGallery {
   location?: string | null
   system?: string | null
   lens?: string | null
+  iso?: string | null
+  notes?: string | null
   mainImage?: {
     asset?: {
       url: string | null
@@ -52,22 +65,29 @@ export default async function PhotographyPage({
 
   const allGalleries = (galleriesData as any) as SanityGallery[]
 
+  // Flatten all photos from all galleries into one massive array
   const flattenedPhotos: GalleryPhoto[] = allGalleries.flatMap((gallery) => 
     (gallery.images || []).map((img: any) => ({
       _id: img._key || Math.random().toString(36).substring(7),
+      // Use individual title first, fallback to gallery title
       title: img.title ?? gallery.title ?? 'Untitled',
       imageUrl: img.imageUrl ?? img.asset?.url ?? '',
       lqip: img.lqip ?? img.asset?.metadata?.lqip ?? '',
+      caption: img.caption ?? null,
       category: gallery.category?.title ?? 'Archive',
       location: gallery.location ?? null,
-      system: gallery.system ?? null,
-      lens: gallery.lens ?? null,
+      // Use override specs if they exist, otherwise fallback to shoot defaults
+      system: img.systemOverride ?? gallery.system ?? null,
+      lens: img.lensOverride ?? gallery.lens ?? null,
       aperture: img.aperture ?? null,
       shutter: img.shutter ?? null,
-      iso: img.iso ?? null,
-      notes: img.notes ?? null
+      iso: img.iso ?? gallery.iso ?? null,
+      notes: gallery.notes ?? null // Attached gallery-level notes
     }))
-  ).filter(p => p.imageUrl).slice(0, 15)
+  ).filter(p => p.imageUrl)
+
+  // Randomize the photos and take the first 15 for the dynamic masonry grid
+  const randomGallery = shuffleArray(flattenedPhotos).slice(0, 15)
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-stone-50 pb-20 relative overflow-hidden">
@@ -93,7 +113,6 @@ export default async function PhotographyPage({
           A curated collection of cinematic moments, capturing the essence of sports, portraits, and live events.
         </p>
         
-        {/* Buttons side-by-side. View Albums route updated to fix 404 */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative">
           <Link 
             href="/photography/albums" 
@@ -111,7 +130,8 @@ export default async function PhotographyPage({
           <div className="w-[1px] h-16 bg-gradient-to-b from-stone-500/50 to-transparent"></div>
         </div>
         <div className="w-full">
-          <CinematicGallery photos={flattenedPhotos} />
+          {/* Passing the newly randomized gallery down */}
+          <CinematicGallery photos={randomGallery} />
         </div>
       </section>
 

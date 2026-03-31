@@ -1,4 +1,4 @@
-import { ImageIcon } from '@sanity/icons' // Optional: adds a nice icon in the studio
+import { ImageIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
@@ -9,7 +9,7 @@ export default defineType({
   fieldsets: [
     {
       name: 'technical',
-      title: 'Shoot Technical Profile',
+      title: 'Shoot Technical Profile (Defaults)',
       options: {
         columns: 2,
         collapsible: true,
@@ -48,7 +48,7 @@ export default defineType({
       name: 'images',
       title: 'Gallery Images',
       type: 'array',
-      description: 'DRAG AND DROP MULTIPLE IMAGES HERE FOR BULK UPLOAD.',
+      description: 'DRAG AND DROP MULTIPLE IMAGES HERE FOR BULK UPLOAD. Click "Edit" on individual images to add specific titles and technical specs.',
       of: [
         {
           type: 'image',
@@ -60,15 +60,49 @@ export default defineType({
               title: 'Alternative Text',
             },
             {
+              name: 'title',
+              type: 'string',
+              title: 'Image Title (Overrides Gallery Title)',
+              description: 'e.g., "Ahmet - Headshot"',
+            },
+            {
               name: 'caption',
               type: 'string',
               title: 'Specific Photo Caption (Optional)',
+            },
+            // --- INDIVIDUAL TECHNICAL SPECS ---
+            {
+              name: 'aperture',
+              type: 'string',
+              title: 'Aperture (e.g., f/2.8)',
+            },
+            {
+              name: 'shutter',
+              type: 'string',
+              title: 'Shutter Speed (e.g., 1/250)',
+            },
+            {
+              name: 'iso',
+              type: 'string',
+              title: 'ISO (Overrides shoot default)',
+            },
+            {
+              name: 'lensOverride',
+              type: 'string',
+              title: 'Lens Override',
+              description: 'Fill this out ONLY if this specific shot used a different lens than the shoot default.',
+            },
+            {
+              name: 'systemOverride',
+              type: 'string',
+              title: 'Camera Override',
+              description: 'Fill this out ONLY if this specific shot used a different camera than the shoot default.',
             }
           ],
         },
       ],
       options: {
-        layout: 'grid', // This makes the array look like a contact sheet in the studio
+        layout: 'grid',
       },
     }),
     defineField({
@@ -81,28 +115,28 @@ export default defineType({
       name: 'category',
       title: 'Category',
       type: 'reference',
-      to: [{ type: 'category' }], // Linking to your existing category document
+      to: [{ type: 'category' }],
       description: 'e.g., Editorial, Architecture, Portraits',
     }),
     
     // --- TECHNICAL PROFILE (General specs for the whole shoot) ---
     defineField({
       name: 'system',
-      title: 'Camera System',
+      title: 'Default Camera System',
       type: 'string',
       fieldset: 'technical',
       initialValue: 'SONY A7III',
     }),
     defineField({
       name: 'lens',
-      title: 'Lens / Gear',
+      title: 'Default Lens / Gear',
       type: 'string',
       fieldset: 'technical',
       description: 'Primary glass used for this volume.',
     }),
     defineField({
       name: 'iso',
-      title: 'Film Stock / ISO',
+      title: 'Default Film Stock / ISO',
       type: 'string',
       fieldset: 'technical',
     }),

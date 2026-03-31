@@ -1,7 +1,6 @@
 import { defineQuery } from 'next-sanity'
 
 // --- SHARED FRAGMENTS ---
-// This helps keep the image logic consistent across all queries
 const imageFields = `
   ...,
   "url": asset->url,
@@ -148,10 +147,14 @@ export const galleriesQuery = defineQuery(`
       ..., 
       "imageUrl": asset->url,
       "lqip": asset->metadata.lqip,
-      "aperture": aperture, // Added for Lightbox
-      "shutter": shutter,   // Added for Lightbox
-      "iso": iso,           // Added for Lightbox
-      "notes": notes        // Added for Lightbox
+      title,
+      alt,
+      caption,
+      aperture,
+      shutter,
+      iso,
+      lensOverride,
+      systemOverride
     }, [])
   }
 `)
@@ -169,7 +172,14 @@ export const galleryBySlugQuery = defineQuery(`
       ..., 
       "imageUrl": asset->url,
       "lqip": asset->metadata.lqip,
-      asset->{ url, metadata { lqip } } 
+      title,
+      alt,
+      caption,
+      aperture,
+      shutter,
+      iso,
+      lensOverride,
+      systemOverride
     }, []),
     description,
     overview,

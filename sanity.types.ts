@@ -223,7 +223,13 @@ export type Gallery = {
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     alt?: string
+    title?: string
     caption?: string
+    aperture?: string
+    shutter?: string
+    iso?: string
+    lensOverride?: string
+    systemOverride?: string
     _type: 'image'
     _key: string
   }>
@@ -1066,7 +1072,7 @@ export type ProjectsQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: galleriesQuery
-// Query: *[_type == "gallery"] | order(_createdAt desc) {    _id,    "title": coalesce(title, "Untitled Volume"),    "slug": coalesce(slug.current, ""),    mainImage {       ...,       asset->{ url, metadata { lqip } }     },    category->{       "title": coalesce(title, "Uncategorized"),       "slug": coalesce(slug.current, ""),       themeColor     },    system,    lens,    location,    "images": coalesce(images[] {       ...,       "imageUrl": asset->url,      "lqip": asset->metadata.lqip,      asset->{ url, metadata { lqip } }    }, [])  }
+// Query: *[_type == "gallery"] | order(_createdAt desc) {    _id,    "title": coalesce(title, "Untitled Volume"),    "slug": coalesce(slug.current, ""),    mainImage {       ...,       asset->{ url, metadata { lqip } }     },    category->{       "title": coalesce(title, "Uncategorized"),       "slug": coalesce(slug.current, ""),       themeColor     },    system,    lens,    location,    "images": coalesce(images[] {       ...,       "imageUrl": asset->url,      "lqip": asset->metadata.lqip,      title,      alt,      caption,      aperture,      shutter,      iso,      lensOverride,      systemOverride    }, [])  }
 export type GalleriesQueryResult = Array<{
   _id: string
   title: string | 'Untitled Volume'
@@ -1093,17 +1099,18 @@ export type GalleriesQueryResult = Array<{
   location: string | null
   images:
     | Array<{
-        asset: {
-          url: string | null
-          metadata: {
-            lqip: string | null
-          } | null
-        } | null
+        asset?: SanityImageAssetReference
         media?: unknown
         hotspot?: SanityImageHotspot
         crop?: SanityImageCrop
-        alt?: string
-        caption?: string
+        alt: string | null
+        title: string | null
+        caption: string | null
+        aperture: string | null
+        shutter: string | null
+        iso: string | null
+        lensOverride: string | null
+        systemOverride: string | null
         _type: 'image'
         _key: string
         imageUrl: string | null
@@ -1114,7 +1121,7 @@ export type GalleriesQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: galleryBySlugQuery
-// Query: *[_type == "gallery" && slug.current == $slug][0] {    _id,    "title": coalesce(title, "Untitled Volume"),    "slug": coalesce(slug.current, ""),    mainImage {       ...,       asset->{ url, metadata { lqip } }     },    "images": coalesce(images[] {       ...,       "imageUrl": asset->url,      "lqip": asset->metadata.lqip,      asset->{ url, metadata { lqip } }     }, []),    description,    overview,    category->{       "title": coalesce(title, "Uncategorized"),       "slug": coalesce(slug.current, ""),       themeColor     },    system,    lens,    iso,    location,    notes  }
+// Query: *[_type == "gallery" && slug.current == $slug][0] {    _id,    "title": coalesce(title, "Untitled Volume"),    "slug": coalesce(slug.current, ""),    mainImage {       ...,       asset->{ url, metadata { lqip } }     },    "images": coalesce(images[] {       ...,       "imageUrl": asset->url,      "lqip": asset->metadata.lqip,      title,      alt,      caption,      aperture,      shutter,      iso,      lensOverride,      systemOverride    }, []),    description,    overview,    category->{       "title": coalesce(title, "Uncategorized"),       "slug": coalesce(slug.current, ""),       themeColor     },    system,    lens,    iso,    location,    notes  }
 export type GalleryBySlugQueryResult = {
   _id: string
   title: string | 'Untitled Volume'
@@ -1133,17 +1140,18 @@ export type GalleryBySlugQueryResult = {
   } | null
   images:
     | Array<{
-        asset: {
-          url: string | null
-          metadata: {
-            lqip: string | null
-          } | null
-        } | null
+        asset?: SanityImageAssetReference
         media?: unknown
         hotspot?: SanityImageHotspot
         crop?: SanityImageCrop
-        alt?: string
-        caption?: string
+        alt: string | null
+        title: string | null
+        caption: string | null
+        aperture: string | null
+        shutter: string | null
+        iso: string | null
+        lensOverride: string | null
+        systemOverride: string | null
         _type: 'image'
         _key: string
         imageUrl: string | null
@@ -1183,8 +1191,8 @@ declare module '@sanity/client' {
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    footerHeadline,\n    archiveTitle,\n    archiveSubtitle,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": coalesce(slug.current, ""),\n        title\n      }\n    },\n    ogImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n  }\n': SettingsQueryResult
     '\n  *[_type == $type && defined(slug.current)]{"slug": slug.current}\n': SlugsByTypeQueryResult
     '\n  *[_type == "project"] | order(duration.end desc) {\n    _id,\n    title,\n    "slug": coalesce(slug.current, ""),\n    coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    tags,\n    techStack,\n    duration\n  }\n': ProjectsQueryResult
-    '\n  *[_type == "gallery"] | order(_createdAt desc) {\n    _id,\n    "title": coalesce(title, "Untitled Volume"),\n    "slug": coalesce(slug.current, ""),\n    mainImage { \n      ..., \n      asset->{ url, metadata { lqip } } \n    },\n    category->{ \n      "title": coalesce(title, "Uncategorized"), \n      "slug": coalesce(slug.current, ""), \n      themeColor \n    },\n    system,\n    lens,\n    location,\n    "images": coalesce(images[] { \n      ..., \n      "imageUrl": asset->url,\n      "lqip": asset->metadata.lqip,\n      asset->{ url, metadata { lqip } }\n    }, [])\n  }\n': GalleriesQueryResult
-    '\n  *[_type == "gallery" && slug.current == $slug][0] {\n    _id,\n    "title": coalesce(title, "Untitled Volume"),\n    "slug": coalesce(slug.current, ""),\n    mainImage { \n      ..., \n      asset->{ url, metadata { lqip } } \n    },\n    "images": coalesce(images[] { \n      ..., \n      "imageUrl": asset->url,\n      "lqip": asset->metadata.lqip,\n      asset->{ url, metadata { lqip } } \n    }, []),\n    description,\n    overview,\n    category->{ \n      "title": coalesce(title, "Uncategorized"), \n      "slug": coalesce(slug.current, ""), \n      themeColor \n    },\n    system,\n    lens,\n    iso,\n    location,\n    notes\n  }\n': GalleryBySlugQueryResult
+    '\n  *[_type == "gallery"] | order(_createdAt desc) {\n    _id,\n    "title": coalesce(title, "Untitled Volume"),\n    "slug": coalesce(slug.current, ""),\n    mainImage { \n      ..., \n      asset->{ url, metadata { lqip } } \n    },\n    category->{ \n      "title": coalesce(title, "Uncategorized"), \n      "slug": coalesce(slug.current, ""), \n      themeColor \n    },\n    system,\n    lens,\n    location,\n    "images": coalesce(images[] { \n      ..., \n      "imageUrl": asset->url,\n      "lqip": asset->metadata.lqip,\n      title,\n      alt,\n      caption,\n      aperture,\n      shutter,\n      iso,\n      lensOverride,\n      systemOverride\n    }, [])\n  }\n': GalleriesQueryResult
+    '\n  *[_type == "gallery" && slug.current == $slug][0] {\n    _id,\n    "title": coalesce(title, "Untitled Volume"),\n    "slug": coalesce(slug.current, ""),\n    mainImage { \n      ..., \n      asset->{ url, metadata { lqip } } \n    },\n    "images": coalesce(images[] { \n      ..., \n      "imageUrl": asset->url,\n      "lqip": asset->metadata.lqip,\n      title,\n      alt,\n      caption,\n      aperture,\n      shutter,\n      iso,\n      lensOverride,\n      systemOverride\n    }, []),\n    description,\n    overview,\n    category->{ \n      "title": coalesce(title, "Uncategorized"), \n      "slug": coalesce(slug.current, ""), \n      themeColor \n    },\n    system,\n    lens,\n    iso,\n    location,\n    notes\n  }\n': GalleryBySlugQueryResult
     '\n  *[_type == "category" && count(*[_type == "gallery" && references(^._id)]) > 0] {\n    _id,\n    title,\n    "slug": slug.current,\n    themeColor\n  }\n': CategoriesQueryResult
   }
 }
