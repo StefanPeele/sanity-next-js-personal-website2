@@ -115,7 +115,7 @@ export default async function ProjectSlugRoute({params}: Props) {
               <div className="p-4 flex flex-col justify-center">
                 <span className="text-stone-600 mb-1">Production URL</span>
                 <Link target="_blank" className="text-stone-300 hover:text-white transition-colors truncate" href={site}>
-                  {site.replace(/^https?:\/\//, '')}
+                  {(site as string).replace(/^https?:\/\//, '')}        
                 </Link>
               </div>
             )}
@@ -123,24 +123,24 @@ export default async function ProjectSlugRoute({params}: Props) {
             <div className="p-4 flex flex-col justify-center">
               <span className="text-stone-600 mb-1">Tags</span>
               <div className="flex gap-2 overflow-hidden whitespace-nowrap">
-                {tags?.slice(0, 2).map((tag, key) => (
+                {(tags as any)?.slice(0, 2).map((tag: string, key: number) => (
                   <span key={key} className="text-stone-300">#{tag}</span>
                 ))}
-                {tags && tags.length > 2 && <span className="text-stone-600">+{tags.length - 2}</span>}
+                {tags && (tags as any).length > 2 && <span className="text-stone-600">+{(tags as any).length - 2}</span>}
               </div>
             </div>
           </div>
         </div>
 
         {/* TECH STACK & LINKS ACTION BAR */}
-        {((techStack && techStack.length > 0) || githubUrl || liveUrl || boardUrl) && (
+        {(((techStack as any) && (techStack as any).length > 0) || githubUrl || liveUrl || boardUrl) && (
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 py-8 border-y border-white/5">
             
             {/* Tech Stack Pills */}
             <div className="flex-1">
               <h3 className="text-[10px] font-mono tracking-[0.3em] text-stone-600 uppercase mb-4">Architecture Stack</h3>
               <div className="flex flex-wrap gap-2">
-                {techStack?.map((tech: string, index: number) => (
+                {(techStack as any)?.map((tech: string, index: number) => (
                   <span key={index} className="px-3 py-1 text-[11px] font-mono tracking-wide bg-white/5 border border-white/10 text-stone-300 rounded-sm hover:bg-white/10 transition-colors">
                     {tech}
                   </span>
@@ -151,19 +151,19 @@ export default async function ProjectSlugRoute({params}: Props) {
             {/* External Action Links */}
             <div className="flex flex-col gap-3 min-w-[200px]">
               {githubUrl && (
-                <Link href={githubUrl} target="_blank" rel="noreferrer" className="flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-[#111] border border-white/10 hover:border-white/30 transition-all rounded-sm text-stone-300 group">
+                <Link href={githubUrl as string} target="_blank" rel="noreferrer" className="flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-[#111] border border-white/10 hover:border-white/30 transition-all rounded-sm text-stone-300 group">
                   <span>Repository</span>
                   <span className="text-stone-600 group-hover:text-white transition-colors">↗</span>
                 </Link>
               )}
               {boardUrl && (
-                <Link href={boardUrl} target="_blank" rel="noreferrer" className="flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-[#111] border border-white/10 hover:border-white/30 transition-all rounded-sm text-stone-300 group">
+                <Link href={boardUrl as string} target="_blank" rel="noreferrer" className="flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-[#111] border border-white/10 hover:border-white/30 transition-all rounded-sm text-stone-300 group">
                   <span>Project Board</span>
                   <span className="text-stone-600 group-hover:text-white transition-colors">↗</span>
                 </Link>
               )}
               {liveUrl && (
-                <Link href={liveUrl} target="_blank" rel="noreferrer" className="flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-white text-black hover:bg-stone-200 transition-all rounded-sm font-bold group">
+                <Link href={liveUrl as string} target="_blank" rel="noreferrer" className="flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-white text-black hover:bg-stone-200 transition-all rounded-sm font-bold group">
                   <span>Live Demo</span>
                   <span className="text-stone-600 group-hover:text-black transition-colors">→</span>
                 </Link>
@@ -173,11 +173,11 @@ export default async function ProjectSlugRoute({params}: Props) {
         )}
 
         {/* TOPOLOGY & ARCHITECTURE IMAGES */}
-        {architecture && architecture.length > 0 && (
+        {architecture && (architecture as any[]).length > 0 && (
           <div className="space-y-6 pt-4">
              <h3 className="text-[10px] font-mono tracking-[0.3em] text-stone-600 uppercase">System Topologies</h3>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               {architecture.map((image: any, idx: number) => (
+               {(architecture as any[]).map((image: any, idx: number) => (
                  <div key={idx} className="relative group rounded-md overflow-hidden border border-white/5 bg-[#111]">
                    <ImageBox image={image} alt={image.alt || `Architecture diagram ${idx + 1}`} classesWrapper="relative aspect-[4/3] w-full" />
                    {image.caption && (
