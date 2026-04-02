@@ -59,11 +59,18 @@ export default function Footer({ data }: { data: any }) {
               viewport={{ once: true }}
               className="text-stone-50 text-4xl md:text-6xl font-serif font-bold leading-tight"
             >
-              {data?.footerHeadline ? (
-                // If you put text in Sanity Studio, it renders it here
-                data.footerHeadline
+              {data?.footerHeadlinePrefix || data?.footerHeadlineHighlight ? (
+                // Uses the split text from Sanity, applying the italic styling to the middle part
+                <>
+                  {data.footerHeadlinePrefix}{' '}
+                  <span className="text-stone-500 italic text-3xl md:text-5xl font-light">
+                    {data.footerHeadlineHighlight}
+                  </span>{' '}
+                  <br />
+                  {data.footerHeadlineSuffix}
+                </>
               ) : (
-                // If Sanity field is empty, it uses this styled fallback
+                // Fallback if Sanity is empty
                 <>
                   Let's bring <span className="text-stone-500 italic text-3xl md:text-5xl font-light">intent & logic</span> <br /> to your next project.
                 </>

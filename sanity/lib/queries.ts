@@ -92,7 +92,9 @@ export const settingsQuery = defineQuery(`
     github,
     linkedin,
     trello,
-    footerHeadline,
+    footerHeadlinePrefix,
+    footerHeadlineHighlight,
+    footerHeadlineSuffix,
     archiveTitle,
     archiveSubtitle,
     menuItems[]{

@@ -49,12 +49,24 @@ export default defineType({
       description: 'Link to your public project board or portfolio tracking.',
     }),
     
-    // --- NEW DYNAMIC FOOTER HEADLINE ---
+    // --- DYNAMIC FOOTER HEADLINE (SPLIT FOR STYLING) ---
     defineField({
-      name: 'footerHeadline',
-      title: 'Footer Headline',
+      name: 'footerHeadlinePrefix',
+      title: 'Footer Headline (First Part)',
       type: 'string',
-      description: 'The giant text next to the contact button. (e.g., "Let\'s bring intent & logic to your next project.")',
+      description: 'Text before the styled highlight (e.g., "Let\'s bring")',
+    }),
+    defineField({
+      name: 'footerHeadlineHighlight',
+      title: 'Footer Headline (Highlighted Part)',
+      type: 'string',
+      description: 'The italicized, colored text (e.g., "intent & logic")',
+    }),
+    defineField({
+      name: 'footerHeadlineSuffix',
+      title: 'Footer Headline (Last Part)',
+      type: 'string',
+      description: 'Text after the highlight (e.g., "to your next project.")',
     }),
 
     // --- NEW PHOTOGRAPHY ARCHIVE FIELDS ---

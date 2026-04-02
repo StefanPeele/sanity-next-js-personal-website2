@@ -41,7 +41,7 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
   const recents = intelData?.recentPosts || []
 
   return (
-<div className="w-full flex flex-col items-center bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-900/40 via-black to-black">      
+    <div className="w-full flex flex-col items-center bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-900/40 via-black to-black">       
       {/* 1. HERO DIRECTORY */}
       <main className="relative w-full min-h-screen overflow-hidden flex items-center justify-center p-6 md:p-12 lg:p-20 select-none">
         
@@ -112,7 +112,8 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
             <ImageBox 
                image={profileImage} 
                alt="Stefan Peele Profile" 
-               classesWrapper="w-full h-full object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 opacity-70 group-hover:opacity-100" 
+               // FIX: Replaced 'object-cover' with '[&_img]:object-cover' to target the actual image
+               classesWrapper="w-full h-full [&_img]:object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 opacity-70 group-hover:opacity-100" 
             />
           ) : (
             <div className="w-full h-full bg-stone-800 animate-pulse flex items-center justify-center text-stone-600 font-mono text-[10px] uppercase tracking-widest">
@@ -131,31 +132,40 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
         >
           <div className="space-y-4">
             <span className="text-stone-600 font-mono text-[10px] tracking-[0.4em] uppercase">The Architect</span>
-            <h2 className="text-stone-50 text-4xl md:text-5xl font-serif font-bold tracking-tight leading-[1.1]">
-              Logic in Infrastructure. <br />
-              Intent in Imagery.
+            
+            {/* DYNAMIC MANIFESTO / HEADLINE */}
+            <h2 className="text-stone-50 text-4xl md:text-5xl font-serif font-bold tracking-tight leading-[1.1] whitespace-pre-wrap">
+              {data?.manifesto || "Logic in Infrastructure.\nIntent in Imagery."}
             </h2>
           </div>
 
-          <div className="space-y-6 text-stone-400 font-sans text-sm md:text-base leading-relaxed max-w-md border-l border-stone-800 pl-6">
-            <p>
-              I specialize in the intersection of high-availability systems and visual storytelling. Whether I am architecting resilient server environments or capturing editorial portraits, my philosophy remains the same: clarity, efficiency, and aesthetic discipline.
-            </p>
-            <p>
-              Currently navigating IT Infrastructure at NJIT, I view technical challenges through the same lens as a photography composition—everything is an arrangement of light, logic, and structure.
-            </p>
+          {/* DYNAMIC ASPIRATIONS / BIO */}
+          <div className="space-y-6 text-stone-400 font-sans text-sm md:text-base leading-relaxed max-w-md border-l border-stone-800 pl-6 whitespace-pre-wrap">
+            {data?.aspirations ? (
+              <p>{data.aspirations}</p>
+            ) : (
+              <>
+                <p>
+                  I specialize in the intersection of high-availability systems and visual storytelling. Whether I am architecting resilient server environments or capturing editorial portraits, my philosophy remains the same: clarity, efficiency, and aesthetic discipline.
+                </p>
+                <p>
+                  Currently navigating IT Infrastructure at NJIT, I view technical challenges through the same lens as a photography composition—everything is an arrangement of light, logic, and structure.
+                </p>
+              </>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 gap-8 pt-8 border-t border-white/5">
-             <div>
-                <span className="block text-white font-serif text-lg">Infrastructure</span>
-                <span className="text-stone-600 font-mono text-[9px] uppercase tracking-widest mt-1 block">Systems & Network</span>
-             </div>
-             <div>
-                <span className="block text-white font-serif text-lg">Imagery</span>
-                <span className="text-stone-600 font-mono text-[9px] uppercase tracking-widest mt-1 block">Editorial Direction</span>
-             </div>
-          </div>
+          {/* DYNAMIC EXPERTISE PILLARS (Moved here!) */}
+          {data?.expertisePillars && data.expertisePillars.length > 0 && (
+            <div className="grid grid-cols-2 gap-8 pt-8 border-t border-white/5">
+              {data.expertisePillars.map((pillar: any, i: number) => (
+                <div key={i}>
+                  <span className="block text-white font-serif text-lg">{pillar.title}</span>
+                  <span className="text-stone-600 font-mono text-[9px] uppercase tracking-widest mt-1 block">{pillar.description}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </motion.div>
       </section>
 
@@ -173,7 +183,8 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
                 <div className="relative h-64 md:h-80 w-full overflow-hidden">
                   {featured.mainImage ? (
                     <div className="w-full h-full transform group-hover:scale-105 transition-transform duration-700">
-                      <ImageBox image={featured.mainImage} alt={featured.title} classesWrapper="w-full h-full object-cover grayscale opacity-50 group-hover:opacity-80 transition-opacity" />
+                      {/* FIX: Applied the same '[&_img]:object-cover' trick here */}
+                      <ImageBox image={featured.mainImage} alt={featured.title} classesWrapper="w-full h-full [&_img]:object-cover grayscale opacity-50 group-hover:opacity-80 transition-opacity" />
                     </div>
                   ) : (
                     <div className="w-full h-full bg-[#1a1a1a]" />
@@ -216,21 +227,6 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
                 ))}
               </div>
             )}
-          </div>
-        </section>
-      )}
-
-      {/* 4. EXPERTISE PILLARS */}
-      {data?.expertisePillars && (
-        <section className="w-full bg-[#111] py-24 px-8 border-t border-white/5">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
-            {data.expertisePillars.map((p: any, i: number) => (
-              <div key={i} className="space-y-4">
-                <span className="text-stone-600 font-mono text-xs tracking-widest">0{i+1}</span>
-                <h3 className="text-xl font-serif font-bold text-white">{p.title}</h3>
-                <p className="text-stone-400 text-sm leading-relaxed">{p.description}</p>
-              </div>
-            ))}
           </div>
         </section>
       )}
