@@ -72,6 +72,7 @@ export default defineConfig({
     codeInput(),
     
     // <-- NEW: ADD THE MEDIA PLUGIN HERE -->
+    // e
     media(),
   ],
 })
