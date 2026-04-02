@@ -2853,7 +2853,21 @@
         },
         "optional": true
       },
-      "footerHeadline": {
+      "footerHeadlinePrefix": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "footerHeadlineHighlight": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "footerHeadlineSuffix": {
         "type": "objectAttribute",
         "value": {
           "type": "string"

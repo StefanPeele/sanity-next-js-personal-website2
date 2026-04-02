@@ -453,7 +453,9 @@ export type Settings = {
   github?: string
   linkedin?: string
   trello?: string
-  footerHeadline?: string
+  footerHeadlinePrefix?: string
+  footerHeadlineHighlight?: string
+  footerHeadlineSuffix?: string
   archiveTitle?: string
   archiveSubtitle?: string
   footer?: Array<{
@@ -960,7 +962,7 @@ export type ProjectBySlugQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0]{    _id,    _type,    footer,    email,    github,    linkedin,    trello,    footerHeadline,    archiveTitle,    archiveSubtitle,    menuItems[]{      _key,      ...@->{        _type,        "slug": coalesce(slug.current, ""),        title      }    },    ogImage {   ...,  "url": asset->url,  "alt": coalesce(asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },  }
+// Query: *[_type == "settings"][0]{    _id,    _type,    footer,    email,    github,    linkedin,    trello,    footerHeadlinePrefix,    footerHeadlineHighlight,    footerHeadlineSuffix,    archiveTitle,    archiveSubtitle,    menuItems[]{      _key,      ...@->{        _type,        "slug": coalesce(slug.current, ""),        title      }    },    ogImage {   ...,  "url": asset->url,  "alt": coalesce(asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },  }
 export type SettingsQueryResult = {
   _id: string
   _type: 'settings'
@@ -986,7 +988,9 @@ export type SettingsQueryResult = {
   github: string | null
   linkedin: string | null
   trello: string | null
-  footerHeadline: string | null
+  footerHeadlinePrefix: string | null
+  footerHeadlineHighlight: string | null
+  footerHeadlineSuffix: string | null
   archiveTitle: string | null
   archiveSubtitle: string | null
   menuItems: Array<
@@ -1188,7 +1192,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n        overview,\n        "slug": coalesce(slug.current, ""),\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl\n      }\n    }\n  }\n': HomePageQueryResult
     '\n  *[_type == "page" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    overview,\n    body[]{\n      ...,\n      _type == "skillReference" => {\n        "skill": @->{\n          title,\n          category,\n          description\n        }\n      }\n    },\n    "resumeUrl": resumeFile.asset->url\n  }\n': PagesBySlugQueryResult
     '\n  *[_type == "project" && slug.current == $slug][0] {\n    _id,\n    _type,\n    client,\n    coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    description,\n    duration,\n    overview,\n    site,\n    "slug": coalesce(slug.current, ""),\n    tags,\n    title,\n    techStack,\n    githubUrl,\n    liveUrl,\n    boardUrl,\n    architecture\n  }\n': ProjectBySlugQueryResult
-    '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    footerHeadline,\n    archiveTitle,\n    archiveSubtitle,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": coalesce(slug.current, ""),\n        title\n      }\n    },\n    ogImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n  }\n': SettingsQueryResult
+    '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    footerHeadlinePrefix,\n    footerHeadlineHighlight,\n    footerHeadlineSuffix,\n    archiveTitle,\n    archiveSubtitle,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": coalesce(slug.current, ""),\n        title\n      }\n    },\n    ogImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n  }\n': SettingsQueryResult
     '\n  *[_type == $type && defined(slug.current)]{"slug": slug.current}\n': SlugsByTypeQueryResult
     '\n  *[_type == "project"] | order(duration.end desc) {\n    _id,\n    title,\n    "slug": coalesce(slug.current, ""),\n    coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    tags,\n    techStack,\n    duration\n  }\n': ProjectsQueryResult
     '\n  *[_type == "gallery"] | order(_createdAt desc) {\n    _id,\n    "title": coalesce(title, "Untitled Volume"),\n    "slug": coalesce(slug.current, ""),\n    mainImage { \n      ..., \n      asset->{ url, metadata { lqip } } \n    },\n    category->{ \n      "title": coalesce(title, "Uncategorized"), \n      "slug": coalesce(slug.current, ""), \n      themeColor \n    },\n    system,\n    lens,\n    location,\n    "images": coalesce(images[] { \n      ..., \n      "imageUrl": asset->url,\n      "lqip": asset->metadata.lqip,\n      title,\n      alt,\n      caption,\n      aperture,\n      shutter,\n      iso,\n      lensOverride,\n      systemOverride\n    }, [])\n  }\n': GalleriesQueryResult
