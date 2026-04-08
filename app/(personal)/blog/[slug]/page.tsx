@@ -4,7 +4,7 @@ import ImageBox from '@/components/ImageBox'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArticleClientTools } from './ArticleClientTools'
-
+//blog/[slug]/page.tsx
 // Updated Query to grab categories
 const postQuery = `*[_type == "post" && slug.current == $slug][0] {
   _id,

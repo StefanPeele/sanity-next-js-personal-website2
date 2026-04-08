@@ -6,7 +6,7 @@ import { createDataAttribute, stegaClean } from 'next-sanity'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-
+// components/Navbar.tsx
 interface NavbarProps {
   data: any // Keeping it simple to avoid type conflicts
 }

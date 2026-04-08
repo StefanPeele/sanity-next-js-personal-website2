@@ -1,7 +1,7 @@
 import { client } from '@/sanity/lib/client'
 import Link from 'next/link'
 import { Navbar } from '@/components/Navbar'
-
+// this is Blog/page.tsx
 // Updated Query: Grabs settings, image URLs, categories, and separates the featured post
 const blogDataQuery = `{
   "settings": *[_type == "settings"][0],

@@ -4,7 +4,7 @@ import { CodeBlock } from '@/components/CodeBlock' // <-- NEW IMPORT
 import type {PathSegment} from '@sanity/client/csm'
 import {PortableText, type PortableTextBlock, type PortableTextComponents} from 'next-sanity'
 import type {Image} from 'sanity'
-
+//components/CustomPortableText.tsx
 export function CustomPortableText({
   id = null,
   type = null,

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-
+//components/CodeBlock.tsx
 export function CodeBlock({ value }: any) {
   const [copied, setCopied] = useState(false)
 

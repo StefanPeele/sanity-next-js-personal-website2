@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, useScroll, useSpring } from 'framer-motion'
-
+// ArticleClientTools.tsx
 interface ToolProps {
   title: string
   author: string
