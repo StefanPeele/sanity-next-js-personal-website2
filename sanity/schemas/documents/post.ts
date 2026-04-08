@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+// sanity/schemas/documents/post.ts
 
 export default defineType({
   name: 'post',
@@ -19,7 +20,6 @@ export default defineType({
       options: { source: 'title', maxLength: 96 },
       validation: (rule) => rule.required(),
     }),
-    // Featured Toggle for the Hero Section
     defineField({
       name: 'isFeatured',
       title: 'Feature this post?',
@@ -27,7 +27,6 @@ export default defineType({
       type: 'boolean',
       initialValue: false,
     }),
-    // Categories / Topics
     defineField({
       name: 'categories',
       title: 'Categories & Topics',
@@ -57,9 +56,14 @@ export default defineType({
       type: 'array',
       of: [
         { type: 'block' },
-        { type: 'image' }, // Added image support for inline article images
-        { type: 'code' },  // Added the new code block support!
-      ], 
+        { type: 'image' },
+        { type: 'code' },
+        // ── Interactive blog features ──────────────────────────────
+        { type: 'knowledgeQuiz' },
+        { type: 'layerExplorer' },
+        { type: 'packetAnimator' },
+        { type: 'wiresharkCallout' },
+      ],
     }),
   ],
 })

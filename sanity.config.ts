@@ -13,20 +13,23 @@ import gallery from '@/sanity/schemas/documents/gallery'
 import post from '@/sanity/schemas/documents/post'
 import experience from '@/sanity/schemas/documents/experience'
 import settings from '@/sanity/schemas/singletons/settings'
-// IMPORT THE MEDIA PLUGIN
 import { media } from 'sanity-plugin-media'
-// IMPORT THE SKILL & CATEGORY SCHEMAS HERE
-import skill from '@/sanity/schemas/objects/skill' 
-import category from '@/sanity/schemas/documents/category' 
-
-// <-- NEW: IMPORT THE CODE PLUGIN -->
+import skill from '@/sanity/schemas/objects/skill'
+import category from '@/sanity/schemas/documents/category'
 import {codeInput} from '@sanity/code-input'
+
+// --- NEW: Interactive Blog Feature Schemas ---
+import knowledgeQuiz from '@/sanity/schemas/objects/knowledgeQuiz'
+import layerExplorer from '@/sanity/schemas/objects/layerExplorer'
+import packetAnimator from '@/sanity/schemas/objects/packetAnimator'
+import wiresharkCallout from '@/sanity/schemas/objects/wiresharkCallout'
 
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
 import {presentationTool} from 'sanity/presentation'
 import {structureTool} from 'sanity/structure'
+// sanity.config.ts
 
 const title =
   process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Stefan Peele II | Digital Archive'
@@ -48,12 +51,16 @@ export default defineConfig({
       gallery,
       experience,
       post,
-      category, 
-      
+      category,
       // Objects
-      skill, 
+      skill,
       milestone,
       timeline,
+      // Interactive Blog Features
+      knowledgeQuiz,
+      layerExplorer,
+      packetAnimator,
+      wiresharkCallout,
     ],
   },
   plugins: [
@@ -67,12 +74,7 @@ export default defineConfig({
     singletonPlugin([home.name, settings.name]),
     unsplashImageAsset(),
     visionTool({defaultApiVersion: apiVersion}),
-    
-    // <-- NEW: ADD THE CODE PLUGIN TO THE ARRAY -->
     codeInput(),
-    
-    // <-- NEW: ADD THE MEDIA PLUGIN HERE -->
-    // e
     media(),
   ],
 })

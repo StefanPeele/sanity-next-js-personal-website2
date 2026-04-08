@@ -24,6 +24,68 @@ type ArrayOf<T> = Array<
 >
 
 // Source: schema.json
+export type SanityImageAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+}
+
+export type WiresharkCallout = {
+  _type: 'wiresharkCallout'
+  image?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  caption?: string
+  callouts?: Array<{
+    number?: number
+    rowDescription?: string
+    explanation?: string
+    _key: string
+  }>
+}
+
+export type PacketAnimator = {
+  _type: 'packetAnimator'
+  scenario?: string
+  steps?: Array<{
+    label?: string
+    description?: string
+    layer?: number
+    layerName?: string
+    _key: string
+  }>
+}
+
+export type LayerExplorer = {
+  _type: 'layerExplorer'
+  title?: string
+  overrides?: Array<{
+    layerNumber?: number
+    protocols?: string
+    description?: string
+    realWorld?: string
+    _key: string
+  }>
+}
+
+export type KnowledgeQuiz = {
+  _type: 'knowledgeQuiz'
+  triggerAfterSection?: string
+  isGated?: boolean
+  question?: string
+  options?: Array<{
+    text?: string
+    isCorrect?: boolean
+    _key: string
+  }>
+  explanation?: string
+}
+
 export type Timeline = {
   _type: 'timeline'
   items?: Array<{
@@ -36,13 +98,6 @@ export type Timeline = {
     _type: 'item'
     _key: string
   }>
-}
-
-export type SanityImageAssetReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
 }
 
 export type Milestone = {
@@ -148,6 +203,18 @@ export type Post = {
     | ({
         _key: string
       } & Code)
+    | ({
+        _key: string
+      } & KnowledgeQuiz)
+    | ({
+        _key: string
+      } & LayerExplorer)
+    | ({
+        _key: string
+      } & PacketAnimator)
+    | ({
+        _key: string
+      } & WiresharkCallout)
   >
 }
 
@@ -648,8 +715,12 @@ export type Geopoint = {
 }
 
 export type AllSanitySchemaTypes =
-  | Timeline
   | SanityImageAssetReference
+  | WiresharkCallout
+  | PacketAnimator
+  | LayerExplorer
+  | KnowledgeQuiz
+  | Timeline
   | Milestone
   | Skill
   | CategoryReference
