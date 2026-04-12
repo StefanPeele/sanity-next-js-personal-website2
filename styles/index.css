@@ -1,7 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-lora), Georgia, serif;
+}
+
+code, pre, kbd {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-feature-settings: 'liga' 0, 'calt' 0;
+}
+
+::selection {
+  background-color: rgba(120, 113, 108, 0.3);
+  color: #fff;
 }
 
 p:not(:last-child) {

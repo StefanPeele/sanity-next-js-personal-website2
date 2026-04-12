@@ -1,12 +1,4 @@
 import ImageBox from '@/components/ImageBox'
-<<<<<<< HEAD
-import {TimelineSection} from '@/components/TimelineSection'
-import { CodeBlock } from '@/components/CodeBlock' // <-- NEW IMPORT
-import type {PathSegment} from '@sanity/client/csm'
-import {PortableText, type PortableTextBlock, type PortableTextComponents} from 'next-sanity'
-import type {Image} from 'sanity'
-//components/CustomPortableText.tsx
-=======
 import { TimelineSection } from '@/components/TimelineSection'
 import { CodeBlock } from '@/components/CodeBlock'
 import { KnowledgeQuiz } from '@/components/blog/KnowledgeQuiz'
@@ -18,7 +10,18 @@ import { PortableText, type PortableTextBlock, type PortableTextComponents } fro
 import type { Image } from 'sanity'
 // components/CustomPortableText.tsx
 
->>>>>>> de11245de0e76e3ef7d82b90228251740dea284e
+// Standalone interface — does NOT extend PortableTextBlock to avoid
+// the children incompatibility (base type requires non-optional array)
+interface PortableTextNode {
+  _type: string
+  _key: string
+  children?: Array<{ _type: string; _key: string; text?: string }>
+  style?: string
+  listItem?: string
+  markDefs?: Array<{ _type: string; _key: string }>
+  level?: number
+}
+
 export function CustomPortableText({
   id = null,
   type = null,
@@ -30,7 +33,7 @@ export function CustomPortableText({
   type?: string | null
   path?: PathSegment[]
   paragraphClasses?: string
-  value: PortableTextBlock[] | any
+  value: PortableTextNode[]
 }) {
   const components: PortableTextComponents = {
 
@@ -119,10 +122,13 @@ export function CustomPortableText({
 
     // --- CUSTOM BLOCK TYPES ---
     types: {
-      // Standard image
       image: ({ value }: { value: Image & { alt?: string; caption?: string } }) => (
         <div className="my-10 rounded-xl overflow-hidden border border-white/5 shadow-2xl bg-[#0a0a0a]">
-          <ImageBox image={value} alt={value.alt} classesWrapper="relative aspect-[16/9] w-full h-auto" />
+          <ImageBox
+            image={value}
+            alt={value.alt}
+            classesWrapper="relative aspect-[16/9] w-full h-auto"
+          />
           {value?.caption && (
             <div className="px-4 py-3 font-mono text-[10px] text-stone-500 uppercase tracking-widest text-center border-t border-white/5">
               {value.caption}
@@ -131,30 +137,36 @@ export function CustomPortableText({
         </div>
       ),
 
-      // Timeline (existing)
-      timeline: ({ value }) => {
-        const { items, _key } = value || {}
+      timeline: ({ value }: { value: { items: unknown; _key: string } }) => {
+        const { items, _key } = value ?? {}
         return (
           <TimelineSection
             key={_key}
-            id={id || ''}
-            type={type || ''}
+            id={id ?? ''}
+            type={type ?? ''}
             path={[...path, { _key }, 'items']}
-            timelines={items}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            timelines={items as any}
           />
         )
       },
 
-      // Code block (existing)
-      code: ({ value }) => <CodeBlock value={value} />,
+      code: ({ value }: { value: { code?: string; language?: string } }) => (
+        <CodeBlock value={value} />
+      ),
 
-      // --- INTERACTIVE BLOG FEATURES ---
-      knowledgeQuiz: ({ value }) => <KnowledgeQuiz value={value} />,
-      layerExplorer: ({ value }) => <LayerExplorer value={value} />,
-      packetAnimator: ({ value }) => <PacketAnimator value={value} />,
+      // ── Interactive blog features ──────────────────────────────
+      knowledgeQuiz:    ({ value }) => <KnowledgeQuiz value={value} />,
+      layerExplorer:    ({ value }) => <LayerExplorer value={value} />,
+      packetAnimator:   ({ value }) => <PacketAnimator value={value} />,
       wiresharkCallout: ({ value }) => <WiresharkCallout value={value} />,
     },
   }
 
-  return <PortableText components={components} value={value} />
+  return (
+    <PortableText
+      components={components}
+      value={value as unknown as PortableTextBlock[]}
+    />
+  )
 }
