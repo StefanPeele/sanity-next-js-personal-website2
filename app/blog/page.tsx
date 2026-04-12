@@ -1,9 +1,14 @@
 import { client } from '@/sanity/lib/client'
 import Link from 'next/link'
 import { Navbar } from '@/components/Navbar'
+<<<<<<< HEAD
+// this is Blog/page.tsx
+// Updated Query: Grabs settings, image URLs, categories, and separates the featured post
+=======
 import { BlogDirectory } from '@/components/blog/BlogDirectory'
 // app/blog/page.tsx
 
+>>>>>>> de11245de0e76e3ef7d82b90228251740dea284e
 const blogDataQuery = `{
   "settings": *[_type == "settings"][0],
   "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] {

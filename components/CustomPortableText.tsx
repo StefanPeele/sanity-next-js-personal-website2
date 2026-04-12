@@ -1,4 +1,12 @@
 import ImageBox from '@/components/ImageBox'
+<<<<<<< HEAD
+import {TimelineSection} from '@/components/TimelineSection'
+import { CodeBlock } from '@/components/CodeBlock' // <-- NEW IMPORT
+import type {PathSegment} from '@sanity/client/csm'
+import {PortableText, type PortableTextBlock, type PortableTextComponents} from 'next-sanity'
+import type {Image} from 'sanity'
+//components/CustomPortableText.tsx
+=======
 import { TimelineSection } from '@/components/TimelineSection'
 import { CodeBlock } from '@/components/CodeBlock'
 import { KnowledgeQuiz } from '@/components/blog/KnowledgeQuiz'
@@ -10,6 +18,7 @@ import { PortableText, type PortableTextBlock, type PortableTextComponents } fro
 import type { Image } from 'sanity'
 // components/CustomPortableText.tsx
 
+>>>>>>> de11245de0e76e3ef7d82b90228251740dea284e
 export function CustomPortableText({
   id = null,
   type = null,

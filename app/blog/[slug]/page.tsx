@@ -6,10 +6,15 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { ArticleClientTools } from './ArticleClientTools'
+<<<<<<< HEAD
+//blog/[slug]/page.tsx
+// Updated Query to grab categories
+=======
 import { ReadingTracker } from '@/components/blog/ReadingTracker'
 // app/blog/[slug]/page.tsx
 
 // ── Queries ───────────────────────────────────────────────────────────
+>>>>>>> de11245de0e76e3ef7d82b90228251740dea284e
 const postQuery = `*[_type == "post" && slug.current == $slug][0] {
   _id,
   title,

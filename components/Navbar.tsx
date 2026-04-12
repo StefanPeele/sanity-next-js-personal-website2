@@ -6,15 +6,29 @@ import { createDataAttribute, stegaClean } from 'next-sanity'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { SearchModal } from '@/components/SearchModal'
 // components/Navbar.tsx
 
+// Matches Sanity's SettingsQueryResult shape — _key and slug can be null
+// from the generated types, so we accept null and guard at render time
+interface MenuItem {
+  _key: string | null
+  _type: string
+  slug: string | null
+  title: string | null
+}
+
 interface NavbarProps {
-  data: any
+  data: {
+    _id?: string | null
+    _type?: string | null
+    menuItems?: MenuItem[] | null
+  } | null
 }
 
 export function Navbar({ data }: NavbarProps) {
-  const pathname = usePathname()
-  const [scrolled, setScrolled] = useState(false)
+  const pathname                    = usePathname()
+  const [scrolled, setScrolled]     = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
@@ -23,12 +37,8 @@ export function Navbar({ data }: NavbarProps) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setMobileOpen(false)
-  }, [pathname])
+  useEffect(() => { setMobileOpen(false) }, [pathname])
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
@@ -54,72 +64,70 @@ export function Navbar({ data }: NavbarProps) {
             : 'bg-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
 
           {/* Logo */}
           <Link
             href="/"
-            className="text-white font-serif text-xl tracking-tighter uppercase z-10"
+            className="text-white font-serif text-xl tracking-tighter uppercase z-10 flex-shrink-0"
           >
             S.P<span className="text-stone-600">.</span>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-x-8">
-            {menuItems.map((menuItem: any) => {
-              const href = resolveHref(menuItem?._type, menuItem?.slug)
-              if (!href) return null
-              const isActive = pathname === href
+          {/* Desktop nav + search */}
+          <div className="hidden md:flex items-center gap-x-8">
+            <nav className="flex items-center gap-x-8">
+              {menuItems.map((menuItem) => {
+                // Guard against null _key or slug from Sanity typegen
+                if (!menuItem._key || !menuItem._type) return null
+                const href = resolveHref(menuItem._type, menuItem.slug ?? '')
+                if (!href) return null
+                const isActive = pathname === href
 
-              return (
-                <Link
-                  key={menuItem._key}
-                  href={href}
-                  className={`font-mono text-[10px] tracking-[0.3em] uppercase transition-colors ${
-                    isActive ? 'text-white' : 'text-stone-500 hover:text-stone-200'
-                  }`}
-                  data-sanity={dataAttribute?.(['menuItems', { _key: menuItem._key }])}
-                >
-                  {stegaClean(menuItem.title)}
-                </Link>
-              )
-            })}
-          </nav>
+                return (
+                  <Link
+                    key={menuItem._key}
+                    href={href}
+                    className={`font-mono text-[10px] tracking-[0.3em] uppercase transition-colors ${
+                      isActive ? 'text-white' : 'text-stone-500 hover:text-stone-200'
+                    }`}
+                    data-sanity={dataAttribute?.([
+                      'menuItems',
+                      { _key: menuItem._key },
+                    ])}
+                  >
+                    {stegaClean(menuItem.title ?? '')}
+                  </Link>
+                )
+              })}
+            </nav>
+            <SearchModal />
+          </div>
 
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMobileOpen((v) => !v)}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={mobileOpen}
-            className="md:hidden z-10 w-8 h-8 flex flex-col items-center justify-center gap-1.5 group"
-          >
-            <span
-              className={`block h-px w-5 bg-stone-400 transition-all duration-300 origin-center ${
-                mobileOpen ? 'rotate-45 translate-y-[7px]' : ''
-              }`}
-            />
-            <span
-              className={`block h-px bg-stone-400 transition-all duration-300 ${
-                mobileOpen ? 'w-0 opacity-0' : 'w-4'
-              }`}
-            />
-            <span
-              className={`block h-px w-5 bg-stone-400 transition-all duration-300 origin-center ${
-                mobileOpen ? '-rotate-45 -translate-y-[7px]' : ''
-              }`}
-            />
-          </button>
+          {/* Mobile: search icon + hamburger */}
+          <div className="md:hidden flex items-center gap-4 z-10">
+            <SearchModal />
+            <button
+              onClick={() => setMobileOpen((v) => !v)}
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileOpen}
+              className="w-8 h-8 flex flex-col items-center justify-center gap-1.5"
+            >
+              <span className={`block h-px w-5 bg-stone-400 transition-all duration-300 origin-center ${mobileOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
+              <span className={`block h-px bg-stone-400 transition-all duration-300 ${mobileOpen ? 'w-0 opacity-0' : 'w-4'}`} />
+              <span className={`block h-px w-5 bg-stone-400 transition-all duration-300 origin-center ${mobileOpen ? '-rotate-45 -translate-y-[7px]' : ''}`} />
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Mobile menu overlay */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-[998] bg-black/95 backdrop-blur-md flex flex-col pt-24 px-8 pb-12">
-          
-          {/* Nav links */}
           <nav className="flex flex-col gap-1 mb-12">
-            {menuItems.map((menuItem: any, i: number) => {
-              const href = resolveHref(menuItem?._type, menuItem?.slug)
+            {menuItems.map((menuItem, i) => {
+              if (!menuItem._key || !menuItem._type) return null
+              const href = resolveHref(menuItem._type, menuItem.slug ?? '')
               if (!href) return null
               const isActive = pathname === href
 
@@ -133,13 +141,12 @@ export function Navbar({ data }: NavbarProps) {
                   }`}
                   style={{ transitionDelay: `${i * 40}ms` }}
                 >
-                  {stegaClean(menuItem.title)}
+                  {stegaClean(menuItem.title ?? '')}
                 </Link>
               )
             })}
           </nav>
 
-          {/* Footer meta */}
           <div className="mt-auto">
             <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-700">
               Stefan Peele — Digital Archive
