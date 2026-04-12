@@ -31,6 +31,7 @@ const PORTRAIT_PACKAGES: Package[] = [
     photos: '15 edited photos',
     turnaround: '1–3 business days',
     features: [
+      'High-res JPEGs — web and print optimized',
       'Indoor or outdoor (flexible location)',
       'Custom crops — LinkedIn, social, print',
       'Secure online gallery',
@@ -48,7 +49,9 @@ const PORTRAIT_PACKAGES: Package[] = [
     photos: '25 edited photos',
     turnaround: '1–4 business days',
     features: [
-      'RAW + TIFF + Black & White versions',
+      'High-res JPEGs — web and print optimized',
+      '3 TIFF exports of your best shots',
+      '3 B&W selects — hand-picked creative edits',
       'Posing guide + creative direction',
       'Professional retouching on all finals',
       'Custom crops for all formats',
@@ -66,7 +69,9 @@ const PORTRAIT_PACKAGES: Package[] = [
     photos: 'Full batch — you keep everything good',
     turnaround: '3–5 business days',
     features: [
-      'RAW + TIFF + B&W versions',
+      'High-res JPEGs — web and print optimized',
+      '5 TIFF exports of your hero shots',
+      '5 B&W selects — curated for maximum impact',
       'Full posing guide + mood board',
       'Professional retouching on all finals',
       'Multiple looks or locations',
@@ -87,7 +92,7 @@ const EVENT_PACKAGES: Package[] = [
     photos: '20 edited photos',
     turnaround: '1–3 business days',
     features: [
-      'RAW files available on request',
+      'High-res JPEGs — web and print optimized',
       'Custom crops — print, social & web',
       'Secure online gallery (60 days)',
       'Personal & promo usage license',
@@ -101,10 +106,11 @@ const EVENT_PACKAGES: Package[] = [
     publicPrice: 450,
     njitPrice: 299,
     duration: 'Up to 3 hours',
-    photos: '40 edited photos + TIFFs',
+    photos: '40 edited photos',
     turnaround: '2–4 business days',
     features: [
-      'RAW + TIFF files included',
+      'High-res JPEGs — web and print optimized',
+      '3 TIFF exports of key moments',
       'Pre-shoot planning call + shot list',
       'Event detail & environment photos',
       'Custom crops for all formats',
@@ -124,6 +130,8 @@ const EVENT_PACKAGES: Package[] = [
     photos: '60+ photos, full batch',
     turnaround: '2–3 business days (priority)',
     features: [
+      'High-res JPEGs — web and print optimized',
+      '5 TIFF exports of hero moments',
       '1-on-1 pre-planning call + detailed shot list',
       'Live delivery folder — real-time access',
       'On-site image previews during event',
@@ -183,17 +191,17 @@ const SPECIALTY_SERVICES = [
 ]
 
 const ADD_ONS = [
-  { label: 'Extra 30 minutes', price: '$50' },
-  { label: 'Extra 1 hour', price: '$90' },
-  { label: 'Extra 2 hours', price: '$180' },
-  { label: 'Same-day social pack (5 photos, 2hr)', price: '$45' },
-  { label: 'Rushed full delivery', price: '$40' },
-  { label: 'High-res digital upgrade', price: '$25' },
-  { label: 'Full RAW file delivery', price: '$50' },
+  { label: 'Extra 30 minutes',              price: '$50' },
+  { label: 'Extra 1 hour',                  price: '$90' },
+  { label: 'Extra 2 hours',                 price: '$180' },
+  { label: 'Same-day social pack (5 edits)', price: '$45' },
+  { label: 'Rushed full delivery',          price: '$40' },
+  { label: 'High-res digital upgrade',      price: '$25' },
+  { label: 'Full RAW file delivery',        price: '$50' },
   { label: 'Softcover photobook (20 pages)', price: '$55' },
   { label: 'Hardcover photobook (20 pages)', price: '$75' },
-  { label: 'Framed print set (8×10)', price: '$45' },
-  { label: 'Portrait discount — Core event clients', price: '15% off' },
+  { label: 'Framed print set (8×10)',        price: '$45' },
+  { label: 'Portrait discount — Core event clients',    price: '15% off' },
   { label: 'Portrait discount — Premium event clients', price: '30% off' },
 ]
 
@@ -208,7 +216,6 @@ function formatPackageLabel(
   return `${typeLabel} · ${name} ($${price} ${rate})`
 }
 
-// Savings shown in the NJIT toggle card
 function getNJITSavings(serviceType: ServiceType): string {
   if (serviceType === 'portrait') return 'Save $26–$100 on portrait sessions'
   if (serviceType === 'event')    return 'Save $100–$200+ on event packages'
@@ -237,7 +244,8 @@ export function ServicePackages() {
 
       {/* ── Service type tabs ─────────────────────────────────────── */}
       <div className="flex flex-col gap-6 mb-10">
-        <div className="flex flex-wrap gap-1 p-1 rounded-lg border border-white/10"
+        <div
+          className="flex flex-wrap gap-1 p-1 rounded-lg border border-white/10"
           style={{ backgroundColor: 'rgba(20,20,24,0.8)' }}
         >
           {(
@@ -261,7 +269,7 @@ export function ServicePackages() {
           ))}
         </div>
 
-        {/* ── NJIT toggle — prominent card ─────────────────────────── */}
+        {/* ── NJIT toggle card ──────────────────────────────────────── */}
         {serviceType !== 'specialty' && (
           <button
             onClick={() => setIsNJIT((v) => !v)}
@@ -279,7 +287,6 @@ export function ServicePackages() {
             <div className="px-6 py-5 flex items-center justify-between gap-6">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-1.5">
-                  {/* Visual toggle pill */}
                   <div className={`relative w-11 h-6 rounded-full transition-colors duration-300 flex-shrink-0 ${
                     isNJIT ? 'bg-emerald-500' : 'bg-white/20'
                   }`}>
@@ -307,28 +314,19 @@ export function ServicePackages() {
                 </p>
               </div>
 
-              {/* Price comparison preview */}
               {isNJIT && serviceType === 'portrait' && (
                 <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
                   <div className="text-right">
-                    <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest block line-through">
-                      From $115
-                    </span>
-                    <span className="font-serif text-xl font-bold text-emerald-300">
-                      From $89
-                    </span>
+                    <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest block line-through">From $115</span>
+                    <span className="font-serif text-xl font-bold text-emerald-300">From $89</span>
                   </div>
                 </div>
               )}
               {isNJIT && serviceType === 'event' && (
                 <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
                   <div className="text-right">
-                    <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest block line-through">
-                      From $250
-                    </span>
-                    <span className="font-serif text-xl font-bold text-emerald-300">
-                      From $150
-                    </span>
+                    <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest block line-through">From $250</span>
+                    <span className="font-serif text-xl font-bold text-emerald-300">From $150</span>
                   </div>
                 </div>
               )}
@@ -364,9 +362,7 @@ export function ServicePackages() {
                 }}
               >
                 {(isSelected || pkg.popular || pkg.badge) && (
-                  <div className={`font-mono text-[8px] uppercase tracking-[0.3em] text-center py-1.5 font-bold ${
-                    isSelected ? 'bg-white text-black' : 'bg-white text-black'
-                  }`}>
+                  <div className="bg-white text-black font-mono text-[8px] uppercase tracking-[0.3em] text-center py-1.5 font-bold">
                     {isSelected ? '✓ Selected' : pkg.badge ?? 'Most Popular'}
                   </div>
                 )}
@@ -418,7 +414,9 @@ export function ServicePackages() {
                         <span className="font-mono text-[9px] uppercase tracking-widest text-stone-600 w-16 flex-shrink-0 mt-0.5">
                           {spec.label}
                         </span>
-                        <span className="font-mono text-[10px] text-stone-300 leading-snug">{spec.value}</span>
+                        <span className="font-mono text-[10px] text-stone-300 leading-snug">
+                          {spec.value}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -542,7 +540,7 @@ export function ServicePackages() {
         </div>
       )}
 
-      {/* ── Add-ons reference ─────────────────────────────────────── */}
+      {/* ── Add-ons ───────────────────────────────────────────────── */}
       <div className="mb-20">
         <div className="mb-6 pb-4 border-b border-white/10">
           <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 border-l-2 border-stone-500 pl-4">
@@ -566,7 +564,7 @@ export function ServicePackages() {
           ))}
         </div>
         <p className="font-mono text-[9px] text-stone-600 uppercase tracking-widest mt-4">
-          Photobooks fulfilled through Pixieset · Physical prints via pro lab · Framing resources provided on delivery
+          Photobooks fulfilled through Pixieset · Framing resources provided on delivery
         </p>
       </div>
 
