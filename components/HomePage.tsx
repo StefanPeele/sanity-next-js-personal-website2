@@ -5,15 +5,23 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { PortableText } from '@portabletext/react'
 import ImageBox from '@/components/ImageBox'
+// components/HomePage.tsx
 
 const portableTextComponents = {
   marks: {
     link: ({ children, value }: any) => (
-      <a href={value.href} className="text-white underline decoration-stone-600 underline-offset-4 hover:decoration-white transition-colors" target={value?.href?.startsWith('/') ? undefined : '_blank'} rel="noreferrer noopener">
+      <a
+        href={value.href}
+        className="text-white underline decoration-stone-600 underline-offset-4 hover:decoration-white transition-colors"
+        target={value?.href?.startsWith('/') ? undefined : '_blank'}
+        rel="noreferrer noopener"
+      >
         {children}
       </a>
     ),
-    strong: ({ children }: any) => <strong className="font-bold text-stone-100">{children}</strong>,
+    strong: ({ children }: any) => (
+      <strong className="font-bold text-stone-100">{children}</strong>
+    ),
   },
   block: {
     normal: ({ children }: any) => <p className="mb-2 last:mb-0">{children}</p>,
@@ -21,40 +29,38 @@ const portableTextComponents = {
 }
 
 const destinations = [
-  { name: 'Projects', href: '/projects', desc: 'Case Studies & Infrastructure' },
+  { name: 'Projects',    href: '/projects',    desc: 'Case Studies & Infrastructure' },
   { name: 'Photography', href: '/photography', desc: 'Visual Archive & Galleries' },
-  { name: 'Resume', href: '/resume', desc: 'Professional History' },
-  { name: 'Editorial', href: '/blog', desc: 'Thoughts & Intel' },
+  { name: 'Services',    href: '/services',    desc: 'Photography Packages & Booking' },
+  { name: 'Resume',      href: '/resume',      desc: 'Professional History' },
+  { name: 'Editorial',   href: '/blog',        desc: 'Thoughts & Intel' },
 ]
 
 export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
   const [isHoveringName, setIsHoveringName] = useState(false)
 
-  // Use Sanity image for the About section
   const profileImage = data?.profileImage
-  
-  // Fallback for the CSS background hover (since CSS needs a direct URL string)
-  // Ensure "fabshots2026051.jpg" is in your /public folder as a backup
-  const fallbackHero = "/fabshots2026051.jpg" 
+  const fallbackHero = '/fabshots2026051.jpg'
 
   const featured = intelData?.featuredPost
-  const recents = intelData?.recentPosts || []
+  const recents  = intelData?.recentPosts || []
 
   return (
-    <div className="w-full flex flex-col items-center bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-900/40 via-black to-black">       
-      {/* 1. HERO DIRECTORY */}
+    <div className="w-full flex flex-col items-center bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-stone-900/40 via-black to-black">
+
+      {/* ── 1. HERO DIRECTORY ───────────────────────────────────── */}
       <main className="relative w-full min-h-screen overflow-hidden flex items-center justify-center p-6 md:p-12 lg:p-20 select-none">
-        
-        {/* Hover Portrait Background */}
+
+        {/* Hover portrait background */}
         <motion.div
           animate={{ opacity: isHoveringName ? 0.3 : 0, scale: isHoveringName ? 1 : 1.05 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
           className="absolute inset-0 z-0 pointer-events-none"
           style={{
-            backgroundImage: `url("${fallbackHero}")`, 
+            backgroundImage: `url("${fallbackHero}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'grayscale(100%) contrast(120%) brightness(0.8)' 
+            filter: 'grayscale(100%) contrast(120%) brightness(0.8)',
           }}
         />
 
@@ -63,23 +69,33 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
             <span className="text-stone-500 font-mono text-[10px] tracking-[0.4em] uppercase border-l border-stone-700 pl-4">
               Directory / Index
             </span>
-            <motion.h1 
+            <motion.h1
               onMouseEnter={() => setIsHoveringName(true)}
               onMouseLeave={() => setIsHoveringName(false)}
               className="text-stone-50 text-4xl md:text-6xl lg:text-7xl font-serif tracking-tight font-bold leading-[0.9] cursor-default"
             >
-              {data?.title || "Stefan Peele"}
+              {data?.title || 'Stefan Peele'}
             </motion.h1>
             <div className="text-stone-400 font-sans text-xs md:text-sm leading-relaxed max-w-xs opacity-80">
-              {data?.overview ? <PortableText value={data.overview} components={portableTextComponents} /> : "IT Infrastructure & Architecture Portfolio"}
+              {data?.overview ? (
+                <PortableText value={data.overview} components={portableTextComponents} />
+              ) : (
+                'IT Infrastructure & Architecture Portfolio'
+              )}
             </div>
           </div>
 
           <div className="lg:col-span-3 flex flex-col w-full group/list">
             {destinations.map((item) => (
-              <Link key={item.name} href={item.href} className="group relative flex items-center justify-between py-6 md:py-8 border-b border-white/5 hover:border-white/20 transition-all duration-500 hover:pl-4">
+              <Link
+                key={item.name}
+                href={item.href}
+                className="group relative flex items-center justify-between py-5 md:py-7 border-b border-white/5 hover:border-white/20 transition-all duration-500 hover:pl-4"
+              >
                 <div className="flex flex-col">
-                  <span className="text-white text-2xl md:text-4xl font-serif">{item.name}</span>
+                  <span className="text-white text-2xl md:text-4xl font-serif">
+                    {item.name}
+                  </span>
                   <span className="text-stone-600 font-mono text-[9px] tracking-[0.3em] uppercase mt-1 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
                     {item.desc}
                   </span>
@@ -92,16 +108,22 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
 
         <div className="absolute bottom-8 left-8 right-8 md:left-12 md:right-12 flex flex-col md:flex-row justify-between items-end md:items-center text-[9px] font-mono tracking-widest text-stone-500 uppercase border-t border-white/5 pt-6 z-10">
           <div className="flex flex-col md:flex-row gap-2 md:gap-8 mb-4 md:mb-0">
-            <p><span className="text-stone-600 mr-2">Currently:</span> {data?.currently || "Operating"}</p>
-            <p><span className="text-stone-600 mr-2">Location:</span> {data?.location || "Classified"}</p>
+            <p>
+              <span className="text-stone-600 mr-2">Currently:</span>
+              {data?.currently || 'Operating'}
+            </p>
+            <p>
+              <span className="text-stone-600 mr-2">Location:</span>
+              {data?.location || 'Classified'}
+            </p>
           </div>
           <span className="opacity-40">2026 ARCHIVE — NJIT</span>
         </div>
       </main>
 
-      {/* 2. THE PROFILE (About Section) */}
+      {/* ── 2. PROFILE ──────────────────────────────────────────── */}
       <section className="w-full max-w-6xl mx-auto py-32 px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
@@ -109,11 +131,10 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
           className="relative group aspect-[4/5] bg-stone-900 rounded-2xl overflow-hidden border border-white/5"
         >
           {profileImage ? (
-            <ImageBox 
-               image={profileImage} 
-               alt="Stefan Peele Profile" 
-               // FIX: Replaced 'object-cover' with '[&_img]:object-cover' to target the actual image
-               classesWrapper="w-full h-full [&_img]:object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 opacity-70 group-hover:opacity-100" 
+            <ImageBox
+              image={profileImage}
+              alt="Stefan Peele Profile"
+              classesWrapper="w-full h-full [&_img]:object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 opacity-70 group-hover:opacity-100"
             />
           ) : (
             <div className="w-full h-full bg-stone-800 animate-pulse flex items-center justify-center text-stone-600 font-mono text-[10px] uppercase tracking-widest">
@@ -123,7 +144,7 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </motion.div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -131,37 +152,42 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
           className="space-y-8"
         >
           <div className="space-y-4">
-            <span className="text-stone-600 font-mono text-[10px] tracking-[0.4em] uppercase">The Architect</span>
-            
-            {/* DYNAMIC MANIFESTO / HEADLINE */}
+            <span className="text-stone-600 font-mono text-[10px] tracking-[0.4em] uppercase">
+              The Architect
+            </span>
             <h2 className="text-stone-50 text-4xl md:text-5xl font-serif font-bold tracking-tight leading-[1.1] whitespace-pre-wrap">
-              {data?.manifesto || "Logic in Infrastructure.\nIntent in Imagery."}
+              {data?.manifesto || 'Logic in Infrastructure.\nIntent in Imagery.'}
             </h2>
           </div>
 
-          {/* DYNAMIC ASPIRATIONS / BIO */}
           <div className="space-y-6 text-stone-400 font-sans text-sm md:text-base leading-relaxed max-w-md border-l border-stone-800 pl-6 whitespace-pre-wrap">
             {data?.aspirations ? (
               <p>{data.aspirations}</p>
             ) : (
               <>
                 <p>
-                  I specialize in the intersection of high-availability systems and visual storytelling. Whether I am architecting resilient server environments or capturing editorial portraits, my philosophy remains the same: clarity, efficiency, and aesthetic discipline.
+                  I specialize in the intersection of high-availability systems and
+                  visual storytelling. Whether architecting resilient server environments
+                  or capturing editorial portraits, my philosophy remains the same:
+                  clarity, efficiency, and aesthetic discipline.
                 </p>
                 <p>
-                  Currently navigating IT Infrastructure at NJIT, I view technical challenges through the same lens as a photography composition—everything is an arrangement of light, logic, and structure.
+                  Currently navigating IT Infrastructure at NJIT, I view technical
+                  challenges through the same lens as a photography composition —
+                  everything is an arrangement of light, logic, and structure.
                 </p>
               </>
             )}
           </div>
 
-          {/* DYNAMIC EXPERTISE PILLARS (Moved here!) */}
           {data?.expertisePillars && data.expertisePillars.length > 0 && (
             <div className="grid grid-cols-2 gap-8 pt-8 border-t border-white/5">
               {data.expertisePillars.map((pillar: any, i: number) => (
                 <div key={i}>
                   <span className="block text-white font-serif text-lg">{pillar.title}</span>
-                  <span className="text-stone-600 font-mono text-[9px] uppercase tracking-widest mt-1 block">{pillar.description}</span>
+                  <span className="text-stone-600 font-mono text-[9px] uppercase tracking-widest mt-1 block">
+                    {pillar.description}
+                  </span>
                 </div>
               ))}
             </div>
@@ -169,29 +195,39 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
         </motion.div>
       </section>
 
-      {/* 3. THE COMMAND CENTER (Latest Intel) */}
+      {/* ── 3. LATEST INTEL ─────────────────────────────────────── */}
       {(featured || recents.length > 0) && (
         <section className="w-full max-w-6xl mx-auto py-24 px-6 md:px-12 border-t border-white/5">
           <div className="flex items-center gap-4 mb-16">
             <div className="h-[1px] w-12 bg-stone-700" />
-            <h2 className="font-mono text-[10px] tracking-[0.4em] text-stone-500 uppercase">Latest Intel</h2>
+            <h2 className="font-mono text-[10px] tracking-[0.4em] text-stone-500 uppercase">
+              Latest Intel
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {featured && (
-              <Link href={`/blog/${featured.slug.current}`} className="lg:col-span-7 group block relative rounded-xl overflow-hidden bg-[#111] border border-white/5 hover:border-white/20 transition-all duration-500">
+              <Link
+                href={`/blog/${featured.slug.current}`}
+                className="lg:col-span-7 group block relative rounded-xl overflow-hidden bg-[#111] border border-white/5 hover:border-white/20 transition-all duration-500"
+              >
                 <div className="relative h-64 md:h-80 w-full overflow-hidden">
                   {featured.mainImage ? (
                     <div className="w-full h-full transform group-hover:scale-105 transition-transform duration-700">
-                      {/* FIX: Applied the same '[&_img]:object-cover' trick here */}
-                      <ImageBox image={featured.mainImage} alt={featured.title} classesWrapper="w-full h-full [&_img]:object-cover grayscale opacity-50 group-hover:opacity-80 transition-opacity" />
+                      <ImageBox
+                        image={featured.mainImage}
+                        alt={featured.title}
+                        classesWrapper="w-full h-full [&_img]:object-cover grayscale opacity-50 group-hover:opacity-80 transition-opacity"
+                      />
                     </div>
                   ) : (
                     <div className="w-full h-full bg-[#1a1a1a]" />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-[#111]/40 to-transparent" />
                   <div className="absolute top-4 left-4 border border-white/10 bg-black/50 backdrop-blur-md px-3 py-1 rounded-sm">
-                    <span className="text-[9px] font-mono tracking-widest text-white uppercase">Featured</span>
+                    <span className="text-[9px] font-mono tracking-widest text-white uppercase">
+                      Featured
+                    </span>
                   </div>
                 </div>
                 <div className="p-8">
@@ -199,11 +235,20 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
                     {featured.title}
                   </h3>
                   <p className="text-stone-400 text-sm leading-relaxed mb-6 line-clamp-2">
-                    {featured.excerpt || "Access the full classified report..."}
+                    {featured.excerpt || 'Access the full classified report...'}
                   </p>
                   <div className="flex items-center gap-4 font-mono text-[10px] text-stone-600 uppercase tracking-widest">
-                    <span>{featured.publishedAt ? new Date(featured.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : 'DRAFT'}</span>                    <span>•</span>
-                    <span className="group-hover:text-white transition-colors">Read Report →</span>
+                    <span>
+                      {featured.publishedAt
+                        ? new Date(featured.publishedAt).toLocaleDateString('en-US', {
+                            month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+                          })
+                        : 'DRAFT'}
+                    </span>
+                    <span>•</span>
+                    <span className="group-hover:text-white transition-colors">
+                      Read Report →
+                    </span>
                   </div>
                 </div>
               </Link>
@@ -215,12 +260,23 @@ export function HomePage({ data, intelData }: { data: any; intelData?: any }) {
                   Archive Logs
                 </h3>
                 {recents.map((post: any, i: number) => (
-                  <Link key={i} href={`/blog/${post.slug.current}`} className="group block p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/20 transition-all">
+                  <Link
+                    key={i}
+                    href={`/blog/${post.slug.current}`}
+                    className="group block p-6 rounded-xl bg-[#111] border border-white/5 hover:border-white/20 transition-all"
+                  >
                     <h4 className="text-lg font-serif font-bold text-white mb-2 group-hover:text-stone-300">
                       {post.title}
                     </h4>
                     <div className="flex items-center gap-3 font-mono text-[9px] text-stone-500 uppercase tracking-widest mt-4">
-                      <span>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric', timeZone: 'UTC' }) : '--/--/----'}</span>                       <span className="w-4 h-[1px] bg-stone-700" />
+                      <span>
+                        {post.publishedAt
+                          ? new Date(post.publishedAt).toLocaleDateString('en-US', {
+                              month: '2-digit', day: '2-digit', year: 'numeric', timeZone: 'UTC',
+                            })
+                          : '--/--/----'}
+                      </span>
+                      <span className="w-4 h-[1px] bg-stone-700" />
                       <span className="group-hover:text-white transition-colors">Open →</span>
                     </div>
                   </Link>
