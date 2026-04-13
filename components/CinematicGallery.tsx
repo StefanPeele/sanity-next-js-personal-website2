@@ -306,7 +306,7 @@ export default function CinematicGallery({ photos }: { photos: GalleryPhoto[] })
           ))}
         </div>
 
-        {/* ── Lightbox ──────────────────────────────────────────────── */}
+        {/* ─-─ Lightbox ──────────────────────────────────────────────── */}
         <AnimatePresence>
           {selectedIndex !== null && filteredPhotos[selectedIndex] && (
             <motion.div
