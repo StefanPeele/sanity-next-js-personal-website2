@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 
-const API = 'https://track.stefanpeele.com'
+const API = 'https://email-tracker-bmuo.onrender.com'
 
 interface Email {
   id: string
