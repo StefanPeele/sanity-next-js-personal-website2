@@ -5,6 +5,8 @@ import { Resend } from 'resend'
 // app/actions/booking.ts
 
 const airtable = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
+console.log('AIRTABLE KEY:', process.env.AIRTABLE_API_KEY?.slice(0, 10))
+
 const base     = airtable.base(process.env.AIRTABLE_BASE_ID!)
 const resend   = new Resend(process.env.RESEND_API_KEY)
 
