@@ -87,8 +87,8 @@ function getRateType(pkg: string): string {
 //   → Specialty · Headshot Mini
 function cleanPackageName(pkg: string): string {
   return pkg
-    .replace(/\s*\(.*?\)\s*/g, '') // remove (anything in parens)
-    .replace(/^["']|["']$/g, '')   // remove surrounding quotes
+    .replace(/^["']|["']$/g, '')   // strip surrounding quotes first
+    .replace(/\s*\(.*?\)\s*/g, '') // then remove (price) part
     .trim()
 }
 
@@ -203,7 +203,8 @@ export async function submitBooking(formData: FormData): Promise<BookingResult> 
   const email         = (formData.get('email')           as string)?.trim().toLowerCase()
   const phone         = (formData.get('phone')           as string)?.trim() ?? ''
   const preferredDate = (formData.get('preferred_date')  as string)?.trim() ?? ''
-  const pkg           = (formData.get('package')         as string) ?? ''
+  const pkg = (formData.get('package') as string) ?? ''
+  console.log('RAW PKG VALUE:', JSON.stringify(pkg))
   const addOnsRaw     = (formData.get('add_ons')         as string) ?? 'None selected'
   const message       = (formData.get('message')         as string)?.trim()
   const discount      = (formData.get('discount_earned') as string) ?? 'None'
