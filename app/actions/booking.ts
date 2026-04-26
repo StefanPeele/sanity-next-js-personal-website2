@@ -16,6 +16,7 @@ export interface BookingResult {
   error?: string
 }
 
+// ── Add-on label → exact Airtable multi-select option ──────────────
 const ADDON_LABEL_TO_AIRTABLE: Record<string, string> = {
   'Extra 30 minutes (+$50)':               'Extra 30 min',
   'Extra 1 hour (+$90)':                   'Extra 1 hour',
@@ -27,6 +28,30 @@ const ADDON_LABEL_TO_AIRTABLE: Record<string, string> = {
   'Softcover photobook (20 pages) (+$55)': 'Softcover photobook',
   'Hardcover photobook (20 pages) (+$75)': 'Hardcover photobook',
   'Framed print set (8×10) (+$45)':        'Framed print set',
+}
+
+// ── Package name resolver ───────────────────────────────────────────
+// Extracts "Type · Name" from any label format, ignoring price/quotes.
+// Works regardless of price formatting, quote wrapping, or character encoding.
+// Examples:
+//   "Specialty · Headshot Mini ($65 NJIT / $85 Public)"  → "Specialty · Headshot Mini"
+//   'Portrait · Core ($175 NJIT / $225 Public)'           → "Portrait · Core"
+//   'Event · Premium ($799 NJIT rate)'                    → "Event · Premium"
+function resolvePackageName(pkg: string): string {
+  // Step 1: strip any surrounding quotes
+  const clean = pkg.replace(/^["']+|["']+$/g, '').trim()
+
+  // Step 2: regex extracts everything before the first "(" or end of string
+  // Handles middle dot variants: · (U+00B7) and • (U+2022) and plain hyphen
+  const match = clean.match(/^(Portrait|Event|Specialty)\s*[·•\-]\s*([^(]+)/)
+  if (match) {
+    const type = match[1].trim()
+    const name = match[2].trim()
+    return `${type} · ${name}`
+  }
+
+  // Step 3: fallback — just strip parens
+  return clean.replace(/\s*\(.*?\)\s*/g, '').trim()
 }
 
 function parseAddOns(addOnsString: string): string[] {
@@ -46,7 +71,8 @@ function parseAddOns(addOnsString: string): string[] {
 
 function airtableSelect(tableId: string, formula: string): Promise<Airtable.Records<Airtable.FieldSet>> {
   return new Promise((resolve, reject) => {
-    base(tableId).select({ filterByFormula: formula, maxRecords: 1 })
+    base(tableId)
+      .select({ filterByFormula: formula, maxRecords: 1 })
       .firstPage((err, records) => {
         if (err) reject(err)
         else resolve(records ?? [])
@@ -82,16 +108,6 @@ function getRateType(pkg: string): string {
   return pkg.toLowerCase().includes('njit') ? 'NJIT' : 'Public'
 }
 
-// Strips price parentheses AND any surrounding quotes from package names
-// e.g. "Specialty · Headshot Mini (from $65 NJIT / $85 public)"
-//   → Specialty · Headshot Mini
-function cleanPackageName(pkg: string): string {
-  return pkg
-    .replace(/^["']|["']$/g, '')   // strip surrounding quotes first
-    .replace(/\s*\(.*?\)\s*/g, '') // then remove (price) part
-    .trim()
-}
-
 function notificationEmailHtml(data: {
   name: string
   email: string
@@ -103,8 +119,7 @@ function notificationEmailHtml(data: {
   njit: string
   message: string
 }): string {
-  return `
-<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
 <body style="font-family:'Courier New',monospace;background:#0a0a0a;color:#d6d3d1;padding:32px;margin:0;">
@@ -112,9 +127,7 @@ function notificationEmailHtml(data: {
     <p style="font-size:10px;text-transform:uppercase;letter-spacing:0.3em;color:#78716c;margin-bottom:24px;">
       NEW BOOKING INQUIRY // STEFAN PEELE PHOTOGRAPHY
     </p>
-    <h1 style="font-family:Georgia,serif;font-size:28px;color:#fff;margin:0 0 24px 0;">
-      ${data.name}
-    </h1>
+    <h1 style="font-family:Georgia,serif;font-size:28px;color:#fff;margin:0 0 24px 0;">${data.name}</h1>
     <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
       ${[
         ['Email',          data.email],
@@ -128,8 +141,7 @@ function notificationEmailHtml(data: {
         <tr>
           <td style="font-size:9px;text-transform:uppercase;letter-spacing:0.3em;color:#78716c;padding:8px 16px 8px 0;white-space:nowrap;vertical-align:top;">${label}</td>
           <td style="font-size:12px;color:#d6d3d1;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">${value}</td>
-        </tr>
-      `).join('')}
+        </tr>`).join('')}
     </table>
     <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:24px;">
       <p style="font-size:9px;text-transform:uppercase;letter-spacing:0.3em;color:#78716c;margin:0 0 8px 0;">Message</p>
@@ -150,7 +162,6 @@ function confirmationEmailHtml(
   preferredDate: string
 ): string {
   const isEvent = pkg.toLowerCase().includes('event')
-
   const prepItems = isEvent ? `
     <li>A run of show or event agenda if available</li>
     <li>Contact for the event coordinator on the day</li>
@@ -164,8 +175,7 @@ function confirmationEmailHtml(
     <li>Arrive 5–10 minutes early so we're not rushing in</li>
   `
 
-  return `
-<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
 <body style="font-family:'Courier New',monospace;background:#0a0a0a;color:#d6d3d1;padding:32px;margin:0;">
@@ -181,7 +191,7 @@ function confirmationEmailHtml(
     </p>
     <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:20px;margin-bottom:24px;">
       <p style="font-size:9px;text-transform:uppercase;letter-spacing:0.3em;color:#78716c;margin:0 0 12px 0;">Your selection</p>
-      <p style="font-size:14px;color:#fff;margin:0 0 6px 0;font-family:Georgia,serif;">${cleanPackageName(pkg)}</p>
+      <p style="font-size:14px;color:#fff;margin:0 0 6px 0;font-family:Georgia,serif;">${resolvePackageName(pkg)}</p>
       ${preferredDate ? `<p style="font-size:11px;color:#78716c;margin:0 0 4px 0;">Preferred date: ${preferredDate}</p>` : ''}
       ${addOns && addOns !== 'None selected' ? `<p style="font-size:11px;color:#78716c;margin:0;">Add-ons: ${addOns}</p>` : ''}
     </div>
@@ -203,8 +213,7 @@ export async function submitBooking(formData: FormData): Promise<BookingResult> 
   const email         = (formData.get('email')           as string)?.trim().toLowerCase()
   const phone         = (formData.get('phone')           as string)?.trim() ?? ''
   const preferredDate = (formData.get('preferred_date')  as string)?.trim() ?? ''
-  const pkg = (formData.get('package') as string) ?? ''
-  console.log('RAW PKG VALUE:', JSON.stringify(pkg))
+  const pkg           = (formData.get('package')         as string) ?? ''
   const addOnsRaw     = (formData.get('add_ons')         as string) ?? 'None selected'
   const message       = (formData.get('message')         as string)?.trim()
   const discount      = (formData.get('discount_earned') as string) ?? 'None'
@@ -215,12 +224,15 @@ export async function submitBooking(formData: FormData): Promise<BookingResult> 
   }
 
   const addOnsArray = parseAddOns(addOnsRaw)
+  const cleanedPkg  = resolvePackageName(pkg)
+
+  console.log('PKG IN:', JSON.stringify(pkg))
+  console.log('PKG OUT:', JSON.stringify(cleanedPkg))
 
   try {
-    // ── 1. Find or create client ───────────────────────────────────
+    // ── 1. Find or create client ─────────────────────────────────
     const safeEmail    = email.replace(/"/g, '\\"')
     const existingRows = await airtableSelect(CLIENTS_TABLE, `{Email} = "${safeEmail}"`)
-
     let clientId: string
 
     if (existingRows.length > 0) {
@@ -243,12 +255,12 @@ export async function submitBooking(formData: FormData): Promise<BookingResult> 
       clientId = newClient.id
     }
 
-    // ── 2. Create shoot record ─────────────────────────────────────
+    // ── 2. Create shoot record ───────────────────────────────────
     const discountOption = mapDiscount(discount)
     const shootFields: Airtable.FieldSet = {
-      'Shoot Title':    `${name} — ${cleanPackageName(pkg)}`,
+      'Shoot Title':    `${name} — ${cleanedPkg}`,
       'Client':         [clientId],
-      'Package':        cleanPackageName(pkg),
+      'Package':        cleanedPkg,
       'Rate Type':      getRateType(pkg),
       'Status':         '🟡 Inquiry',
       'Internal Notes': `Package: ${pkg}\nAdd-ons: ${addOnsRaw}\nNJIT: ${njit}\nDiscount: ${discount}\n\nClient message:\n${message}`,
@@ -260,18 +272,18 @@ export async function submitBooking(formData: FormData): Promise<BookingResult> 
 
     await airtableCreate(SHOOTS_TABLE, shootFields)
 
-    // ── 3. Notify Stefan ───────────────────────────────────────────
+    // ── 3. Notify Stefan ─────────────────────────────────────────
     await resend.emails.send({
       from:    'Stefan Peele Photography <bookings@stefanpeele.com>',
       to:      'swp9@njit.edu',
-      subject: `📸 New inquiry: ${name} — ${cleanPackageName(pkg)}`,
+      subject: `📸 New inquiry: ${name} — ${cleanedPkg}`,
       html:    notificationEmailHtml({
         name, email, phone, preferredDate,
         pkg, addOns: addOnsRaw, discount, njit, message,
       }),
     })
 
-    // ── 4. Confirm to client ───────────────────────────────────────
+    // ── 4. Confirm to client ─────────────────────────────────────
     await resend.emails.send({
       from:    'Stefan Peele <bookings@stefanpeele.com>',
       to:      email,
