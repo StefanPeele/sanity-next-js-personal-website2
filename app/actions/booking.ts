@@ -5,8 +5,6 @@ import { Resend } from 'resend'
 // app/actions/booking.ts
 
 const airtable = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
-console.log('AIRTABLE KEY:', process.env.AIRTABLE_API_KEY?.slice(0, 10))
-
 const base     = airtable.base(process.env.AIRTABLE_BASE_ID!)
 const resend   = new Resend(process.env.RESEND_API_KEY)
 
@@ -18,32 +16,25 @@ export interface BookingResult {
   error?: string
 }
 
-// ── Maps form add-on labels → exact Airtable multi-select option names ──
-// These must match your Airtable Add-ons field options exactly
 const ADDON_LABEL_TO_AIRTABLE: Record<string, string> = {
-  'Extra 30 minutes (+$50)':              'Extra 30 min',
-  'Extra 1 hour (+$90)':                  'Extra 1 hour',
-  'Extra 2 hours (+$180)':                'Extra 2 hours',
-  'Same-day social pack (+$45)':          'Same-day social pack',
-  'Rushed full delivery (+$40)':          'Rushed delivery',
-  'High-res digital upgrade (+$25)':      'High-res digital upgrade',
-  'Full RAW file delivery (+$50)':        'Full RAW delivery',
-  'Softcover photobook (20 pages) (+$55)':'Softcover photobook',
-  'Hardcover photobook (20 pages) (+$75)':'Hardcover photobook',
-  'Framed print set (8×10) (+$45)':       'Framed print set',
+  'Extra 30 minutes (+$50)':               'Extra 30 min',
+  'Extra 1 hour (+$90)':                   'Extra 1 hour',
+  'Extra 2 hours (+$180)':                 'Extra 2 hours',
+  'Same-day social pack (+$45)':           'Same-day social pack',
+  'Rushed full delivery (+$40)':           'Rushed delivery',
+  'High-res digital upgrade (+$25)':       'High-res digital upgrade',
+  'Full RAW file delivery (+$50)':         'Full RAW delivery',
+  'Softcover photobook (20 pages) (+$55)': 'Softcover photobook',
+  'Hardcover photobook (20 pages) (+$75)': 'Hardcover photobook',
+  'Framed print set (8×10) (+$45)':        'Framed print set',
 }
 
-// Converts the comma-separated add-ons string from the form into
-// an array of Airtable-safe option names
 function parseAddOns(addOnsString: string): string[] {
   if (!addOnsString || addOnsString === 'None selected') return []
-
   return addOnsString
     .split(', ')
     .map((item) => {
-      // Try exact match first
       if (ADDON_LABEL_TO_AIRTABLE[item]) return ADDON_LABEL_TO_AIRTABLE[item]
-      // Try partial match — find the first key that starts with the item text before " (+"
       const baseLabel = item.split(' (+')[0]
       const match = Object.entries(ADDON_LABEL_TO_AIRTABLE).find(([key]) =>
         key.startsWith(baseLabel)
@@ -91,8 +82,14 @@ function getRateType(pkg: string): string {
   return pkg.toLowerCase().includes('njit') ? 'NJIT' : 'Public'
 }
 
+// Strips price parentheses AND any surrounding quotes from package names
+// e.g. "Specialty · Headshot Mini (from $65 NJIT / $85 public)"
+//   → Specialty · Headshot Mini
 function cleanPackageName(pkg: string): string {
-  return pkg.replace(/\s*\(.*?\)\s*/g, '').trim()
+  return pkg
+    .replace(/\s*\(.*?\)\s*/g, '') // remove (anything in parens)
+    .replace(/^["']|["']$/g, '')   // remove surrounding quotes
+    .trim()
 }
 
 function notificationEmailHtml(data: {
@@ -216,7 +213,6 @@ export async function submitBooking(formData: FormData): Promise<BookingResult> 
     return { success: false, error: 'Missing required fields.' }
   }
 
-  // Parse add-ons string → array of Airtable-safe option names
   const addOnsArray = parseAddOns(addOnsRaw)
 
   try {
@@ -242,14 +238,12 @@ export async function submitBooking(formData: FormData): Promise<BookingResult> 
         'NJIT Affiliate': njit === 'Yes',
       }
       if (phone) clientFields['Phone'] = phone
-
       const newClient = await airtableCreate(CLIENTS_TABLE, clientFields)
       clientId = newClient.id
     }
 
     // ── 2. Create shoot record ─────────────────────────────────────
     const discountOption = mapDiscount(discount)
-
     const shootFields: Airtable.FieldSet = {
       'Shoot Title':    `${name} — ${cleanPackageName(pkg)}`,
       'Client':         [clientId],
