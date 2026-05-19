@@ -3,6 +3,7 @@ import { CustomPortableText } from '@/components/CustomPortableText'
 import ImageBox from '@/components/ImageBox'
 import { Navbar } from '@/components/Navbar'
 import { BlogBackground } from '@/components/blog/BlogBackground'
+import { SourcesList } from '@/components/blog/SourcesList'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
@@ -22,6 +23,15 @@ interface Block {
   children?: BlockChild[]
 }
 
+interface Source {
+  _key: string
+  title: string
+  url?: string
+  author?: string
+  type?: string
+  description?: string
+}
+
 interface Post {
   _id: string
   title: string
@@ -32,6 +42,7 @@ interface Post {
   body: Block[]
   excerpt?: string
   categories?: string[]
+  sources?: Source[]
 }
 
 interface RelatedPost {
@@ -58,7 +69,15 @@ const postQuery = `*[_type == "post" && slug.current == $slug][0] {
   "mainImageUrl": mainImage.asset->url,
   body,
   excerpt,
-  "categories": categories[]->title
+  "categories": categories[]->title,
+  sources[] {
+    _key,
+    title,
+    url,
+    author,
+    type,
+    description
+  }
 }`
 
 const relatedQuery = `*[
@@ -190,6 +209,12 @@ export default async function BlogPostPage({ params }: Props) {
             <span>{publishDate}</span>
             <span className="text-stone-600">•</span>
             <span>{readTime} min read</span>
+            {post.sources && post.sources.length > 0 && (
+              <>
+                <span className="text-stone-600">•</span>
+                <span>{post.sources.length} source{post.sources.length !== 1 ? 's' : ''}</span>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -207,6 +232,11 @@ export default async function BlogPostPage({ params }: Props) {
             <p className="italic text-stone-600 text-center">No classified data provided yet.</p>
           )}
         </div>
+
+        {/* ── Sources ────────────────────────────────────────────── */}
+        {post.sources && post.sources.length > 0 && (
+          <SourcesList sources={post.sources} />
+        )}
 
         <ArticleClientTools
           title={post.title}

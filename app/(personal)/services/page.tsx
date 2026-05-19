@@ -6,25 +6,37 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Photography Services | Stefan Peele',
   description:
-    'Professional event and portrait photography for NJIT affiliates, professionals, and organizations. Starter, Core, and Premium packages with fast turnaround and guaranteed quality.',
+    'Consultation-first photography for NJIT affiliates, professionals, and organizations. Every session includes edited JPEGs, print-ready TIFFs, a social media pack, and a physical product.',
 }
 
-// The three pillars of the No BS promise
 const PROMISE_PILLARS = [
   {
     label: 'Time & Presence',
     icon: '🕒',
-    body: 'I arrive early, stay alert, and remain unobtrusive. Every package includes coverage time, travel, setup, and post-event buffer — no shortcuts, no shortcuts.',
+    body: 'I arrive early, stay alert, and remain unobtrusive. Every package includes coverage time, travel, setup, and post-session buffer. You get what you paid for — and usually more.',
   },
   {
     label: 'Professional Gear',
     icon: '📷',
-    body: 'Two camera bodies, full backup kit, dual-card recording, RAW files only. Technical failure is planned for — your coverage is never at risk.',
+    body: 'Two camera bodies, full backup kit, dual-card recording. Technical failure is planned for — your coverage is never at risk.',
   },
   {
-    label: 'Honest Delivery',
-    icon: '📁',
-    body: 'Clean edits, accurate colors, no heavy-handed filters. Delivered via Pixieset, Google Drive, and Google Photos in every format you need — print, web, social.',
+    label: 'Three-Part Delivery',
+    icon: '📦',
+    body: 'Every session delivers edited JPEGs, print-ready TIFFs, and a social media pack as standard. Not as add-ons. Not tiered. Every client, every time.',
+  },
+]
+
+const PHYSICAL_PRODUCTS_PREVIEW = [
+  {
+    tier: 'Core',
+    description: 'Choose from framed prints, matted print sets, softcover photobooks, linen print boxes, and more.',
+    color: 'border-white/15',
+  },
+  {
+    tier: 'Premium',
+    description: 'Choose from hardcover lay-flat photobooks, large archival framed prints, acrylic blocks, metal prints, leather portfolios, fine art cotton rag prints, backlit LED panels, and more.',
+    color: 'border-amber-500/25',
   },
 ]
 
@@ -44,18 +56,16 @@ export default function ServicesPage() {
             worth capturing,<span className="text-stone-600">.</span><br />
             captured right<span className="text-stone-600">.</span>
           </h1>
-          <p className="text-stone-300 text-base md:text-lg leading-relaxed max-w-2xl">
-            I help professionals, creatives, and NJIT affiliates get powerful, no-fluff photos
-            that feel real and reflect their brand — delivered fast, edited honestly, and built to last.
+          <p className="text-stone-300 text-base md:text-lg leading-relaxed max-w-xl">
+            Book a free consultation. We'll build your session around what you want to keep.
           </p>
         </div>
 
-        {/* Stats strip */}
         <div className="flex flex-wrap gap-8">
           {[
-            { label: 'Packages', value: '3' },
-            { label: 'Avg. turnaround', value: '48hrs' },
-            { label: 'Starting at', value: '$99' },
+            { label: 'Free consultation', value: 'Always' },
+            { label: 'Standard turnaround', value: '48hrs' },
+            { label: 'Starting at', value: '$180' },
             { label: 'Guarantee', value: '100%' },
           ].map((stat) => (
             <div key={stat.label}>
@@ -73,11 +83,52 @@ export default function ServicesPage() {
             Packages // Choose Your Coverage
           </span>
           <p className="text-stone-400 text-sm max-w-xl leading-relaxed pl-5">
-            Select your service type, toggle your rate, and find the package that fits.
-            All packages can be extended — see add-ons below.
+            Every package starts with a free consultation. We build your session around what you want — then lock in the details.
           </p>
         </div>
         <ServicePackages />
+      </section>
+
+      {/* ── What You'll Own ───────────────────────────────────────── */}
+      <section className="py-20 border-b border-white/5">
+        <div className="mb-10">
+          <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 block mb-3 border-l border-stone-700 pl-4">
+            What You'll Own // Beyond the Gallery
+          </span>
+          <p className="text-stone-400 text-sm max-w-2xl leading-relaxed pl-5">
+            Every session includes a physical product — something you can hold, hang, or keep on a shelf.
+            A digital gallery lives on your phone. A physical product lives in your home for decades.
+            We'll find the right one during your consultation.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          {PHYSICAL_PRODUCTS_PREVIEW.map((tier) => (
+            <div
+              key={tier.tier}
+              className={`p-6 rounded-xl border ${tier.color} bg-white/[0.02]`}
+            >
+              <span className={`font-mono text-[9px] uppercase tracking-[0.35em] block mb-3 ${
+                tier.tier === 'Premium' ? 'text-amber-500/70' : 'text-stone-500'
+              }`}>
+                {tier.tier} — included
+              </span>
+              <p className="text-stone-300 text-sm leading-relaxed">
+                {tier.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="p-6 rounded-xl border border-white/8 bg-white/[0.02]">
+          <p className="font-serif text-stone-400 text-base leading-relaxed italic max-w-2xl">
+            "Every session can be extended into something physical — photo books, framed prints, matted portfolios, acrylic panels, engraved wood blocks, and more.
+            We'll talk about what makes sense for you during your consultation."
+          </p>
+          <span className="font-mono text-[9px] text-stone-700 uppercase tracking-widest block mt-3">
+            Pricing discussed during consultation · No hidden costs
+          </span>
+        </div>
       </section>
 
       {/* ── The Promise ───────────────────────────────────────────── */}
@@ -101,7 +152,6 @@ export default function ServicesPage() {
           ))}
         </div>
 
-        {/* Guarantee — loud */}
         <div className="p-8 border border-white/15 rounded-xl bg-white/[0.03] text-center">
           <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-500 block mb-3">
             Guarantee
@@ -127,7 +177,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* ── Social proof placeholder ──────────────────────────────── */}
+      {/* ── Social proof ──────────────────────────────────────────── */}
       <section className="py-20 border-b border-white/5">
         <div className="mb-10">
           <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 block border-l border-stone-700 pl-4">
@@ -148,7 +198,7 @@ export default function ServicesPage() {
           ))}
         </div>
         <p className="font-mono text-[9px] text-stone-700 uppercase tracking-widest text-center mt-6">
-          Testimonials coming soon — replace placeholder divs above when you have them
+          Testimonials coming soon
         </p>
       </section>
 

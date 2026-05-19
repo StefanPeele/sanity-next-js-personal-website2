@@ -5,17 +5,19 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { submitBooking } from '@/app/actions/booking'
 // components/BookingSection.tsx
 
+// ── Update this once your Calendly is live ────────────────────────
+export const CALENDLY_URL = 'https://calendly.com' // replace with your actual link
+
 interface BookingSectionProps {
   selectedPackage?: string
   triggerLabel?: string
+  mode?: 'inquiry' | 'consultation'
 }
 
 const PACKAGE_OPTIONS = [
   '— Select a package —',
-  'Portrait · Starter ($89 NJIT / $115 Public)',
-  'Portrait · Core ($175 NJIT / $225 Public)',
+  'Portrait · Core ($180 NJIT / $250 Public)',
   'Portrait · Premium ($275 NJIT / $375 Public)',
-  'Event · Starter ($150 NJIT / $250 Public)',
   'Event · Core ($299 NJIT / $450 Public)',
   'Event · Premium ($799 NJIT / $1,000+ Public)',
   'Specialty · Headshot Mini ($65 NJIT / $85 Public)',
@@ -34,70 +36,33 @@ interface AddOnOption {
 
 const ADD_ON_OPTIONS: AddOnOption[] = [
   {
-    id: 'extra_30',
-    label: 'Extra 30 minutes',
-    price: '+$50',
-    description: 'Add 30 minutes to your session. Good if you want an extra look, location change, or just more time.',
-  },
-  {
-    id: 'extra_60',
-    label: 'Extra 1 hour',
-    price: '+$90',
-    description: 'A full extra hour of coverage. Best value if you anticipate needing significantly more time.',
+    id: 'extra_time',
+    label: 'Additional session time',
+    price: '+$75/hr',
+    description: 'Add more time to any session. Confirmed before the shoot.',
   },
   {
     id: 'rush',
-    label: 'Rushed full delivery',
+    label: 'Rush delivery',
     price: '+$40',
-    description: 'Bumps your delivery to the next business day. Available for Core and Premium packages.',
+    description: 'Moves your full gallery from 48hr to same-day or next-morning.',
   },
   {
     id: 'social',
-    label: 'Same-day social pack',
+    label: 'Social media pack — same-day',
     price: '+$45',
-    description: '5 lightly edited photos delivered within 2 hours of the shoot ending. Perfect for events.',
+    description: 'Upgrades standard social pack to same-day delivery. 5–8 platform-ready edits.',
   },
   {
-    id: 'hires',
-    label: 'High-res digital upgrade',
-    price: '+$25',
-    description: 'Full print-resolution exports. Required if printing anything larger than 5×7.',
-  },
-  {
-    id: 'raws',
-    label: 'Full RAW file delivery',
-    price: '+$50',
-    description: 'Every unedited RAW file from your shoot via Google Drive.',
-  },
-  {
-    id: 'softbook',
-    label: 'Softcover photobook (20 pages)',
-    price: '+$55',
-    description: 'Professionally printed softcover photobook fulfilled through Pixieset\'s print lab.',
-  },
-  {
-    id: 'hardbook',
-    label: 'Hardcover photobook (20 pages)',
-    price: '+$75',
-    description: 'Premium hardcover photobook with lay-flat pages.',
-  },
-  {
-    id: 'frame',
-    label: 'Framed print set (8×10)',
-    price: '+$45',
-    description: 'Your top 3 photos printed at 8×10 and ready to hang.',
+    id: 'physical_upgrade',
+    label: 'Physical product upgrade',
+    price: 'Discussed in consultation',
+    description: 'Add a second product or upgrade your included product. Pricing depends on selection.',
   },
 ]
 
-function getRelevantAddOns(pkg: string): string[] {
-  if (pkg.startsWith('Event')) {
-    return ['extra_30', 'extra_60', 'rush', 'social', 'hires', 'raws']
-  }
-  if (pkg.startsWith('Portrait') || pkg.startsWith('Specialty')) {
-    return ['extra_30', 'extra_60', 'rush', 'hires', 'raws', 'softbook', 'hardbook', 'frame']
-  }
-  return ADD_ON_OPTIONS.map((a) => a.id)
-}
+// Shared input class
+const inputClass = "w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-stone-600 focus:outline-none focus:border-white/30 transition-colors"
 
 function AddOnItem({
   addon, checked, onToggle,
@@ -126,18 +91,10 @@ function AddOnItem({
               </svg>
             )}
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.15em] truncate">
-            {addon.label}
-          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.15em] truncate">{addon.label}</span>
         </div>
-
         <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-          <span
-            onClick={onToggle}
-            className={`font-mono text-[10px] font-bold cursor-pointer transition-colors ${
-              checked ? 'text-white' : 'text-stone-500'
-            }`}
-          >
+          <span onClick={onToggle} className={`font-mono text-[10px] font-bold cursor-pointer transition-colors ${checked ? 'text-white' : 'text-stone-500'}`}>
             {addon.price}
           </span>
           <button
@@ -150,7 +107,6 @@ function AddOnItem({
           </button>
         </div>
       </div>
-
       <AnimatePresence>
         {tooltipVisible && (
           <motion.div
@@ -171,10 +127,7 @@ function AddOnItem({
   )
 }
 
-// Shared input class
-const inputClass = "w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-stone-600 focus:outline-none focus:border-white/30 transition-colors"
-
-export default function BookingSection({ selectedPackage, triggerLabel }: BookingSectionProps) {
+export default function BookingSection({ selectedPackage, triggerLabel, mode = 'inquiry' }: BookingSectionProps) {
   const [isOpen, setIsOpen]         = useState(false)
   const [status, setStatus]         = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg]     = useState('')
@@ -185,8 +138,6 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
   const formRef                     = useRef<HTMLFormElement>(null)
 
   const hasPackage     = pkg !== PACKAGE_OPTIONS[0]
-  const relevantIds    = getRelevantAddOns(pkg)
-  const visibleAddOns  = ADD_ON_OPTIONS.filter((a) => relevantIds.includes(a.id))
   const selectedAddOns = ADD_ON_OPTIONS.filter((a) => addOns.has(a.id))
 
   const toggleAddOn = (id: string) => {
@@ -203,7 +154,6 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
     setErrorMsg('')
 
     const formData = new FormData(e.currentTarget)
-
     formData.set('package', pkg)
     formData.set('njit_affiliate', isNJIT ? 'Yes' : 'No')
     formData.set('add_ons', selectedAddOns.length > 0
@@ -239,14 +189,12 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
 
   return (
     <div className="relative flex flex-col items-center">
-
-      {/* Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="group flex items-center justify-center gap-3 px-6 py-3 border border-stone-700/50 hover:border-stone-400 bg-stone-900/50 backdrop-blur-md rounded-full text-stone-300 hover:text-white transition-all duration-500"
       >
         <span className="text-xs tracking-[0.2em] uppercase font-semibold whitespace-nowrap">
-          {isOpen ? 'Close Inquiry' : (triggerLabel ?? 'Book a Session')}
+          {isOpen ? 'Close' : (triggerLabel ?? 'Send Inquiry')}
         </span>
         <motion.svg
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -258,7 +206,6 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
         </motion.svg>
       </button>
 
-      {/* Form dropdown */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -282,60 +229,33 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
                   </div>
                   <h3 className="text-2xl font-serif text-white">Inquiry Sent</h3>
                   <p className="text-stone-400 text-sm">
-                    Check your email — I've sent a confirmation with next steps. I'll follow up within 24 hours.
+                    Check your email — I've sent confirmation and next steps. I'll follow up within 24 hours.
                   </p>
                 </motion.div>
               ) : (
-                <motion.form
-                  ref={formRef}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  onSubmit={handleSubmit}
-                >
-                  <h3 className="text-2xl font-serif text-white mb-2">
-                    Let's capture something special.
-                  </h3>
+                <motion.form ref={formRef} initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={handleSubmit}>
+                  <h3 className="text-2xl font-serif text-white mb-2">Let's capture something special.</h3>
                   <p className="text-stone-400 text-sm mb-7 leading-relaxed">
-                    I'll follow up within 24 hours to confirm availability and details.
+                    I'll follow up within 24 hours to confirm availability and next steps.
                   </p>
 
-                  {/* Row 1 — Name + Email */}
+                  {/* Name + Email */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                    <input
-                      name="name" required placeholder="Name"
-                      className={inputClass}
-                    />
-                    <input
-                      type="email" name="email" required placeholder="Email Address"
-                      className={inputClass}
-                    />
+                    <input name="name" required placeholder="Name" className={inputClass} />
+                    <input type="email" name="email" required placeholder="Email Address" className={inputClass} />
                   </div>
 
-                  {/* Row 2 — Phone + Preferred Date */}
+                  {/* Phone + Preferred Date */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                    <input
-                      type="tel"
-                      name="phone"
-                      placeholder="Phone (optional)"
-                      className={inputClass}
-                    />
-                    <input
-                      type="date"
-                      name="preferred_date"
-                      className={`${inputClass} cursor-pointer`}
-                      style={{ colorScheme: 'dark' }}
-                    />
+                    <input type="tel" name="phone" placeholder="Phone (optional)" className={inputClass} />
+                    <input type="date" name="preferred_date" className={`${inputClass} cursor-pointer`} style={{ colorScheme: 'dark' }} />
                   </div>
 
-                  {/* Package selector */}
+                  {/* Package */}
                   <div className="mb-3">
                     <select
                       value={pkg}
-                      onChange={(e) => {
-                        setPkg(e.target.value)
-                        setAddOns(new Set())
-                        setShowAddOns(false)
-                      }}
+                      onChange={(e) => { setPkg(e.target.value); setAddOns(new Set()); setShowAddOns(false) }}
                       className={`${inputClass} appearance-none cursor-pointer`}
                       style={{
                         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
@@ -349,7 +269,26 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
                     </select>
                   </div>
 
-                  {/* NJIT Affiliate checkbox */}
+                  {/* Preferred Zoom time — shown when package is selected */}
+                  <AnimatePresence>
+                    {hasPackage && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden mb-3"
+                      >
+                        <input
+                          name="zoom_availability"
+                          placeholder="When works for a 20–30 min Zoom call? (e.g. weekday evenings, Saturday mornings)"
+                          className={inputClass}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* NJIT checkbox */}
                   <label className="flex items-center gap-3 mb-4 cursor-pointer group">
                     <div
                       onClick={() => setIsNJIT((v) => !v)}
@@ -385,9 +324,7 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
                           className="w-full flex items-center justify-between px-4 py-3 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-colors mb-2"
                         >
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-300">
-                              Add-ons
-                            </span>
+                            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-300">Add-ons</span>
                             {addOns.size > 0 && (
                               <span className="font-mono text-[9px] text-white bg-white/15 px-2 py-0.5 rounded-sm">
                                 {addOns.size} selected
@@ -395,15 +332,10 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
                             )}
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest">
-                              hover ⓘ for details
-                            </span>
-                            <span className={`font-mono text-stone-500 text-sm transition-transform duration-200 ${showAddOns ? 'rotate-45' : ''}`}>
-                              +
-                            </span>
+                            <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest">hover ⓘ for details</span>
+                            <span className={`font-mono text-stone-500 text-sm transition-transform duration-200 ${showAddOns ? 'rotate-45' : ''}`}>+</span>
                           </div>
                         </button>
-
                         <AnimatePresence>
                           {showAddOns && (
                             <motion.div
@@ -413,7 +345,7 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
                               transition={{ duration: 0.2 }}
                               className="overflow-visible space-y-1.5 pt-1 pb-2"
                             >
-                              {visibleAddOns.map((addon) => (
+                              {ADD_ON_OPTIONS.map((addon) => (
                                 <AddOnItem
                                   key={addon.id}
                                   addon={addon}
@@ -421,16 +353,6 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
                                   onToggle={() => toggleAddOn(addon.id)}
                                 />
                               ))}
-                              {addOns.size > 0 && (
-                                <div className="mt-2 px-4 py-2.5 rounded-lg border border-white/10 bg-white/[0.03]">
-                                  <span className="font-mono text-[9px] uppercase tracking-widest text-stone-500 block mb-1">
-                                    Selected
-                                  </span>
-                                  <p className="font-mono text-[10px] text-stone-300 leading-relaxed">
-                                    {selectedAddOns.map((a) => `${a.label} (${a.price})`).join(' · ')}
-                                  </p>
-                                </div>
-                              )}
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -441,7 +363,7 @@ export default function BookingSection({ selectedPackage, triggerLabel }: Bookin
                   {/* Message */}
                   <textarea
                     name="message" required rows={3}
-                    placeholder="Tell me about your project — date, location, what you need..."
+                    placeholder="Tell me about the occasion — what do you want to walk away with?"
                     className={`${inputClass} mb-5 resize-none`}
                   />
 

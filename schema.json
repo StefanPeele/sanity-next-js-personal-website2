@@ -1,5 +1,100 @@
 [
   {
+    "name": "failureNote",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "failureNote"
+          }
+        },
+        "label": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "union",
+            "of": [
+              {
+                "type": "string",
+                "value": "failed"
+              },
+              {
+                "type": "string",
+                "value": "lesson"
+              },
+              {
+                "type": "string",
+                "value": "fixed"
+              },
+              {
+                "type": "string",
+                "value": "warning"
+              }
+            ]
+          },
+          "optional": true
+        },
+        "content": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "name": "sectionBreak",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "sectionBreak"
+          }
+        },
+        "title": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "teaser": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "style": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "union",
+            "of": [
+              {
+                "type": "string",
+                "value": "subtle"
+              },
+              {
+                "type": "string",
+                "value": "cinematic"
+              }
+            ]
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
     "type": "type",
     "name": "sanity.imageAsset.reference",
     "value": {
@@ -1080,34 +1175,69 @@
                     "value": {
                       "type": "array",
                       "of": {
-                        "type": "object",
-                        "attributes": {
-                          "href": {
-                            "type": "objectAttribute",
-                            "value": {
-                              "type": "string"
+                        "type": "union",
+                        "of": [
+                          {
+                            "type": "object",
+                            "attributes": {
+                              "href": {
+                                "type": "objectAttribute",
+                                "value": {
+                                  "type": "string"
+                                },
+                                "optional": true
+                              },
+                              "_type": {
+                                "type": "objectAttribute",
+                                "value": {
+                                  "type": "string",
+                                  "value": "link"
+                                }
+                              }
                             },
-                            "optional": true
-                          },
-                          "_type": {
-                            "type": "objectAttribute",
-                            "value": {
-                              "type": "string",
-                              "value": "link"
+                            "rest": {
+                              "type": "object",
+                              "attributes": {
+                                "_key": {
+                                  "type": "objectAttribute",
+                                  "value": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
                             }
-                          }
-                        },
-                        "rest": {
-                          "type": "object",
-                          "attributes": {
-                            "_key": {
-                              "type": "objectAttribute",
-                              "value": {
-                                "type": "string"
+                          },
+                          {
+                            "type": "object",
+                            "attributes": {
+                              "note": {
+                                "type": "objectAttribute",
+                                "value": {
+                                  "type": "string"
+                                },
+                                "optional": true
+                              },
+                              "_type": {
+                                "type": "objectAttribute",
+                                "value": {
+                                  "type": "string",
+                                  "value": "sidenote"
+                                }
+                              }
+                            },
+                            "rest": {
+                              "type": "object",
+                              "attributes": {
+                                "_key": {
+                                  "type": "objectAttribute",
+                                  "value": {
+                                    "type": "string"
+                                  }
+                                }
                               }
                             }
                           }
-                        }
+                        ]
                       }
                     },
                     "optional": true
@@ -1267,8 +1397,133 @@
                   "type": "inline",
                   "name": "wiresharkCallout"
                 }
+              },
+              {
+                "type": "object",
+                "attributes": {
+                  "_key": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "rest": {
+                  "type": "inline",
+                  "name": "sectionBreak"
+                }
+              },
+              {
+                "type": "object",
+                "attributes": {
+                  "_key": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "rest": {
+                  "type": "inline",
+                  "name": "failureNote"
+                }
               }
             ]
+          }
+        },
+        "optional": true
+      },
+      "sources": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "title": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "url": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "author": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "type": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "union",
+                  "of": [
+                    {
+                      "type": "string",
+                      "value": "article"
+                    },
+                    {
+                      "type": "string",
+                      "value": "rfc"
+                    },
+                    {
+                      "type": "string",
+                      "value": "paper"
+                    },
+                    {
+                      "type": "string",
+                      "value": "book"
+                    },
+                    {
+                      "type": "string",
+                      "value": "documentation"
+                    },
+                    {
+                      "type": "string",
+                      "value": "video"
+                    },
+                    {
+                      "type": "string",
+                      "value": "other"
+                    }
+                  ]
+                },
+                "optional": true
+              },
+              "description": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "_type": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string",
+                  "value": "source"
+                }
+              }
+            },
+            "rest": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         },
         "optional": true

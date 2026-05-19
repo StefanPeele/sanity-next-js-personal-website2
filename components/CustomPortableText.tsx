@@ -5,13 +5,14 @@ import { KnowledgeQuiz } from '@/components/blog/KnowledgeQuiz'
 import { LayerExplorer } from '@/components/blog/LayerExplorer'
 import { PacketAnimator } from '@/components/blog/PacketAnimator'
 import { WiresharkCallout } from '@/components/blog/WiresharkCallout'
+import { SideNote } from '@/components/blog/SideNote'
+import { SectionBreak } from '@/components/blog/SectionBreak'
+import { FailureNote } from '@/components/blog/FailureNote'
 import type { PathSegment } from '@sanity/client/csm'
 import { PortableText, type PortableTextBlock, type PortableTextComponents } from 'next-sanity'
 import type { Image } from 'sanity'
 // components/CustomPortableText.tsx
 
-// Standalone interface — does NOT extend PortableTextBlock to avoid
-// the children incompatibility (base type requires non-optional array)
 interface PortableTextNode {
   _type: string
   _key: string
@@ -37,7 +38,7 @@ export function CustomPortableText({
 }) {
   const components: PortableTextComponents = {
 
-    // --- BLOCK-LEVEL ELEMENTS ---
+    // ── Block-level elements ───────────────────────────────────────
     block: {
       normal: ({ children }) => (
         <p className={paragraphClasses ?? 'mb-5 leading-relaxed text-stone-400'}>{children}</p>
@@ -69,7 +70,7 @@ export function CustomPortableText({
       ),
     },
 
-    // --- LIST ELEMENTS ---
+    // ── List elements ──────────────────────────────────────────────
     list: {
       bullet: ({ children }) => (
         <ul className="my-6 space-y-2 pl-0 list-none">{children}</ul>
@@ -95,7 +96,7 @@ export function CustomPortableText({
       ),
     },
 
-    // --- INLINE MARKS ---
+    // ── Inline marks ───────────────────────────────────────────────
     marks: {
       link: ({ children, value }) => (
         <a
@@ -118,9 +119,13 @@ export function CustomPortableText({
       em: ({ children }) => (
         <em className="italic font-serif text-stone-300">{children}</em>
       ),
+      // ── Sidenote margin annotation ─────────────────────────────
+      sidenote: ({ children, value }) => (
+        <SideNote note={value?.note}>{children}</SideNote>
+      ),
     },
 
-    // --- CUSTOM BLOCK TYPES ---
+    // ── Custom block types ─────────────────────────────────────────
     types: {
       image: ({ value }: { value: Image & { alt?: string; caption?: string } }) => (
         <div className="my-10 rounded-xl overflow-hidden border border-white/5 shadow-2xl bg-[#0a0a0a]">
@@ -160,6 +165,10 @@ export function CustomPortableText({
       layerExplorer:    ({ value }) => <LayerExplorer value={value} />,
       packetAnimator:   ({ value }) => <PacketAnimator value={value} />,
       wiresharkCallout: ({ value }) => <WiresharkCallout value={value} />,
+
+      // ── New editorial features ─────────────────────────────────
+      sectionBreak: ({ value }) => <SectionBreak value={value} />,
+      failureNote:  ({ value }) => <FailureNote value={value} />,
     },
   }
 

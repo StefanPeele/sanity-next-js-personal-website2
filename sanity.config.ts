@@ -17,19 +17,23 @@ import { media } from 'sanity-plugin-media'
 import skill from '@/sanity/schemas/objects/skill'
 import category from '@/sanity/schemas/documents/category'
 import {codeInput} from '@sanity/code-input'
+// sanity.config.ts
 
-// --- NEW: Interactive Blog Feature Schemas ---
+// Interactive Blog Feature Schemas
 import knowledgeQuiz from '@/sanity/schemas/objects/knowledgeQuiz'
 import layerExplorer from '@/sanity/schemas/objects/layerExplorer'
 import packetAnimator from '@/sanity/schemas/objects/packetAnimator'
 import wiresharkCallout from '@/sanity/schemas/objects/wiresharkCallout'
+
+// New Editorial Feature Schemas
+import sectionBreak from '@/sanity/schemas/objects/sectionBreak'
+import failureNote from '@/sanity/schemas/objects/failureNote'
 
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
 import {presentationTool} from 'sanity/presentation'
 import {structureTool} from 'sanity/structure'
-// sanity.config.ts
 
 const title =
   process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Stefan Peele II | Digital Archive'
@@ -61,6 +65,9 @@ export default defineConfig({
       layerExplorer,
       packetAnimator,
       wiresharkCallout,
+      // Editorial Features
+      sectionBreak,
+      failureNote,
     ],
   },
   plugins: [

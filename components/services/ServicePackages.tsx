@@ -13,52 +13,51 @@ interface Package {
   njitPrice: number | string
   priceNote?: string
   duration: string
-  photos: string
-  turnaround: string
-  features: string[]
+  deliverables: string[]
+  physicalProduct: 'core' | 'premium'
   recommended: string
-  popular?: boolean
-  badge?: string
+  comingSoon?: boolean
 }
+
+const CORE_PRODUCTS = [
+  'Framed 5×7 print (archival, black or white frame)',
+  'Matted print set (two 5×7s, kraft presentation sleeve)',
+  'Softcover photobook (10 pages, Pixieset print lab)',
+  'Linen-wrapped print box (3–5 prints, keepsake box)',
+  'Desk acrylic stand (4×6 hero image, double-sided)',
+]
+
+const PREMIUM_PRODUCTS = [
+  'Hardcover lay-flat photobook (20 pages, Artifact Uprising)',
+  'Large framed print 11×14 (archival, real wood frame, wall-ready)',
+  'Acrylic print block (single hero image, thick mount)',
+  'Metal print 8×10 (aluminum, wall mount, modern finish)',
+  'Leather portfolio (5–8 prints, presentation sleeve)',
+  'Fine art pigment print on cotton rag paper 16×20 (museum quality)',
+  'Backlit LED acrylic panel (image glows, wall mounted)',
+  'Custom photo engraved wood block (maple or walnut)',
+  'Panoramic gallery wrap triptych (3 panels, 12×36)',
+  'Handbound Japanese stab-stitch photobook (artisan paper, linen cover)',
+  'Archival clamshell print box (10 fine art prints, archival tissue)',
+]
 
 const PORTRAIT_PACKAGES: Package[] = [
   {
-    name: 'Starter',
-    tagline: 'Clean. Confident. Ready to post.',
-    publicPrice: 115,
-    njitPrice: 89,
-    duration: 'Up to 1 hour — we shoot until we get it right',
-    photos: '15 edited photos',
-    turnaround: '1–3 business days',
-    features: [
-      'High-res JPEGs — web and print optimized',
-      'Indoor or outdoor (flexible location)',
-      'Custom crops — LinkedIn, social, print',
-      'Secure online gallery',
-      'Personal use license',
-    ],
-    recommended: 'LinkedIn headshots, student profiles, quick professional portraits',
-    badge: 'Most Accessible',
-  },
-  {
     name: 'Core',
     tagline: 'Professional. Directed. Polished.',
-    publicPrice: 225,
-    njitPrice: 175,
+    publicPrice: 250,
+    njitPrice: 180,
     duration: 'Up to 1.5 hours — multiple looks welcome',
-    photos: '25 edited photos',
-    turnaround: '1–4 business days',
-    features: [
-      'High-res JPEGs — web and print optimized',
-      '3 TIFF exports of your best shots',
-      '3 B&W selects — hand-picked creative edits',
-      'Posing guide + creative direction',
+    deliverables: [
+      'Full gallery of edited JPEGs — high-res, color-graded, print-ready',
+      '5 hero shots exported as print-ready TIFFs at full native resolution',
+      'Social media pack — 5–8 images in Instagram, Stories & LinkedIn formats',
+      'Full posing guide + mood board',
       'Professional retouching on all finals',
-      'Custom crops for all formats',
-      'Secure online gallery',
+      'Pixieset gallery — password-protected, downloadable',
     ],
-    recommended: 'Professionals, fashion, model shoots, brand portraits',
-    popular: true,
+    physicalProduct: 'core',
+    recommended: 'Professionals, headshots, brand portraits, personal work',
   },
   {
     name: 'Premium',
@@ -66,80 +65,64 @@ const PORTRAIT_PACKAGES: Package[] = [
     publicPrice: 375,
     njitPrice: 275,
     duration: 'Up to 2.5 hours — your vision, fully executed',
-    photos: 'Full batch — you keep everything good',
-    turnaround: '3–5 business days',
-    features: [
-      'High-res JPEGs — web and print optimized',
-      '5 TIFF exports of your hero shots',
-      '5 B&W selects — curated for maximum impact',
+    deliverables: [
+      'Full gallery of edited JPEGs — high-res, color-graded, print-ready',
+      '5 hero shots exported as print-ready TIFFs at full native resolution',
+      'Social media pack — 5–8 images in Instagram, Stories & LinkedIn formats',
       'Full posing guide + mood board',
       'Professional retouching on all finals',
       'Multiple looks or locations',
       'Commercial use license',
-      'Secure online gallery',
+      'Pixieset gallery — password-protected, 1 year access',
     ],
+    physicalProduct: 'premium',
     recommended: 'Brand shoots, editorial, marketing, full portfolio builds',
+    comingSoon: true,
   },
 ]
 
 const EVENT_PACKAGES: Package[] = [
   {
-    name: 'Starter',
-    tagline: 'Sharp Coverage. Fast Delivery.',
-    publicPrice: 250,
-    njitPrice: 150,
-    duration: 'Up to 1.5 hours',
-    photos: '20 edited photos',
-    turnaround: '1–3 business days',
-    features: [
-      'High-res JPEGs — web and print optimized',
-      'Custom crops — print, social & web',
-      'Secure online gallery (60 days)',
-      'Personal & promo usage license',
-      'Pre-event planning call recommended',
-    ],
-    recommended: 'Club events, panels, pop-ups, recruiting tables',
-  },
-  {
     name: 'Core',
     tagline: 'Extended Coverage. Stronger Output.',
-    publicPrice: 450,
-    njitPrice: 299,
+    publicPrice: 250,
+    njitPrice: 175,
+    priceNote: 'starting at',
     duration: 'Up to 3 hours',
-    photos: '40 edited photos',
-    turnaround: '2–4 business days',
-    features: [
-      'High-res JPEGs — web and print optimized',
-      '3 TIFF exports of key moments',
-      'Pre-shoot planning call + shot list',
-      'Event detail & environment photos',
-      'Custom crops for all formats',
-      'Secure online gallery (120 days)',
+    deliverables: [
+      'Full gallery of edited JPEGs — high-res, web and print optimized',
+      '5 key moment TIFFs at full native resolution',
+      'Social media pack — platform-ready edits delivered same day',
+      'Full posing guide + shot list integration',
+      'Event detail & environment coverage',
       'Organizational use license',
+      'Secure online gallery (120 days)',
     ],
+    physicalProduct: 'core',
     recommended: 'Brand events, showcases, sponsored panels, cohorts',
-    popular: true,
   },
   {
     name: 'Premium',
-    tagline: 'Top-Tier Coverage. Chef-Stef.',
-    publicPrice: '1,000+',
-    njitPrice: 799,
+    tagline: 'Top-Tier Coverage. Full Day. Video Included.',
+    publicPrice: 700,
+    njitPrice: 499,
     priceNote: 'starting at',
     duration: 'Full day — up to 8 hours',
-    photos: '60+ photos, full batch',
-    turnaround: '2–3 business days (priority)',
-    features: [
-      'High-res JPEGs — web and print optimized',
-      '5 TIFF exports of hero moments',
+    deliverables: [
+      'Full gallery of edited JPEGs — high-res, web and print optimized',
+      '5 hero moment TIFFs at full native resolution',
+      'Social media pack — platform-ready edits',
+      'Osmo video coverage — event highlight footage (in development)',
       '1-on-1 pre-planning call + detailed shot list',
-      'Live delivery folder — real-time access',
-      'On-site image previews during event',
+      'Live delivery folder — real-time access during event',
+      'On-site image previews',
       'Headshots & portrait coverage included',
       'Commercial + editorial license',
       'Secure gallery — 1 year access',
     ],
+    physicalProduct: 'premium',
     recommended: 'Summits, galas, multi-day events, VIP & press coverage',
+    comingSoon: true,
   },
 ]
 
@@ -150,21 +133,23 @@ const SPECIALTY_SERVICES = [
     njitPrice: 65,
     publicPrice: 85,
     duration: 'Up to 1 hour',
-    photos: '10 edited photos, 1 look',
     turnaround: '1–2 business days',
-    note: 'The no-frills version. Perfect for a quick profile update, student org directory, or résumé headshot. Ask about headshot day pricing for your club or team.',
-    badge: 'Best for volume',
+    note: 'The no-frills version. Perfect for a quick profile update, student org directory, or résumé headshot. Direct inquiry — no consultation required.',
+    badge: 'Direct Inquiry',
+    consultation: false,
+    highlight: false,
   },
   {
     name: 'Graduation Session',
     tagline: "You earned this. Let's document it.",
-    njitPrice: 120,
-    publicPrice: 160,
-    duration: 'Up to 1.5 hours',
-    photos: '20 edited photos',
-    turnaround: '2–4 business days',
-    note: 'Cap and gown, campus locations, the real moment. Available April–May and December. Book early — these fill up fast around commencement.',
-    badge: 'Seasonal',
+    njitPrice: 180,
+    publicPrice: 250,
+    duration: 'Up to 2–2.5 hours',
+    turnaround: '48 hours',
+    note: 'Cap and gown, campus locations, the real moment. Includes the full three-part delivery and your choice of physical product. Available April–May and December — book early.',
+    badge: 'Available Now',
+    consultation: true,
+    highlight: true,
   },
   {
     name: 'Personal Brand / Content',
@@ -172,10 +157,11 @@ const SPECIALTY_SERVICES = [
     njitPrice: 150,
     publicPrice: 225,
     duration: 'Up to 2 hours',
-    photos: '30 edited photos',
     turnaround: '2–4 business days',
-    note: 'For students running businesses, building social media, or creating a professional presence beyond LinkedIn. Multiple outfits, locations, and content angles. Social-ready crops included.',
-    badge: 'Most requested',
+    note: 'For students running businesses, building social media, or creating a professional presence. Multiple outfits, locations, content angles. Consultation required.',
+    badge: 'Most Requested',
+    consultation: true,
+    highlight: false,
   },
   {
     name: 'Club / Frat Headshot Day',
@@ -183,61 +169,94 @@ const SPECIALTY_SERVICES = [
     njitPrice: '45 / person',
     publicPrice: '65 / person',
     duration: '2–3 hour block, ~15 min per person',
-    photos: '5 edited photos per person',
     turnaround: '2–3 business days',
-    note: 'Minimum 5 people. The coordinator shoots free for organizing. Pitch to pre-law, business, engineering orgs, fraternities, sororities — they book these every semester.',
+    note: 'Minimum 5 people. The coordinator shoots free for organizing. Consultation required to coordinate scheduling, locations, and delivery.',
     badge: '5 person minimum',
+    consultation: true,
+    highlight: false,
   },
 ]
 
 const ADD_ONS = [
-  { label: 'Extra 30 minutes',              price: '$50' },
-  { label: 'Extra 1 hour',                  price: '$90' },
-  { label: 'Extra 2 hours',                 price: '$180' },
-  { label: 'Same-day social pack (5 edits)', price: '$45' },
-  { label: 'Rushed full delivery',          price: '$40' },
-  { label: 'High-res digital upgrade',      price: '$25' },
-  { label: 'Full RAW file delivery',        price: '$50' },
-  { label: 'Softcover photobook (20 pages)', price: '$55' },
-  { label: 'Hardcover photobook (20 pages)', price: '$75' },
-  { label: 'Framed print set (8×10)',        price: '$45' },
-  { label: 'Portrait discount — Core event clients',    price: '15% off' },
-  { label: 'Portrait discount — Premium event clients', price: '30% off' },
+  {
+    label: 'Additional session time',
+    price: '$75 / hr',
+    description: 'Add more time to any session. Discussed and confirmed before the shoot.',
+  },
+  {
+    label: 'Rush delivery',
+    price: '$40',
+    description: 'Standard 48hr turnaround moved to 24hr. Available for Core and Premium.',
+  },
+  {
+    label: 'Social media pack — same-day',
+    price: '$45',
+    description: '5–8 platform-ready edits. Included standard — this upgrades to same-day delivery.',
+  },
+  {
+    label: 'Physical product upgrade',
+    price: 'Discussed in consultation',
+    description: 'Add a second product or upgrade your included product. We cover this during your consultation.',
+  },
 ]
 
-function formatPackageLabel(
-  name: string,
-  serviceType: ServiceType,
-  isNJIT: boolean,
-  price: number | string
-): string {
-  const rate      = isNJIT ? 'NJIT rate' : 'Public rate'
-  const typeLabel = serviceType === 'event' ? 'Event' : serviceType === 'portrait' ? 'Portrait' : 'Specialty'
-  return `${typeLabel} · ${name} ($${price} ${rate})`
-}
+const CALENDLY_URL = 'https://calendly.com'
 
 function getNJITSavings(serviceType: ServiceType): string {
-  if (serviceType === 'portrait') return 'Save $26–$100 on portrait sessions'
-  if (serviceType === 'event')    return 'Save $100–$200+ on event packages'
+  if (serviceType === 'portrait') return 'Save $70–$100 on portrait sessions'
+  if (serviceType === 'event')    return 'Save $75–$200+ on event packages'
   return 'Discounted rates on specialty sessions'
+}
+
+function PhysicalProductBadge({ tier }: { tier: 'core' | 'premium' }) {
+  const products = tier === 'core' ? CORE_PRODUCTS : PREMIUM_PRODUCTS
+  const label    = tier === 'core' ? 'Choose your physical product' : 'Choose your premium keepsake'
+
+  return (
+    <div className={`rounded-lg border p-4 mb-6 ${
+      tier === 'premium'
+        ? 'border-amber-500/30 bg-amber-950/10'
+        : 'border-white/15 bg-white/[0.03]'
+    }`}>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-base">{tier === 'premium' ? '✦' : '◈'}</span>
+        <span className={`font-mono text-[9px] uppercase tracking-[0.35em] font-bold ${
+          tier === 'premium' ? 'text-amber-400' : 'text-stone-300'
+        }`}>
+          {label}
+        </span>
+      </div>
+      <ul className="space-y-1.5">
+        {products.map((product, i) => (
+          <li key={i} className="flex items-start gap-2">
+            <span className={`text-[10px] mt-0.5 flex-shrink-0 ${
+              tier === 'premium' ? 'text-amber-500' : 'text-stone-600'
+            }`}>—</span>
+            <span className={`font-mono text-[9px] leading-snug ${
+              tier === 'premium' ? 'text-stone-300' : 'text-stone-400'
+            }`}>
+              {product}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className={`font-mono text-[8px] uppercase tracking-widest mt-3 ${
+        tier === 'premium' ? 'text-amber-500/60' : 'text-stone-600'
+      }`}>
+        Final selection confirmed during consultation
+      </p>
+    </div>
+  )
 }
 
 export function ServicePackages() {
   const [serviceType, setServiceType] = useState<ServiceType>('portrait')
   const [isNJIT, setIsNJIT]           = useState(false)
-  const [selectedPkg, setSelectedPkg] = useState<string | undefined>(undefined)
+  const [showInquiry, setShowInquiry] = useState(false)
 
   const packages =
     serviceType === 'portrait' ? PORTRAIT_PACKAGES :
     serviceType === 'event'    ? EVENT_PACKAGES    : []
-
-  const handleBookPackage = (name: string, price: number | string) => {
-    const label = formatPackageLabel(name, serviceType, isNJIT, price)
-    setSelectedPkg(label)
-    setTimeout(() => {
-      document.getElementById('booking-cta')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 50)
-  }
 
   return (
     <div id="packages">
@@ -269,7 +288,7 @@ export function ServicePackages() {
           ))}
         </div>
 
-        {/* ── NJIT toggle card ──────────────────────────────────────── */}
+        {/* NJIT toggle */}
         {serviceType !== 'specialty' && (
           <button
             onClick={() => setIsNJIT((v) => !v)}
@@ -279,9 +298,7 @@ export function ServicePackages() {
                 : 'border-white/20 hover:border-white/35'
             }`}
             style={{
-              backgroundColor: isNJIT
-                ? 'rgba(16, 46, 32, 0.85)'
-                : 'rgba(25, 25, 30, 0.85)',
+              backgroundColor: isNJIT ? 'rgba(16,46,32,0.85)' : 'rgba(25,25,30,0.85)',
             }}
           >
             <div className="px-6 py-5 flex items-center justify-between gap-6">
@@ -313,21 +330,14 @@ export function ServicePackages() {
                     : 'Toggle on to see discounted rates for students, faculty & orgs'}
                 </p>
               </div>
-
-              {isNJIT && serviceType === 'portrait' && (
-                <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
-                  <div className="text-right">
-                    <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest block line-through">From $115</span>
-                    <span className="font-serif text-xl font-bold text-emerald-300">From $89</span>
-                  </div>
-                </div>
-              )}
-              {isNJIT && serviceType === 'event' && (
-                <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
-                  <div className="text-right">
-                    <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest block line-through">From $250</span>
-                    <span className="font-serif text-xl font-bold text-emerald-300">From $150</span>
-                  </div>
+              {isNJIT && (
+                <div className="hidden sm:block text-right flex-shrink-0">
+                  <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest block line-through">
+                    {serviceType === 'portrait' ? 'From $250' : 'From $250'}
+                  </span>
+                  <span className="font-serif text-xl font-bold text-emerald-300">
+                    {serviceType === 'portrait' ? 'From $180' : 'From $175'}
+                  </span>
                 </div>
               )}
             </div>
@@ -335,44 +345,75 @@ export function ServicePackages() {
         )}
       </div>
 
-      {/* ── Standard package cards ────────────────────────────────── */}
+      {/* ── Standard delivery banner ──────────────────────────────── */}
       {serviceType !== 'specialty' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div className="mb-8 p-5 rounded-xl border border-white/10 bg-white/[0.02]">
+          <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-500 block mb-3">
+            Every session includes — standard
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { icon: '▣', label: 'Edited JPEGs', desc: 'Full gallery, color-graded, high-res, print-ready via Pixieset' },
+              { icon: '◈', label: 'Print-ready TIFFs', desc: '5 hero shots at full native resolution — labeled for professional printing' },
+              { icon: '⊞', label: 'Social media pack', desc: '5–8 images in Instagram, Stories, and LinkedIn formats — ready to post' },
+            ].map((item) => (
+              <div key={item.label} className="flex items-start gap-3">
+                <span className="text-stone-600 text-sm flex-shrink-0 mt-0.5">{item.icon}</span>
+                <div>
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-stone-300 block mb-0.5">{item.label}</span>
+                  <span className="font-mono text-[9px] text-stone-600 leading-snug block">{item.desc}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Package cards ─────────────────────────────────────────── */}
+      {serviceType !== 'specialty' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
           {packages.map((pkg) => {
             const price      = isNJIT ? pkg.njitPrice : pkg.publicPrice
-            const pkgLabel   = formatPackageLabel(pkg.name, serviceType, isNJIT, price)
-            const isSelected = selectedPkg === pkgLabel
+            const isCore     = pkg.name === 'Core'
+            const isComing   = pkg.comingSoon
 
             return (
               <div
                 key={pkg.name}
                 className={`relative flex flex-col rounded-xl border transition-all duration-300 overflow-hidden ${
-                  isSelected
-                    ? 'border-white/40 ring-1 ring-white/20'
-                    : pkg.popular
-                    ? 'border-white/25'
+                  isComing
+                    ? 'border-white/8 opacity-50'
+                    : isCore
+                    ? 'border-amber-500/40 shadow-lg shadow-amber-900/10'
                     : 'border-white/10'
                 }`}
                 style={{
-                  backgroundColor: isSelected
-                    ? 'rgba(30,30,36,0.95)'
-                    : pkg.popular
-                    ? 'rgba(22,22,28,0.95)'
+                  backgroundColor: isComing
+                    ? 'rgba(14,14,16,0.95)'
+                    : isCore
+                    ? 'rgba(24,20,12,0.95)'
                     : 'rgba(16,16,20,0.95)',
                 }}
               >
-                {(isSelected || pkg.popular || pkg.badge) && (
-                  <div className="bg-white text-black font-mono text-[8px] uppercase tracking-[0.3em] text-center py-1.5 font-bold">
-                    {isSelected ? '✓ Selected' : pkg.badge ?? 'Most Popular'}
-                  </div>
-                )}
+                {/* Badge */}
+                <div className={`font-mono text-[8px] uppercase tracking-[0.3em] text-center py-1.5 font-bold ${
+                  isComing
+                    ? 'bg-white/10 text-stone-500'
+                    : isCore
+                    ? 'bg-amber-500 text-black'
+                    : 'bg-white/10 text-stone-400'
+                }`}>
+                  {isComing ? 'Expanding Soon' : isCore ? '✦ Recommended' : 'Available'}
+                </div>
 
                 <div className="p-7 flex flex-col flex-grow">
                   <div className="mb-6">
-                    <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-500 block mb-2">
+                    <span className={`font-mono text-[9px] uppercase tracking-[0.35em] block mb-2 ${
+                      isCore ? 'text-amber-500/70' : 'text-stone-500'
+                    }`}>
                       {pkg.name}
                     </span>
-                    <p className="font-serif italic text-stone-400 text-base leading-snug">
+                    <p className="font-serif italic text-stone-300 text-lg leading-snug">
                       {pkg.tagline}
                     </p>
                   </div>
@@ -385,8 +426,12 @@ export function ServicePackages() {
                       </span>
                     )}
                     <div className="flex items-baseline gap-2 flex-wrap">
-                      <span className={`font-serif text-4xl font-bold transition-colors ${
-                        isNJIT ? 'text-emerald-300' : 'text-white'
+                      <span className={`font-serif text-5xl font-bold transition-colors ${
+                        isNJIT
+                          ? 'text-emerald-300'
+                          : isCore
+                          ? 'text-amber-300'
+                          : 'text-white'
                       }`}>
                         ${price}
                       </span>
@@ -397,62 +442,62 @@ export function ServicePackages() {
                       )}
                     </div>
                     {isNJIT && (
-                      <span className="font-mono text-[9px] text-stone-600 line-through mt-0.5 block">
+                      <span className="font-mono text-[10px] text-stone-600 line-through mt-0.5 block">
                         Public: ${pkg.publicPrice}
                       </span>
                     )}
+                    <span className="font-mono text-[10px] text-stone-500 block mt-1.5">
+                      {pkg.duration}
+                    </span>
                   </div>
 
-                  {/* Specs */}
-                  <div className="flex flex-col gap-2 mb-6">
-                    {[
-                      { label: 'Time',     value: pkg.duration },
-                      { label: 'Photos',   value: pkg.photos },
-                      { label: 'Delivery', value: pkg.turnaround },
-                    ].map((spec) => (
-                      <div key={spec.label} className="flex items-start gap-2">
-                        <span className="font-mono text-[9px] uppercase tracking-widest text-stone-600 w-16 flex-shrink-0 mt-0.5">
-                          {spec.label}
-                        </span>
-                        <span className="font-mono text-[10px] text-stone-300 leading-snug">
-                          {spec.value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Features */}
+                  {/* Deliverables */}
                   <ul className="space-y-2.5 mb-6 flex-grow">
-                    {pkg.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2.5 text-stone-300 text-sm leading-snug">
-                        <span className="text-white mt-0.5 flex-shrink-0 text-xs">✓</span>
-                        {feature}
+                    {pkg.deliverables.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-stone-200 text-sm leading-snug">
+                        <span className={`mt-0.5 flex-shrink-0 text-xs ${
+                          isCore ? 'text-amber-500' : 'text-stone-500'
+                        }`}>✓</span>
+                        {item}
+                        {item.includes('in development') && (
+                          <span className="font-mono text-[8px] text-amber-500/70 border border-amber-500/30 px-1.5 py-0.5 rounded-sm ml-1 flex-shrink-0">
+                            WIP
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ul>
 
+                  {/* Physical product */}
+                  <PhysicalProductBadge tier={pkg.physicalProduct} />
+
                   {/* Recommended */}
                   <div className="pt-4 border-t border-white/8 mb-6">
-                    <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-600 block mb-1">
+                    <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-stone-600 block mb-1">
                       Ideal for
                     </span>
-                    <p className="font-mono text-[9px] text-stone-400 leading-relaxed">
+                    <p className="font-mono text-[10px] text-stone-400 leading-relaxed">
                       {pkg.recommended}
                     </p>
                   </div>
 
-                  <button
-                    onClick={() => handleBookPackage(pkg.name, price)}
-                    className={`w-full text-center font-mono text-[10px] uppercase tracking-[0.25em] py-3 rounded-lg transition-all duration-200 ${
-                      isSelected
-                        ? 'bg-white text-black'
-                        : pkg.popular
-                        ? 'bg-white text-black hover:bg-stone-200'
-                        : 'border border-white/20 text-stone-300 hover:border-white/50 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    {isSelected ? '✓ Selected — scroll down' : `Book ${pkg.name}`}
-                  </button>
+                  {/* CTA */}
+                  {isComing ? (
+                    <div className="w-full text-center font-mono text-[10px] uppercase tracking-[0.25em] py-3.5 rounded-lg border border-white/10 text-stone-600 cursor-not-allowed">
+                      Expanding Soon
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => window.open(CALENDLY_URL, '_blank')}
+                      className={`w-full text-center font-mono text-[11px] uppercase tracking-[0.25em] py-3.5 rounded-lg transition-all duration-200 font-bold ${
+                        isCore
+                          ? 'bg-amber-500 text-black hover:bg-amber-400'
+                          : 'bg-white text-black hover:bg-stone-200'
+                      }`}
+                    >
+                      Schedule a Consultation
+                    </button>
+                  )}
                 </div>
               </div>
             )
@@ -463,132 +508,144 @@ export function ServicePackages() {
       {/* ── Specialty services ────────────────────────────────────── */}
       {serviceType === 'specialty' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-          {SPECIALTY_SERVICES.map((svc) => {
-            const pkgLabel   = `Specialty · ${svc.name} (from $${svc.njitPrice} NJIT / $${svc.publicPrice} public)`
-            const isSelected = selectedPkg === pkgLabel
+          {SPECIALTY_SERVICES.map((svc) => (
+            <div
+              key={svc.name}
+              className={`relative flex flex-col rounded-xl border transition-all duration-300 overflow-hidden ${
+                svc.highlight
+                  ? 'border-amber-500/40 shadow-lg shadow-amber-900/10'
+                  : 'border-white/10'
+              }`}
+              style={{
+                backgroundColor: svc.highlight
+                  ? 'rgba(24,20,12,0.95)'
+                  : 'rgba(16,16,20,0.95)',
+              }}
+            >
+              {svc.badge && (
+                <div className={`font-mono text-[8px] uppercase tracking-[0.3em] text-center py-1.5 font-bold ${
+                  svc.highlight ? 'bg-amber-500 text-black' : 'bg-white text-black'
+                }`}>
+                  {svc.highlight ? '✦ ' : ''}{svc.badge}
+                </div>
+              )}
 
-            return (
-              <div
-                key={svc.name}
-                className={`relative flex flex-col rounded-xl border transition-all duration-300 overflow-hidden ${
-                  isSelected ? 'border-white/40 ring-1 ring-white/20' : 'border-white/10'
-                }`}
-                style={{ backgroundColor: 'rgba(16,16,20,0.95)' }}
-              >
-                {(svc.badge || isSelected) && (
-                  <div className="bg-white text-black font-mono text-[8px] uppercase tracking-[0.3em] text-center py-1.5 font-bold">
-                    {isSelected ? '✓ Selected' : svc.badge}
+              <div className="p-7 flex flex-col flex-grow">
+                <div className="mb-5">
+                  <h3 className="font-serif text-2xl text-white mb-1">{svc.name}</h3>
+                  <p className="font-serif italic text-stone-400 text-base">{svc.tagline}</p>
+                </div>
+
+                <div className="mb-5 pb-5 border-b border-white/8">
+                  <div className="flex items-center gap-6">
+                    <div>
+                      <span className="font-mono text-[9px] text-stone-600 uppercase tracking-widest block mb-0.5">NJIT</span>
+                      <span className={`font-serif text-3xl font-bold ${svc.highlight ? 'text-amber-300' : 'text-emerald-300'}`}>
+                        ${svc.njitPrice}
+                      </span>
+                    </div>
+                    <div className="w-px h-8 bg-white/10" />
+                    <div>
+                      <span className="font-mono text-[9px] text-stone-600 uppercase tracking-widest block mb-0.5">Public</span>
+                      <span className={`font-serif text-3xl font-bold ${svc.highlight ? 'text-amber-300/70' : 'text-stone-400'}`}>
+                        ${svc.publicPrice}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 mb-5">
+                  {[
+                    { label: 'Time',     value: svc.duration },
+                    { label: 'Delivery', value: svc.turnaround },
+                  ].map((spec) => (
+                    <div key={spec.label} className="flex items-start gap-2">
+                      <span className="font-mono text-[9px] uppercase tracking-widest text-stone-600 w-16 flex-shrink-0 mt-0.5">
+                        {spec.label}
+                      </span>
+                      <span className="font-mono text-[10px] text-stone-300 leading-snug">{spec.value}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-stone-300 text-sm leading-relaxed flex-grow mb-6">{svc.note}</p>
+
+                {svc.highlight && (
+                  <div className="mb-4 p-3 rounded-lg border border-amber-500/20 bg-amber-950/10">
+                    <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-amber-400/70 block mb-1">Includes</span>
+                    <span className="font-mono text-[9px] text-stone-300">Full three-part delivery + physical product of your choice</span>
                   </div>
                 )}
 
-                <div className="p-7 flex flex-col flex-grow">
-                  <div className="mb-5">
-                    <h3 className="font-serif text-xl text-white mb-1">{svc.name}</h3>
-                    <p className="font-serif italic text-stone-400 text-sm">{svc.tagline}</p>
-                  </div>
-
-                  <div className="mb-5 pb-5 border-b border-white/8">
-                    <div className="flex items-center gap-6">
-                      <div>
-                        <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest block mb-0.5">NJIT</span>
-                        <span className="font-serif text-2xl font-bold text-emerald-300">${svc.njitPrice}</span>
-                      </div>
-                      <div className="w-px h-8 bg-white/10" />
-                      <div>
-                        <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest block mb-0.5">Public</span>
-                        <span className="font-serif text-2xl font-bold text-stone-400">${svc.publicPrice}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-2 mb-5">
-                    {[
-                      { label: 'Time',     value: svc.duration },
-                      { label: 'Photos',   value: svc.photos },
-                      { label: 'Delivery', value: svc.turnaround },
-                    ].map((spec) => (
-                      <div key={spec.label} className="flex items-start gap-2">
-                        <span className="font-mono text-[9px] uppercase tracking-widest text-stone-600 w-16 flex-shrink-0 mt-0.5">
-                          {spec.label}
-                        </span>
-                        <span className="font-mono text-[10px] text-stone-300 leading-snug">{spec.value}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <p className="text-stone-400 text-sm leading-relaxed flex-grow mb-6">{svc.note}</p>
-
-                  <button
-                    onClick={() => {
-                      setSelectedPkg(pkgLabel)
-                      setTimeout(() => {
-                        document.getElementById('booking-cta')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                      }, 50)
-                    }}
-                    className={`w-full text-center font-mono text-[10px] uppercase tracking-[0.25em] py-3 rounded-lg transition-all duration-200 ${
-                      isSelected
-                        ? 'bg-white text-black'
-                        : 'border border-white/20 text-stone-300 hover:border-white/50 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    {isSelected ? '✓ Selected — scroll down' : `Inquire about ${svc.name}`}
-                  </button>
-                </div>
+                <button
+                  onClick={() => {
+                    if (svc.consultation) {
+                      window.open(CALENDLY_URL, '_blank')
+                    } else {
+                      document.getElementById('inline-inquiry')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                    }
+                  }}
+                  className={`w-full text-center font-mono text-[10px] uppercase tracking-[0.25em] py-3.5 rounded-lg transition-all duration-200 font-bold ${
+                    svc.highlight
+                      ? 'bg-amber-500 text-black hover:bg-amber-400'
+                      : svc.consultation
+                      ? 'bg-white text-black hover:bg-stone-200'
+                      : 'border border-white/20 text-stone-300 hover:border-white/50 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {svc.consultation ? 'Schedule a Consultation' : 'Send Inquiry'}
+                </button>
               </div>
-            )
-          })}
+            </div>
+          ))}
         </div>
       )}
 
       {/* ── Add-ons ───────────────────────────────────────────────── */}
-      <div className="mb-20">
+      <div className="mb-16">
         <div className="mb-6 pb-4 border-b border-white/10">
           <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 border-l-2 border-stone-500 pl-4">
             Add-Ons // Available for any package
           </span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {ADD_ONS.map((addon) => (
             <div
               key={addon.label}
-              className="flex items-center justify-between px-4 py-3 rounded-lg border border-white/8"
+              className="px-5 py-4 rounded-lg border border-white/8"
               style={{ backgroundColor: 'rgba(20,20,24,0.6)' }}
             >
-              <span className="font-mono text-[10px] text-stone-300 uppercase tracking-[0.15em] leading-snug">
-                {addon.label}
-              </span>
-              <span className="font-mono text-[10px] text-white font-bold ml-4 flex-shrink-0">
-                {addon.price}
-              </span>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="font-mono text-[10px] text-stone-200 uppercase tracking-[0.15em] font-bold">
+                  {addon.label}
+                </span>
+                <span className="font-mono text-[10px] text-white font-bold ml-4 flex-shrink-0">
+                  {addon.price}
+                </span>
+              </div>
+              <p className="font-mono text-[9px] text-stone-500 leading-relaxed">
+                {addon.description}
+              </p>
             </div>
           ))}
         </div>
-        <p className="font-mono text-[9px] text-stone-600 uppercase tracking-widest mt-4">
-          Photobooks fulfilled through Pixieset · Framing resources provided on delivery
-        </p>
       </div>
 
-      {/* ── Booking CTA ───────────────────────────────────────────── */}
-      <div id="booking-cta" className="text-center py-16 border-t border-white/10 scroll-mt-8">
-        <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 block mb-4">
-          Ready to book?
-        </span>
-        <h2 className="font-serif text-3xl md:text-4xl text-white mb-4">
-          Let's make something worth keeping.
-        </h2>
-        <p className="font-mono text-[10px] text-stone-400 uppercase tracking-widest mb-2 max-w-md mx-auto leading-relaxed">
-          Send an inquiry and I'll follow up within 24 hours to confirm availability and details.
-        </p>
-        {selectedPkg && (
-          <p className="font-mono text-[10px] text-stone-300 uppercase tracking-widest mb-8 max-w-lg mx-auto">
-            Selected: {selectedPkg}
+      {/* ── Inline inquiry form — always visible ─────────────────── */}
+      <div id="inline-inquiry" className="py-16 border-t border-white/10 scroll-mt-8">
+        <div className="text-center mb-8">
+          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 block mb-3">
+            Questions? Direct inquiry.
+          </span>
+          <h2 className="font-serif text-3xl text-white mb-3">
+            Not sure where to start?
+          </h2>
+          <p className="font-mono text-[10px] text-stone-400 uppercase tracking-widest max-w-md mx-auto leading-relaxed">
+            Send me a message and I'll follow up within 24 hours. No commitment required.
           </p>
-        )}
+        </div>
         <div className="flex justify-center">
-          <BookingSection
-            selectedPackage={selectedPkg}
-            triggerLabel={selectedPkg ? 'Send Inquiry' : 'Book a Session'}
-          />
+          <BookingSection triggerLabel="Send a Message" />
         </div>
       </div>
     </div>

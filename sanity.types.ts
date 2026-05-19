@@ -24,6 +24,19 @@ type ArrayOf<T> = Array<
 >
 
 // Source: schema.json
+export type FailureNote = {
+  _type: 'failureNote'
+  label?: 'failed' | 'lesson' | 'fixed' | 'warning'
+  content?: string
+}
+
+export type SectionBreak = {
+  _type: 'sectionBreak'
+  title?: string
+  teaser?: string
+  style?: 'subtle' | 'cinematic'
+}
+
 export type SanityImageAssetReference = {
   _ref: string
   _type: 'reference'
@@ -183,11 +196,18 @@ export type Post = {
         }>
         style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
         listItem?: 'bullet' | 'number'
-        markDefs?: Array<{
-          href?: string
-          _type: 'link'
-          _key: string
-        }>
+        markDefs?: Array<
+          | {
+              href?: string
+              _type: 'link'
+              _key: string
+            }
+          | {
+              note?: string
+              _type: 'sidenote'
+              _key: string
+            }
+        >
         level?: number
         _type: 'block'
         _key: string
@@ -215,7 +235,22 @@ export type Post = {
     | ({
         _key: string
       } & WiresharkCallout)
+    | ({
+        _key: string
+      } & SectionBreak)
+    | ({
+        _key: string
+      } & FailureNote)
   >
+  sources?: Array<{
+    title?: string
+    url?: string
+    author?: string
+    type?: 'article' | 'rfc' | 'paper' | 'book' | 'documentation' | 'video' | 'other'
+    description?: string
+    _type: 'source'
+    _key: string
+  }>
 }
 
 export type SanityImageCrop = {
@@ -715,6 +750,8 @@ export type Geopoint = {
 }
 
 export type AllSanitySchemaTypes =
+  | FailureNote
+  | SectionBreak
   | SanityImageAssetReference
   | WiresharkCallout
   | PacketAnimator

@@ -6,28 +6,36 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const FAQS = [
   {
-    q: "Why does photography cost this much for just a few hours?",
-    a: "Photography fees cover far more than the shoot itself. You're paying for pre-event planning, travel, professional gear maintenance, hours of editing in professional software, and multi-platform delivery. A 3-hour event typically means another 3–6 hours of post-production. At $150 for a 1.5-hour booking, that's still below minimum wage when you account for everything included. I price fairly to respect both your event and my work.",
+    q: "What happens after I schedule a consultation?",
+    a: "We get on a 20–30 minute Zoom call. I'll ask you five questions: what's the occasion, where do you picture these photos living, if you have a style reference, who's coming with you, and what matters most to you about the session. From there I'll walk you through the direction, present two options, and we'll book. No pressure, no sales pitch — just figuring out what makes sense for you.",
   },
   {
-    q: "What if I'm not satisfied with the results?",
-    a: "Simple: I make it right. If there's a technical failure on my end, a missed key moment, or a delivery issue I caused — I'll own it directly and offer either a partial refund, reshoot, or alternate solution based on the situation. No ghosting, no excuses. If disruptions are outside my control (venue restrictions, weather, last-minute changes), I'll communicate immediately and adapt as best as possible.",
+    q: "Why consultation first — why can't I just book directly?",
+    a: "Because a package you picked from a menu without talking to me is a package built for someone else. The consultation is how I make sure the session is built around what you actually want — the photos you'll use, the product you'll keep, the experience that matches the moment. It takes 20 minutes and it protects both of us from mismatched expectations.",
+  },
+  {
+    q: "What's included in the three-part delivery?",
+    a: "Every session — regardless of package — delivers three things. First, your full gallery of edited JPEGs via Pixieset: high-resolution, color-graded, ready to download and print. Second, your 5 hero shots exported as print-ready TIFFs at full native resolution — these are labeled for professional printing and are the frames you'd put on a wall. Third, a social media pack: 5–8 images pre-formatted for Instagram feed, Stories, and LinkedIn, delivered in a separate folder labeled 'Ready to Post.' This is my standard. Not an add-on.",
+  },
+  {
+    q: "What physical product do I get?",
+    a: "Core clients choose one from a menu of accessible products — framed prints, matted print sets, softcover photobooks, linen print boxes, and more. Premium clients choose from a premium keepsake menu — hardcover lay-flat photobooks, large archival framed prints, acrylic print blocks, metal prints, leather portfolios, fine art cotton rag prints, backlit LED panels, and others. We go through the options during the consultation so you can choose based on where you picture the photos living.",
   },
   {
     q: "How quickly will I get my photos?",
-    a: "Starter packages deliver in 1–3 business days. Core packages in 2–4. Premium in 2–3 (priority editing). If you need faster, rushed delivery is available as a $40 add-on for Core and Premium. I don't rush quality — but I also don't hold your photos hostage.",
+    a: "Standard turnaround is 48 hours from the day of the shoot. You'll receive a sneak peek to your phone within 24 hours. If you need everything faster, rush delivery is available for $40 and moves your full gallery to same-day or next-morning delivery.",
   },
   {
     q: "How do I qualify for the NJIT rate?",
-    a: "The NJIT rate is available to current NJIT students, faculty, staff, and registered student organizations. NJIT ID verification is required at booking. If you're unsure whether your organization qualifies, just ask — I'm reasonable about it.",
+    a: "Current NJIT students, faculty, staff, and registered student organizations all qualify. NJIT ID verification is required at booking. If you're not sure whether your organization qualifies, just ask during the consultation — I'm reasonable about it.",
   },
   {
-    q: "Can I add extra time on the day of the event?",
-    a: "Yes, as long as I'm available and we've discussed it before the event. Extra time is $50 for 30 minutes, $90 for an hour, $180 for two hours. Ideally we plan this in advance — impromptu extensions are possible but not guaranteed, especially for multi-event days.",
+    q: "What if I'm not satisfied with the results?",
+    a: "I make it right. If there's a technical failure on my end, a missed key moment, or a delivery issue I caused — I'll own it directly and offer a reshoot, partial refund, or alternate solution. No ghosting, no excuses. If something outside my control disrupts the shoot — weather, venue restrictions, last-minute changes — I'll communicate immediately and we'll figure it out together.",
   },
   {
-    q: "Do you shoot portraits as well as events?",
-    a: "Yes. Portrait packages are available separately and designed for headshots, professional portraits, fashion shoots, and brand photography. Core and Premium event clients also receive a discount (15% and 30% respectively) on portrait sessions — a good way to consolidate your visual brand.",
+    q: "Can I add time or make changes on the day?",
+    a: "Additional time is $75/hr and needs to be discussed before the shoot, not the morning of. I block my schedule around confirmed sessions. If you think you might need more time, flag it during the consultation and we'll plan for it upfront.",
   },
 ]
 
