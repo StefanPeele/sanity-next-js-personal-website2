@@ -1,0 +1,280 @@
+'use client'
+
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+// components/blog/CredibilitySection.tsx
+
+interface Reviewer {
+  _key: string
+  name: string
+  role?: string
+  organization?: string
+  quote?: string
+  date?: string
+  linkedIn?: string
+}
+
+interface ChangelogEntry {
+  _key: string
+  date: string
+  description: string
+}
+
+interface FieldResponse {
+  _key: string
+  title: string
+  url: string
+  author?: string
+  platform?: string
+  summary?: string
+  date?: string
+}
+
+interface CredibilitySectionProps {
+  reviewStatus?: string
+  reviewers?: Reviewer[]
+  changelog?: ChangelogEntry[]
+  responsesFromField?: FieldResponse[]
+  confidenceLevel?: string
+  maturityIndicator?: string
+  cognitiveLoad?: string
+}
+
+const CONFIDENCE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  'speculative':    { label: 'Speculative',      color: 'text-orange-400', bg: 'border-orange-500/30 bg-orange-950/10' },
+  'working-theory': { label: 'Working Theory',   color: 'text-amber-400',  bg: 'border-amber-500/30 bg-amber-950/10' },
+  'confident':      { label: 'Confident',        color: 'text-stone-300',  bg: 'border-stone-500/30 bg-stone-950/30' },
+  'verified':       { label: 'Verified',         color: 'text-emerald-400', bg: 'border-emerald-500/30 bg-emerald-950/10' },
+  'peer-reviewed':  { label: 'Peer Reviewed',    color: 'text-blue-400',   bg: 'border-blue-500/30 bg-blue-950/10' },
+}
+
+const MATURITY_CONFIG: Record<string, { label: string; icon: string }> = {
+  'fresh':              { label: 'Fresh',              icon: '🌱' },
+  'tested':             { label: 'Lab Tested',         icon: '🧪' },
+  'production-proven':  { label: 'Production-proven',  icon: '🏭' },
+}
+
+const LOAD_CONFIG: Record<string, { label: string; icon: string }> = {
+  'light':     { label: 'Light read',    icon: '☕' },
+  'technical': { label: 'Technical',     icon: '🖥' },
+  'dense':     { label: 'Dense',         icon: '🧠' },
+  'reference': { label: 'Reference',     icon: '📚' },
+}
+
+const REVIEW_STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  'seeking-review':    { label: 'Seeking peer review', color: 'text-amber-400', bg: 'border-amber-500/30 bg-amber-950/10' },
+  'community-reviewed':{ label: 'Community reviewed',  color: 'text-blue-400',  bg: 'border-blue-500/30 bg-blue-950/10' },
+  'expert-verified':   { label: 'Expert verified',     color: 'text-emerald-400', bg: 'border-emerald-500/30 bg-emerald-950/10' },
+}
+
+export function CredibilitySection({
+  reviewStatus,
+  reviewers = [],
+  changelog = [],
+  responsesFromField = [],
+  confidenceLevel,
+  maturityIndicator,
+  cognitiveLoad,
+}: CredibilitySectionProps) {
+
+  const [changelogOpen, setChangelogOpen] = useState(false)
+
+  const hasCredibilityContent =
+    reviewers.length > 0 ||
+    changelog.length > 0 ||
+    responsesFromField.length > 0 ||
+    confidenceLevel ||
+    maturityIndicator
+
+  if (!hasCredibilityContent) return null
+
+  const confidence = confidenceLevel ? CONFIDENCE_CONFIG[confidenceLevel] : null
+  const maturity   = maturityIndicator ? MATURITY_CONFIG[maturityIndicator] : null
+  const load       = cognitiveLoad ? LOAD_CONFIG[cognitiveLoad] : null
+  const reviewBadge = reviewStatus ? REVIEW_STATUS_CONFIG[reviewStatus] : null
+
+  return (
+    <section className="mt-16 pt-12 border-t border-white/8 space-y-8">
+
+      {/* ── Metadata badges ────────────────────────────────────────── */}
+      {(confidence || maturity || load || reviewBadge) && (
+        <div className="flex flex-wrap gap-2">
+          {reviewBadge && (
+            <span className={`font-mono text-[9px] uppercase tracking-[0.3em] px-3 py-1.5 rounded-sm border ${reviewBadge.bg} ${reviewBadge.color}`}>
+              {reviewBadge.label}
+            </span>
+          )}
+          {confidence && (
+            <span className={`font-mono text-[9px] uppercase tracking-[0.3em] px-3 py-1.5 rounded-sm border ${confidence.bg} ${confidence.color}`}>
+              {confidence.label}
+            </span>
+          )}
+          {maturity && (
+            <span className="font-mono text-[9px] uppercase tracking-[0.3em] px-3 py-1.5 rounded-sm border border-white/10 text-stone-400">
+              {maturity.icon} {maturity.label}
+            </span>
+          )}
+          {load && (
+            <span className="font-mono text-[9px] uppercase tracking-[0.3em] px-3 py-1.5 rounded-sm border border-white/10 text-stone-500">
+              {load.icon} {load.label}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* ── Expert reviewers ───────────────────────────────────────── */}
+      {reviewers.length > 0 && (
+        <div>
+          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-600 pl-4 block mb-6">
+            Reviewed By
+          </span>
+          <div className="space-y-6">
+            {reviewers.map((reviewer) => (
+              <div
+                key={reviewer._key}
+                className="p-5 rounded-xl border border-emerald-500/20 bg-emerald-950/8"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="font-mono text-[10px] text-emerald-400 font-bold">
+                      {reviewer.name.charAt(0)}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 flex-wrap mb-1">
+                      {reviewer.linkedIn ? (
+                        <a
+                          href={reviewer.linkedIn}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-serif text-white hover:text-emerald-300 transition-colors font-semibold"
+                        >
+                          {reviewer.name} ↗
+                        </a>
+                      ) : (
+                        <span className="font-serif text-white font-semibold">{reviewer.name}</span>
+                      )}
+                      {reviewer.role && (
+                        <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
+                          {reviewer.role}{reviewer.organization ? ` · ${reviewer.organization}` : ''}
+                        </span>
+                      )}
+                      {reviewer.date && (
+                        <span className="font-mono text-[9px] text-stone-700 ml-auto">
+                          {new Date(reviewer.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                        </span>
+                      )}
+                    </div>
+                    {reviewer.quote && (
+                      <blockquote className="font-serif italic text-stone-400 text-sm leading-relaxed mt-2 border-l border-emerald-500/30 pl-3">
+                        "{reviewer.quote}"
+                      </blockquote>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Responses from the field ───────────────────────────────── */}
+      {responsesFromField.length > 0 && (
+        <div>
+          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-600 pl-4 block mb-4">
+            Responses from the Field
+          </span>
+          <div className="space-y-2">
+            {responsesFromField.map((response) => (
+              <a
+                key={response._key}
+                href={response.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="flex items-start gap-4 p-4 rounded-lg border border-white/8 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all group"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <span className="font-serif text-stone-200 group-hover:text-white transition-colors text-sm leading-snug">
+                      {response.title}
+                    </span>
+                    {response.platform && (
+                      <span className="font-mono text-[8px] uppercase tracking-widest text-stone-600 border border-stone-800 px-1.5 py-0.5 rounded-sm">
+                        {response.platform}
+                      </span>
+                    )}
+                  </div>
+                  {response.summary && (
+                    <p className="font-mono text-[10px] text-stone-600 leading-relaxed">
+                      {response.summary}
+                    </p>
+                  )}
+                  {response.author && (
+                    <p className="font-mono text-[9px] text-stone-700 mt-1">— {response.author}</p>
+                  )}
+                </div>
+                <span className="text-stone-600 group-hover:text-stone-400 transition-colors flex-shrink-0 mt-0.5">↗</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Changelog ─────────────────────────────────────────────── */}
+      {changelog.length > 0 && (
+        <div>
+          <button
+            onClick={() => setChangelogOpen((v) => !v)}
+            className="flex items-center gap-3 group"
+          >
+            <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-600 group-hover:text-stone-400 transition-colors">
+              Revision History
+            </span>
+            <span className="font-mono text-[9px] text-stone-700 group-hover:text-stone-500 transition-colors">
+              {changelog.length} update{changelog.length !== 1 ? 's' : ''} {changelogOpen ? '↑' : '↓'}
+            </span>
+          </button>
+          <AnimatePresence>
+            {changelogOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden mt-4"
+              >
+                <ol className="space-y-2 border-l border-white/8 pl-4">
+                  {changelog
+                    .slice()
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .map((entry) => (
+                      <li key={entry._key} className="flex items-start gap-4">
+                        <span className="font-mono text-[9px] text-stone-600 flex-shrink-0 mt-0.5 w-24">
+                          {new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                        <span className="font-mono text-[10px] text-stone-400 leading-relaxed">
+                          {entry.description}
+                        </span>
+                      </li>
+                    ))}
+                </ol>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* ── Correction link ───────────────────────────────────────── */}
+      <div className="pt-4 border-t border-white/5">
+        <a
+          href="https://github.com/StefanPeele/sanity-next-js-personal-website2/issues/new?title=Correction+request&body=Post+URL%3A+%0A%0AError+found%3A+%0A%0ASuggested+correction%3A+"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="font-mono text-[9px] uppercase tracking-widest text-stone-700 hover:text-stone-400 transition-colors"
+        >
+          Found an error? Submit a correction →
+        </a>
+      </div>
+    </section>
+  )
+}

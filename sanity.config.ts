@@ -16,7 +16,12 @@ import settings from '@/sanity/schemas/singletons/settings'
 import { media } from 'sanity-plugin-media'
 import skill from '@/sanity/schemas/objects/skill'
 import category from '@/sanity/schemas/documents/category'
-import {codeInput} from '@sanity/code-input'
+import { codeInput } from '@sanity/code-input'
+import { visionTool } from '@sanity/vision'
+import { defineConfig } from 'sanity'
+import { unsplashImageAsset } from 'sanity-plugin-asset-source-unsplash'
+import { presentationTool } from 'sanity/presentation'
+import { structureTool } from 'sanity/structure'
 // sanity.config.ts
 
 // Interactive Blog Feature Schemas
@@ -25,15 +30,18 @@ import layerExplorer from '@/sanity/schemas/objects/layerExplorer'
 import packetAnimator from '@/sanity/schemas/objects/packetAnimator'
 import wiresharkCallout from '@/sanity/schemas/objects/wiresharkCallout'
 
-// New Editorial Feature Schemas
+// Editorial Feature Schemas (existing)
 import sectionBreak from '@/sanity/schemas/objects/sectionBreak'
 import failureNote from '@/sanity/schemas/objects/failureNote'
 
-import {visionTool} from '@sanity/vision'
-import {defineConfig} from 'sanity'
-import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
-import {presentationTool} from 'sanity/presentation'
-import {structureTool} from 'sanity/structure'
+// New Learning Block Schemas
+import whatIGotWrong from '@/sanity/schemas/objects/whatIGotWrong'
+import whatEngineersUse from '@/sanity/schemas/objects/whatEngineersUse'
+import theProblemSolved from '@/sanity/schemas/objects/theProblemSolved'
+import conceptStressTest from '@/sanity/schemas/objects/conceptStressTest'
+
+// Library Schema
+import mediaItem from '@/sanity/schemas/documents/mediaItem'
 
 const title =
   process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Stefan Peele II | Digital Archive'
@@ -56,6 +64,7 @@ export default defineConfig({
       experience,
       post,
       category,
+      mediaItem,
       // Objects
       skill,
       milestone,
@@ -68,6 +77,11 @@ export default defineConfig({
       // Editorial Features
       sectionBreak,
       failureNote,
+      // New Learning Blocks
+      whatIGotWrong,
+      whatEngineersUse,
+      theProblemSolved,
+      conceptStressTest,
     ],
   },
   plugins: [
@@ -76,11 +90,11 @@ export default defineConfig({
     }),
     presentationTool({
       resolve,
-      previewUrl: {previewMode: {enable: '/api/draft-mode/enable'}},
+      previewUrl: { previewMode: { enable: '/api/draft-mode/enable' } },
     }),
     singletonPlugin([home.name, settings.name]),
     unsplashImageAsset(),
-    visionTool({defaultApiVersion: apiVersion}),
+    visionTool({ defaultApiVersion: apiVersion }),
     codeInput(),
     media(),
   ],

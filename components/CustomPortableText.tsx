@@ -8,6 +8,7 @@ import { WiresharkCallout } from '@/components/blog/WiresharkCallout'
 import { SideNote } from '@/components/blog/SideNote'
 import { SectionBreak } from '@/components/blog/SectionBreak'
 import { FailureNote } from '@/components/blog/FailureNote'
+import { WhatIGotWrong, WhatEngineersUse, TheProblemSolved, ConceptStressTest } from '@/components/blog/LearningBlocks'
 import type { PathSegment } from '@sanity/client/csm'
 import { PortableText, type PortableTextBlock, type PortableTextComponents } from 'next-sanity'
 import type { Image } from 'sanity'
@@ -41,7 +42,7 @@ export function CustomPortableText({
     // ── Block-level elements ───────────────────────────────────────
     block: {
       normal: ({ children }) => (
-        <p className={paragraphClasses ?? 'mb-5 leading-relaxed text-stone-400'}>{children}</p>
+        <p className={paragraphClasses ?? 'mb-6 leading-[1.85] text-stone-300 text-base md:text-[17px]'}>{children}</p>
       ),
       h1: ({ children }) => (
         <h1 className="mt-16 mb-6 font-serif text-4xl md:text-5xl font-bold text-white leading-tight tracking-tight">
@@ -49,12 +50,12 @@ export function CustomPortableText({
         </h1>
       ),
       h2: ({ children }) => (
-        <h2 className="mt-14 mb-5 font-serif text-3xl md:text-4xl font-semibold text-white leading-tight tracking-tight border-b border-white/5 pb-4">
+        <h2 className="mt-16 mb-5 font-serif text-3xl md:text-[2rem] font-semibold text-white leading-tight tracking-tight border-b border-white/5 pb-4">
           {children}
         </h2>
       ),
       h3: ({ children }) => (
-        <h3 className="mt-10 mb-4 font-serif text-2xl md:text-3xl font-semibold text-white leading-snug">
+        <h3 className="mt-10 mb-4 font-serif text-2xl md:text-[1.6rem] font-semibold text-white leading-snug">
           {children}
         </h3>
       ),
@@ -73,22 +74,22 @@ export function CustomPortableText({
     // ── List elements ──────────────────────────────────────────────
     list: {
       bullet: ({ children }) => (
-        <ul className="my-6 space-y-2 pl-0 list-none">{children}</ul>
+        <ul className="my-6 space-y-3 pl-0 list-none">{children}</ul>
       ),
       number: ({ children }) => (
-        <ol className="my-6 space-y-2 pl-0 list-none">{children}</ol>
+        <ol className="my-6 space-y-3 pl-0 list-none">{children}</ol>
       ),
     },
     listItem: {
       bullet: ({ children }) => (
-        <li className="flex items-start gap-3 text-stone-400 leading-relaxed">
-          <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-stone-600" />
+        <li className="flex items-start gap-3 text-stone-300 leading-relaxed text-base">
+          <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-stone-600" />
           <span>{children}</span>
         </li>
       ),
       number: ({ children, index }) => (
-        <li className="flex items-start gap-4 text-stone-400 leading-relaxed">
-          <span className="shrink-0 font-mono text-[11px] text-stone-600 mt-0.5 w-5 text-right">
+        <li className="flex items-start gap-4 text-stone-300 leading-relaxed text-base">
+          <span className="shrink-0 font-mono text-[11px] text-stone-600 mt-1 w-5 text-right">
             {(index ?? 0) + 1}.
           </span>
           <span>{children}</span>
@@ -100,7 +101,7 @@ export function CustomPortableText({
     marks: {
       link: ({ children, value }) => (
         <a
-          className="text-white decoration-stone-600 underline underline-offset-4 transition hover:decoration-white hover:opacity-80"
+          className="text-white decoration-stone-600 underline underline-offset-4 transition hover:decoration-white hover:text-stone-200"
           href={value?.href}
           rel="noreferrer noopener"
           target={value?.href?.startsWith('/') ? undefined : '_blank'}
@@ -114,12 +115,11 @@ export function CustomPortableText({
         </code>
       ),
       strong: ({ children }) => (
-        <strong className="font-semibold text-stone-200">{children}</strong>
+        <strong className="font-semibold text-stone-100">{children}</strong>
       ),
       em: ({ children }) => (
         <em className="italic font-serif text-stone-300">{children}</em>
       ),
-      // ── Sidenote margin annotation ─────────────────────────────
       sidenote: ({ children, value }) => (
         <SideNote note={value?.note}>{children}</SideNote>
       ),
@@ -150,7 +150,6 @@ export function CustomPortableText({
             id={id ?? ''}
             type={type ?? ''}
             path={[...path, { _key }, 'items']}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             timelines={items as any}
           />
         )
@@ -166,9 +165,15 @@ export function CustomPortableText({
       packetAnimator:   ({ value }) => <PacketAnimator value={value} />,
       wiresharkCallout: ({ value }) => <WiresharkCallout value={value} />,
 
-      // ── New editorial features ─────────────────────────────────
+      // ── Editorial features ─────────────────────────────────────
       sectionBreak: ({ value }) => <SectionBreak value={value} />,
       failureNote:  ({ value }) => <FailureNote value={value} />,
+
+      // ── New learning blocks ────────────────────────────────────
+      whatIGotWrong:    ({ value }) => <WhatIGotWrong value={value} />,
+      whatEngineersUse: ({ value }) => <WhatEngineersUse value={value} />,
+      theProblemSolved: ({ value }) => <TheProblemSolved value={value} />,
+      conceptStressTest:({ value }) => <ConceptStressTest value={value} />,
     },
   }
 
