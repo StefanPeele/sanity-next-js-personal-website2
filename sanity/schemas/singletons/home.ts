@@ -102,8 +102,9 @@ export default defineType({
     defineField({
       name: 'showcaseProjects',
       title: 'Showcase projects',
+      description: 'Two or three projects rendered as cards on the homepage, in this order. Fill each project\'s Role and Outcome — the cards lead with them.',
       type: 'array',
-      readOnly: false, // <--- WE FORCEFULLY UNLOCKED THE FIELD HERE
+      validation: (rule) => rule.max(3).warning('The homepage shows at most three showcase projects.'),
       of: [
         defineArrayMember({
           type: 'reference',

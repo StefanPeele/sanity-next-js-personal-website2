@@ -1,0 +1,81 @@
+'use client'
+
+import { useId, useState, useTransition } from 'react'
+import { askArticle } from '@/app/actions/ask'
+// components/blog/AskArticle.tsx
+// Ask a question about this article. Answers come from the article text only
+// (see app/actions/ask.ts). Only rendered by the page when the API key is set.
+
+export function AskArticle({ slug }: { slug: string }) {
+  const [question, setQuestion] = useState('')
+  const [answer, setAnswer] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [pending, startTransition] = useTransition()
+  const id = useId()
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const q = question.trim()
+    if (!q || pending) return
+    setError(null)
+    setAnswer(null)
+    startTransition(async () => {
+      const result = await askArticle(slug, q)
+      if (result.ok) setAnswer(result.answer)
+      else setError(result.error)
+    })
+  }
+
+  return (
+    <section className="mt-16 pt-10 border-t border-white/[0.08]" aria-labelledby={`${id}-heading`} data-print-hide>
+      <div className="flex items-center gap-4 mb-2">
+        <h2 id={`${id}-heading`} className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-600 pl-4">
+          Ask this article
+        </h2>
+      </div>
+      <p className="font-mono text-[10px] text-stone-500 mb-5 max-w-xl leading-relaxed">
+        Answers are generated from this article&rsquo;s text only — nothing outside it. If the article doesn&rsquo;t cover your question, it will say so.
+      </p>
+
+      <form onSubmit={submit} className="space-y-3">
+        <label htmlFor={`${id}-q`} className="sr-only">Your question</label>
+        <textarea
+          id={`${id}-q`}
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          onKeyDown={(e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') submit(e) }}
+          rows={3}
+          maxLength={500}
+          placeholder="e.g. Why does the article say STP blocks that port?"
+          className="w-full rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 font-sans text-sm text-stone-100 placeholder:text-stone-500 focus:border-white/30 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 resize-y"
+          disabled={pending}
+        />
+        <div className="flex items-center gap-4 flex-wrap">
+          <button
+            type="submit"
+            disabled={pending || !question.trim()}
+            className="font-mono text-[10px] uppercase tracking-widest px-5 py-3 bg-white text-black rounded-lg hover:bg-stone-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+          >
+            {pending ? 'Reading the article…' : 'Ask'}
+          </button>
+          <span className="font-mono text-[9px] text-stone-500">{question.length}/500 · Ctrl+Enter to send</span>
+        </div>
+      </form>
+
+      <div aria-live="polite" className="mt-5">
+        {pending && (
+          <p className="font-mono text-[10px] uppercase tracking-widest text-stone-400 motion-safe:animate-pulse">Thinking…</p>
+        )}
+        {error && !pending && (
+          <p role="alert" className="font-mono text-[11px] text-amber-400 border border-amber-500/30 bg-amber-950/10 rounded-lg px-4 py-3">{error}</p>
+        )}
+        {answer && !pending && (
+          <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-5">
+            <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-stone-500 block mb-3">From the article</span>
+            <p className="font-serif text-base text-stone-200 leading-relaxed whitespace-pre-wrap">{answer}</p>
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}

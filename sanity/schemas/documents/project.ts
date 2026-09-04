@@ -6,6 +6,14 @@ export default defineType({
   title: 'Project',
   type: 'document',
   icon: DocumentIcon,
+  validation: (rule) =>
+    rule
+      .custom((doc) =>
+        doc && typeof doc === 'object' && 'outcome' in doc && (doc as {outcome?: string}).outcome
+          ? true
+          : 'Add an Outcome — it is the first thing a recruiter reads on the case-study page and on the homepage card.',
+      )
+      .warning(),
   fields: [
     defineField({
       name: 'title',

@@ -1,108 +1,119 @@
+// app/(personal)/photography/[slug]/page.tsx
+import CinematicGallery from '@/components/CinematicGallery'
+import { JsonLd } from '@/components/JsonLd'
+import { galleryPhotos } from '@/components/photography/photo-utils'
+import { SITE, absoluteUrl } from '@/lib/site'
+import { client } from '@/sanity/lib/client'
 import { sanityFetch } from '@/sanity/lib/live'
+import { galleryBySlugQuery, slugsByTypeQuery } from '@/sanity/lib/queries'
+import type { Metadata, ResolvingMetadata } from 'next'
+import { draftMode } from 'next/headers'
 import Link from 'next/link'
-import CinematicGallery from '@/components/CinematicGallery' 
-import { galleryBySlugQuery } from '@/sanity/lib/queries'
 import { notFound } from 'next/navigation'
 
-// 1. UPDATE: params is now a Promise in Next.js 15+
-export default async function AlbumPage({ params }: { params: Promise<{ slug: string }> }) {
-  
-  // 2. UPDATE: Await the params to extract the slug correctly
-  const resolvedParams = await params
+type Props = { params: Promise<{ slug: string }> }
 
-  // Fetch the specific gallery based on the URL slug
-  const { data: gallery } = await sanityFetch({ 
-    query: galleryBySlugQuery, 
-    params: { slug: resolvedParams.slug } // Now it has the actual string!
-  })
+export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+  const { slug } = await params
+  const { data: gallery } = await sanityFetch({ query: galleryBySlugQuery, params: { slug }, stega: false })
+  if (!gallery) return {}
+  const cover = gallery.mainImage?.asset?.url
+  const description = gallery.overview ?? `${gallery.title} — ${gallery.images?.length ?? 0} photographs by ${SITE.name}.`
+  return {
+    title: gallery.title,
+    description,
+    alternates: { canonical: absoluteUrl(`/photography/${slug}`) },
+    openGraph: {
+      title: gallery.title,
+      description,
+      type: 'article',
+      images: cover ? [{ url: `${cover}?w=1200&h=630&fit=crop&auto=format`, width: 1200, height: 630 }] : (await parent).openGraph?.images ?? [],
+    },
+  }
+}
 
+export async function generateStaticParams() {
+  const data = await client.fetch(slugsByTypeQuery, { type: 'gallery' })
+  return data.filter((d) => !!d.slug).map((d) => ({ slug: d.slug as string }))
+}
+
+const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
+
+export default async function AlbumPage({ params }: Props) {
+  const { slug } = await params
+  const { data: gallery } = await sanityFetch({ query: galleryBySlugQuery, params: { slug } })
+
+  if (!gallery && !(await draftMode()).isEnabled) notFound()
   if (!gallery) {
-    notFound()
+    return <p className="pt-32 text-center font-mono text-xs text-stone-400 uppercase tracking-widest">Draft album — add content in the Studio.</p>
   }
 
-  // Map the gallery's images so they perfectly match what your 
-  // CinematicGallery component expects
-  const formattedImages = (gallery.images || []).map((img: any) => ({
-    ...img, // This safely brings in imageUrl, lqip, aperture, shutter, iso, etc!
-    _id: img._key,
-    category: gallery.category?.title,
-    title: gallery.title,
-    // Use the specific override if it exists, otherwise fall back to the album settings
-    system: img.systemOverride || gallery.system,
-    lens: img.lensOverride || gallery.lens,
-    location: gallery.location,
-  }))
+  const photos = galleryPhotos(gallery)
+
+  // Only fields with data are rendered — nothing is invented.
+  const readout = [
+    { label: 'Location', value: gallery.location },
+    { label: 'Frames', value: `${photos.length} ${photos.length === 1 ? 'capture' : 'captures'}` },
+    { label: 'Camera', value: gallery.system },
+    { label: 'Primary lens', value: gallery.lens },
+    { label: 'ISO', value: gallery.iso },
+  ].filter((r) => !!r.value)
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ImageGallery',
+    name: gallery.title,
+    description: gallery.overview ?? undefined,
+    url: absoluteUrl(`/photography/${slug}`),
+    author: { '@type': 'Person', name: SITE.name, url: SITE.url },
+    image: photos.slice(0, 10).map((p) => p.imageUrl),
+  }
 
   return (
-    <main className="min-h-screen bg-black text-stone-50 pt-32 pb-20 relative overflow-hidden rounded-xl">
-      
-      {/* Cinematic Film Grain Overlay */}
-      <div 
-        className="pointer-events-none fixed inset-0 z-[100] h-full w-full opacity-[0.04] mix-blend-overlay" 
-        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
-      ></div>
+    <div className="min-h-screen text-stone-50 pt-24 pb-20 relative">
+      <JsonLd data={jsonLd} />
 
       <div className="max-w-7xl mx-auto px-6 mb-20 relative z-10">
-        
-        {/* Navigation */}
-        <Link 
-          href="/photography/albums" 
-          className="inline-flex items-center gap-2 text-stone-500 font-mono text-[10px] tracking-[0.3em] uppercase hover:text-white transition-colors mb-16"
+        <Link
+          href="/photography/albums"
+          className={`inline-flex items-center gap-2 text-stone-400 font-mono text-[10px] tracking-[0.3em] uppercase hover:text-white transition-colors mb-16 ${FOCUS}`}
         >
-          <span>←</span> Return to Archives
+          <span aria-hidden="true">←</span> All albums
         </Link>
 
-        {/* Editorial Header */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end border-b border-white/10 pb-16">
-          
-          {/* Title & Category (Left side) */}
           <div className="lg:col-span-8">
-            <span className="text-red-500 font-mono text-[10px] tracking-[0.4em] uppercase mb-4 block">
-              {gallery.category?.title || 'Volume'}
-            </span>
-            <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-white mb-6">
-              {gallery.title}
-            </h1>
+            {gallery.category?.title && (
+              <span className="text-amber-400 font-mono text-[10px] tracking-[0.4em] uppercase mb-4 block">{gallery.category.title}</span>
+            )}
+            <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-white mb-6">{gallery.title}</h1>
             {gallery.overview && (
-              <p className="text-stone-400 max-w-2xl font-serif text-lg italic leading-relaxed">
-                {gallery.overview}
-              </p>
+              <p className="text-stone-300 max-w-2xl font-serif text-lg italic leading-relaxed whitespace-pre-line">{gallery.overview}</p>
             )}
           </div>
 
-          {/* Technical Readout (Right side) */}
-          <div className="lg:col-span-4 flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
-              <div>
-                <span className="block text-stone-600 font-mono text-[8px] uppercase tracking-widest mb-1">Location</span>
-                <span className="block text-stone-300 font-mono text-[10px] uppercase tracking-wider">{gallery.location || 'Undisclosed'}</span>
-              </div>
-              <div>
-                <span className="block text-stone-600 font-mono text-[8px] uppercase tracking-widest mb-1">Frames</span>
-                <span className="block text-stone-300 font-mono text-[10px] uppercase tracking-wider">{formattedImages.length} Captures</span>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
-              <div>
-                <span className="block text-stone-600 font-mono text-[8px] uppercase tracking-widest mb-1">System</span>
-                <span className="block text-stone-300 font-mono text-[10px] uppercase tracking-wider">{gallery.system || 'Digital Format'}</span>
-              </div>
-              <div>
-                <span className="block text-stone-600 font-mono text-[8px] uppercase tracking-widest mb-1">Primary Lens</span>
-                <span className="block text-stone-300 font-mono text-[10px] uppercase tracking-wider">{gallery.lens || 'Prime Array'}</span>
-              </div>
-            </div>
-          </div>
-
+          {readout.length > 0 && (
+            <dl className="lg:col-span-4 grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
+              {readout.map((r) => (
+                <div key={r.label}>
+                  <dt className="block text-stone-400 font-mono text-[8px] uppercase tracking-widest mb-1">{r.label}</dt>
+                  <dd className="block text-stone-200 font-mono text-[10px] uppercase tracking-wider m-0">{r.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
         </div>
+
+        {gallery.notes && (
+          <p className="mt-8 max-w-2xl font-mono text-xs text-stone-400 leading-relaxed">
+            <span className="uppercase tracking-widest text-stone-400 mr-2">Conditions —</span>{gallery.notes}
+          </p>
+        )}
       </div>
 
-      {/* The Gallery Drop-in */}
       <div className="relative z-10">
-        <CinematicGallery photos={formattedImages} />
+        <CinematicGallery photos={photos} developing={false} />
       </div>
-
-    </main>
+    </div>
   )
 }

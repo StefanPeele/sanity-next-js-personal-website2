@@ -1,0 +1,11 @@
+/* TEAM */
+Author: Stefan Peele
+Site: https://stefanpeele.com
+Location: Newark, NJ, USA
+Roles: network engineer associate (intern), NJIT student, photographer
+
+/* SITE */
+Stack: Next.js (App Router), React, TypeScript, Tailwind CSS, Sanity, Vercel
+Fonts: Lora, Inter, IBM Plex Mono
+Source: https://github.com/StefanPeele
+Standards: HTML5, CSS3, RSS 2.0, JSON Feed 1.1, h-card

@@ -1,48 +1,44 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useArticle } from '@/components/article/ArticleProvider'
 // components/blog/ReadingRuler.tsx
-// A subtle horizontal highlight that follows the mouse Y position within the article.
-// Helps readers with tracking difficulties follow a line of text.
-// Only active when [data-article] has the a11y-reading-ruler class (toggled by toolbar).
+// Horizontal highlight following the pointer inside the article. Enabled from the
+// toolbar (settings.ruler). Position is written straight to the DOM inside rAF —
+// no React state per mousemove.
 
 export function ReadingRuler() {
-  const [y, setY]           = useState(-200)
-  const [active, setActive] = useState(false)
+  const { settings } = useArticle()
+  const active = settings.ruler
   const [inArticle, setInArticle] = useState(false)
+  const barRef = useRef<HTMLDivElement>(null)
+  const yRef = useRef(-200)
+  const rafRef = useRef(0)
 
-  // Observe a11y class on [data-article]
-  useEffect(() => {
-    const article = document.querySelector('[data-article]')
-    if (!article) return
-
-    const check = () => setActive(article.classList.contains('a11y-reading-ruler'))
-    check()
-
-    const obs = new MutationObserver(check)
-    obs.observe(article, { attributes: true, attributeFilter: ['class'] })
-    return () => obs.disconnect()
-  }, [])
-
-  // Track mouse Y and article hover state
   useEffect(() => {
     if (!active) return
-
-    const article = document.querySelector('[data-article]') as HTMLElement
+    const article = document.querySelector<HTMLElement>('[data-article]')
     if (!article) return
 
-    const onMove = (e: MouseEvent) => setY(e.clientY)
+    const paint = () => {
+      rafRef.current = 0
+      if (barRef.current) barRef.current.style.transform = `translateY(${yRef.current - 14}px)`
+    }
+    const onMove = (e: MouseEvent) => {
+      yRef.current = e.clientY
+      if (!rafRef.current) rafRef.current = window.requestAnimationFrame(paint)
+    }
     const onEnter = () => setInArticle(true)
     const onLeave = () => setInArticle(false)
 
     window.addEventListener('mousemove', onMove, { passive: true })
     article.addEventListener('mouseenter', onEnter)
     article.addEventListener('mouseleave', onLeave)
-
     return () => {
       window.removeEventListener('mousemove', onMove)
       article.removeEventListener('mouseenter', onEnter)
       article.removeEventListener('mouseleave', onLeave)
+      if (rafRef.current) window.cancelAnimationFrame(rafRef.current)
     }
   }, [active])
 
@@ -50,13 +46,14 @@ export function ReadingRuler() {
 
   return (
     <div
-      className="fixed left-0 right-0 pointer-events-none z-30 transition-none"
+      ref={barRef}
+      className="fixed left-0 right-0 top-0 h-7 pointer-events-none z-30 will-change-transform"
       style={{
-        top: y - 14,
-        height: 28,
+        transform: `translateY(${yRef.current - 14}px)`,
         background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.025) 30%, rgba(255,255,255,0.035) 50%, rgba(255,255,255,0.025) 70%, transparent)',
       }}
       aria-hidden="true"
+      data-print-hide
     />
   )
 }

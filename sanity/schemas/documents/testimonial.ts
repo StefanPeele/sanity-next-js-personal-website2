@@ -27,5 +27,15 @@ export default defineType({
       validation: (r) => r.required(),
     }),
   ],
-  preview: { select: { title: 'name', subtitle: 'role', media: 'photo' } },
+  preview: {
+    select: { title: 'name', role: 'role', service: 'service', consent: 'consent', media: 'photo' },
+    prepare({ title, role, service, consent, media }) {
+      const context = [service, role].filter(Boolean).join(' · ')
+      return {
+        title: `${consent ? '✅' : '⛔'} ${title ?? 'Unnamed'}`,
+        subtitle: consent ? context || 'Consented — will publish' : `Not published (no consent)${context ? ` · ${context}` : ''}`,
+        media,
+      }
+    },
+  },
 })

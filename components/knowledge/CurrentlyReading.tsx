@@ -1,0 +1,67 @@
+import Link from 'next/link'
+import Image from 'next/image'
+import { MEDIA_ICONS, MEDIA_LABELS } from '@/components/library/types'
+// components/knowledge/CurrentlyReading.tsx
+// Server component. Accepts already-fetched items (homeIntelQuery.currentlyReading / nowQuery.reading).
+//
+// Props: { items: { title: string | null; author: string | null; mediaType: string | null; progressPercent: number | null; coverUrl?: string | null; _id?: string }[]; title?: string }
+
+export interface CurrentlyReadingItem {
+  _id?: string
+  title: string | null
+  author: string | null
+  mediaType: string | null
+  progressPercent: number | null
+  coverUrl?: string | null
+}
+
+export function CurrentlyReading({ items, title = 'Currently reading' }: { items: CurrentlyReadingItem[]; title?: string }) {
+  const list = (items ?? []).filter((i) => i.title)
+  return (
+    <section aria-label={title}>
+      <div className="mb-3 flex items-center justify-between">
+        <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-emerald-600 pl-3">{title}</span>
+        <Link href="/library" className="font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
+          Library →
+        </Link>
+      </div>
+      {list.length > 0 ? (
+        <ul className="space-y-3">
+          {list.map((item, i) => {
+            const href = item._id ? `/library#${item._id}` : '/library'
+            return (
+              <li key={item._id ?? `${item.title}-${i}`}>
+                <Link href={href} className="group flex gap-3 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
+                  <span className="flex-shrink-0 w-9 h-12 rounded border border-white/10 bg-stone-900 overflow-hidden flex items-center justify-center">
+                    {item.coverUrl ? (
+                      <Image src={item.coverUrl} alt="" width={36} height={48} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-base" aria-hidden="true">{MEDIA_ICONS[item.mediaType ?? ''] ?? '📖'}</span>
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-baseline justify-between gap-3">
+                      <span className="font-serif text-sm text-white group-hover:text-stone-200 leading-snug truncate">{item.title}</span>
+                      <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 flex-shrink-0">{MEDIA_LABELS[item.mediaType ?? ''] ?? item.mediaType}</span>
+                    </span>
+                    {item.author && <span className="font-mono text-[9px] text-stone-500 block truncate">{item.author}</span>}
+                    {typeof item.progressPercent === 'number' && (
+                      <span className="flex items-center gap-2 mt-1.5">
+                        <span className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${item.title} progress`}>
+                          <span className="block h-full bg-emerald-500/70 rounded-full" style={{ width: `${Math.max(0, Math.min(100, item.progressPercent))}%` }} />
+                        </span>
+                        <span className="font-mono text-[8px] text-stone-500">{item.progressPercent}%</span>
+                      </span>
+                    )}
+                  </span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      ) : (
+        <p className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">Nothing on the nightstand right now.</p>
+      )}
+    </section>
+  )
+}

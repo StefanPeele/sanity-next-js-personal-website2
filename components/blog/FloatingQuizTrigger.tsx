@@ -91,7 +91,8 @@ export function FloatingQuizTrigger({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.95 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="fixed bottom-24 right-8 md:bottom-12 md:right-12 z-40"
+            className="fixed bottom-20 right-4 lg:bottom-24 lg:right-6 z-40"
+            data-print-hide
           >
             <button
               onClick={() => setOpen(true)}
@@ -105,7 +106,7 @@ export function FloatingQuizTrigger({
               <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-stone-400 group-hover:text-white transition-colors">
                 Check your understanding
               </span>
-              <span className="font-mono text-[10px] text-stone-700 group-hover:text-stone-400 transition-colors">
+              <span className="font-mono text-[10px] text-stone-500 group-hover:text-stone-300 transition-colors">
                 →
               </span>
             </button>
@@ -123,7 +124,7 @@ export function FloatingQuizTrigger({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000]"
               onClick={() => setOpen(false)}
             />
 
@@ -133,7 +134,11 @@ export function FloatingQuizTrigger({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, scale: 0.97 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="fixed bottom-0 left-0 right-0 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-xl w-full z-50"
+              className="fixed bottom-0 left-0 right-0 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-xl w-full z-[1001]"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Knowledge check"
+              data-no-toc
             >
               <div className="bg-[#111] border border-white/10 rounded-t-2xl md:rounded-2xl overflow-hidden shadow-2xl">
 
@@ -149,7 +154,7 @@ export function FloatingQuizTrigger({
                   </div>
                   <button
                     onClick={handleDismiss}
-                    className="font-mono text-[10px] text-stone-700 hover:text-white transition-colors uppercase tracking-widest"
+                    className="font-mono text-[10px] text-stone-400 hover:text-white transition-colors uppercase tracking-widest min-h-[40px] px-2"
                   >
                     Dismiss
                   </button>
@@ -242,7 +247,7 @@ export function FloatingQuizTrigger({
                         transition={{ duration: 0.35 }}
                         className="mt-6 pt-6 border-t border-white/5 overflow-hidden"
                       >
-                        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-600 mb-2">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-2">
                           Explanation
                         </p>
                         <p className="text-stone-400 text-sm leading-relaxed">

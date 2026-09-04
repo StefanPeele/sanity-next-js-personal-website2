@@ -1,16 +1,9 @@
-'use client'
-
-import { motion } from 'framer-motion'
+// components/PageTransition.tsx
+// CSS-only route enter animation. app/template.tsx remounts this on every navigation,
+// so the keyframe replays per route. `motion-safe:` keeps it off for reduced-motion users.
+// No framer-motion: the old `exit` variant never fired (no AnimatePresence) and the
+// client boundary made every page a client tree.
 
 export default function PageTransition({ children }: { children: React.ReactNode }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
-    >
-      {children}
-    </motion.div>
-  )
+  return <div className="motion-safe:animate-page-enter">{children}</div>
 }

@@ -17,9 +17,11 @@ const TYPE_CONFIG: Record<string, { icon: string; label: string }> = {
   article:       { icon: '📰', label: 'Article' },
   rfc:           { icon: '📋', label: 'RFC / Standard' },
   paper:         { icon: '📄', label: 'Research Paper' },
+  whitepaper:    { icon: '📑', label: 'White Paper' },
   book:          { icon: '📚', label: 'Book' },
   documentation: { icon: '📖', label: 'Documentation' },
   video:         { icon: '🎥', label: 'Video' },
+  podcast:       { icon: '🎙', label: 'Podcast' },
   other:         { icon: '🔗', label: 'Source' },
 }
 
@@ -33,7 +35,7 @@ export function SourcesList({ sources }: SourcesListProps) {
         <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-600 pl-4">
           Sources & References
         </span>
-        <span className="font-mono text-[9px] text-stone-700 uppercase tracking-widest">
+        <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
           {sources.length} cited
         </span>
       </div>
@@ -49,7 +51,7 @@ export function SourcesList({ sources }: SourcesListProps) {
               className="flex items-start gap-4 group"
             >
               {/* Index number */}
-              <span className="font-mono text-[10px] text-stone-700 flex-shrink-0 mt-0.5 w-6 text-right">
+              <span className="font-mono text-[10px] text-stone-500 flex-shrink-0 mt-0.5 w-6 text-right">
                 [{i + 1}]
               </span>
 
@@ -68,7 +70,7 @@ export function SourcesList({ sources }: SourcesListProps) {
                         className="font-serif text-stone-300 hover:text-white transition-colors leading-snug group-hover:underline underline-offset-4 decoration-stone-600 hover:decoration-white"
                       >
                         {source.title}
-                        <span className="font-mono text-[9px] text-stone-600 ml-1.5 group-hover:text-stone-400 transition-colors">
+                        <span className="font-mono text-[9px] text-stone-500 ml-1.5 group-hover:text-stone-400 transition-colors">
                           ↗
                         </span>
                       </a>
@@ -80,11 +82,11 @@ export function SourcesList({ sources }: SourcesListProps) {
 
                     {/* Meta */}
                     <div className="flex flex-wrap items-center gap-2 mt-1">
-                      <span className="font-mono text-[8px] uppercase tracking-widest text-stone-700 border border-stone-800 px-1.5 py-0.5 rounded-sm">
+                      <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 border border-stone-700 px-1.5 py-0.5 rounded-sm">
                         {config.label}
                       </span>
                       {source.author && (
-                        <span className="font-mono text-[9px] text-stone-600">
+                        <span className="font-mono text-[9px] text-stone-500">
                           {source.author}
                         </span>
                       )}
@@ -92,7 +94,7 @@ export function SourcesList({ sources }: SourcesListProps) {
 
                     {/* Optional description */}
                     {source.description && (
-                      <p className="font-mono text-[10px] text-stone-600 mt-1.5 leading-relaxed italic">
+                      <p className="font-mono text-[10px] text-stone-500 mt-1.5 leading-relaxed italic">
                         {source.description}
                       </p>
                     )}

@@ -34,7 +34,7 @@ export default defineType({
       title: 'Slug',
       type: 'slug',
       group: 'content',
-      options: { source: 'title', maxLength: 96 },
+      options: { source: 'title', maxLength: 96, isUnique: (slug, context) => context.defaultIsUnique(slug, context) },
       validation: (rule) => rule.required(),
     }),
 
@@ -150,7 +150,8 @@ export default defineType({
       title: 'Last tended',
       type: 'date',
       group: 'metadata',
-      description: 'Update this whenever you significantly revise the note. "Last tended" shows the garden is alive — not a graveyard of half-finished thoughts.',
+      description: "Update this whenever you significantly revise the note. 'Last tended' shows the garden is alive, not a graveyard of half-finished thoughts. Leave it empty and the site uses the document's last publish date instead. The note page flags anything untended for more than 60 days, and the Garden Health tool lists them.",
+      validation: (rule) => rule.max(new Date().toISOString().slice(0, 10)).warning('Last tended is in the future.'),
     }),
 
     // ── Connections ───────────────────────────────────────────────

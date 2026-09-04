@@ -185,6 +185,21 @@ export type Skill = {
   }>
 }
 
+export type Subscriber = {
+  _id: string
+  _type: 'subscriber'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  email?: string
+  status?: 'pending' | 'confirmed' | 'unsubscribed'
+  source?: string
+  token?: string
+  createdAt?: string
+  confirmedAt?: string
+  unsubscribedAt?: string
+}
+
 export type Testimonial = {
   _id: string
   _type: 'testimonial'
@@ -784,7 +799,9 @@ export type Category = {
   _updatedAt: string
   _rev: string
   title?: string
+  slug?: Slug
   description?: string
+  themeColor?: string
 }
 
 export type Project = {
@@ -1227,6 +1244,7 @@ export type AllSanitySchemaTypes =
   | Timeline
   | Milestone
   | Skill
+  | Subscriber
   | Testimonial
   | SanityImageCrop
   | SanityImageHotspot
@@ -1268,6 +1286,167 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
   | Geopoint
+
+// Source: sanity/lib/queries-article.ts
+// Variable: articleTextQuery
+// Query: *[_type == "post" && slug.current == $slug][0] {    title, body, tldr, excerpt  }
+export type ArticleTextQueryResult = {
+  title: string | null
+  body: Array<
+    | ({
+        _key: string
+      } & Code)
+    | ({
+        _key: string
+      } & ConceptStressTest)
+    | ({
+        _key: string
+      } & FailureNote)
+    | ({
+        _key: string
+      } & KnowledgeQuiz)
+    | ({
+        _key: string
+      } & LayerExplorer)
+    | ({
+        _key: string
+      } & PacketAnimator)
+    | ({
+        _key: string
+      } & SectionBreak)
+    | ({
+        _key: string
+      } & TheProblemSolved)
+    | ({
+        _key: string
+      } & WhatEngineersUse)
+    | ({
+        _key: string
+      } & WhatIGotWrong)
+    | ({
+        _key: string
+      } & WiresharkCallout)
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<
+          | {
+              href?: string
+              _type: 'link'
+              _key: string
+            }
+          | {
+              note?: string
+              _type: 'sidenote'
+              _key: string
+            }
+        >
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        alt?: string
+        caption?: string
+        keepColor?: boolean
+        _type: 'image'
+        _key: string
+      }
+  > | null
+  tldr: Array<string> | null
+  excerpt: string | null
+} | null
+
+// Source: sanity/lib/queries-article.ts
+// Variable: articleOgQuery
+// Query: *[_type == "post" && slug.current == $slug][0] {    title, excerpt, articleType, publishedAt,    "categories": categories[]->title,    "mainImageUrl": mainImage.asset->url,    "wordCount": length(pt::text(body)),    "series": series->{ title },    seriesOrder  }
+export type ArticleOgQueryResult = {
+  title: string | null
+  excerpt: string | null
+  articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+  publishedAt: string | null
+  categories: Array<string | null> | null
+  mainImageUrl: string | null
+  wordCount: number
+  series: {
+    title: string | null
+  } | null
+  seriesOrder: number | null
+} | null
+
+// Source: sanity/lib/queries-knowledge.ts
+// Variable: noteTitlesQuery
+// Query: *[_type == "note" && defined(slug.current)] | order(coalesce(lastTended, _updatedAt) desc) {    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)  }
+export type NoteTitlesQueryResult = Array<{
+  _id: string
+  title: string | null
+  slug: string | null
+  status: 'evergreen' | 'growing' | 'seedling' | null
+  lastTended: string
+}>
+
+// Source: sanity/lib/queries-knowledge.ts
+// Variable: reviewQuery
+// Query: *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {    _id,    title,    "slug": slug.current,    articleType,    conceptCards[]{ _key, front, back },    "quizzes": body[_type == "knowledgeQuiz"]{ _key, question, explanation, options[]{ _key, text, isCorrect } }  }
+export type ReviewQueryResult = Array<{
+  _id: string
+  title: string | null
+  slug: string | null
+  articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+  conceptCards: Array<{
+    _key: string
+    front: string | null
+    back: string | null
+  }> | null
+  quizzes: Array<{
+    _key: string
+    question: string | null
+    explanation: string | null
+    options: Array<{
+      _key: string
+      text: string | null
+      isCorrect: boolean | null
+    }> | null
+  }> | null
+}>
+
+// Source: sanity/lib/queries-knowledge.ts
+// Variable: gardenHealthQuery
+// Query: {  "seedlings": count(*[_type == "note" && status == "seedling"]),  "growing": count(*[_type == "note" && status == "growing"]),  "evergreen": count(*[_type == "note" && status == "evergreen"]),  "untended": *[_type == "note" && coalesce(lastTended, _updatedAt) < $cutoff] | order(coalesce(lastTended, _updatedAt) asc) {    _id, title, status, "lastTended": coalesce(lastTended, _updatedAt)  },  "postsWithoutTags": *[_type == "post" && count(tags) == 0] | order(publishedAt desc) { _id, title },  "orphanNotes": *[_type == "note" && count(relatedNotes) == 0 && count(relatedPosts) == 0 && count(*[_type in ["note","post"] && references(^._id)]) == 0] { _id, title, status },  "unusedTags": *[_type == "tag" && count(*[_type in ["note","post"] && references(^._id)]) == 0] { _id, title }}
+export type GardenHealthQueryResult = {
+  seedlings: number
+  growing: number
+  evergreen: number
+  untended: Array<{
+    _id: string
+    title: string | null
+    status: 'evergreen' | 'growing' | 'seedling' | null
+    lastTended: string
+  }>
+  postsWithoutTags: Array<{
+    _id: string
+    title: string | null
+  }>
+  orphanNotes: Array<{
+    _id: string
+    title: string | null
+    status: 'evergreen' | 'growing' | 'seedling' | null
+  }>
+  unusedTags: Array<{
+    _id: string
+    title: string | null
+  }>
+}
 
 // Source: sanity/lib/queries.ts
 // Variable: settingsQuery
@@ -1886,8 +2065,8 @@ export type GalleriesQueryResult = Array<{
   } | null
   category: {
     title: string | 'Uncategorized'
-    slug: ''
-    themeColor: null
+    slug: string | ''
+    themeColor: string | null
   } | null
   system: string | null
   lens: string | null
@@ -1958,8 +2137,8 @@ export type GalleryBySlugQueryResult = {
   overview: string | null
   category: {
     title: string | 'Uncategorized'
-    slug: ''
-    themeColor: null
+    slug: string | ''
+    themeColor: string | null
   } | null
   system: string | null
   lens: string | null
@@ -1974,8 +2153,8 @@ export type GalleryBySlugQueryResult = {
 export type CategoriesQueryResult = Array<{
   _id: string
   title: string | null
-  slug: null
-  themeColor: null
+  slug: string | null
+  themeColor: string | null
 }>
 
 // Source: sanity/lib/queries.ts
@@ -2976,6 +3155,11 @@ export type NowQueryResult = {
 
 declare module '@sanity/client' {
   interface SanityQueries {
+    '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, body, tldr, excerpt\n  }\n': ArticleTextQueryResult
+    '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, excerpt, articleType, publishedAt,\n    "categories": categories[]->title,\n    "mainImageUrl": mainImage.asset->url,\n    "wordCount": length(pt::text(body)),\n    "series": series->{ title },\n    seriesOrder\n  }\n': ArticleOgQueryResult
+    '\n  *[_type == "note" && defined(slug.current)] | order(coalesce(lastTended, _updatedAt) desc) {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  }\n': NoteTitlesQueryResult
+    '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    articleType,\n    conceptCards[]{ _key, front, back },\n    "quizzes": body[_type == "knowledgeQuiz"]{ _key, question, explanation, options[]{ _key, text, isCorrect } }\n  }\n': ReviewQueryResult
+    '{\n  "seedlings": count(*[_type == "note" && status == "seedling"]),\n  "growing": count(*[_type == "note" && status == "growing"]),\n  "evergreen": count(*[_type == "note" && status == "evergreen"]),\n  "untended": *[_type == "note" && coalesce(lastTended, _updatedAt) < $cutoff] | order(coalesce(lastTended, _updatedAt) asc) {\n    _id, title, status, "lastTended": coalesce(lastTended, _updatedAt)\n  },\n  "postsWithoutTags": *[_type == "post" && count(tags) == 0] | order(publishedAt desc) { _id, title },\n  "orphanNotes": *[_type == "note" && count(relatedNotes) == 0 && count(relatedPosts) == 0 && count(*[_type in ["note","post"] && references(^._id)]) == 0] { _id, title, status },\n  "unusedTags": *[_type == "tag" && count(*[_type in ["note","post"] && references(^._id)]) == 0] { _id, title }\n}': GardenHealthQueryResult
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    instagram,\n    bluesky,\n    gitbook,\n    calendlyUrl,\n    openTo,\n    footerHeadlinePrefix,\n    footerHeadlineHighlight,\n    footerHeadlineSuffix,\n    archiveTitle,\n    archiveSubtitle,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": coalesce(slug.current, ""),\n        title\n      }\n    },\n    ogImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n  }\n': SettingsQueryResult
     '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n        overview,\n        "slug": coalesce(slug.current, ""),\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl,\n        outcome,\n        role\n      }\n    }\n  }\n': HomePageQueryResult
     '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  "wordCount": length(pt::text(body)),\n  "series": series->{ title, "slug": slug.current }\n },\n  "recentPosts": *[_type == "post" && isFeatured != true] | order(publishedAt desc)[0...3] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  "wordCount": length(pt::text(body)),\n  "series": series->{ title, "slug": slug.current }\n },\n  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {\n    _id, title, author, mediaType, progressPercent, "coverUrl": coverImage.asset->url\n  },\n  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...3] {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  }\n}': HomeIntelQueryResult

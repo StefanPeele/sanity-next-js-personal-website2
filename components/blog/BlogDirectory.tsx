@@ -1,48 +1,38 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { EmptyThumbnail } from '@/components/blog/EmptyThumbnail'
-import { PostCardSkeleton } from '@/components/blog/PostCardSkeleton'
+import { ARTICLE_TYPES, articleTypeMeta, type ArticleType } from '@/lib/site'
+import { formatDate } from '@/lib/dates'
+import { readingTime } from '@/lib/reading'
+import { noteStatus } from '@/components/garden/status'
+import type { BlogIndexQueryResult } from '@/sanity.types'
 // components/blog/BlogDirectory.tsx
+// Directory + filters + grid for /blog. Filters live in the URL:
+//   ?category=  ?lane=  ?tag=  ?sort=newest|oldest|longest
+// Posts paint immediately on the server; read-state dimming applies after mount.
 
-interface Post {
-  _id: string
-  title: string
-  slug: string
-  publishedAt: string
-  excerpt?: string
-  imageUrl?: string
-  categories?: string[]
-  articleType?: string  // NEW
-  readTime?: number     // NEW — passed from page if available
-}
+export type DirectoryPost = BlogIndexQueryResult['posts'][number]
 
 interface BlogDirectoryProps {
-  posts: Post[]
+  posts: DirectoryPost[]
   categories: string[]
   totalCount: number
   latestDate: string | null
+  series: BlogIndexQueryResult['series']
+  currentlyReading: BlogIndexQueryResult['currentlyReading']
+  recentNotes: BlogIndexQueryResult['recentNotes']
 }
 
-const ARTICLE_TYPE_CONFIG: Record<string, { icon: string; color: string }> = {
-  'perspective':       { icon: '🔭', color: 'text-violet-400 border-violet-500/30 bg-violet-950/10' },
-  'concept-deep-dive': { icon: '⚡', color: 'text-amber-400  border-amber-500/30  bg-amber-950/10' },
-  'field-notes':       { icon: '🔧', color: 'text-emerald-400 border-emerald-500/30 bg-emerald-950/10' },
-  'transmission':      { icon: '📡', color: 'text-blue-400   border-blue-500/30   bg-blue-950/10' },
-}
-
-function estimateReadTime(excerpt?: string): number {
-  if (!excerpt) return 2
-  const words = excerpt.split(/\s+/).length
-  return Math.max(1, Math.ceil((words * 8) / 200))
-}
+type Sort = 'newest' | 'oldest' | 'longest'
 
 const READ_POSTS_KEY = 'sp_read_posts'
+const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 function getReadPosts(): Set<string> {
-  if (typeof window === 'undefined') return new Set()
   try {
     const stored = localStorage.getItem(READ_POSTS_KEY)
     return stored ? new Set(JSON.parse(stored)) : new Set()
@@ -50,7 +40,6 @@ function getReadPosts(): Set<string> {
 }
 
 function markPostRead(slug: string) {
-  if (typeof window === 'undefined') return
   try {
     const current = getReadPosts()
     current.add(slug)
@@ -58,84 +47,121 @@ function markPostRead(slug: string) {
   } catch {}
 }
 
-export function BlogDirectory({ posts, categories, totalCount, latestDate }: BlogDirectoryProps) {
-  const router       = useRouter()
-  const pathname     = usePathname()
+const MEDIA_LABEL: Record<string, string> = {
+  book: 'Book', article: 'Article', whitepaper: 'White paper', 'industry-paper': 'Industry paper',
+  rfc: 'RFC', 'research-paper': 'Paper', podcast: 'Podcast', newsletter: 'Newsletter', video: 'Video', documentation: 'Docs',
+}
+
+function chip(active: boolean) {
+  return `font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm border transition-all duration-200 ${FOCUS} ${
+    active
+      ? 'border-white/50 text-white bg-white/15 shadow-sm'
+      : 'border-white/20 text-stone-300 hover:border-white/40 hover:text-white hover:bg-white/[0.08]'
+  }`
+}
+
+export function BlogDirectory({ posts, categories, totalCount, latestDate, series, currentlyReading, recentNotes }: BlogDirectoryProps) {
+  const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const activeFromUrl             = searchParams.get('category')
-  const [active, setActive]       = useState<string | null>(activeFromUrl)
+  const active = searchParams.get('category')
+  const lane = searchParams.get('lane')
+  const tag = searchParams.get('tag')
+  const sort = (searchParams.get('sort') as Sort | null) ?? 'newest'
+
   const [readPosts, setReadPosts] = useState<Set<string>>(new Set())
-  const [mounted, setMounted]     = useState(false)
-  const archiveRef                = useRef<HTMLDivElement>(null)
+  const [mounted, setMounted] = useState(false)
+  const archiveRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setReadPosts(getReadPosts())
     setMounted(true)
   }, [])
 
-  const updateFilter = useCallback((cat: string | null) => {
-    setActive(cat)
-    const params = new URLSearchParams(searchParams.toString())
-    if (cat) { params.set('category', cat) } else { params.delete('category') }
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-  }, [pathname, router, searchParams])
+  const setParam = useCallback(
+    (key: string, value: string | null) => {
+      const params = new URLSearchParams(searchParams.toString())
+      if (value) params.set(key, value)
+      else params.delete(key)
+      const qs = params.toString()
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+    },
+    [pathname, router, searchParams],
+  )
+
+  const clearAll = useCallback(() => router.replace(pathname, { scroll: false }), [router, pathname])
 
   const handleDirectoryClick = (cat: string) => {
-    updateFilter(active === cat ? null : cat)
-    setTimeout(() => {
-      archiveRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 50)
+    setParam('category', active === cat ? null : cat)
+    setTimeout(() => archiveRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
   }
 
-  const filtered = active ? posts.filter((p) => p.categories?.includes(active)) : posts
+  const allTags = useMemo(() => {
+    const map = new Map<string, { title: string; count: number }>()
+    posts.forEach((p) => (p.tags ?? []).forEach((t) => {
+      if (!t?.slug) return
+      const cur = map.get(t.slug)
+      map.set(t.slug, { title: t.title ?? t.slug, count: (cur?.count ?? 0) + 1 })
+    }))
+    return [...map.entries()].map(([slug, v]) => ({ slug, ...v })).sort((a, b) => b.count - a.count || a.title.localeCompare(b.title))
+  }, [posts])
+
+  const filtered = useMemo(() => {
+    let list = posts
+    if (active) list = list.filter((p) => p.categories?.includes(active))
+    if (lane) list = list.filter((p) => p.articleType === lane)
+    if (tag) list = list.filter((p) => (p.tags ?? []).some((t) => t?.slug === tag))
+    const byDate = (a: DirectoryPost, b: DirectoryPost) => (b.publishedAt ?? '').localeCompare(a.publishedAt ?? '')
+    if (sort === 'oldest') list = [...list].sort((a, b) => byDate(b, a))
+    else if (sort === 'longest') list = [...list].sort((a, b) => (b.wordCount ?? 0) - (a.wordCount ?? 0))
+    else list = [...list].sort(byDate)
+    return list
+  }, [posts, active, lane, tag, sort])
+
+  const anyFilter = Boolean(active || lane || tag)
+  const activeLabel = [active, lane && articleTypeMeta(lane)?.label, tag && `#${allTags.find((t) => t.slug === tag)?.title ?? tag}`].filter(Boolean).join(' · ')
 
   return (
     <>
       {/* ── Section Directory ──────────────────────────────────────── */}
       <nav
-        className="mb-20 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10 border border-white/15 rounded-lg overflow-hidden"
+        aria-label="Directory"
+        className="mb-12 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10 border border-white/15 rounded-lg overflow-hidden"
         style={{ backgroundColor: 'rgba(20,20,24,0.85)', backdropFilter: 'blur(12px)' }}
       >
         {/* Column 1 — Content Pillars */}
         <div className="p-6">
-          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 mb-5 pb-3 border-b border-white/10">
-            Content Pillars
-          </p>
+          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 mb-5 pb-3 border-b border-white/10">Content Pillars</p>
           <ul className="space-y-1">
             {categories.length > 0 ? categories.map((cat) => (
               <li key={cat}>
                 <button
+                  type="button"
                   onClick={() => handleDirectoryClick(cat)}
-                  className={`w-full text-left font-mono text-[11px] uppercase tracking-[0.2em] transition-all duration-200 flex items-center justify-between px-3 py-2.5 rounded-md border group ${
+                  aria-pressed={active === cat}
+                  className={`w-full text-left font-mono text-[11px] uppercase tracking-[0.2em] transition-all duration-200 flex items-center justify-between px-3 py-2.5 rounded-md border group ${FOCUS} ${
                     active === cat
                       ? 'text-white bg-white/15 border-white/30 shadow-sm'
                       : 'text-stone-300 hover:text-white hover:bg-white/[0.08] border-transparent hover:border-white/15'
                   }`}
                 >
                   <span className="flex items-center gap-2.5">
-                    <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 transition-all ${
-                      active === cat ? 'bg-white scale-125' : 'bg-stone-500 group-hover:bg-stone-300'
-                    }`} />
+                    <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 transition-all ${active === cat ? 'bg-white scale-125' : 'bg-stone-500 group-hover:bg-stone-300'}`} aria-hidden="true" />
                     {cat}
                   </span>
-                  <span className={`text-[10px] font-mono transition-colors ${
-                    active === cat ? 'text-stone-300' : 'text-stone-500 group-hover:text-stone-300'
-                  }`}>
-                    {posts.filter(p => p.categories?.includes(cat)).length}
+                  <span className={`text-[10px] font-mono transition-colors ${active === cat ? 'text-stone-300' : 'text-stone-500 group-hover:text-stone-300'}`}>
+                    {posts.filter((p) => p.categories?.includes(cat)).length}
                   </span>
                 </button>
               </li>
             )) : (
               <li className="font-mono text-[10px] text-stone-500 px-3 py-2">No categories yet</li>
             )}
-            {active && (
+            {anyFilter && (
               <li className="pt-3 mt-2 border-t border-white/10">
-                <button
-                  onClick={() => updateFilter(null)}
-                  className="font-mono text-[10px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors flex items-center gap-2 px-3 py-1"
-                >
-                  <span className="text-xs">✕</span> Clear filter
+                <button type="button" onClick={clearAll} className={`font-mono text-[10px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors flex items-center gap-2 px-3 py-1 rounded-sm ${FOCUS}`}>
+                  <span className="text-xs" aria-hidden="true">✕</span> Clear filters
                 </button>
               </li>
             )}
@@ -144,63 +170,37 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate }: Blo
 
         {/* Column 2 — Reference Tools */}
         <div className="p-6">
-          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 mb-5 pb-3 border-b border-white/10">
-            Reference Tools
-          </p>
+          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 mb-5 pb-3 border-b border-white/10">Reference Tools</p>
           <ul className="space-y-1">
-            <li>
-              <Link
-                href="/blog/osi-model"
-                className="group font-mono text-[11px] uppercase tracking-[0.2em] text-stone-300 hover:text-white transition-all duration-200 flex items-center justify-between px-3 py-2.5 rounded-md border border-transparent hover:border-white/15 hover:bg-white/[0.08]"
-              >
-                <span className="flex items-center gap-2.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-stone-500 group-hover:bg-white flex-shrink-0 transition-colors" />
-                  OSI Model Explorer
-                </span>
-                <span className="text-stone-500 group-hover:text-white group-hover:translate-x-0.5 transition-all">→</span>
-              </Link>
-            </li>
-            <li>
-              <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-stone-600 flex items-center justify-between px-3 py-2.5 cursor-not-allowed">
-                <span className="flex items-center gap-2.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-stone-700 flex-shrink-0" />
-                  TCP/IP Deep Dive
-                </span>
-                <span className="text-[8px] tracking-widest text-stone-700 border border-stone-700 px-1.5 py-0.5 rounded-sm">Soon</span>
-              </div>
-            </li>
-            <li className="pt-3 mt-2 border-t border-white/[0.08]">
-              <Link
-                href="/garden"
-                className="group font-mono text-[11px] uppercase tracking-[0.2em] text-stone-300 hover:text-white transition-all duration-200 flex items-center justify-between px-3 py-2.5 rounded-md border border-transparent hover:border-white/15 hover:bg-white/[0.08]"
-              >
-                <span className="flex items-center gap-2.5">
-                  <span className="text-sm">🌱</span>
-                  The Garden
-                </span>
-                <span className="text-stone-500 group-hover:text-white group-hover:translate-x-0.5 transition-all">→</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/graph"
-                className="group font-mono text-[11px] uppercase tracking-[0.2em] text-stone-300 hover:text-white transition-all duration-200 flex items-center justify-between px-3 py-2.5 rounded-md border border-transparent hover:border-white/15 hover:bg-white/[0.08]"
-              >
-                <span className="flex items-center gap-2.5">
-                  <span className="text-sm">◉</span>
-                  Knowledge Graph
-                </span>
-                <span className="text-stone-500 group-hover:text-white group-hover:translate-x-0.5 transition-all">→</span>
-              </Link>
-            </li>
+            {[
+              { href: '/blog/osi-model', label: 'OSI Model Explorer', icon: '◎' },
+              { href: '/garden', label: 'The Garden', icon: '🌱' },
+              { href: '/graph', label: 'Knowledge Graph', icon: '◉' },
+              { href: '/library', label: 'Library', icon: '▤' },
+              { href: '/glossary', label: 'Glossary', icon: 'Aa' },
+              { href: '/paths', label: 'Learning Paths', icon: '⇢' },
+              { href: '/blog/series', label: 'Series', icon: '≡' },
+              { href: '/review', label: 'Review deck', icon: '↻' },
+            ].map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={`group font-mono text-[11px] uppercase tracking-[0.2em] text-stone-300 hover:text-white transition-all duration-200 flex items-center justify-between px-3 py-2 rounded-md border border-transparent hover:border-white/15 hover:bg-white/[0.08] ${FOCUS}`}
+                >
+                  <span className="flex items-center gap-2.5">
+                    <span className="w-4 text-center text-[11px] text-stone-500 group-hover:text-white" aria-hidden="true">{item.icon}</span>
+                    {item.label}
+                  </span>
+                  <span className="text-stone-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" aria-hidden="true">→</span>
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Column 3 — Archive Stats */}
         <div className="p-6">
-          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 mb-5 pb-3 border-b border-white/10">
-            Archive
-          </p>
+          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 mb-5 pb-3 border-b border-white/10">Archive</p>
           <ul className="space-y-4">
             <li className="flex items-baseline justify-between">
               <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400">Total Posts</span>
@@ -211,185 +211,266 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate }: Blo
               <span className="font-mono text-[10px] text-stone-200">{latestDate ?? '—'}</span>
             </li>
             <li className="flex items-baseline justify-between">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400">Status</span>
-              <span className="font-mono text-[10px] text-emerald-400 flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Active
-              </span>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400">Series</span>
+              <span className="font-mono text-[10px] text-stone-200">{series.length}</span>
             </li>
             {mounted && readPosts.size > 0 && (
               <li className="flex items-baseline justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400">Read</span>
-                <span className="font-mono text-[10px] text-stone-300">{readPosts.size} / {totalCount}</span>
+                <span className="font-mono text-[10px] text-stone-300">{Math.min(readPosts.size, totalCount)} / {totalCount}</span>
               </li>
             )}
           </ul>
         </div>
       </nav>
 
+      {/* ── Series rail ───────────────────────────────────────────── */}
+      {series.length > 0 && (
+        <section className="mb-12" aria-labelledby="series-rail">
+          <div className="mb-4 flex items-center justify-between">
+            <span id="series-rail" className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-600 pl-3">Series</span>
+            <Link href="/blog/series" className={`font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-white transition-colors rounded-sm ${FOCUS}`}>All series →</Link>
+          </div>
+          <ul className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x">
+            {series.map((s) => (
+              <li key={s._id} className="snap-start flex-shrink-0 w-64">
+                <Link
+                  href={`/blog/series/${s.slug}`}
+                  className={`block h-full rounded-lg border border-white/10 hover:border-white/30 bg-white/[0.02] p-4 transition-colors ${FOCUS}`}
+                >
+                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 block mb-2">{s.count} part{s.count === 1 ? '' : 's'}</span>
+                  <span className="font-serif text-white text-base leading-snug block mb-1">{s.title}</span>
+                  {s.description && <span className="text-stone-400 text-xs line-clamp-2 block">{s.description}</span>}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* ── Currently reading + Recently tended ───────────────────── */}
+      {(currentlyReading.length > 0 || recentNotes.length > 0) && (
+        <div className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {currentlyReading.length > 0 && (
+            <section className="rounded-lg border border-white/10 bg-white/[0.02] p-5" aria-labelledby="reading-strip">
+              <div className="mb-3 flex items-center justify-between">
+                <span id="reading-strip" className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-emerald-600 pl-3">Currently reading</span>
+                <Link href="/library" className={`font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-white transition-colors rounded-sm ${FOCUS}`}>Library →</Link>
+              </div>
+              <ul className="space-y-3">
+                {currentlyReading.map((item) => (
+                  <li key={item._id}>
+                    <Link href={`/library#${item._id}`} className={`block rounded-sm ${FOCUS}`}>
+                      <span className="flex items-baseline justify-between gap-3">
+                        <span className="font-serif text-sm text-white leading-snug">{item.title}</span>
+                        <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 flex-shrink-0">{MEDIA_LABEL[item.mediaType ?? ''] ?? item.mediaType}</span>
+                      </span>
+                      {item.author && <span className="font-mono text-[9px] text-stone-500 block">{item.author}</span>}
+                      {typeof item.progressPercent === 'number' && (
+                        <span className="flex items-center gap-2 mt-1.5">
+                          <span className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${item.title} progress`}>
+                            <span className="block h-full bg-emerald-500/70 rounded-full" style={{ width: `${item.progressPercent}%` }} />
+                          </span>
+                          <span className="font-mono text-[8px] text-stone-500">{item.progressPercent}%</span>
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          {recentNotes.length > 0 && (
+            <section className="rounded-lg border border-white/10 bg-white/[0.02] p-5" aria-labelledby="notes-strip">
+              <div className="mb-3 flex items-center justify-between">
+                <span id="notes-strip" className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-green-600 pl-3">Recently tended notes</span>
+                <Link href="/garden" className={`font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-white transition-colors rounded-sm ${FOCUS}`}>Garden →</Link>
+              </div>
+              <ul className="space-y-2">
+                {recentNotes.map((n) => {
+                  const s = noteStatus(n.status)
+                  return (
+                    <li key={n._id}>
+                      <Link href={`/garden/${n.slug}`} className={`group flex items-center gap-2.5 rounded-sm ${FOCUS}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${s.dot}`} aria-hidden="true" />
+                        <span className="font-serif text-sm text-stone-200 group-hover:text-white transition-colors">{n.title}</span>
+                        <span className="ml-auto font-mono text-[8px] uppercase tracking-widest text-stone-500 flex-shrink-0">{s.label}</span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            </section>
+          )}
+        </div>
+      )}
+
       {/* ── Archive header ─────────────────────────────────────────── */}
-      <div
-        ref={archiveRef}
-        className="mb-6 border-b border-white/10 pb-5 flex items-end justify-between scroll-mt-24"
-      >
+      <div ref={archiveRef} className="mb-6 border-b border-white/10 pb-5 flex items-end justify-between scroll-mt-24">
         <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-300 border-l-2 border-stone-400 pl-4">
-          Archive // {active ?? 'All Posts'}
+          Archive // {activeLabel || 'All Posts'}
         </span>
-        <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">
+        <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest" aria-live="polite">
           {filtered.length} post{filtered.length !== 1 ? 's' : ''}
         </span>
       </div>
 
-      {/* ── Filter bar ─────────────────────────────────────────────── */}
-      <div className="flex items-center gap-2 flex-wrap mb-10">
-        <button
-          onClick={() => updateFilter(null)}
-          className={`font-mono text-[10px] uppercase tracking-[0.2em] px-4 py-2 rounded-sm border transition-all duration-200 ${
-            active === null
-              ? 'border-white/50 text-white bg-white/15 shadow-sm'
-              : 'border-white/20 text-stone-300 hover:border-white/40 hover:text-white hover:bg-white/[0.08]'
-          }`}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => updateFilter(active === cat ? null : cat)}
-            className={`font-mono text-[10px] uppercase tracking-[0.2em] px-4 py-2 rounded-sm border transition-all duration-200 ${
-              active === cat
-                ? 'border-white/50 text-white bg-white/15 shadow-sm'
-                : 'border-white/20 text-stone-300 hover:border-white/40 hover:text-white hover:bg-white/[0.08]'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+      {/* ── Filter bars ────────────────────────────────────────────── */}
+      <div className="space-y-3 mb-10">
+        <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by lane">
+          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 w-16">Lane</span>
+          <button type="button" onClick={() => setParam('lane', null)} aria-pressed={lane === null} className={chip(lane === null)}>All</button>
+          {(Object.keys(ARTICLE_TYPES) as ArticleType[]).map((key) => {
+            const meta = ARTICLE_TYPES[key]
+            const on = lane === key
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setParam('lane', on ? null : key)}
+                aria-pressed={on}
+                className={chip(on)}
+                style={on ? { borderColor: meta.color, color: meta.color, backgroundColor: meta.bg } : undefined}
+              >
+                <span className="w-1.5 h-1.5 rounded-full inline-block mr-2 align-middle" style={{ backgroundColor: meta.color }} aria-hidden="true" />
+                {meta.label}
+              </button>
+            )
+          })}
+        </div>
+
+        {categories.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by category">
+            <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 w-16">Pillar</span>
+            <button type="button" onClick={() => setParam('category', null)} aria-pressed={active === null} className={chip(active === null)}>All</button>
+            {categories.map((cat) => (
+              <button key={cat} type="button" onClick={() => setParam('category', active === cat ? null : cat)} aria-pressed={active === cat} className={chip(active === cat)}>
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {allTags.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by tag">
+            <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 w-16">Tag</span>
+            {allTags.map((t) => (
+              <button key={t.slug} type="button" onClick={() => setParam('tag', tag === t.slug ? null : t.slug)} aria-pressed={tag === t.slug} className={chip(tag === t.slug)}>
+                #{t.title} <span className="opacity-60 text-[8px]">{t.count}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Sort">
+          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 w-16">Sort</span>
+          {(['newest', 'oldest', 'longest'] as Sort[]).map((s) => (
+            <button key={s} type="button" onClick={() => setParam('sort', s === 'newest' ? null : s)} aria-pressed={sort === s} className={chip(sort === s)}>
+              {s}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ── Post grid ──────────────────────────────────────────────── */}
-      {!mounted ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {Array.from({ length: 3 }).map((_, i) => <PostCardSkeleton key={i} />)}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filtered.length > 0 ? filtered.map((post) => {
-            const isRead     = readPosts.has(post.slug)
-            const readTime   = post.readTime ?? estimateReadTime(post.excerpt)
-            const firstCat   = post.categories?.[0]
-            const typeConfig = post.articleType ? ARTICLE_TYPE_CONFIG[post.articleType] : null
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {filtered.length > 0 ? filtered.map((post) => {
+          const isRead = mounted && post.slug ? readPosts.has(post.slug) : false
+          const minutes = readingTime(post.wordCount ?? 0)
+          const firstCat = post.categories?.[0] ?? undefined
+          const meta = articleTypeMeta(post.articleType)
 
-            return (
-              <a
-                href={`/blog/${post.slug}`}
-                key={post._id}
-                onClick={() => markPostRead(post.slug)}
-                className={`group flex flex-col space-y-4 cursor-pointer transition-all duration-300 ${
-                  isRead ? 'opacity-50 hover:opacity-100' : 'opacity-100'
-                }`}
-              >
-                {/* Thumbnail */}
-                <div
-                  className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-white/15 relative"
-                  style={{ backgroundColor: 'rgba(20,20,24,0.8)' }}
-                >
-                  <div className="absolute inset-0 z-10 bg-black/20 group-hover:bg-transparent transition-all duration-500" />
+          return (
+            <Link
+              href={`/blog/${post.slug}`}
+              key={post._id}
+              onClick={() => post.slug && markPostRead(post.slug)}
+              className={`group flex flex-col space-y-4 transition-all duration-300 rounded-lg ${FOCUS} ${isRead ? 'opacity-60 hover:opacity-100' : 'opacity-100'}`}
+            >
+              <div className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-white/15 relative" style={{ backgroundColor: 'rgba(20,20,24,0.8)' }}>
+                <div className="absolute inset-0 z-10 bg-black/20 group-hover:bg-transparent transition-all duration-500" />
 
-                  {post.imageUrl ? (
-                    <div
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                      style={{ backgroundImage: `url(${post.imageUrl})`, filter: 'grayscale(30%)' }}
-                    />
-                  ) : (
-                    <EmptyThumbnail title={post.title} category={firstCat} />
-                  )}
+                {post.imageUrl ? (
+                  <Image
+                    src={post.imageUrl}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    placeholder={post.lqip ? 'blur' : 'empty'}
+                    blurDataURL={post.lqip ?? undefined}
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    style={{ filter: 'grayscale(30%)' }}
+                  />
+                ) : (
+                  <EmptyThumbnail title={post.title ?? 'Untitled'} category={firstCat} />
+                )}
 
-                  {/* Article type badge — top left */}
-                  {typeConfig && (
-                    <div className={`absolute top-3 left-3 z-20 font-mono text-[8px] uppercase tracking-widest px-2 py-1 rounded-sm border backdrop-blur-sm ${typeConfig.color}`}>
-                      {typeConfig.icon}
-                    </div>
-                  )}
-
-                  {/* Read badge — top right */}
-                  {isRead && (
-                    <div className="absolute top-3 right-3 z-20 font-mono text-[8px] uppercase tracking-widest text-stone-300 bg-black/70 px-2 py-1 rounded-sm border border-white/15 backdrop-blur-sm">
-                      Read
-                    </div>
-                  )}
-
-                  {/* Hover CTA */}
-                  <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="font-mono text-[11px] uppercase tracking-widest text-white bg-black/75 px-5 py-2.5 rounded-sm backdrop-blur-sm border border-white/25 shadow-lg">
-                      {isRead ? 'Read Again →' : 'Read Article →'}
-                    </span>
+                {meta && (
+                  <div
+                    className="absolute top-3 left-3 z-20 font-mono text-[8px] uppercase tracking-widest px-2 py-1 rounded-sm border backdrop-blur-sm"
+                    style={{ color: meta.color, borderColor: `${meta.color}55`, backgroundColor: meta.bg }}
+                  >
+                    {meta.short}
                   </div>
+                )}
+
+                {isRead && (
+                  <div className="absolute top-3 right-3 z-20 font-mono text-[8px] uppercase tracking-widest text-stone-300 bg-black/70 px-2 py-1 rounded-sm border border-white/15 backdrop-blur-sm">
+                    Read
+                  </div>
+                )}
+
+                <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
+                  <span className="font-mono text-[11px] uppercase tracking-widest text-white bg-black/75 px-5 py-2.5 rounded-sm backdrop-blur-sm border border-white/25 shadow-lg">
+                    {isRead ? 'Read Again →' : 'Read Article →'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col flex-grow">
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <div className="flex gap-2 flex-wrap items-center">
+                    {meta && (
+                      <span className="font-mono text-[8px] tracking-[0.2em] uppercase border px-2 py-0.5 rounded-sm" style={{ color: meta.color, borderColor: `${meta.color}55`, backgroundColor: meta.bg }}>
+                        {meta.label}
+                      </span>
+                    )}
+                    {firstCat && (
+                      <span className={`font-mono text-[9px] tracking-[0.2em] uppercase border px-2 py-1 rounded-sm ${firstCat === active ? 'border-stone-300 text-stone-200 bg-white/[0.08]' : 'border-stone-600 text-stone-400'}`}>
+                        {firstCat}
+                      </span>
+                    )}
+                    {post.series?.title && (
+                      <span className="font-mono text-[8px] tracking-[0.2em] uppercase text-orange-300/80">≡ {post.series.title}</span>
+                    )}
+                  </div>
+                  <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest flex-shrink-0">{minutes} min</span>
                 </div>
 
-                <div className="flex flex-col flex-grow">
-                  {/* Article type label + read time */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <div className="flex gap-2 flex-wrap items-center">
-                      {/* Article type text badge */}
-                      {typeConfig && post.articleType && (
-                        <span className={`font-mono text-[8px] tracking-[0.2em] uppercase border px-2 py-0.5 rounded-sm ${typeConfig.color}`}>
-                          {post.articleType.replace(/-/g, ' ')}
-                        </span>
-                      )}
-                      {/* Category tags */}
-                      {post.categories?.slice(0, 1).map((cat) => (
-                        <span
-                          key={cat}
-                          className={`font-mono text-[9px] tracking-[0.2em] uppercase border px-2 py-1 rounded-sm ${
-                            cat === active
-                              ? 'border-stone-300 text-stone-200 bg-white/[0.08]'
-                              : 'border-stone-600 text-stone-400'
-                          }`}
-                        >
-                          {cat}
-                        </span>
-                      ))}
-                    </div>
-                    <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest flex-shrink-0">
-                      {readTime} min
-                    </span>
-                  </div>
+                <h3 className="text-xl font-serif text-white group-hover:text-stone-100 transition-colors mb-2 leading-snug">{post.title}</h3>
 
-                  {/* Title */}
-                  <h3 className="text-xl font-serif text-white group-hover:text-stone-100 transition-colors mb-2 leading-snug">
-                    {post.title}
-                  </h3>
+                <p className="text-stone-300 text-sm line-clamp-2 mb-4 flex-grow leading-relaxed">{post.excerpt}</p>
 
-                  {/* Excerpt */}
-                  <p className="text-stone-300 text-sm line-clamp-2 mb-4 flex-grow leading-relaxed">
-                    {post.excerpt}
-                  </p>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-widest border-t border-white/10 pt-4">
-                    <span className="text-stone-400">
-                      {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                        month: 'short', day: 'numeric', year: 'numeric',
-                      })}
-                    </span>
-                    <span className="text-stone-300 group-hover:text-white flex items-center gap-1.5 transition-colors">
-                      Read
-                      <span className="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
-                    </span>
-                  </div>
+                <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-widest border-t border-white/10 pt-4">
+                  <time dateTime={formatDate(post.publishedAt, 'iso')} className="text-stone-400">{formatDate(post.publishedAt, 'short', 'Undated')}</time>
+                  <span className="text-stone-300 group-hover:text-white flex items-center gap-1.5 transition-colors">
+                    Read <span className="group-hover:translate-x-0.5 transition-transform inline-block" aria-hidden="true">→</span>
+                  </span>
                 </div>
-              </a>
-            )
-          }) : (
-            <div className="col-span-3 py-20 text-center">
-              <p className="font-mono text-[10px] text-stone-500 uppercase tracking-widest">
-                No posts in this category yet.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
+              </div>
+            </Link>
+          )
+        }) : (
+          <div className="col-span-3 py-20 text-center">
+            <p className="font-mono text-[10px] text-stone-500 uppercase tracking-widest mb-3">No posts match these filters yet.</p>
+            {anyFilter && (
+              <button type="button" onClick={clearAll} className={`font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white underline underline-offset-4 rounded-sm ${FOCUS}`}>
+                Clear filters
+              </button>
+            )}
+          </div>
+        )}
+      </div>
     </>
   )
 }

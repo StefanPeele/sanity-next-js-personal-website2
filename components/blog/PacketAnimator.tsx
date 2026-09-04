@@ -39,13 +39,13 @@ export function PacketAnimator({ value }: PacketAnimatorProps) {
   if (total === 0) return null
 
   return (
-    <div className="my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]">
+    <div className="article-light-invert my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]" data-no-toc>
       {/* Header */}
       <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500">
           Packet Journey
         </span>
-        <span className="font-mono text-[10px] text-stone-700">
+        <span className="font-mono text-[10px] text-stone-500">
           {value?.scenario || 'Interactive Walkthrough'}
         </span>
       </div>
@@ -67,7 +67,7 @@ export function PacketAnimator({ value }: PacketAnimatorProps) {
           ))}
         </div>
         <div className="flex justify-between mt-2">
-          <span className="font-mono text-[9px] text-stone-700 uppercase tracking-widest">
+          <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
             Step {currentStep + 1} of {total}
           </span>
           {step && (

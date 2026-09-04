@@ -109,8 +109,19 @@ export default defineType({
       title: 'Progress (for currently reading)',
       type: 'number',
       group: 'info',
-      description: 'A rough percentage. 0–100. Updated manually — honesty over precision.',
-      validation: (rule) => rule.min(0).max(100),
+      description: 'A rough percentage. 0–100. Updated manually — honesty over precision. Only meaningful while status is "Currently reading".',
+      hidden: ({ document }) => document?.status !== 'current',
+      validation: (rule) =>
+        rule
+          .min(0)
+          .max(100)
+          .custom((value, context) => {
+            const status = (context.document as { status?: string } | undefined)?.status
+            if (value !== undefined && value !== null && status !== 'current') {
+              return 'Progress only applies while the status is "Currently reading". Clear it or change the status.'
+            }
+            return true
+          }),
     }),
 
     defineField({

@@ -1,15 +1,28 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useMemo, useRef, useState, useId } from 'react'
+import { useRouter } from 'next/navigation'
+import { useReducedMotion } from 'framer-motion'
 import * as d3 from 'd3'
+import { ARTICLE_TYPES } from '@/lib/site'
+import { NOTE_STATUS } from '@/components/garden/status'
+import type { GraphQueryResult } from '@/sanity.types'
 // components/graph/KnowledgeGraph.tsx
-// D3 force-directed graph connecting posts, notes, tags, and library items.
-// D3 owns the SVG DOM entirely. React manages overlay UI only (hover cards, filters).
+// D3 force-directed graph connecting posts, notes, tags, library items, projects and series.
+// D3 owns the SVG DOM. React manages overlay UI (hover card, filters, legend, a11y list).
+//
+// Two effects: `build` (re-runs on data/filter change, rebuilds the simulation) and
+// `search` (cheap attribute update that dims non-matching nodes). Resize is debounced
+// and only re-centres + gently reheats the simulation.
 
 // ── Types ─────────────────────────────────────────────────────────
+export type GraphData = GraphQueryResult
+
+type NodeType = 'post' | 'note' | 'tag' | 'library' | 'project' | 'series'
+
 interface GraphNode extends d3.SimulationNodeDatum {
   id: string
-  type: 'post' | 'note' | 'tag' | 'library'
+  type: NodeType
   subtype?: string
   label: string
   url?: string
@@ -23,362 +36,405 @@ interface GraphLink extends d3.SimulationLinkDatum<GraphNode> {
   color: string
 }
 
-export interface GraphData {
-  posts: {
-    _id: string; title: string; slug: string; articleType?: string
-    excerpt?: string; prerequisiteIds?: string[]
-    readDeeperId?: string; readBroaderId?: string; readApplyId?: string
-  }[]
-  notes: {
-    _id: string; title: string; slug: string; status: string
-    relatedNoteIds?: string[]; relatedPostIds?: string[]; tagIds?: string[]
-  }[]
-  tags: { _id: string; title: string; slug: string; category?: string }[]
-  library: { _id: string; title: string; mediaType?: string; influencedPostIds?: string[] }[]
-}
+type FilterState = Record<NodeType, boolean>
 
-type FilterState = { posts: boolean; notes: boolean; tags: boolean; library: boolean }
-
-// ── Colors ────────────────────────────────────────────────────────
-const POST_COLORS: Record<string, string> = {
-  'perspective':       '#8b5cf6',
-  'concept-deep-dive': '#f59e0b',
-  'field-notes':       '#10b981',
-  'transmission':      '#3b82f6',
-}
-
+// ── Colours ───────────────────────────────────────────────────────
+// Lane colours are shared with ARTICLE_TYPES in lib/site.ts.
+const POST_COLORS: Record<string, string> = Object.fromEntries(
+  Object.entries(ARTICLE_TYPES).map(([k, v]) => [k, v.color]),
+)
 const NOTE_COLORS: Record<string, string> = {
-  seedling:  '#57534e',
-  growing:   '#4ade80',
-  evergreen: '#22c55e',
+  seedling: NOTE_STATUS.seedling.hex,
+  growing: NOTE_STATUS.growing.hex,
+  evergreen: NOTE_STATUS.evergreen.hex,
 }
-
+const TYPE_COLORS: Record<NodeType, string> = {
+  post: '#d6d3d1',
+  note: NOTE_STATUS.growing.hex,
+  tag: '#a855f7',
+  library: '#06b6d4',
+  project: '#f472b6',
+  series: '#fb923c',
+}
+const LIBRARY_STATUS_COLORS: Record<string, string> = {
+  current: '#22d3ee',
+  finished: '#06b6d4',
+  reference: '#0e7490',
+}
 const LINK_COLORS: Record<string, string> = {
   prerequisite: 'rgba(255,255,255,0.18)',
-  readNext:     'rgba(255,255,255,0.1)',
-  noteNote:     'rgba(74,222,128,0.18)',
-  notePost:     'rgba(74,222,128,0.12)',
-  noteTag:      'rgba(168,85,247,0.22)',
-  library:      'rgba(6,182,212,0.18)',
+  readNext: 'rgba(255,255,255,0.1)',
+  noteNote: 'rgba(74,222,128,0.18)',
+  notePost: 'rgba(74,222,128,0.12)',
+  noteTag: 'rgba(168,85,247,0.22)',
+  postTag: 'rgba(168,85,247,0.16)',
+  library: 'rgba(6,182,212,0.18)',
+  project: 'rgba(244,114,182,0.18)',
+  series: 'rgba(251,146,60,0.2)',
+}
+const DIM = 'rgba(255,255,255,0.07)'
+
+export const GRAPH_LEGEND: { color: string; label: string; shape?: 'ring' }[] = [
+  ...Object.values(ARTICLE_TYPES).map((t) => ({ color: t.color, label: t.label })),
+  { color: NOTE_STATUS.evergreen.hex, label: 'Evergreen note' },
+  { color: NOTE_STATUS.growing.hex, label: 'Growing note' },
+  { color: NOTE_STATUS.seedling.hex, label: 'Seedling note' },
+  { color: TYPE_COLORS.tag, label: 'Tag' },
+  { color: LIBRARY_STATUS_COLORS.current, label: 'Library — reading now', shape: 'ring' },
+  { color: LIBRARY_STATUS_COLORS.finished, label: 'Library — finished' },
+  { color: LIBRARY_STATUS_COLORS.reference, label: 'Library — reference' },
+  { color: TYPE_COLORS.project, label: 'Project' },
+  { color: TYPE_COLORS.series, label: 'Series' },
+]
+
+// ── Graph model ───────────────────────────────────────────────────
+export function buildGraphModel(data: GraphData, filters: FilterState) {
+  const nodes: GraphNode[] = []
+  const ids = new Set<string>()
+  const add = (n: GraphNode) => { if (!ids.has(n.id)) { nodes.push(n); ids.add(n.id) } }
+
+  if (filters.post) data.posts.forEach((p) => p.title && add({
+    id: p._id, type: 'post', subtype: p.articleType ?? 'post', label: p.title,
+    url: `/blog/${p.slug}`, radius: 10, color: POST_COLORS[p.articleType ?? ''] ?? TYPE_COLORS.post,
+    description: p.excerpt ?? undefined,
+  }))
+  if (filters.note) data.notes.forEach((n) => n.title && add({
+    id: n._id, type: 'note', subtype: n.status ?? 'seedling', label: n.title,
+    url: `/garden/${n.slug}`, radius: n.status === 'evergreen' ? 9 : 6,
+    color: NOTE_COLORS[n.status ?? ''] ?? '#78716c', description: `${n.status ?? 'seedling'} note`,
+  }))
+  if (filters.tag) data.tags.forEach((t) => t.title && add({
+    id: t._id, type: 'tag', label: `#${t.title}`, url: `/garden?tag=${t.slug}`,
+    radius: 6, color: TYPE_COLORS.tag, description: t.category ?? undefined,
+  }))
+  if (filters.library) data.library.forEach((l) => l.title && add({
+    id: l._id, type: 'library', subtype: l.status ?? undefined, label: l.title, url: `/library#${l._id}`,
+    radius: 7, color: LIBRARY_STATUS_COLORS[l.status ?? ''] ?? TYPE_COLORS.library,
+    description: [l.mediaType, l.status].filter(Boolean).join(' · '),
+  }))
+  if (filters.project) data.projects.forEach((p) => p.title && add({
+    id: p._id, type: 'project', label: p.title, url: `/projects/${p.slug}`,
+    radius: 9, color: TYPE_COLORS.project, description: 'project',
+  }))
+  if (filters.series) data.series.forEach((s) => s.title && add({
+    id: s._id, type: 'series', label: s.title, url: `/blog/series/${s.slug}`,
+    radius: 8, color: TYPE_COLORS.series, description: 'series',
+  }))
+
+  const links: GraphLink[] = []
+  const seen = new Set<string>()
+  const link = (a: string | null | undefined, b: string | null | undefined, linkType: string) => {
+    if (!a || !b || a === b || !ids.has(a) || !ids.has(b)) return
+    const key = a < b ? `${a}|${b}` : `${b}|${a}`
+    if (seen.has(key)) return
+    seen.add(key)
+    links.push({ source: a, target: b, linkType, color: LINK_COLORS[linkType] ?? 'rgba(255,255,255,0.08)' })
+  }
+
+  data.posts.forEach((p) => {
+    p.prerequisiteIds?.forEach((id) => link(p._id, id, 'prerequisite'))
+    link(p._id, p.readDeeperId, 'readNext')
+    link(p._id, p.readBroaderId, 'readNext')
+    link(p._id, p.readApplyId, 'readNext')
+    p.tagIds?.forEach((id) => link(p._id, id, 'postTag'))
+    link(p._id, p.seriesId, 'series')
+  })
+  data.notes.forEach((n) => {
+    n.relatedNoteIds?.forEach((id) => link(n._id, id, 'noteNote'))
+    n.relatedPostIds?.forEach((id) => link(n._id, id, 'notePost'))
+    n.tagIds?.forEach((id) => link(n._id, id, 'noteTag'))
+  })
+  data.library.forEach((l) => {
+    l.influencedPostIds?.forEach((id) => link(l._id, id, 'library'))
+    l.influencedNoteIds?.forEach((id) => link(l._id, id, 'library'))
+  })
+  data.projects.forEach((p) => {
+    p.relatedPostIds?.forEach((id) => link(p._id, id, 'project'))
+    p.relatedNoteIds?.forEach((id) => link(p._id, id, 'project'))
+  })
+
+  return { nodes, links }
 }
 
-const LEGEND = [
-  { color: '#8b5cf6', label: 'Perspective' },
-  { color: '#f59e0b', label: 'Concept Deep Dive' },
-  { color: '#10b981', label: 'Field Notes' },
-  { color: '#3b82f6', label: 'Transmission' },
-  { color: '#22c55e', label: 'Evergreen note' },
-  { color: '#4ade80', label: 'Growing note' },
-  { color: '#57534e', label: 'Seedling note' },
-  { color: '#a855f7', label: 'Tag' },
-  { color: '#06b6d4', label: 'Library' },
-]
+const ALL_ON: FilterState = { post: true, note: true, tag: true, library: true, project: true, series: true }
+
+/** Nodes within one hop of `focusId`, plus the edges between them. */
+export function neighborhoodOf(data: GraphData, focusId: string) {
+  const { nodes, links } = buildGraphModel(data, ALL_ON)
+  const keep = new Set<string>([focusId])
+  links.forEach((l) => {
+    const s = l.source as string, t = l.target as string
+    if (s === focusId) keep.add(t)
+    if (t === focusId) keep.add(s)
+  })
+  return {
+    nodes: nodes.filter((n) => keep.has(n.id)),
+    links: links.filter((l) => keep.has(l.source as string) && keep.has(l.target as string)),
+  }
+}
+
+// ── Shared D3 rendering ───────────────────────────────────────────
+function truncate(s: string, n: number) {
+  return s.length > n ? s.slice(0, n) + '…' : s
+}
+
+interface RenderOpts {
+  svg: SVGSVGElement
+  nodes: GraphNode[]
+  links: GraphLink[]
+  W: number
+  H: number
+  reduceMotion: boolean
+  zoomable: boolean
+  focusId?: string
+  onHover?: (n: GraphNode | null) => void
+  onClick?: (n: GraphNode) => void
+  onEnd?: () => void
+  glowId: string
+}
+
+function render(o: RenderOpts) {
+  const sel = d3.select(o.svg)
+  sel.selectAll('*').remove()
+  sel.attr('viewBox', `0 0 ${o.W} ${o.H}`)
+
+  const defs = sel.append('defs')
+  const glow = defs.append('filter').attr('id', o.glowId)
+  glow.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'blur')
+  const merge = glow.append('feMerge')
+  merge.append('feMergeNode').attr('in', 'blur')
+  merge.append('feMergeNode').attr('in', 'SourceGraphic')
+
+  const g = sel.append('g').attr('class', 'graph-root')
+  let zoom: d3.ZoomBehavior<SVGSVGElement, unknown> | null = null
+  if (o.zoomable) {
+    zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.15, 5])
+      .on('zoom', (e) => g.attr('transform', e.transform.toString()))
+    sel.call(zoom).on('dblclick.zoom', null)
+  }
+
+  const linkEl = g.append('g').attr('class', 'links')
+    .selectAll<SVGLineElement, GraphLink>('line')
+    .data(o.links).join('line')
+    .attr('stroke', (d) => d.color)
+    .attr('stroke-width', 1)
+
+  const nodeEl = g.append('g').attr('class', 'nodes')
+    .selectAll<SVGGElement, GraphNode>('g')
+    .data(o.nodes, (d) => d.id).join('g')
+    .attr('class', 'node')
+    .attr('data-id', (d) => d.id)
+    .style('cursor', (d) => (d.url ? 'pointer' : 'grab'))
+
+  nodeEl.append('circle').attr('class', 'core')
+    .attr('r', (d) => d.radius)
+    .attr('fill', (d) => d.color)
+    .attr('fill-opacity', (d) => (d.type === 'library' && d.subtype === 'current' ? 0.15 : 0.9))
+    .attr('stroke', (d) => d.color)
+    .attr('stroke-width', (d) => (d.id === o.focusId ? 3 : 1.5))
+    .attr('stroke-opacity', (d) => (d.type === 'library' && d.subtype === 'current' ? 1 : 0.35))
+
+  nodeEl.append('circle').attr('class', 'halo')
+    .attr('r', (d) => d.radius + 4)
+    .attr('fill', 'none')
+    .attr('stroke', (d) => d.color)
+    .attr('stroke-width', 1)
+    .attr('stroke-opacity', (d) => (d.id === o.focusId ? 0.5 : 0.1))
+
+  nodeEl.append('text')
+    .text((d) => truncate(d.label, 22))
+    .attr('text-anchor', 'middle')
+    .attr('dy', (d) => d.radius + 12)
+    .attr('font-size', '8px')
+    .attr('font-family', 'var(--font-mono), monospace')
+    .attr('fill', 'rgba(255,255,255,0.45)')
+    .attr('pointer-events', 'none')
+    .attr('data-label', '1')
+    .style('display', (d) => (d.radius >= 6 || d.id === o.focusId ? 'block' : 'none'))
+
+  nodeEl
+    .on('mouseenter', function (_, d) {
+      o.onHover?.(d)
+      d3.select(this).select<SVGTextElement>('text').style('display', 'block')
+      const c = d3.select(this).select<SVGCircleElement>('circle.core')
+      if (o.reduceMotion) c.attr('r', d.radius * 1.3).attr('filter', `url(#${o.glowId})`)
+      else c.transition().duration(120).attr('r', d.radius * 1.45).attr('fill-opacity', 1).attr('filter', `url(#${o.glowId})`)
+    })
+    .on('mouseleave', function (_, d) {
+      o.onHover?.(null)
+      d3.select(this).select<SVGTextElement>('text').style('display', d.radius >= 6 || d.id === o.focusId ? 'block' : 'none')
+      const c = d3.select(this).select<SVGCircleElement>('circle.core')
+      if (o.reduceMotion) c.attr('r', d.radius).attr('filter', null)
+      else c.transition().duration(200).attr('r', d.radius).attr('fill-opacity', d.type === 'library' && d.subtype === 'current' ? 0.15 : 0.9).attr('filter', null)
+    })
+    .on('click', (_, d) => o.onClick?.(d))
+
+  const simulation = d3.forceSimulation<GraphNode>(o.nodes)
+    .force('link', d3.forceLink<GraphNode, GraphLink>(o.links).id((d) => d.id)
+      .distance((d) => (d.linkType === 'noteTag' || d.linkType === 'postTag' ? 60 : d.linkType === 'prerequisite' ? 100 : 80))
+      .strength(0.45))
+    .force('charge', d3.forceManyBody<GraphNode>().strength((d) => -(200 + d.radius * 12)))
+    .force('center', d3.forceCenter(o.W / 2, o.H / 2).strength(0.06))
+    .force('collision', d3.forceCollide<GraphNode>().radius((d) => d.radius + 10).strength(0.8))
+    .alphaDecay(0.025)
+
+  if (o.focusId) {
+    const f = o.nodes.find((n) => n.id === o.focusId)
+    if (f) { f.fx = o.W / 2; f.fy = o.H / 2 }
+  }
+
+  const drag = d3.drag<SVGGElement, GraphNode>()
+    .on('start', (event, d) => { if (!event.active) simulation.alphaTarget(0.25).restart(); d.fx = d.x ?? 0; d.fy = d.y ?? 0 })
+    .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y })
+    .on('end', (event, d) => { if (!event.active) simulation.alphaTarget(0); if (d.id !== o.focusId) { d.fx = null; d.fy = null } })
+  nodeEl.call(drag)
+
+  const tick = () => {
+    linkEl
+      .attr('x1', (d) => (d.source as GraphNode).x ?? 0)
+      .attr('y1', (d) => (d.source as GraphNode).y ?? 0)
+      .attr('x2', (d) => (d.target as GraphNode).x ?? 0)
+      .attr('y2', (d) => (d.target as GraphNode).y ?? 0)
+    nodeEl.attr('transform', (d) => `translate(${d.x ?? 0},${d.y ?? 0})`)
+  }
+
+  if (o.reduceMotion) {
+    // Settle synchronously: no animated layout.
+    simulation.stop()
+    for (let i = 0; i < 300; i++) simulation.tick()
+    tick()
+    o.onEnd?.()
+  } else {
+    simulation.on('tick', tick)
+    simulation.on('end', () => o.onEnd?.())
+  }
+
+  return { simulation, zoom, g, sel }
+}
 
 // ── Main component ────────────────────────────────────────────────
 export function KnowledgeGraph({ data }: { data: GraphData }) {
-  const svgRef       = useRef<SVGSVGElement>(null)
-  const simRef       = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null)
+  const router = useRouter()
+  const reduceMotion = useReducedMotion() ?? false
+  const glowId = useId().replace(/:/g, '')
+  const svgRef = useRef<SVGSVGElement>(null)
+  const simRef = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null)
+  const listRef = useRef<HTMLUListElement>(null)
 
-  const [hoveredNode, setHoveredNode]   = useState<GraphNode | null>(null)
-  const [mousePos, setMousePos]         = useState({ x: 0, y: 0 })
-  const [filters, setFilters]           = useState<FilterState>({ posts: true, notes: true, tags: true, library: true })
-  const [search, setSearch]             = useState('')
-  const [settling, setSettling]         = useState(true)
+  const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null)
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const [filters, setFilters] = useState<FilterState>(ALL_ON)
+  const [search, setSearch] = useState('')
+  const [settling, setSettling] = useState(true)
 
-  // ── Build and render graph ─────────────────────────────────────
-  const buildGraph = useCallback(() => {
+  const model = useMemo(() => buildGraphModel(data, filters), [data, filters])
+
+  // Build effect: data / filters only.
+  useEffect(() => {
+    const svg = svgRef.current
+    if (!svg) return undefined
+    const W = svg.clientWidth || 900
+    const H = svg.clientHeight || 650
+    setSettling(true)
+    // Copy nodes so d3 mutation never leaks into the memoised model.
+    const nodes = model.nodes.map((n) => ({ ...n }))
+    const links = model.links.map((l) => ({ ...l }))
+    const r = render({
+      svg, nodes, links, W, H, reduceMotion, zoomable: true, glowId,
+      onHover: setHoveredNode,
+      onClick: (d) => { if (d.url) router.push(d.url) },
+      onEnd: () => setSettling(false),
+    })
+    simRef.current = r.simulation
+    return () => { r.simulation.stop(); simRef.current = null }
+  }, [model, reduceMotion, router, glowId])
+
+  // Search effect: cheap attribute update, no rebuild.
+  useEffect(() => {
     const svg = svgRef.current
     if (!svg) return
-
-    const W = svg.clientWidth  || 900
-    const H = svg.clientHeight || 650
-
-    // ── Nodes ────────────────────────────────────────────────────
-    const nodes: GraphNode[] = []
-    const nodeIds = new Set<string>()
-
-    const searchQ = search.toLowerCase().trim()
-
-    const dimColor = (color: string, id: string, label: string): string => {
-      if (!searchQ) return color
-      return label.toLowerCase().includes(searchQ) ? color : 'rgba(255,255,255,0.07)'
-    }
-
-    if (filters.posts) {
-      data.posts.forEach(p => {
-        const base = POST_COLORS[p.articleType ?? ''] ?? '#d6d3d1'
-        nodes.push({
-          id: p._id, type: 'post', subtype: p.articleType ?? 'post',
-          label: p.title, url: `/blog/${p.slug}`,
-          radius: 10, color: dimColor(base, p._id, p.title),
-          description: p.excerpt,
-        })
-        nodeIds.add(p._id)
-      })
-    }
-
-    if (filters.notes) {
-      data.notes.forEach(n => {
-        const base = NOTE_COLORS[n.status] ?? '#78716c'
-        nodes.push({
-          id: n._id, type: 'note', subtype: n.status,
-          label: n.title, url: '/garden',
-          radius: n.status === 'evergreen' ? 9 : 6,
-          color: dimColor(base, n._id, n.title),
-          description: `${n.status} note`,
-        })
-        nodeIds.add(n._id)
-      })
-    }
-
-    if (filters.tags) {
-      data.tags.forEach(t => {
-        nodes.push({
-          id: t._id, type: 'tag',
-          label: `#${t.title}`, url: undefined,
-          radius: 5, color: dimColor('#a855f7', t._id, t.title),
-          description: t.category,
-        })
-        nodeIds.add(t._id)
-      })
-    }
-
-    if (filters.library) {
-      data.library.forEach(l => {
-        nodes.push({
-          id: l._id, type: 'library',
-          label: l.title, url: undefined,
-          radius: 7, color: dimColor('#06b6d4', l._id, l.title),
-          description: l.mediaType,
-        })
-        nodeIds.add(l._id)
-      })
-    }
-
-    // ── Links ────────────────────────────────────────────────────
-    const links: GraphLink[] = []
-
-    const addLink = (source: string, target: string, linkType: string) => {
-      if (nodeIds.has(source) && nodeIds.has(target)) {
-        links.push({ source, target, linkType, color: LINK_COLORS[linkType] ?? 'rgba(255,255,255,0.08)' })
-      }
-    }
-
-    data.posts.forEach(p => {
-      p.prerequisiteIds?.forEach(pid => addLink(p._id, pid, 'prerequisite'))
-      if (p.readDeeperId)  addLink(p._id, p.readDeeperId,  'readNext')
-      if (p.readBroaderId) addLink(p._id, p.readBroaderId, 'readNext')
-      if (p.readApplyId)   addLink(p._id, p.readApplyId,   'readNext')
+    const q = search.trim().toLowerCase()
+    d3.select(svg).selectAll<SVGGElement, GraphNode>('g.node').each(function (d) {
+      const match = !q || d.label.toLowerCase().includes(q)
+      const g = d3.select(this)
+      g.select('circle.core').attr('fill', match ? d.color : DIM).attr('stroke', match ? d.color : DIM)
+      g.select('circle.halo').attr('stroke', match ? d.color : DIM)
+      g.select('text')
+        .style('display', match && (q || d.radius >= 6) ? 'block' : q ? 'none' : d.radius >= 6 ? 'block' : 'none')
+        .attr('fill', q && match ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.45)')
     })
+  }, [search, model])
 
-    data.notes.forEach(n => {
-      n.relatedNoteIds?.forEach(nid => addLink(n._id, nid, 'noteNote'))
-      n.relatedPostIds?.forEach(pid => addLink(n._id, pid, 'notePost'))
-      n.tagIds?.forEach(tid => addLink(n._id, tid, 'noteTag'))
-    })
-
-    data.library.forEach(l => {
-      l.influencedPostIds?.forEach(pid => addLink(l._id, pid, 'library'))
-    })
-
-    // ── D3 SVG setup ──────────────────────────────────────────────
-    const sel = d3.select(svg)
-    sel.selectAll('*').remove()
-
-    // Background gradient
-    const defs = sel.append('defs')
-    const grad = defs.append('radialGradient').attr('id', 'bg-grad').attr('cx', '50%').attr('cy', '50%').attr('r', '50%')
-    grad.append('stop').attr('offset', '0%').attr('stop-color', '#0f0f13')
-    grad.append('stop').attr('offset', '100%').attr('stop-color', '#0a0a0a')
-
-    sel.append('rect').attr('width', '100%').attr('height', '100%').attr('fill', 'url(#bg-grad)')
-
-    // Zoom container
-    const g = sel.append('g').attr('class', 'graph-root')
-
-    const zoom = d3.zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.15, 5])
-      .on('zoom', (e) => g.attr('transform', e.transform.toString()))
-
-    sel.call(zoom).on('dblclick.zoom', null)
-
-    // Initial centering
-    sel.call(zoom.translateTo, W / 2, H / 2)
-
-    // ── Links layer ───────────────────────────────────────────────
-    const linkG = g.append('g').attr('class', 'links')
-    const linkEl = linkG.selectAll<SVGLineElement, GraphLink>('line')
-      .data(links)
-      .join('line')
-      .attr('stroke', d => d.color)
-      .attr('stroke-width', 1)
-
-    // ── Nodes layer ───────────────────────────────────────────────
-    const nodeG = g.append('g').attr('class', 'nodes')
-    const nodeEl = nodeG.selectAll<SVGGElement, GraphNode>('g')
-      .data(nodes, d => d.id)
-      .join('g')
-      .attr('class', 'node')
-      .style('cursor', d => d.url ? 'pointer' : 'grab')
-
-    // Glow filter for highlighted nodes
-    defs.append('filter').attr('id', 'glow')
-      .append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'blur')
-
-    const glowMerge = defs.select('#glow').append('feMerge')
-    glowMerge.append('feMergeNode').attr('in', 'blur')
-    glowMerge.append('feMergeNode').attr('in', 'SourceGraphic')
-
-    // Node circle
-    nodeEl.append('circle')
-      .attr('r', d => d.radius)
-      .attr('fill', d => d.color)
-      .attr('fill-opacity', 0.9)
-      .attr('stroke', d => d.color)
-      .attr('stroke-width', 1.5)
-      .attr('stroke-opacity', 0.35)
-
-    // Soft glow ring (subtle)
-    nodeEl.append('circle')
-      .attr('r', d => d.radius + 4)
-      .attr('fill', 'none')
-      .attr('stroke', d => d.color)
-      .attr('stroke-width', 1)
-      .attr('stroke-opacity', 0.1)
-
-    // Node labels
-    nodeEl.append('text')
-      .text(d => d.label.length > 20 ? d.label.slice(0, 20) + '…' : d.label)
-      .attr('text-anchor', 'middle')
-      .attr('dy', d => d.radius + 12)
-      .attr('font-size', '8px')
-      .attr('font-family', 'var(--font-mono), monospace')
-      .attr('fill', 'rgba(255,255,255,0.38)')
-      .attr('pointer-events', 'none')
-      .style('display', d => d.radius >= 6 ? 'block' : 'none')
-
-    // ── Mouse events ──────────────────────────────────────────────
-    nodeEl
-      .on('mouseenter', function(_, d) {
-        setHoveredNode(d)
-        d3.select(this).select('circle:first-of-type')
-          .transition().duration(120)
-          .attr('r', d.radius * 1.45)
-          .attr('fill-opacity', 1)
-          .attr('filter', 'url(#glow)')
-      })
-      .on('mouseleave', function(_, d) {
-        setHoveredNode(null)
-        d3.select(this).select('circle:first-of-type')
-          .transition().duration(200)
-          .attr('r', d.radius)
-          .attr('fill-opacity', 0.9)
-          .attr('filter', null)
-      })
-      .on('click', (_, d) => { if (d.url) window.location.href = d.url })
-
-    // ── Drag ──────────────────────────────────────────────────────
-    const drag = d3.drag<SVGGElement, GraphNode>()
-      .on('start', (event, d) => {
-        if (!event.active) simRef.current?.alphaTarget(0.25).restart()
-        d.fx = d.x ?? 0; d.fy = d.y ?? 0
-      })
-      .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y })
-      .on('end', (event, d) => {
-        if (!event.active) simRef.current?.alphaTarget(0)
-        d.fx = null; d.fy = null
-      })
-
-    nodeEl.call(drag)
-
-    // ── Simulation ────────────────────────────────────────────────
-    simRef.current?.stop()
-
-    const simulation = d3.forceSimulation<GraphNode>(nodes)
-      .force('link',
-        d3.forceLink<GraphNode, GraphLink>(links)
-          .id(d => d.id)
-          .distance(d => {
-            const lt = (d as any).linkType
-            if (lt === 'noteTag') return 60
-            if (lt === 'prerequisite') return 100
-            return 80
-          })
-          .strength(0.45)
-      )
-      .force('charge', d3.forceManyBody<GraphNode>().strength(d => -(200 + d.radius * 12)))
-      .force('center', d3.forceCenter(W / 2, H / 2).strength(0.06))
-      .force('collision', d3.forceCollide<GraphNode>().radius(d => d.radius + 10).strength(0.8))
-      .alphaDecay(0.025)
-
-    simRef.current = simulation
-
-    simulation.on('tick', () => {
-      linkEl
-        .attr('x1', (d: any) => d.source.x ?? 0)
-        .attr('y1', (d: any) => d.source.y ?? 0)
-        .attr('x2', (d: any) => d.target.x ?? 0)
-        .attr('y2', (d: any) => d.target.y ?? 0)
-
-      nodeEl.attr('transform', d => `translate(${d.x ?? 0},${d.y ?? 0})`)
-    })
-
-    simulation.on('end', () => setSettling(false))
-
-  }, [data, filters, search])
-
+  // Debounced resize: update viewBox + centre force, gentle reheat.
   useEffect(() => {
-    setSettling(true)
-    buildGraph()
-    return () => { simRef.current?.stop() }
-  }, [buildGraph])
-
-  // Resize handler
-  useEffect(() => {
-    const onResize = () => { simRef.current?.stop(); buildGraph() }
+    let t: ReturnType<typeof setTimeout> | null = null
+    const onResize = () => {
+      if (t) clearTimeout(t)
+      t = setTimeout(() => {
+        const svg = svgRef.current
+        const sim = simRef.current
+        if (!svg || !sim) return
+        const W = svg.clientWidth || 900
+        const H = svg.clientHeight || 650
+        d3.select(svg).attr('viewBox', `0 0 ${W} ${H}`)
+        const center = sim.force<d3.ForceCenter<GraphNode>>('center')
+        center?.x(W / 2).y(H / 2)
+        if (!reduceMotion) sim.alpha(0.15).restart()
+        else { sim.stop(); for (let i = 0; i < 60; i++) sim.tick() }
+      }, 180)
+    }
     window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [buildGraph])
+    return () => { window.removeEventListener('resize', onResize); if (t) clearTimeout(t) }
+  }, [reduceMotion])
 
-  // Mouse tracking for hover card
   useEffect(() => {
     const onMove = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY })
     window.addEventListener('mousemove', onMove, { passive: true })
     return () => window.removeEventListener('mousemove', onMove)
   }, [])
 
-  const toggleFilter = (key: keyof FilterState) =>
-    setFilters(f => ({ ...f, [key]: !f[key] }))
+  const toggleFilter = (key: NodeType) => setFilters((f) => ({ ...f, [key]: !f[key] }))
 
-  const totalNodes = data.posts.length + data.notes.length + data.tags.length + data.library.length
-  const totalLinks = data.posts.reduce((n, p) => n + (p.prerequisiteIds?.length ?? 0) + (p.readDeeperId ? 1 : 0) + (p.readBroaderId ? 1 : 0) + (p.readApplyId ? 1 : 0), 0)
-    + data.notes.reduce((n, note) => n + (note.relatedNoteIds?.length ?? 0) + (note.relatedPostIds?.length ?? 0) + (note.tagIds?.length ?? 0), 0)
-    + data.library.reduce((n, l) => n + (l.influencedPostIds?.length ?? 0), 0)
+  const filterRows: { key: NodeType; label: string; color: string; count: number }[] = [
+    { key: 'post', label: 'Posts', color: TYPE_COLORS.post, count: data.posts.length },
+    { key: 'note', label: 'Notes', color: TYPE_COLORS.note, count: data.notes.length },
+    { key: 'tag', label: 'Tags', color: TYPE_COLORS.tag, count: data.tags.length },
+    { key: 'library', label: 'Library', color: TYPE_COLORS.library, count: data.library.length },
+    { key: 'project', label: 'Projects', color: TYPE_COLORS.project, count: data.projects.length },
+    { key: 'series', label: 'Series', color: TYPE_COLORS.series, count: data.series.length },
+  ]
+
+  const q = search.trim().toLowerCase()
+  const listNodes = q ? model.nodes.filter((n) => n.label.toLowerCase().includes(q)) : model.nodes
 
   return (
     <div className="relative w-full h-full select-none">
+      <svg
+        ref={svgRef}
+        className="w-full h-full"
+        role="img"
+        aria-label={`Knowledge graph with ${model.nodes.length} nodes and ${model.links.length} connections between posts, notes, tags, library items, projects and series. A text list of every node follows.`}
+        style={{ background: 'radial-gradient(circle at 50% 50%, #0f0f13 0%, #0a0a0a 100%)' }}
+      />
 
-      {/* Graph canvas */}
-      <svg ref={svgRef} className="w-full h-full" />
-
-      {/* Settling indicator */}
       {settling && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3 pointer-events-none" aria-hidden="true">
           <div className="w-6 h-6 border border-white/20 border-t-white/50 rounded-full animate-spin" />
-          <p className="font-mono text-[8px] text-stone-700 uppercase tracking-widest">Mapping connections…</p>
+          <p className="font-mono text-[8px] text-stone-500 uppercase tracking-widest">Mapping connections…</p>
         </div>
       )}
 
-      {/* ── Hover card ────────────────────────────────────────────── */}
+      {/* Hover card */}
       {hoveredNode && (
         <div
           className="fixed z-50 pointer-events-none"
           style={{
             left: Math.min(mousePos.x + 18, (typeof window !== 'undefined' ? window.innerWidth : 1200) - 230),
-            top:  Math.max(mousePos.y - 50, 8),
+            top: Math.max(mousePos.y - 50, 8),
           }}
         >
-          <div className="bg-[#111]/96 border border-white/15 rounded-xl p-4 w-56 backdrop-blur-xl shadow-2xl">
+          <div className="bg-[#111]/95 border border-white/15 rounded-xl p-4 w-56 backdrop-blur-xl shadow-2xl">
             <div className="flex items-center gap-2 mb-2.5">
               <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: hoveredNode.color }} />
               <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500">
@@ -387,88 +443,174 @@ export function KnowledgeGraph({ data }: { data: GraphData }) {
             </div>
             <p className="font-serif text-sm text-white leading-snug mb-1.5">{hoveredNode.label}</p>
             {hoveredNode.description && (
-              <p className="font-mono text-[9px] text-stone-500 leading-relaxed line-clamp-2">
-                {hoveredNode.description}
-              </p>
+              <p className="font-mono text-[9px] text-stone-500 leading-relaxed line-clamp-2">{hoveredNode.description}</p>
             )}
             {hoveredNode.url && (
-              <p className="font-mono text-[8px] text-stone-700 mt-2 uppercase tracking-widest">
-                Click to navigate →
-              </p>
+              <p className="font-mono text-[8px] text-stone-500 mt-2 uppercase tracking-widest">Click to open →</p>
             )}
           </div>
         </div>
       )}
 
-      {/* ── Controls panel (top-left) ──────────────────────────────── */}
-      <div className="absolute top-4 left-4 bg-[#0d0d0f]/92 border border-white/10 rounded-xl p-4 backdrop-blur-xl w-48 shadow-xl">
-
-        {/* Stats */}
+      {/* Controls */}
+      <div className="absolute top-4 left-4 bg-[#0d0d0f]/90 border border-white/10 rounded-xl p-4 backdrop-blur-xl w-52 shadow-xl">
         <div className="flex gap-4 mb-4 pb-3 border-b border-white/[0.08]">
           <div>
-            <div className="font-serif text-lg text-white font-bold">{totalNodes}</div>
-            <div className="font-mono text-[7px] uppercase tracking-widest text-stone-600">Nodes</div>
+            <div className="font-serif text-lg text-white font-bold">{model.nodes.length}</div>
+            <div className="font-mono text-[7px] uppercase tracking-widest text-stone-500">Nodes</div>
           </div>
           <div>
-            <div className="font-serif text-lg text-white font-bold">{totalLinks}</div>
-            <div className="font-mono text-[7px] uppercase tracking-widest text-stone-600">Edges</div>
+            <div className="font-serif text-lg text-white font-bold">{model.links.length}</div>
+            <div className="font-mono text-[7px] uppercase tracking-widest text-stone-500">Edges</div>
           </div>
         </div>
 
-        {/* Type filters */}
-        <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-600 mb-2.5">Visible</p>
-        <div className="space-y-1.5 mb-4">
-          {([
-            { key: 'posts',   label: 'Posts',   color: '#d6d3d1', count: data.posts.length },
-            { key: 'notes',   label: 'Notes',   color: '#4ade80', count: data.notes.length },
-            { key: 'tags',    label: 'Tags',    color: '#a855f7', count: data.tags.length },
-            { key: 'library', label: 'Library', color: '#06b6d4', count: data.library.length },
-          ] as const).map(({ key, label, color, count }) => (
+        <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 mb-2.5" id={`${glowId}-visible`}>Visible</p>
+        <div className="space-y-1 mb-4" role="group" aria-labelledby={`${glowId}-visible`}>
+          {filterRows.map(({ key, label, color, count }) => (
             <button
               key={key}
+              type="button"
               onClick={() => toggleFilter(key)}
-              className={`flex items-center justify-between w-full px-2 py-1.5 rounded-md transition-all ${
-                filters[key]
-                  ? 'bg-white/5 opacity-100'
-                  : 'bg-transparent opacity-30'
+              aria-pressed={filters[key]}
+              className={`flex items-center justify-between w-full px-2 py-1.5 rounded-md transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 ${
+                filters[key] ? 'bg-white/5 opacity-100' : 'bg-transparent opacity-40'
               }`}
             >
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+              <span className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} aria-hidden="true" />
                 <span className="font-mono text-[9px] uppercase tracking-widest text-stone-300">{label}</span>
-              </div>
-              <span className="font-mono text-[8px] text-stone-600">{count}</span>
+              </span>
+              <span className="font-mono text-[8px] text-stone-500">{count}</span>
             </button>
           ))}
         </div>
 
-        {/* Search */}
+        <label htmlFor={`${glowId}-search`} className="sr-only">Search nodes</label>
         <input
-          type="text"
+          id={`${glowId}-search`}
+          type="search"
           value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search..."
-          className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-1.5 font-mono text-[10px] text-white placeholder:text-stone-700 focus:outline-none focus:border-white/25 transition-colors"
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search nodes…"
+          className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-1.5 font-mono text-[10px] text-white placeholder:text-stone-500 focus:border-white/25 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
         />
 
-        {/* Zoom hint */}
-        <p className="font-mono text-[7px] text-stone-800 uppercase tracking-widest mt-3 leading-loose">
-          Scroll to zoom<br />Drag to pan<br />Drag nodes to reposition
+        <p className="font-mono text-[7px] text-stone-500 uppercase tracking-widest mt-3 leading-loose">
+          Scroll to zoom · Drag to pan · Drag nodes to reposition
         </p>
       </div>
 
-      {/* ── Legend (bottom-left) ───────────────────────────────────── */}
-      <div className="absolute bottom-4 left-4 bg-[#0d0d0f]/80 border border-white/[0.08] rounded-lg p-3 backdrop-blur-xl">
-        <div className="space-y-1.5">
-          {LEGEND.map(({ color, label }) => (
-            <div key={label} className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
-              <span className="font-mono text-[7px] text-stone-600 uppercase tracking-widest">{label}</span>
-            </div>
+      {/* Legend */}
+      <details className="absolute bottom-4 left-4 bg-[#0d0d0f]/85 border border-white/[0.08] rounded-lg backdrop-blur-xl max-w-[220px]" open>
+        <summary className="cursor-pointer px-3 py-2 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-lg">
+          Legend
+        </summary>
+        <ul className="px-3 pb-3 space-y-1.5">
+          {GRAPH_LEGEND.map(({ color, label, shape }) => (
+            <li key={label} className="flex items-center gap-2">
+              <span
+                className="w-2 h-2 rounded-full flex-shrink-0"
+                style={shape === 'ring' ? { border: `1.5px solid ${color}` } : { backgroundColor: color }}
+                aria-hidden="true"
+              />
+              <span className="font-mono text-[7px] text-stone-400 uppercase tracking-widest">{label}</span>
+            </li>
           ))}
-        </div>
-      </div>
+          <li className="pt-1 mt-1 border-t border-white/[0.06] font-mono text-[7px] text-stone-500 uppercase tracking-widest">
+            Lines: prerequisites, read-next, related, tags, influence
+          </li>
+        </ul>
+      </details>
 
+      {/* Keyboard / screen-reader alternative */}
+      <div className="absolute bottom-4 right-4">
+        <details className="bg-[#0d0d0f]/90 border border-white/[0.08] rounded-lg backdrop-blur-xl max-w-xs">
+          <summary className="cursor-pointer px-3 py-2 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-lg">
+            Node list ({listNodes.length})
+          </summary>
+          <ul ref={listRef} className="max-h-64 overflow-y-auto px-3 pb-3 space-y-1" aria-label="All graph nodes">
+            {listNodes.map((n) => (
+              <li key={n.id}>
+                {n.url ? (
+                  <a
+                    href={n.url}
+                    className="flex items-center gap-2 font-mono text-[9px] text-stone-300 hover:text-white rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: n.color }} aria-hidden="true" />
+                    <span className="truncate">{n.label}</span>
+                    <span className="ml-auto text-[7px] uppercase tracking-widest text-stone-500 flex-shrink-0">{n.type}</span>
+                  </a>
+                ) : (
+                  <span className="flex items-center gap-2 font-mono text-[9px] text-stone-400">
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: n.color }} aria-hidden="true" />
+                    {n.label}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </details>
+      </div>
+    </div>
+  )
+}
+
+// ── Neighbourhood (embed) variant ─────────────────────────────────
+// Small, non-zoomable 1-hop view around a focus node. Rendered by GraphEmbed.
+export function GraphNeighborhood({ data, focusId, height = 260 }: { data: GraphData; focusId: string; height?: number }) {
+  const router = useRouter()
+  const reduceMotion = useReducedMotion() ?? false
+  const glowId = useId().replace(/:/g, '')
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [hovered, setHovered] = useState<GraphNode | null>(null)
+
+  const model = useMemo(() => neighborhoodOf(data, focusId), [data, focusId])
+
+  useEffect(() => {
+    const svg = svgRef.current
+    if (!svg || model.nodes.length === 0) return undefined
+    const W = svg.clientWidth || 600
+    const H = height
+    const r = render({
+      svg, nodes: model.nodes.map((n) => ({ ...n })), links: model.links.map((l) => ({ ...l })),
+      W, H, reduceMotion, zoomable: false, focusId, glowId,
+      onHover: setHovered,
+      onClick: (d) => { if (d.url && d.id !== focusId) router.push(d.url) },
+    })
+    return () => { r.simulation.stop() }
+  }, [model, reduceMotion, focusId, height, router, glowId])
+
+  if (model.nodes.length <= 1) return null
+
+  const focus = model.nodes.find((n) => n.id === focusId)
+  const neighbours = model.nodes.filter((n) => n.id !== focusId)
+
+  return (
+    <div className="relative rounded-xl border border-white/[0.08] overflow-hidden" style={{ background: '#0c0c0f' }}>
+      <svg
+        ref={svgRef}
+        className="w-full"
+        style={{ height }}
+        role="img"
+        aria-label={`${focus?.label ?? 'This item'} is connected to ${neighbours.length} other item${neighbours.length === 1 ? '' : 's'}: ${neighbours.map((n) => n.label).join(', ')}.`}
+      />
+      <div className="absolute top-2 right-3 font-mono text-[8px] uppercase tracking-widest text-stone-500" aria-live="polite">
+        {hovered ? `${hovered.type} · ${hovered.label}` : `${neighbours.length} connection${neighbours.length === 1 ? '' : 's'}`}
+      </div>
+      <ul className="flex flex-wrap gap-2 p-3 border-t border-white/[0.06]" aria-label="Connected items">
+        {neighbours.map((n) => (
+          <li key={n.id}>
+            <a
+              href={n.url}
+              className="flex items-center gap-1.5 font-mono text-[9px] text-stone-400 hover:text-white border border-white/10 hover:border-white/30 px-2 py-1 rounded-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+            >
+              <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: n.color }} aria-hidden="true" />
+              {n.label}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

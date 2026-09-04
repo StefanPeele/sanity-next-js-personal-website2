@@ -1,185 +1,119 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useArticle } from '@/components/article/ArticleProvider'
 // components/blog/ArticleEffects.tsx
-// Handles three visual effects that require DOM access:
-//   1. Magnetic cursor — subtle pull toward interactive elements (desktop only)
-//   2. CRT overlay — scanline effect when terminal theme is active
-//   3. Lexend font — dynamically loaded when dyslexia mode is active
+// DOM-level effects for the article page:
+//   1. Magnetic cursor (desktop, pointer:fine, motion allowed) — pull applies to buttons only
+//   2. CRT overlay while the terminal theme is active
+//   3. Lexend font loaded on demand for dyslexia mode
+//   4. Service worker registration (production only) for offline reading
 
 export function ArticleEffects() {
-  const cursorRef   = useRef<HTMLDivElement>(null)
-  const crtRef      = useRef<HTMLDivElement>(null)
-  const [crtActive, setCrtActive] = useState(false)
-  const mouseRef    = useRef({ x: -100, y: -100 })
-  const rafRef      = useRef<number>(0)
+  const { settings, reducedMotion } = useArticle()
+  const cursorRef = useRef<HTMLDivElement>(null)
+  const mouseRef = useRef({ x: -100, y: -100 })
+  const rafRef = useRef(0)
+  const [cursorOn, setCursorOn] = useState(false)
 
   // ── 1. Magnetic cursor ──────────────────────────────────────────
   useEffect(() => {
     const cursor = cursorRef.current
     if (!cursor) return
-
-    // Only activate on non-touch, non-reduced-motion devices
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const isMobile       = window.matchMedia('(max-width: 1024px)').matches
-    if (prefersReduced || isMobile) return
+    const fine = window.matchMedia('(pointer: fine)').matches && window.matchMedia('(min-width: 1024px)').matches
+    if (reducedMotion || !fine) { setCursorOn(false); return }
+    setCursorOn(true)
 
     document.documentElement.classList.add('sp-cursor-active')
     cursor.classList.add('cursor-visible')
 
-    const SELECTORS = 'a, button, [role="button"], input, textarea, select, label, [data-interactive]'
-    let hovered: HTMLElement | null = null
-    let pullX = 0
-    let pullY = 0
-
     const onMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY }
+      if (!rafRef.current) rafRef.current = requestAnimationFrame(tick)
     }
-
-    // Animate cursor with rAF for smooth tracking
     const tick = () => {
-      const cursor = cursorRef.current
-      if (!cursor) return
-
+      rafRef.current = 0
       const { x, y } = mouseRef.current
       cursor.style.left = `${x}px`
-      cursor.style.top  = `${y}px`
-      rafRef.current = requestAnimationFrame(tick)
+      cursor.style.top = `${y}px`
     }
 
-    rafRef.current = requestAnimationFrame(tick)
-
-    // Magnetic pull on interactive elements
-    const onMouseEnter = (e: Event) => {
-      const target = e.currentTarget as HTMLElement
-      hovered = target
-      cursor.classList.add('cursor-hover')
-
-      const onMove = (ev: MouseEvent) => {
-        if (!hovered) return
-        const rect    = hovered.getBoundingClientRect()
-        const centerX = rect.left + rect.width  / 2
-        const centerY = rect.top  + rect.height / 2
-        const dX = ev.clientX - centerX
-        const dY = ev.clientY - centerY
-        // Pull is proportional to distance — max 6px
-        const maxPull = 6
-        const distRaw = Math.sqrt(dX * dX + dY * dY)
-        const dist    = Math.max(distRaw, 1)
-        const pull    = Math.min(maxPull, maxPull * (1 - dist / 120))
-
-        pullX = (dX / dist) * pull
-        pullY = (dY / dist) * pull
-        hovered.style.transform = `translate(${pullX}px, ${pullY}px)`
-        hovered.style.transition = 'transform 0.12s ease-out'
-      }
-
-      hovered.addEventListener('mousemove', onMove)
-      ;(hovered as any)._spMoveHandler = onMove
-    }
-
-    const onMouseLeave = (e: Event) => {
-      const target = e.currentTarget as HTMLElement
-      cursor.classList.remove('cursor-hover')
-
-      const handler = (target as any)._spMoveHandler
-      if (handler) target.removeEventListener('mousemove', handler)
-
-      // Spring back
-      target.style.transform  = ''
-      target.style.transition = 'transform 0.4s ease-out'
-      setTimeout(() => { target.style.transition = '' }, 400)
-      hovered = null
-    }
-
-    // Attach to interactive elements within the article
-    const article = document.querySelector('[data-article]')
+    // Magnetic pull: buttons only. Transforming inline anchors inside prose has no
+    // visible effect and can shift line boxes, so links just grow the cursor ring.
+    const article = document.querySelector<HTMLElement>('[data-article]')
     if (!article) return
 
-    const attachToElements = () => {
-      const elements = Array.from(article.querySelectorAll(SELECTORS)) as HTMLElement[]
-      elements.forEach((el) => {
-        el.addEventListener('mouseenter', onMouseEnter)
-        el.addEventListener('mouseleave', onMouseLeave)
-      })
-      return elements
-    }
+    const cleanups: Array<() => void> = []
+    const onEnterLink = () => cursor.classList.add('cursor-hover')
+    const onLeaveLink = () => cursor.classList.remove('cursor-hover')
 
-    let elements = attachToElements()
+    article.querySelectorAll<HTMLElement>('a, button, [role="button"]').forEach((el) => {
+      el.addEventListener('mouseenter', onEnterLink)
+      el.addEventListener('mouseleave', onLeaveLink)
+      cleanups.push(() => {
+        el.removeEventListener('mouseenter', onEnterLink)
+        el.removeEventListener('mouseleave', onLeaveLink)
+      })
+    })
+
+    article.querySelectorAll<HTMLElement>('button').forEach((btn) => {
+      // Skip inline text buttons (sidenotes, glossary terms): moving them breaks the line.
+      if (btn.classList.contains('glossary-term') || btn.closest('p, li, blockquote')) return
+      const onMove = (ev: MouseEvent) => {
+        const rect = btn.getBoundingClientRect()
+        const dX = ev.clientX - (rect.left + rect.width / 2)
+        const dY = ev.clientY - (rect.top + rect.height / 2)
+        const dist = Math.max(1, Math.hypot(dX, dY))
+        const pull = Math.min(6, 6 * (1 - dist / 120))
+        btn.style.transform = `translate(${(dX / dist) * pull}px, ${(dY / dist) * pull}px)`
+        btn.style.transition = 'transform 0.12s ease-out'
+      }
+      const onLeave = () => {
+        btn.style.transform = ''
+        btn.style.transition = 'transform 0.4s ease-out'
+      }
+      btn.addEventListener('mousemove', onMove)
+      btn.addEventListener('mouseleave', onLeave)
+      cleanups.push(() => {
+        btn.removeEventListener('mousemove', onMove)
+        btn.removeEventListener('mouseleave', onLeave)
+        btn.style.transform = ''
+        btn.style.transition = ''
+      })
+    })
 
     window.addEventListener('mousemove', onMouseMove, { passive: true })
-
     return () => {
-      cancelAnimationFrame(rafRef.current)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
       window.removeEventListener('mousemove', onMouseMove)
       document.documentElement.classList.remove('sp-cursor-active')
-      elements.forEach((el) => {
-        el.removeEventListener('mouseenter', onMouseEnter)
-        el.removeEventListener('mouseleave', onMouseLeave)
-        el.style.transform = ''
-      })
+      cursor.classList.remove('cursor-visible', 'cursor-hover')
+      cleanups.forEach((fn) => fn())
     }
-  }, [])
+  }, [reducedMotion])
 
-  // ── 2. CRT overlay — observe [data-article] class changes ──────
+  // ── 3. Lexend for dyslexia mode ─────────────────────────────────
   useEffect(() => {
-    const article = document.querySelector('[data-article]')
-    if (!article) return
+    if (!settings.dyslexia || document.getElementById('sp-lexend-font')) return
+    const link = document.createElement('link')
+    link.id = 'sp-lexend-font'
+    link.rel = 'stylesheet'
+    link.href = 'https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap'
+    document.head.appendChild(link)
+  }, [settings.dyslexia])
 
-    const checkTheme = () => {
-      setCrtActive(article.classList.contains('theme-terminal'))
-    }
-
-    checkTheme()
-
-    const observer = new MutationObserver(checkTheme)
-    observer.observe(article, { attributes: true, attributeFilter: ['class'] })
-    return () => observer.disconnect()
-  }, [])
-
-  // ── 4. Service worker registration ────────────────────────────
+  // ── 4. Service worker — production only ─────────────────────────
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {})
-    }
-  }, [])
-
-  // ── 3. Lexend font loader — observe a11y-dyslexia class ────────
-  useEffect(() => {
-    const article = document.querySelector('[data-article]')
-    if (!article) return
-
-    const checkDyslexia = () => {
-      if (article.classList.contains('a11y-dyslexia')) {
-        // Load Lexend from Google Fonts if not already loaded
-        if (!document.getElementById('sp-lexend-font')) {
-          const link = document.createElement('link')
-          link.id   = 'sp-lexend-font'
-          link.rel  = 'stylesheet'
-          link.href = 'https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap'
-          document.head.appendChild(link)
-        }
-      }
-    }
-
-    checkDyslexia()
-
-    const observer = new MutationObserver(checkDyslexia)
-    observer.observe(article, { attributes: true, attributeFilter: ['class'] })
-    return () => observer.disconnect()
+    if (process.env.NODE_ENV !== 'production') return
+    if (!('serviceWorker' in navigator)) return
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {})
   }, [])
 
   return (
     <>
-      {/* Custom cursor — desktop only, hidden via CSS on mobile */}
-      <div ref={cursorRef} className="sp-cursor" aria-hidden="true" />
+      <div ref={cursorRef} className="sp-cursor" aria-hidden="true" hidden={!cursorOn} />
 
-      {/* CRT overlay — visible only when terminal theme is active */}
-      <div
-        ref={crtRef}
-        className={`sp-crt-overlay ${crtActive ? 'crt-active' : ''}`}
-        aria-hidden="true"
-      />
+      <div className={`sp-crt-overlay ${settings.theme === 'terminal' ? 'crt-active' : ''}`} aria-hidden="true" />
     </>
   )
 }

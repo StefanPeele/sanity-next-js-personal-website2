@@ -15,6 +15,29 @@ export default defineType({
     { name: 'community',    title: '💬 Community' },
   ],
 
+  // New posts start with the archive defaults and an empty TL;DR so the writer
+  // sees the summary block right away. Works with Studio initial value templates too.
+  initialValue: {
+    isFeatured: false,
+    articleType: 'concept-deep-dive',
+    recommendedTheme: 'archive',
+    confidenceLevel: 'confident',
+    maturityIndicator: 'fresh',
+    cognitiveLoad: 'technical',
+    reviewStatus: 'self-reviewed',
+    tldr: [],
+  },
+
+  // Document-level checks: a concept deep dive without any self-assessment tooling is a warning.
+  validation: (rule) =>
+    rule.custom((doc) => {
+      const d = doc as { articleType?: string; priorKnowledgeCheck?: { question?: string }; conceptCards?: unknown[] } | undefined
+      if (d?.articleType === 'concept-deep-dive' && !d.priorKnowledgeCheck?.question && !(d.conceptCards?.length)) {
+        return 'Concept Deep Dives work best with a prior-knowledge checkpoint or concept cards (Learning tab). Add at least one.'
+      }
+      return true
+    }).warning(),
+
   fields: [
 
     // ══════════════════════════════════════════════════════════════
@@ -253,8 +276,17 @@ export default defineType({
       title: 'Position in series',
       type: 'number',
       group: 'presentation',
-      description: '1 for the first part. Only used when a series is set.',
-      validation: (rule) => rule.min(1).integer(),
+      description: '1 for the first part. Required when a series is set.',
+      validation: (rule) => [
+        rule.min(1).integer(),
+        rule.custom((value, context) => {
+          const doc = context.document as { series?: { _ref?: string } } | undefined
+          if (doc?.series?._ref && (value === undefined || value === null)) {
+            return 'Set the position in the series so the "Part N of M" banner and prev/next links are correct.'
+          }
+          return true
+        }),
+      ],
     }),
 
     defineField({

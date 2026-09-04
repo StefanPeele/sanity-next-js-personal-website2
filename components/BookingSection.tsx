@@ -1,394 +1,323 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { submitBooking } from '@/app/actions/booking'
 // components/BookingSection.tsx
+// Photography inquiry form. Package and add-on options come from lib/pricing so
+// the form, the service cards and the server action never disagree.
 
-// ── Update this once your Calendly is live ────────────────────────
-export const CALENDLY_URL = 'https://calendly.com' // replace with your actual link
+import { useId, useRef, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { submitBooking } from '@/app/actions/booking'
+import { ADD_ONS, NOT_SURE_ID, PACKAGES, packageLabel, type PricingAddOn } from '@/lib/pricing'
 
 interface BookingSectionProps {
+  /** Package id from lib/pricing to preselect. */
   selectedPackage?: string
   triggerLabel?: string
-  mode?: 'inquiry' | 'consultation'
+  /** Render the form open and inline instead of behind a toggle button. */
+  inline?: boolean
+  /** id of the wrapper — the services page uses "inquiry" as a scroll target. */
+  anchorId?: string
 }
 
-const PACKAGE_OPTIONS = [
-  '— Select a package —',
-  'Portrait · Core ($180 NJIT / $250 Public)',
-  'Portrait · Premium ($275 NJIT / $375 Public)',
-  'Event · Core ($299 NJIT / $450 Public)',
-  'Event · Premium ($799 NJIT / $1,000+ Public)',
-  'Specialty · Headshot Mini ($65 NJIT / $85 Public)',
-  'Specialty · Graduation Session ($120 NJIT / $160 Public)',
-  'Specialty · Personal Brand / Content ($150 NJIT / $225 Public)',
-  'Specialty · Club / Frat Headshot Day ($45/person NJIT / $65/person Public)',
-  'Not sure yet — I have questions',
-]
+const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
+const inputClass = `w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-stone-500 focus:outline-none focus:border-white/30 transition-colors ${FOCUS}`
 
-interface AddOnOption {
-  id: string
-  label: string
-  price: string
-  description: string
-}
-
-const ADD_ON_OPTIONS: AddOnOption[] = [
-  {
-    id: 'extra_time',
-    label: 'Additional session time',
-    price: '+$75/hr',
-    description: 'Add more time to any session. Confirmed before the shoot.',
-  },
-  {
-    id: 'rush',
-    label: 'Rush delivery',
-    price: '+$40',
-    description: 'Moves your full gallery from 48hr to same-day or next-morning.',
-  },
-  {
-    id: 'social',
-    label: 'Social media pack — same-day',
-    price: '+$45',
-    description: 'Upgrades standard social pack to same-day delivery. 5–8 platform-ready edits.',
-  },
-  {
-    id: 'physical_upgrade',
-    label: 'Physical product upgrade',
-    price: 'Discussed in consultation',
-    description: 'Add a second product or upgrade your included product. Pricing depends on selection.',
-  },
-]
-
-// Shared input class
-const inputClass = "w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-stone-600 focus:outline-none focus:border-white/30 transition-colors"
-
-function AddOnItem({
-  addon, checked, onToggle,
-}: {
-  addon: AddOnOption
-  checked: boolean
-  onToggle: () => void
-}) {
-  const [tooltipVisible, setTooltipVisible] = useState(false)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
+function AddOnItem({ addon, checked, onToggle }: { addon: PricingAddOn; checked: boolean; onToggle: () => void }) {
+  const descId = useId()
   return (
-    <div className="relative">
-      <div className={`flex items-center justify-between px-4 py-2.5 rounded-lg border transition-all duration-150 ${
+    <label
+      className={`flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-colors duration-150 cursor-pointer ${
         checked
           ? 'border-white/30 bg-white/[0.08] text-white'
           : 'border-white/[0.08] bg-white/[0.02] text-stone-400 hover:border-white/20 hover:text-stone-200'
-      }`}>
-        <div className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer" onClick={onToggle}>
-          <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-all ${
-            checked ? 'bg-white border-white' : 'border-white/30 bg-transparent'
-          }`}>
-            {checked && (
-              <svg className="w-2.5 h-2.5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            )}
-          </div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.15em] truncate">{addon.label}</span>
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-          <span onClick={onToggle} className={`font-mono text-[10px] font-bold cursor-pointer transition-colors ${checked ? 'text-white' : 'text-stone-500'}`}>
-            {addon.price}
-          </span>
-          <button
-            type="button"
-            onMouseEnter={() => { timerRef.current = setTimeout(() => setTooltipVisible(true), 250) }}
-            onMouseLeave={() => { if (timerRef.current) clearTimeout(timerRef.current); setTooltipVisible(false) }}
-            className="w-4 h-4 rounded-full border border-white/20 text-stone-600 hover:text-stone-300 hover:border-white/40 transition-colors flex items-center justify-center text-[9px] font-bold"
-          >
-            i
-          </button>
-        </div>
-      </div>
-      <AnimatePresence>
-        {tooltipVisible && (
-          <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
-            transition={{ duration: 0.15 }}
-            className="absolute bottom-full left-0 right-0 mb-2 z-50 pointer-events-none"
-          >
-            <div className="bg-[#1a1a1e] border border-white/20 rounded-lg px-4 py-3 shadow-2xl">
-              <p className="text-stone-300 text-xs leading-relaxed">{addon.description}</p>
-              <div className="absolute bottom-[-5px] left-6 w-2.5 h-2.5 bg-[#1a1a1e] border-r border-b border-white/20 rotate-45" />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+      }`}
+      title={addon.description}
+    >
+      <span className="flex items-center gap-3 flex-1 min-w-0">
+        <input
+          type="checkbox"
+          name="add_ons"
+          value={addon.id}
+          checked={checked}
+          onChange={onToggle}
+          aria-describedby={descId}
+          className={`h-4 w-4 rounded border-white/30 bg-transparent accent-white ${FOCUS}`}
+        />
+        <span className="font-mono text-[10px] uppercase tracking-[0.15em] truncate">{addon.label}</span>
+      </span>
+      <span className={`font-mono text-[10px] font-bold flex-shrink-0 ${checked ? 'text-white' : 'text-stone-400'}`}>{addon.price}</span>
+      <span id={descId} className="sr-only">{addon.description}</span>
+    </label>
   )
 }
 
-export default function BookingSection({ selectedPackage, triggerLabel, mode = 'inquiry' }: BookingSectionProps) {
-  const [isOpen, setIsOpen]         = useState(false)
-  const [status, setStatus]         = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
-  const [errorMsg, setErrorMsg]     = useState('')
-  const [pkg, setPkg]               = useState(selectedPackage ?? PACKAGE_OPTIONS[0])
-  const [addOns, setAddOns]         = useState<Set<string>>(new Set())
+export default function BookingSection({ selectedPackage, triggerLabel, inline = false, anchorId }: BookingSectionProps) {
+  const reduceMotion = useReducedMotion()
+  const [isOpen, setIsOpen] = useState(inline)
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
+  const [pkg, setPkg] = useState(selectedPackage ?? '')
+  const [addOns, setAddOns] = useState<Set<string>>(new Set())
   const [showAddOns, setShowAddOns] = useState(false)
-  const [isNJIT, setIsNJIT]         = useState(false)
-  const formRef                     = useRef<HTMLFormElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+  const headingId = useId()
 
-  const hasPackage     = pkg !== PACKAGE_OPTIONS[0]
-  const selectedAddOns = ADD_ON_OPTIONS.filter((a) => addOns.has(a.id))
+  const hasPackage = pkg !== '' && pkg !== NOT_SURE_ID
+  const selectedPkg = PACKAGES.find((p) => p.id === pkg)
 
-  const toggleAddOn = (id: string) => {
+  const toggleAddOn = (id: string) =>
     setAddOns((prev) => {
       const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
       return next
     })
-  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!pkg) {
+      setStatus('error')
+      setErrorMsg('Please choose a package (or "Not sure yet").')
+      return
+    }
     setStatus('submitting')
     setErrorMsg('')
-
     const formData = new FormData(e.currentTarget)
     formData.set('package', pkg)
-    formData.set('njit_affiliate', isNJIT ? 'Yes' : 'No')
-    formData.set('add_ons', selectedAddOns.length > 0
-      ? selectedAddOns.map((a) => `${a.label} (${a.price})`).join(', ')
-      : 'None selected'
-    )
-    formData.set('discount_earned',
-      pkg.includes('Core') && pkg.startsWith('Event')
-        ? '15% off next portrait session'
-        : pkg.includes('Premium') && pkg.startsWith('Event')
-        ? '30% off next portrait session'
-        : 'None'
-    )
-
     const result = await submitBooking(formData)
-
     if (result.success) {
       setStatus('success')
       formRef.current?.reset()
-      setPkg(selectedPackage ?? PACKAGE_OPTIONS[0])
+      setPkg(selectedPackage ?? '')
       setAddOns(new Set())
       setShowAddOns(false)
-      setIsNJIT(false)
-      setTimeout(() => {
-        setIsOpen(false)
-        setTimeout(() => setStatus('idle'), 500)
-      }, 3000)
+      if (!inline) {
+        setTimeout(() => {
+          setIsOpen(false)
+          setTimeout(() => setStatus('idle'), 500)
+        }, 4000)
+      }
     } else {
       setStatus('error')
       setErrorMsg(result.error ?? 'Something went wrong.')
     }
   }
 
+  const form = (
+    <div className="p-6 sm:p-8 md:p-10 border border-white/10 bg-stone-900/95 backdrop-blur-2xl rounded-2xl shadow-2xl">
+      {status === 'success' ? (
+        <div role="status" className="flex flex-col items-center justify-center py-10 text-center space-y-4">
+          <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mb-2" aria-hidden="true">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h3 className="text-2xl font-serif text-white">Inquiry sent</h3>
+          <p className="text-stone-400 text-sm">
+            Check your email — I've sent a confirmation and next steps. I'll follow up within 24 hours.
+          </p>
+        </div>
+      ) : (
+        <form ref={formRef} onSubmit={handleSubmit} aria-labelledby={headingId} noValidate={false}>
+          <h3 id={headingId} className="text-2xl font-serif text-white mb-2">Let's capture something worth keeping.</h3>
+          <p className="text-stone-400 text-sm mb-7 leading-relaxed">
+            I'll follow up within 24 hours to confirm availability and next steps.
+          </p>
+
+          {/* Honeypot: hidden from people, present for bots. Must stay empty. */}
+          <div className="absolute -left-[9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
+            <label htmlFor="booking-website">Website</label>
+            <input id="booking-website" type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div>
+              <label htmlFor="booking-name" className="sr-only">Name</label>
+              <input id="booking-name" name="name" required maxLength={100} autoComplete="name" placeholder="Name" className={inputClass} />
+            </div>
+            <div>
+              <label htmlFor="booking-email" className="sr-only">Email address</label>
+              <input id="booking-email" type="email" name="email" required maxLength={200} autoComplete="email" placeholder="Email address" className={inputClass} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div>
+              <label htmlFor="booking-phone" className="sr-only">Phone (optional)</label>
+              <input id="booking-phone" type="tel" name="phone" maxLength={40} autoComplete="tel" placeholder="Phone (optional)" className={inputClass} />
+            </div>
+            <div>
+              <label htmlFor="booking-date" className="sr-only">Preferred date</label>
+              <input id="booking-date" type="date" name="preferred_date" className={`${inputClass} cursor-pointer`} style={{ colorScheme: 'dark' }} />
+            </div>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="booking-package" className="sr-only">Package</label>
+            <select
+              id="booking-package"
+              name="package"
+              value={pkg}
+              required
+              onChange={(e) => { setPkg(e.target.value); setAddOns(new Set()); setShowAddOns(false) }}
+              className={`${inputClass} appearance-none cursor-pointer`}
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 16px center',
+              }}
+            >
+              <option value="" className="bg-stone-900">— Select a package —</option>
+              {PACKAGES.map((p) => (
+                <option key={p.id} value={p.id} className="bg-stone-900">
+                  {packageLabel(p)}{p.comingSoon ? ' — expanding soon' : ''}
+                </option>
+              ))}
+              <option value={NOT_SURE_ID} className="bg-stone-900">Not sure yet — I have questions</option>
+            </select>
+            {selectedPkg?.comingSoon && (
+              <p className="mt-2 font-mono text-[10px] text-amber-400/90 uppercase tracking-widest">
+                This tier is expanding soon — send the inquiry and I'll tell you what's available.
+              </p>
+            )}
+          </div>
+
+          <AnimatePresence initial={false}>
+            {hasPackage && (
+              <motion.div
+                initial={reduceMotion ? false : { opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden mb-3"
+              >
+                <label htmlFor="booking-zoom" className="sr-only">Availability for a 20–30 minute call</label>
+                <input
+                  id="booking-zoom"
+                  name="zoom_availability"
+                  maxLength={300}
+                  placeholder="When works for a 20–30 min call? (e.g. weekday evenings, Saturday mornings)"
+                  className={inputClass}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <label className="flex items-center gap-3 mb-4 cursor-pointer group">
+            <input type="checkbox" name="njit_affiliate" className={`h-4 w-4 rounded border-white/30 bg-transparent accent-white ${FOCUS}`} />
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-400 group-hover:text-stone-200 transition-colors">
+              I'm an NJIT student, faculty, or affiliate
+              <span className="text-stone-500 ml-2">(NJIT ID required at booking)</span>
+            </span>
+          </label>
+
+          <AnimatePresence initial={false}>
+            {hasPackage && (
+              <motion.div
+                initial={reduceMotion ? false : { opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden mb-3"
+              >
+                <button
+                  type="button"
+                  onClick={() => setShowAddOns((v) => !v)}
+                  aria-expanded={showAddOns}
+                  aria-controls="booking-addons"
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-colors mb-2 ${FOCUS}`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-300">Add-ons</span>
+                    {addOns.size > 0 && (
+                      <span className="font-mono text-[9px] text-white bg-white/15 px-2 py-0.5 rounded-sm">{addOns.size} selected</span>
+                    )}
+                  </span>
+                  <span className={`font-mono text-stone-400 text-sm transition-transform duration-200 ${showAddOns ? 'rotate-45' : ''}`} aria-hidden="true">+</span>
+                </button>
+                <div id="booking-addons" hidden={!showAddOns} className="space-y-1.5 pt-1 pb-2">
+                  {ADD_ONS.map((addon) => (
+                    <AddOnItem key={addon.id} addon={addon} checked={addOns.has(addon.id)} onToggle={() => toggleAddOn(addon.id)} />
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <label htmlFor="booking-message" className="sr-only">Message</label>
+          <textarea
+            id="booking-message"
+            name="message"
+            required
+            rows={3}
+            maxLength={2000}
+            placeholder="Tell me about the occasion — what do you want to walk away with?"
+            className={`${inputClass} mb-5 resize-none`}
+          />
+
+          {status === 'error' && (
+            <p role="alert" className="text-red-400 text-xs mb-4 text-center">{errorMsg}</p>
+          )}
+
+          <button
+            disabled={status === 'submitting'}
+            type="submit"
+            className={`w-full bg-white text-black py-3 rounded-lg text-xs tracking-[0.2em] uppercase font-bold hover:bg-stone-200 transition-colors disabled:opacity-50 flex justify-center items-center gap-2 ${FOCUS}`}
+          >
+            {status === 'submitting' ? (
+              <>
+                <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Sending…
+              </>
+            ) : 'Send inquiry'}
+          </button>
+        </form>
+      )}
+    </div>
+  )
+
+  if (inline) {
+    return (
+      <div id={anchorId} className="relative w-full max-w-2xl mx-auto scroll-mt-28">
+        {form}
+      </div>
+    )
+  }
+
   return (
-    <div className="relative flex flex-col items-center">
+    <div id={anchorId} className="relative flex flex-col items-center scroll-mt-28">
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="group flex items-center justify-center gap-3 px-6 py-3 border border-stone-700/50 hover:border-stone-400 bg-stone-900/50 backdrop-blur-md rounded-full text-stone-300 hover:text-white transition-all duration-500"
+        aria-expanded={isOpen}
+        aria-controls="booking-panel"
+        className={`group flex items-center justify-center gap-3 px-6 py-3 border border-stone-700/50 hover:border-stone-400 bg-stone-900/50 backdrop-blur-md rounded-full text-stone-300 hover:text-white transition-all duration-500 ${FOCUS}`}
       >
         <span className="text-xs tracking-[0.2em] uppercase font-semibold whitespace-nowrap">
-          {isOpen ? 'Close' : (triggerLabel ?? 'Send Inquiry')}
+          {isOpen ? 'Close' : (triggerLabel ?? 'Send inquiry')}
         </span>
-        <motion.svg
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.5, ease: 'circOut' }}
-          className="w-4 h-4 text-stone-500 group-hover:text-white transition-colors"
-          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        <svg
+          className={`w-4 h-4 text-stone-500 group-hover:text-white transition-transform duration-500 ${isOpen ? 'rotate-180' : ''}`}
+          fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 9l-7 7-7-7" />
-        </motion.svg>
+        </svg>
       </button>
 
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0, y: -10 }}
-            animate={{ height: 'auto', opacity: 1, y: 0 }}
-            exit={{ height: 0, opacity: 0, y: -10 }}
-            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="absolute top-full mt-4 w-[calc(100vw-2rem)] sm:w-[34rem] max-w-[92vw] overflow-hidden origin-top z-50 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto"
+            id="booking-panel"
+            initial={reduceMotion ? false : { opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="relative mt-4 w-[calc(100vw-2rem)] sm:w-[34rem] max-w-[92vw] z-30"
           >
-            <div className="p-8 md:p-10 border border-white/10 bg-stone-900/95 backdrop-blur-2xl rounded-2xl shadow-2xl">
-
-              {status === 'success' ? (
-                <motion.div
-                  initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                  className="flex flex-col items-center justify-center py-10 text-center space-y-4"
-                >
-                  <div className="w-12 h-12 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mb-2">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-serif text-white">Inquiry Sent</h3>
-                  <p className="text-stone-400 text-sm">
-                    Check your email — I've sent confirmation and next steps. I'll follow up within 24 hours.
-                  </p>
-                </motion.div>
-              ) : (
-                <motion.form ref={formRef} initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={handleSubmit}>
-                  <h3 className="text-2xl font-serif text-white mb-2">Let's capture something special.</h3>
-                  <p className="text-stone-400 text-sm mb-7 leading-relaxed">
-                    I'll follow up within 24 hours to confirm availability and next steps.
-                  </p>
-
-                  {/* Name + Email */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                    <input name="name" required placeholder="Name" className={inputClass} />
-                    <input type="email" name="email" required placeholder="Email Address" className={inputClass} />
-                  </div>
-
-                  {/* Phone + Preferred Date */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                    <input type="tel" name="phone" placeholder="Phone (optional)" className={inputClass} />
-                    <input type="date" name="preferred_date" className={`${inputClass} cursor-pointer`} style={{ colorScheme: 'dark' }} />
-                  </div>
-
-                  {/* Package */}
-                  <div className="mb-3">
-                    <select
-                      value={pkg}
-                      onChange={(e) => { setPkg(e.target.value); setAddOns(new Set()); setShowAddOns(false) }}
-                      className={`${inputClass} appearance-none cursor-pointer`}
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'right 16px center',
-                      }}
-                    >
-                      {PACKAGE_OPTIONS.map((o) => (
-                        <option key={o} value={o} className="bg-stone-900">{o}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Preferred Zoom time — shown when package is selected */}
-                  <AnimatePresence>
-                    {hasPackage && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden mb-3"
-                      >
-                        <input
-                          name="zoom_availability"
-                          placeholder="When works for a 20–30 min Zoom call? (e.g. weekday evenings, Saturday mornings)"
-                          className={inputClass}
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* NJIT checkbox */}
-                  <label className="flex items-center gap-3 mb-4 cursor-pointer group">
-                    <div
-                      onClick={() => setIsNJIT((v) => !v)}
-                      className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-all ${
-                        isNJIT ? 'bg-white border-white' : 'border-white/30 bg-transparent group-hover:border-white/50'
-                      }`}
-                    >
-                      {isNJIT && (
-                        <svg className="w-2.5 h-2.5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </div>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-400 group-hover:text-stone-200 transition-colors">
-                      I'm an NJIT student, faculty, or affiliate
-                      <span className="text-stone-600 ml-2">(NJIT ID required at booking)</span>
-                    </span>
-                  </label>
-
-                  {/* Add-ons */}
-                  <AnimatePresence>
-                    {hasPackage && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="overflow-hidden mb-3"
-                      >
-                        <button
-                          type="button"
-                          onClick={() => setShowAddOns((v) => !v)}
-                          className="w-full flex items-center justify-between px-4 py-3 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-colors mb-2"
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-300">Add-ons</span>
-                            {addOns.size > 0 && (
-                              <span className="font-mono text-[9px] text-white bg-white/15 px-2 py-0.5 rounded-sm">
-                                {addOns.size} selected
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-[8px] text-stone-600 uppercase tracking-widest">hover ⓘ for details</span>
-                            <span className={`font-mono text-stone-500 text-sm transition-transform duration-200 ${showAddOns ? 'rotate-45' : ''}`}>+</span>
-                          </div>
-                        </button>
-                        <AnimatePresence>
-                          {showAddOns && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={{ opacity: 0, height: 0 }}
-                              transition={{ duration: 0.2 }}
-                              className="overflow-visible space-y-1.5 pt-1 pb-2"
-                            >
-                              {ADD_ON_OPTIONS.map((addon) => (
-                                <AddOnItem
-                                  key={addon.id}
-                                  addon={addon}
-                                  checked={addOns.has(addon.id)}
-                                  onToggle={() => toggleAddOn(addon.id)}
-                                />
-                              ))}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Message */}
-                  <textarea
-                    name="message" required rows={3}
-                    placeholder="Tell me about the occasion — what do you want to walk away with?"
-                    className={`${inputClass} mb-5 resize-none`}
-                  />
-
-                  {status === 'error' && (
-                    <p className="text-red-400 text-xs mb-4 text-center">{errorMsg}</p>
-                  )}
-
-                  <button
-                    disabled={status === 'submitting'}
-                    type="submit"
-                    className="w-full bg-white text-black py-3 rounded-lg text-xs tracking-[0.2em] uppercase font-bold hover:bg-stone-200 transition-colors disabled:opacity-50 flex justify-center items-center gap-2"
-                  >
-                    {status === 'submitting' ? (
-                      <>
-                        <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                        </svg>
-                        Sending...
-                      </>
-                    ) : 'Send Inquiry'}
-                  </button>
-                </motion.form>
-              )}
-            </div>
+            {form}
           </motion.div>
         )}
       </AnimatePresence>

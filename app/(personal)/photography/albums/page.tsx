@@ -1,63 +1,74 @@
+// app/(personal)/photography/albums/page.tsx
+import { absoluteUrl } from '@/lib/site'
 import { sanityFetch } from '@/sanity/lib/live'
 import { galleriesQuery, settingsQuery } from '@/sanity/lib/queries'
-import Link from 'next/link'
+import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Albums',
+  description: 'Every photography album by Stefan Peele — sports, portraits, graduations and events.',
+  alternates: { canonical: absoluteUrl('/photography/albums') },
+}
+
+const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default async function ArchivesPage() {
-  // 1. Fetch live data from Sanity
-  const { data: galleries } = await sanityFetch({ query: galleriesQuery })
-  const { data: settings } = await sanityFetch({ query: settingsQuery })
+  const [{ data: galleries }, { data: settings }] = await Promise.all([
+    sanityFetch({ query: galleriesQuery }),
+    sanityFetch({ query: settingsQuery }),
+  ])
 
-  // 2. Set dynamic title/subtitle with safe fallbacks
-  const title = settings?.archiveTitle || "The Archives"
-  const subtitle = settings?.archiveSubtitle || "STRUCTURED VOLUMES AND EDITORIAL COLLECTIONS."
+  const title = settings?.archiveTitle || 'The Archives'
+  const subtitle = settings?.archiveSubtitle || 'Structured volumes and editorial collections.'
 
   return (
-    <main className="min-h-screen bg-black text-stone-50 pt-32 pb-20">
-      
-      {/* Header Section */}
+    <div className="min-h-screen text-stone-50 pt-24 pb-20">
       <div className="text-center mb-24 px-6">
-        <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-white mb-6">
-          {title}
-        </h1>
-        <p className="text-stone-500 font-mono text-[10px] tracking-[0.3em] uppercase">
-          {subtitle}
-        </p>
+        <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-white mb-6">{title}</h1>
+        <p className="text-stone-400 font-mono text-[10px] tracking-[0.3em] uppercase">{subtitle}</p>
       </div>
 
-      {/* Dynamic Grid Section */}
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-        {galleries?.length > 0 ? (
-          galleries.map((gallery: any) => (
-            <Link 
-              key={gallery._id} 
-              href={`/photography/${gallery.slug}`}
-              className="group block relative aspect-[4/5] bg-stone-900 overflow-hidden"
-            >
-              {gallery.mainImage?.asset?.url && (
-                <Image 
-                  src={gallery.mainImage.asset.url} 
-                  alt={gallery.title} 
-                  fill
-                  className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
-                />
-              )}
-              
-              <div className="absolute inset-0 p-6 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent">
-                <span className="text-red-500 font-mono text-[9px] tracking-widest uppercase mb-2 block">
-                  {gallery.category?.title || 'Volume'}
-                </span>
-                <h2 className="text-white text-xl font-serif">{gallery.title}</h2>
-              </div>
-            </Link>
-          ))
-        ) : (
-          <p className="col-span-full text-center text-stone-600 font-mono text-xs mt-10">
-            No collections published yet.
-          </p>
-        )}
-      </div>
-
-    </main>
+      {galleries.length > 0 ? (
+        <ul className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 list-none m-0 p-0">
+          {galleries.map((gallery) => {
+            const cover = gallery.mainImage?.asset?.url
+            const frames = gallery.images?.length ?? 0
+            return (
+              <li key={gallery._id}>
+                <Link
+                  href={`/photography/${gallery.slug}`}
+                  className={`group block relative aspect-[4/5] bg-stone-900 overflow-hidden rounded-xl ${FOCUS}`}
+                >
+                  {cover && (
+                    <Image
+                      src={cover}
+                      alt=""
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      placeholder={gallery.mainImage?.asset?.metadata?.lqip ? 'blur' : 'empty'}
+                      blurDataURL={gallery.mainImage?.asset?.metadata?.lqip ?? undefined}
+                      className="object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 group-focus-visible:opacity-100 transition-all duration-700 ease-out"
+                    />
+                  )}
+                  <div className="absolute inset-0 p-6 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                    <span className="text-amber-400 font-mono text-[9px] tracking-widest uppercase mb-2 block">
+                      {gallery.category?.title || 'Volume'}{frames ? ` · ${frames} frames` : ''}
+                    </span>
+                    <h2 className="text-white text-xl font-serif">{gallery.title}</h2>
+                    {gallery.location && (
+                      <span className="text-stone-400 font-mono text-[9px] uppercase tracking-widest mt-1">{gallery.location}</span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      ) : (
+        <p className="text-center text-stone-400 font-mono text-xs mt-10">No albums published yet.</p>
+      )}
+    </div>
   )
 }

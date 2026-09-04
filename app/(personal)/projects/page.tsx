@@ -1,103 +1,114 @@
+// app/(personal)/projects/page.tsx
 import ImageBox from '@/components/ImageBox'
-import {sanityFetch} from '@/sanity/lib/live'
-import {projectsQuery} from '@/sanity/lib/queries'
+import { ProjectIconLinks, RepoMetaLine } from '@/components/portfolio/ProjectLinks'
+import { yearOf } from '@/lib/dates'
+import { getRepoMetaMap } from '@/lib/github'
+import { absoluteUrl } from '@/lib/site'
+import { sanityFetch } from '@/sanity/lib/live'
+import { projectsQuery } from '@/sanity/lib/queries'
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import {toPlainText} from 'next-sanity'
+import { toPlainText } from 'next-sanity'
 
-export const metadata = {
-  title: 'Projects Archive | Stefan Peele II',
-  description: 'IT Infrastructure, Architecture, and Development Case Studies',
+export const metadata: Metadata = {
+  title: 'Projects',
+  description: 'Network, storage, Active Directory and automation case studies by Stefan Peele — the problem, the constraints, the approach and the measured outcome.',
+  alternates: { canonical: absoluteUrl('/projects') },
 }
 
+const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
+
 export default async function ProjectsIndexRoute() {
-  const {data: projects} = await sanityFetch({query: projectsQuery})
+  const { data: projects } = await sanityFetch({ query: projectsQuery })
+  const sorted = [...projects].sort((a, b) => Number(!!b.featured) - Number(!!a.featured))
+  const repos = await getRepoMetaMap(sorted.map((p) => p.githubUrl))
 
   return (
-    <div className="w-full bg-[#0a0a0a] min-h-screen text-stone-300 pb-24">
+    <div className="w-full min-h-screen text-stone-300 pb-24">
       <div className="max-w-6xl mx-auto pt-24 space-y-12">
-        
-        {/* Page Header */}
-        <div className="border-b border-white/5 pb-12 mb-12">
-          <span className="text-stone-500 font-mono text-[10px] tracking-[0.4em] uppercase border-l border-stone-700 pl-4 mb-4 block">
+        <div className="border-b border-white/5 pb-12">
+          <span className="text-stone-400 font-mono text-[10px] tracking-[0.4em] uppercase border-l border-stone-700 pl-4 mb-4 block">
             Directory / Projects
           </span>
-          <h1 className="text-4xl md:text-6xl font-serif font-bold text-white tracking-tight">
-            Case Studies
-          </h1>
+          <h1 className="text-4xl md:text-6xl font-serif font-bold text-white tracking-tight">Case studies</h1>
           <p className="mt-4 text-stone-400 font-mono text-sm max-w-xl">
-            An archive of IT infrastructure, systems architecture, and developmental deployments.
+            Infrastructure, storage, identity and automation work — each written up as problem, constraints, approach and outcome.
           </p>
         </div>
 
-        {/* Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {projects.map((project: any) => {
-            const startYear = project.duration?.start ? new Date(project.duration.start).getFullYear() : null
-            const endYear = project.duration?.end ? new Date(project.duration.end).getFullYear() : 'Present'
-
-            return (
-              <Link 
-                key={project._id} 
-                href={`/projects/${project.slug}`} 
-                className="group block relative rounded-xl overflow-hidden bg-[#111] border border-white/5 hover:border-white/20 transition-all duration-500 flex flex-col h-full"
-              >
-                {/* Image */}
-                <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-white/5">
-                  {project.coverImage ? (
-                    <div className="w-full h-full transform group-hover:scale-105 transition-transform duration-700">
-                      <ImageBox 
-                        image={project.coverImage} 
-                        alt={project.title} 
-                        classesWrapper="w-full h-full object-cover filter contrast-110 opacity-70 group-hover:opacity-100 transition-opacity" 
+        {sorted.length === 0 ? (
+          <p className="py-24 text-center font-mono text-stone-400 text-sm">No projects published yet.</p>
+        ) : (
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-8 list-none m-0 p-0">
+            {sorted.map((project) => {
+              const startYear = yearOf(project.duration?.start)
+              const endYear = project.duration?.end ? yearOf(project.duration.end) : 'Present'
+              const repo = project.githubUrl ? repos.get(project.githubUrl) : undefined
+              const href = `/projects/${project.slug}`
+              return (
+                <li key={project._id} className="group relative rounded-xl overflow-hidden bg-[#111] border border-white/5 hover:border-white/20 focus-within:border-white/30 transition-colors duration-500 flex flex-col">
+                  <Link href={href} className={`block relative aspect-[16/9] w-full overflow-hidden border-b border-white/5 ${FOCUS}`} aria-label={project.title ?? 'Project'}>
+                    {project.coverImage ? (
+                      <ImageBox
+                        image={project.coverImage}
+                        alt={project.coverImage.alt !== 'Image' ? project.coverImage.alt : (project.title ?? '')}
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        width={1200}
+                        classesWrapper="h-full w-full rounded-none"
+                        imageClassName="opacity-80 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-700"
                       />
-                    </div>
-                  ) : (
-                    <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center font-mono text-stone-600 text-xs">NO ASSET</div>
-                  )}
-                  {startYear && (
-                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-2 py-1 rounded-sm border border-white/10 text-[9px] font-mono tracking-widest text-white uppercase">
-                      {startYear} - {endYear}
-                    </div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="p-6 flex flex-col flex-grow">
-                  <h2 className="text-2xl font-serif font-bold text-white mb-3 group-hover:text-stone-300 transition-colors">
-                    {project.title}
-                  </h2>
-                  
-                  {project.overview && (
-                    <div className="text-stone-400 text-sm leading-relaxed mb-6 line-clamp-3 flex-grow">
-                      {toPlainText(project.overview)}
-                    </div>
-                  )}
-
-                  {/* Tech Stack Pills (Limit to 3) */}
-                  {project.techStack && project.techStack.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5">
-                      {project.techStack.slice(0, 3).map((tech: string, index: number) => (
-                        <span key={index} className="px-2 py-1 text-[9px] font-mono tracking-wide bg-white/5 border border-white/10 text-stone-300 rounded-sm">
-                          {tech}
-                        </span>
-                      ))}
-                      {project.techStack.length > 3 && (
-                        <span className="px-2 py-1 text-[9px] font-mono tracking-wide text-stone-500">
-                          +{project.techStack.length - 3}
+                    ) : (
+                      <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center font-mono text-stone-400 text-xs">No cover</div>
+                    )}
+                    <div className="absolute top-4 right-4 flex gap-2">
+                      {project.featured && (
+                        <span className="bg-amber-500 text-black px-2 py-1 rounded-sm text-[9px] font-mono tracking-widest uppercase font-bold">Featured</span>
+                      )}
+                      {startYear && (
+                        <span className="bg-black/60 backdrop-blur-md px-2 py-1 rounded-sm border border-white/10 text-[9px] font-mono tracking-widest text-white uppercase">
+                          {startYear} – {endYear}
                         </span>
                       )}
                     </div>
-                  )}
-                </div>
-              </Link>
-            )
-          })}
-        </div>
+                  </Link>
 
-        {projects.length === 0 && (
-          <div className="py-24 text-center font-mono text-stone-500 text-sm">
-            Project archive is currently empty. Initialize a new project in Sanity.
-          </div>
+                  <div className="p-6 flex flex-col flex-grow">
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <h2 className="text-2xl font-serif font-bold text-white group-hover:text-stone-200 transition-colors">
+                        <Link href={href} className={`${FOCUS} rounded-sm`}>{project.title}</Link>
+                      </h2>
+                      <ProjectIconLinks title={project.title} githubUrl={project.githubUrl} liveUrl={project.liveUrl} className="shrink-0" />
+                    </div>
+
+                    {project.role && (
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-stone-400 mb-3">{project.role}</p>
+                    )}
+
+                    {project.outcome ? (
+                      <p className="text-stone-300 text-sm leading-relaxed mb-4 line-clamp-3">
+                        <span className="font-mono text-[9px] uppercase tracking-widest text-amber-400 mr-2">Outcome</span>{project.outcome}
+                      </p>
+                    ) : project.overview ? (
+                      <p className="text-stone-400 text-sm leading-relaxed mb-4 line-clamp-3">{toPlainText(project.overview)}</p>
+                    ) : null}
+
+                    {repo && <RepoMetaLine meta={repo} className="mb-4" />}
+
+                    {project.techStack && project.techStack.length > 0 && (
+                      <ul className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5 list-none m-0 p-0" aria-label="Tech stack">
+                        {project.techStack.slice(0, 5).map((tech) => (
+                          <li key={tech} className="px-2 py-1 text-[9px] font-mono tracking-wide bg-white/5 border border-white/10 text-stone-300 rounded-sm">{tech}</li>
+                        ))}
+                        {project.techStack.length > 5 && (
+                          <li className="px-2 py-1 text-[9px] font-mono tracking-wide text-stone-400">+{project.techStack.length - 5}</li>
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
         )}
       </div>
     </div>

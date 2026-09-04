@@ -12,6 +12,10 @@ import { homePageQuery, settingsQuery } from '@/sanity/lib/queries'
 import { urlForOpenGraphImage } from '@/sanity/lib/utils'
 import { toPlainText } from 'next-sanity'
 import { Inter, Lora, IBM_Plex_Mono } from 'next/font/google'
+import { Analytics } from '@/components/Analytics'
+import { JsonLd } from '@/components/JsonLd'
+import { MotionProvider } from '@/components/MotionProvider'
+import { absoluteUrl, SITE } from '@/lib/site'
 // app/layout.tsx — root layout, HTML shell + providers only
 
 // Lora replaces PT Serif — open and readable at small sizes, designed for screens
@@ -40,35 +44,51 @@ const ibmPlexMono = IBM_Plex_Mono({
   weight: ['400', '500', '600'],
 })
 
+const WEBMENTION_ENABLED = process.env.NEXT_PUBLIC_WEBMENTION_ENABLED === 'true'
+
 export async function generateMetadata(): Promise<Metadata> {
-  const [{data: settings}, {data: homePage}] = await Promise.all([
-    sanityFetch({query: settingsQuery, stega: false}),
-    sanityFetch({query: homePageQuery, stega: false}),
+  const [{ data: settings }, { data: homePage }] = await Promise.all([
+    sanityFetch({ query: settingsQuery, stega: false }),
+    sanityFetch({ query: homePageQuery, stega: false }),
   ])
 
   const ogImage = urlForOpenGraphImage(settings?.ogImage as any)
+  const siteTitle = homePage?.title || SITE.title
+  const description = homePage?.overview ? toPlainText(homePage.overview) : SITE.description
 
   return {
-    metadataBase: new URL('https://stefanpeele.com'),
-    title: homePage?.title
-      ? {
-          template: `%s | ${homePage.title}`,
-          default: homePage.title || 'Stefan Peele II | Digital Archive',
-        }
-      : 'Stefan Peele II | Digital Archive',
-    description: homePage?.overview
-      ? toPlainText(homePage.overview)
-      : 'IT Infrastructure & Architecture Portfolio',
+    metadataBase: new URL(SITE.url),
+    title: {
+      template: `%s | ${siteTitle}`,
+      default: siteTitle,
+    },
+    description,
+    applicationName: SITE.name,
+    authors: [{ name: SITE.name, url: SITE.url }],
+    creator: SITE.name,
+    publisher: SITE.name,
+    category: 'technology',
+    keywords: ['network engineering', 'infrastructure', 'NJIT', 'photography', 'Newark NJ', 'Stefan Peele'],
+    formatDetection: { email: false, address: false, telephone: false },
     openGraph: {
-      images: ogImage ? [ogImage] : [],
       type: 'website',
+      siteName: siteTitle,
+      locale: 'en_US',
+      url: SITE.url,
+      title: siteTitle,
+      description,
+      images: ogImage ? [ogImage] : [],
     },
     twitter: {
       card: 'summary_large_image',
+      title: siteTitle,
+      description,
     },
     alternates: {
+      canonical: SITE.url,
       types: {
-        'application/rss+xml': 'https://stefanpeele.com/blog/feed.xml',
+        'application/rss+xml': [{ url: absoluteUrl('/blog/feed.xml'), title: `${SITE.name} — Writing (RSS)` }],
+        'application/feed+json': [{ url: absoluteUrl('/blog/feed.json'), title: `${SITE.name} — Writing (JSON Feed)` }],
       },
     },
     robots: {
@@ -87,6 +107,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = {
   themeColor: '#0a0a0a',
+  colorScheme: 'dark',
 }
 
 export default async function RootLayout({
@@ -94,14 +115,69 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const { data: settings } = await sanityFetch({ query: settingsQuery, stega: false })
+
+  const sameAs = [
+    settings?.github || SITE.handles.github,
+    settings?.linkedin,
+    settings?.instagram || SITE.handles.instagram,
+    settings?.bluesky,
+    settings?.gitbook || SITE.handles.gitbook,
+  ].filter((v): v is string => Boolean(v))
+
+  const personId = `${SITE.url}/#person`
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      '@id': personId,
+      name: SITE.name,
+      alternateName: SITE.legalName,
+      url: SITE.url,
+      email: `mailto:${settings?.email || SITE.email}`,
+      jobTitle: 'Network Engineer Associate (Intern)',
+      alumniOf: { '@type': 'CollegeOrUniversity', name: SITE.school },
+      affiliation: { '@type': 'CollegeOrUniversity', name: SITE.school },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: SITE.location.city,
+        addressRegion: SITE.location.region,
+        addressCountry: 'US',
+      },
+      knowsAbout: ['Network engineering', 'IT infrastructure', 'Photography'],
+      sameAs,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': `${SITE.url}/#website`,
+      url: SITE.url,
+      name: SITE.title,
+      description: SITE.description,
+      inLanguage: 'en-US',
+      publisher: { '@id': personId },
+      // No SearchAction: /blog does not read a ?q= or ?search= param. Add one here once it does.
+    },
+  ]
+
   return (
     <html
       lang="en"
       className={`${lora.variable} ${inter.variable} ${ibmPlexMono.variable}`}
     >
+      <head>
+        {WEBMENTION_ENABLED && (
+          <>
+            <link rel="webmention" href="https://webmention.io/stefanpeele.com/webmention" />
+            <link rel="pingback" href="https://webmention.io/stefanpeele.com/xmlrpc" />
+          </>
+        )}
+        <link rel="author" href="/humans.txt" />
+      </head>
       <body className="bg-[#0a0a0a] text-stone-300 font-sans selection:bg-white/20 antialiased">
         <a href="#content" className="skip-link">Skip to content</a>
-        {children}
+        <MotionProvider>{children}</MotionProvider>
+        <JsonLd data={jsonLd} />
 
         <Toaster />
         <SanityLive onError={handleError} />
@@ -121,6 +197,7 @@ export default async function RootLayout({
           </>
         )}
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   )

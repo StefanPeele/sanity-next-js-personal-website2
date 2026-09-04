@@ -7,6 +7,9 @@ html {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  /* Anchor targets clear the fixed navbar */
+  scroll-padding-top: 6rem;
+  color-scheme: dark;
 }
 
 body {
@@ -15,6 +18,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-serif), Georgia, serif;
+  text-wrap: balance;
 }
 
 code, pre, kbd {
@@ -39,6 +43,14 @@ ul {
 ol {
   list-style-type: disc;
 }
+
+@layer utilities {
+  /* Shared keyboard focus ring — same as the inline focus-visible classes used site-wide. */
+  .focus-ring {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 focus-visible:outline-offset-2;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -68,4 +80,30 @@ ol {
 .skip-link:focus {
   top: 1rem;
   outline: 2px solid #f59e0b;
+}
+
+/* Print: white paper, black ink, no chrome. Components with `print:hidden` also drop out. */
+@media print {
+  html {
+    scroll-padding-top: 0;
+    color-scheme: light;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  header, footer, nav, .skip-link, [data-print-hidden] {
+    display: none !important;
+  }
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+  }
+  pre, blockquote, figure {
+    break-inside: avoid;
+  }
 }

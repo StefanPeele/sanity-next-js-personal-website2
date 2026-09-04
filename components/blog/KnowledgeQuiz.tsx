@@ -58,7 +58,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
   }
 
   return (
-    <div ref={quizRef} className="relative">
+    <div ref={quizRef} className="relative" data-no-toc>
 
       {/* ── Quiz card ─────────────────────────────────────────────── */}
       <div className="my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]">
@@ -78,7 +78,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
               </span>
             )}
           </div>
-          <span className="font-mono text-[10px] text-stone-700">Active Recall</span>
+          <span className="font-mono text-[10px] text-stone-500">Active Recall</span>
         </div>
 
         <div className="p-6">
@@ -157,7 +157,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
                 transition={{ duration: 0.4 }}
                 className="mt-6 pt-6 border-t border-white/5 overflow-hidden"
               >
-                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-600 mb-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-2">
                   Explanation
                 </p>
                 <p className="text-stone-400 text-sm leading-relaxed">

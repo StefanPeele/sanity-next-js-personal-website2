@@ -9,10 +9,58 @@ import { SideNote } from '@/components/blog/SideNote'
 import { SectionBreak } from '@/components/blog/SectionBreak'
 import { FailureNote } from '@/components/blog/FailureNote'
 import { WhatIGotWrong, WhatEngineersUse, TheProblemSolved, ConceptStressTest } from '@/components/blog/LearningBlocks'
+import { GlossaryTerm } from '@/components/blog/GlossaryTerm'
+import { HeadingAnchor } from '@/components/article/HeadingAnchor'
+import { slugify, countWords } from '@/lib/reading'
 import type { PathSegment } from '@sanity/client/csm'
 import { PortableText, type PortableTextBlock, type PortableTextComponents } from 'next-sanity'
 import type { Image } from 'sanity'
 // components/CustomPortableText.tsx
+// Shared Portable Text renderer. When `article` is true the headings get stable
+// slugified ids (deduped -2, -3 …), a data-words attribute with the word count
+// of the section that follows (for TOC reading times) and a hover anchor link.
+
+type AnyBlock = PortableTextBlock & { _key: string; _type: string; style?: string; children?: Array<{ text?: string }>; title?: string }
+
+const HEADING_STYLES = new Set(['h2', 'h3', 'h4'])
+
+/** Precompute ids + section word counts so SSR markup already carries them. */
+function buildHeadingMeta(blocks: AnyBlock[]): Map<string, { id: string; words: number }> {
+  const meta = new Map<string, { id: string; words: number }>()
+  const taken = new Set<string>()
+  let current: string | null = null
+  let words = 0
+
+  const flush = () => {
+    if (current) {
+      const m = meta.get(current)
+      if (m) m.words = words
+    }
+    words = 0
+  }
+
+  for (const b of blocks) {
+    if (!b) continue
+    const isHeading = (b._type === 'block' && b.style && HEADING_STYLES.has(b.style)) || b._type === 'sectionBreak'
+    if (isHeading) {
+      flush()
+      const text = b._type === 'sectionBreak' ? (b.title ?? '') : (b.children ?? []).map((c) => c.text ?? '').join('')
+      const base = slugify(text)
+      let id = base
+      let n = 2
+      while (taken.has(id)) id = `${base}-${n++}`
+      taken.add(id)
+      meta.set(b._key, { id, words: 0 })
+      current = b._key
+      continue
+    }
+    if (b._type === 'block' && Array.isArray(b.children)) {
+      words += countWords((b.children as Array<{ text?: string }>).map((c) => c.text ?? '').join(''))
+    }
+  }
+  flush()
+  return meta
+}
 
 export function CustomPortableText({
   id = null,
@@ -20,40 +68,66 @@ export function CustomPortableText({
   path = [],
   paragraphClasses,
   value,
+  article = false,
 }: {
   id?: string | null
   type?: string | null
   path?: PathSegment[]
   paragraphClasses?: string
   value: PortableTextBlock[]
+  /** Enables heading ids/anchors, reader font-size variable, glossary marks. */
+  article?: boolean
 }) {
+  const headingMeta = article ? buildHeadingMeta(value as AnyBlock[]) : null
+
+  const headingProps = (key: string | undefined) => {
+    const m = key ? headingMeta?.get(key) : undefined
+    return m ? { id: m.id, 'data-words': m.words } : {}
+  }
+
+  const bodyText = article
+    ? 'text-[length:var(--article-fs,1rem)]'
+    : 'text-base md:text-[17px]'
+
   const components: PortableTextComponents = {
 
     // ── Block-level elements ───────────────────────────────────────
     block: {
       normal: ({ children }) => (
-        <p className={paragraphClasses ?? 'mb-6 leading-[1.85] text-stone-300 text-base md:text-[17px]'}>{children}</p>
+        <p className={paragraphClasses ?? `mb-6 leading-[1.85] text-stone-300 ${bodyText}`}>{children}</p>
       ),
       h1: ({ children }) => (
         <h1 className="mt-16 mb-6 font-serif text-4xl md:text-5xl font-bold text-white leading-tight tracking-tight">
           {children}
         </h1>
       ),
-      h2: ({ children }) => (
-        <h2 className="mt-16 mb-5 font-serif text-3xl md:text-[2rem] font-semibold text-white leading-tight tracking-tight border-b border-white/5 pb-4">
-          {children}
-        </h2>
-      ),
-      h3: ({ children }) => (
-        <h3 className="mt-10 mb-4 font-serif text-2xl md:text-[1.6rem] font-semibold text-white leading-snug">
-          {children}
-        </h3>
-      ),
-      h4: ({ children }) => (
-        <h4 className="mt-8 mb-3 font-serif text-xl font-semibold text-stone-200 leading-snug">
-          {children}
-        </h4>
-      ),
+      h2: ({ children, value: v }) => {
+        const p = headingProps(v?._key)
+        return (
+          <h2 {...p} className="group mt-16 mb-5 font-serif text-3xl md:text-[2rem] font-semibold text-white leading-tight tracking-tight border-b border-white/5 pb-4 scroll-mt-28">
+            {children}
+            {p.id && <HeadingAnchor id={p.id} />}
+          </h2>
+        )
+      },
+      h3: ({ children, value: v }) => {
+        const p = headingProps(v?._key)
+        return (
+          <h3 {...p} className="group mt-10 mb-4 font-serif text-2xl md:text-[1.6rem] font-semibold text-white leading-snug scroll-mt-28">
+            {children}
+            {p.id && <HeadingAnchor id={p.id} />}
+          </h3>
+        )
+      },
+      h4: ({ children, value: v }) => {
+        const p = headingProps(v?._key)
+        return (
+          <h4 {...p} className="group mt-8 mb-3 font-serif text-xl font-semibold text-stone-200 leading-snug scroll-mt-28">
+            {children}
+            {p.id && <HeadingAnchor id={p.id} />}
+          </h4>
+        )
+      },
       blockquote: ({ children }) => (
         <blockquote className="my-10 pl-6 border-l-2 border-stone-600 font-serif italic text-xl text-stone-400 leading-relaxed">
           {children}
@@ -72,14 +146,14 @@ export function CustomPortableText({
     },
     listItem: {
       bullet: ({ children }) => (
-        <li className="flex items-start gap-3 text-stone-300 leading-relaxed text-base">
-          <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-stone-600" />
+        <li className={`flex items-start gap-3 text-stone-300 leading-relaxed ${bodyText}`}>
+          <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-stone-500" aria-hidden="true" />
           <span>{children}</span>
         </li>
       ),
       number: ({ children, index }) => (
-        <li className="flex items-start gap-4 text-stone-300 leading-relaxed text-base">
-          <span className="shrink-0 font-mono text-[11px] text-stone-600 mt-1 w-5 text-right">
+        <li className={`flex items-start gap-4 text-stone-300 leading-relaxed ${bodyText}`}>
+          <span className="shrink-0 font-mono text-[11px] text-stone-500 mt-1 w-5 text-right" aria-hidden="true">
             {(index ?? 0) + 1}.
           </span>
           <span>{children}</span>
@@ -89,16 +163,20 @@ export function CustomPortableText({
 
     // ── Inline marks ───────────────────────────────────────────────
     marks: {
-      link: ({ children, value }) => (
-        <a
-          className="text-white decoration-stone-600 underline underline-offset-4 transition hover:decoration-white hover:text-stone-200"
-          href={value?.href}
-          rel="noreferrer noopener"
-          target={value?.href?.startsWith('/') ? undefined : '_blank'}
-        >
-          {children}
-        </a>
-      ),
+      link: ({ children, value: v }) => {
+        const href: string = v?.href ?? '#'
+        const external = /^https?:\/\//i.test(href)
+        return (
+          <a
+            className="article-link text-white decoration-stone-500 underline underline-offset-4 transition hover:decoration-white hover:text-stone-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+            href={href}
+            rel={external ? 'noreferrer noopener' : undefined}
+            target={external ? '_blank' : undefined}
+          >
+            {children}
+          </a>
+        )
+      },
       code: ({ children }) => (
         <code className="font-mono text-[0.875em] text-stone-200 bg-white/5 border border-white/10 rounded px-1.5 py-0.5">
           {children}
@@ -110,30 +188,36 @@ export function CustomPortableText({
       em: ({ children }) => (
         <em className="italic font-serif text-stone-300">{children}</em>
       ),
-      sidenote: ({ children, value }) => (
-        <SideNote note={value?.note}>{children}</SideNote>
+      sidenote: ({ children, value: v }) => (
+        <SideNote note={v?.note}>{children}</SideNote>
+      ),
+      glossary: ({ children, value: v }) => (
+        <GlossaryTerm slug={v?.slug} term={v?.term} definition={v?.definition}>{children}</GlossaryTerm>
       ),
     },
 
     // ── Custom block types ─────────────────────────────────────────
     types: {
-      image: ({ value }: { value: Image & { alt?: string; caption?: string } }) => (
-        <div className="my-10 rounded-xl overflow-hidden border border-white/5 shadow-2xl bg-[#0a0a0a]">
+      image: ({ value: v }: { value: Image & { alt?: string; caption?: string; keepColor?: boolean } }) => (
+        <figure
+          className="my-10 rounded-xl overflow-hidden border border-white/5 shadow-2xl bg-[#0a0a0a]"
+          {...(v?.keepColor === false ? { 'data-desaturate': '' } : {})}
+        >
           <ImageBox
-            image={value}
-            alt={value.alt}
+            image={v}
+            alt={v.alt ?? ''}
             classesWrapper="relative aspect-[16/9] w-full h-auto"
           />
-          {value?.caption && (
-            <div className="px-4 py-3 font-mono text-[10px] text-stone-500 uppercase tracking-widest text-center border-t border-white/5">
-              {value.caption}
-            </div>
+          {v?.caption && (
+            <figcaption className="px-4 py-3 font-mono text-[10px] text-stone-500 uppercase tracking-widest text-center border-t border-white/5">
+              {v.caption}
+            </figcaption>
           )}
-        </div>
+        </figure>
       ),
 
-      timeline: ({ value }: { value: { items: unknown; _key: string } }) => {
-        const { items, _key } = value ?? {}
+      timeline: ({ value: v }: { value: { items: unknown; _key: string } }) => {
+        const { items, _key } = v ?? {}
         return (
           <TimelineSection
             key={_key}
@@ -145,25 +229,28 @@ export function CustomPortableText({
         )
       },
 
-      code: ({ value }: { value: { code?: string; language?: string } }) => (
-        <CodeBlock value={value} />
+      code: ({ value: v }: { value: { code?: string; language?: string; filename?: string; highlightedLines?: number[] } }) => (
+        <CodeBlock value={v} />
       ),
 
       // ── Interactive blog features ──────────────────────────────
-      knowledgeQuiz:    ({ value }) => <KnowledgeQuiz value={value} />,
-      layerExplorer:    ({ value }) => <LayerExplorer value={value} />,
-      packetAnimator:   ({ value }) => <PacketAnimator value={value} />,
-      wiresharkCallout: ({ value }) => <WiresharkCallout value={value} />,
+      knowledgeQuiz:    ({ value: v }) => <KnowledgeQuiz value={v} />,
+      layerExplorer:    ({ value: v }) => <LayerExplorer value={v} />,
+      packetAnimator:   ({ value: v }) => <PacketAnimator value={v} />,
+      wiresharkCallout: ({ value: v }) => <WiresharkCallout value={v} />,
 
       // ── Editorial features ─────────────────────────────────────
-      sectionBreak: ({ value }) => <SectionBreak value={value} />,
-      failureNote:  ({ value }) => <FailureNote value={value} />,
+      sectionBreak: ({ value: v }) => {
+        const m = headingMeta?.get(v?._key)
+        return <SectionBreak value={v} id={m?.id} words={m?.words} />
+      },
+      failureNote:  ({ value: v }) => <FailureNote value={v} />,
 
-      // ── New learning blocks ────────────────────────────────────
-      whatIGotWrong:    ({ value }) => <WhatIGotWrong value={value} />,
-      whatEngineersUse: ({ value }) => <WhatEngineersUse value={value} />,
-      theProblemSolved: ({ value }) => <TheProblemSolved value={value} />,
-      conceptStressTest:({ value }) => <ConceptStressTest value={value} />,
+      // ── Learning blocks ────────────────────────────────────────
+      whatIGotWrong:    ({ value: v }) => <WhatIGotWrong value={v} />,
+      whatEngineersUse: ({ value: v }) => <WhatEngineersUse value={v} />,
+      theProblemSolved: ({ value: v }) => <TheProblemSolved value={v} />,
+      conceptStressTest:({ value: v }) => <ConceptStressTest value={v} />,
     },
   }
 

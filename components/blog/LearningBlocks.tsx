@@ -5,6 +5,8 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
+import { downloadTextFile } from '@/lib/anki'
 
 // ══════════════════════════════════════════════════════════════════
 // WHAT I GOT WRONG FIRST
@@ -193,7 +195,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
             Before moving on
           </span>
         </div>
-        <span className="font-mono text-[10px] text-stone-700">Active recall</span>
+        <span className="font-mono text-[10px] text-stone-500">Active recall</span>
       </div>
 
       <div className="p-6">
@@ -273,30 +275,53 @@ interface ConceptCard {
 
 interface ConceptCardsProps {
   cards: ConceptCard[]
+  /** Anki TSV built by lib/anki buildStudyDeck; enables the download button. */
+  deck?: string
+  deckCount?: number
+  deckFilename?: string
 }
 
-export function ConceptCards({ cards }: ConceptCardsProps) {
+export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study-deck.txt' }: ConceptCardsProps) {
   const [flipped, setFlipped] = useState<Set<string>>(new Set())
+  const [downloaded, setDownloaded] = useState(false)
+  const reduced = useArticleReducedMotion()
 
   if (!cards || cards.length === 0) return null
 
   const toggleFlip = (key: string) => {
     setFlipped((prev) => {
       const next = new Set(prev)
-      next.has(key) ? next.delete(key) : next.add(key)
+      if (next.has(key)) next.delete(key); else next.add(key)
       return next
     })
   }
 
+  const download = () => {
+    if (!deck) return
+    downloadTextFile(deckFilename, deck, 'text/tab-separated-values;charset=utf-8')
+    setDownloaded(true)
+    setTimeout(() => setDownloaded(false), 2500)
+  }
+
   return (
-    <section className="mt-16 pt-12 border-t border-white/[0.08]">
-      <div className="flex items-center gap-4 mb-6">
-        <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-600 pl-4">
+    <section className="mt-16 pt-12 border-t border-white/[0.08]" aria-labelledby="concept-cards-heading" data-no-toc>
+      <div className="flex items-center gap-4 mb-6 flex-wrap">
+        <h2 id="concept-cards-heading" className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-600 pl-4">
           Concept Cards
-        </span>
-        <span className="font-mono text-[9px] text-stone-700 uppercase tracking-widest">
+        </h2>
+        <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
           {cards.length} terms — click to flip
         </span>
+        {deck && deckCount > 0 && (
+          <button
+            type="button"
+            onClick={download}
+            className="ml-auto font-mono text-[9px] uppercase tracking-widest px-3 py-2 border border-white/10 rounded-lg text-stone-300 hover:text-white hover:border-white/30 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+            data-print-hide
+          >
+            {downloaded ? 'Saved ✓' : `Download study deck (${deckCount} cards, Anki)`}
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -305,13 +330,15 @@ export function ConceptCards({ cards }: ConceptCardsProps) {
           return (
             <button
               key={card._key}
+              type="button"
               onClick={() => toggleFlip(card._key)}
-              className="relative h-36 w-full text-left group"
-              aria-label={`Concept card: ${card.front}. Click to reveal definition.`}
+              className="relative h-36 w-full text-left group focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-xl"
+              aria-pressed={isFlipped}
+              aria-label={isFlipped ? `Definition of ${card.front}: ${card.back}. Activate to show the term.` : `Concept card: ${card.front}. Activate to reveal the definition.`}
             >
-              {/* Card container with 3D flip */}
+              {/* Card container with 3D flip (instant swap under reduced motion) */}
               <div
-                className="relative w-full h-full transition-all duration-500"
+                className={`relative w-full h-full ${reduced ? '' : 'transition-transform duration-500'}`}
                 style={{
                   transformStyle: 'preserve-3d',
                   transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
@@ -328,7 +355,7 @@ export function ConceptCards({ cards }: ConceptCardsProps) {
                   <p className="font-serif text-lg text-white leading-snug">
                     {card.front}
                   </p>
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-700 group-hover:text-stone-500 transition-colors">
+                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 group-hover:text-stone-300 transition-colors">
                     Click to define →
                   </span>
                 </div>
@@ -344,7 +371,7 @@ export function ConceptCards({ cards }: ConceptCardsProps) {
                   <p className="font-mono text-xs text-stone-300 leading-relaxed">
                     {card.back}
                   </p>
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-700">
+                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500">
                     ← Click to flip back
                   </span>
                 </div>

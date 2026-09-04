@@ -1,24 +1,26 @@
 import {HomePage} from '@/components/HomePage'
 import {studioUrl} from '@/sanity/lib/api'
 import {sanityFetch} from '@/sanity/lib/live'
-import {homePageQuery, homeIntelQuery} from '@/sanity/lib/queries'
+import {homeIntelQuery, homePageQuery, settingsQuery} from '@/sanity/lib/queries'
 import Link from 'next/link'
 
 export default async function IndexRoute() {
-  const {data: homeData} = await sanityFetch({query: homePageQuery})
-  const {data: intelData} = await sanityFetch({query: homeIntelQuery})
+  const [{data: homeData}, {data: intelData}, {data: settings}] = await Promise.all([
+    sanityFetch({query: homePageQuery}),
+    sanityFetch({query: homeIntelQuery}),
+    sanityFetch({query: settingsQuery}),
+  ])
 
   if (!homeData) {
     return (
-      <div className="text-center font-mono text-stone-500 mt-32">
-        Archive empty.{' '}
+      <div className="text-center font-mono text-stone-400 mt-32">
+        The Home document has not been created yet.{' '}
         <Link href={`${studioUrl}/structure/home`} className="text-white underline">
-          Initialize Database
+          Open the Studio
         </Link>
       </div>
     )
   }
 
-  // We are now passing BOTH the standard home data AND the new blog data to your component!
-  return <HomePage data={homeData} intelData={intelData} />
+  return <HomePage data={homeData} intelData={intelData} settings={settings} />
 }

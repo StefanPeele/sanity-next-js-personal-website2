@@ -15,13 +15,23 @@ export default defineType({
       title: 'Tag name',
       type: 'string',
       description: 'Keep it short and specific. Use lowercase. "ospf" not "OSPF Routing Protocol". Tags should be reusable across many notes.',
-      validation: (rule) => rule.required(),
+      validation: (rule) =>
+        rule.required().custom(async (title, context) => {
+          if (!title) return true
+          const id = (context.document?._id ?? '').replace(/^drafts\./, '')
+          const client = context.getClient({ apiVersion: '2025-02-27' })
+          const dupes = await client.fetch<number>(
+            `count(*[_type == "tag" && lower(title) == lower($t) && !(_id in [$id, "drafts." + $id])])`,
+            { t: title, id },
+          )
+          return dupes > 0 ? `A tag called "${title}" already exists. Reuse it instead of creating a duplicate.` : true
+        }),
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      options: { source: 'title', maxLength: 64 },
+      options: { source: 'title', maxLength: 64, isUnique: (slug, context) => context.defaultIsUnique(slug, context) },
       validation: (rule) => rule.required(),
     }),
     defineField({

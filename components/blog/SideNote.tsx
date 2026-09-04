@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useId, useState } from 'react'
 // components/blog/SideNote.tsx
-//
-// Renders inline annotation marks from Sanity.
-// Desktop (lg+): hover the highlighted text → note appears in a tooltip
-// Mobile: tap the highlighted text → note expands inline below
+// Inline annotation mark. The highlighted text is a button so keyboard users can
+// reach it: hover or focus shows the tooltip on desktop, click/tap toggles an
+// inline expansion on mobile. The note is linked through aria-describedby.
 
 interface SideNoteProps {
   children: React.ReactNode
@@ -14,58 +13,45 @@ interface SideNoteProps {
 
 export function SideNote({ children, note }: SideNoteProps) {
   const [open, setOpen] = useState(false)
+  const noteId = useId()
 
   if (!note) return <span>{children}</span>
 
   return (
-    <span className="relative group">
-      {/* Annotated text — dashed amber underline signals "there's a note here" */}
-      <span
-        className="border-b border-dashed border-amber-400/60 cursor-pointer lg:cursor-help text-inherit"
+    <span className="relative group inline">
+      <button
+        type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label="Sidenote"
+        aria-expanded={open}
+        aria-describedby={noteId}
+        style={{ font: 'inherit', color: 'inherit' }}
+        className="border-b border-dashed border-amber-400/60 cursor-help bg-transparent p-0 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
       >
         {children}
-      </span>
+        <sup className="font-mono text-[9px] text-amber-400/80 ml-0.5 select-none" aria-hidden="true">※</sup>
+      </button>
 
-      {/* Superscript marker */}
-      <sup className="font-mono text-[9px] text-amber-400/80 ml-0.5 select-none">
-        ※
-      </sup>
-
-      {/* ── Desktop tooltip — appears on hover above/below the text ── */}
+      {/* Desktop tooltip — hover or focus-within */}
       <span
+        id={noteId}
+        role="tooltip"
         className={`
-          pointer-events-none
-          hidden lg:group-hover:block
-          absolute z-50
-          bottom-full left-1/2 -translate-x-1/2 mb-2
-          w-64
-          p-3.5
-          bg-[#1a1a1e] border border-amber-400/20 rounded-lg
-          shadow-2xl shadow-black/60
-          text-left
+          article-light-invert pointer-events-none
+          absolute z-40 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3.5
+          bg-[#1a1a1e] border border-amber-400/20 rounded-lg shadow-2xl shadow-black/60 text-left
+          hidden lg:group-hover:block lg:group-focus-within:block
         `}
       >
-        <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-amber-400/70 block mb-1.5">
-          Note
-        </span>
-        <span className="font-mono text-[11px] text-stone-300 leading-relaxed block">
-          {note}
-        </span>
-        {/* Arrow pointing down */}
-        <span className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-amber-400/20" />
+        <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-amber-400/80 block mb-1.5">Note</span>
+        <span className="font-mono text-[11px] text-stone-200 leading-relaxed block">{note}</span>
+        <span className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-amber-400/20" aria-hidden="true" />
       </span>
 
-      {/* ── Mobile inline expander ─────────────────────────────────── */}
+      {/* Mobile inline expander */}
       {open && (
-        <span className="lg:hidden block mt-2 mb-3 ml-0 pl-3 border-l-2 border-amber-400/40 bg-amber-950/20 rounded-r-lg py-2 pr-3">
-          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-amber-400/70 block mb-1">
-            Note
-          </span>
-          <span className="font-mono text-[11px] text-stone-300 leading-relaxed block">
-            {note}
-          </span>
+        <span className="lg:hidden block mt-2 mb-3 pl-3 border-l-2 border-amber-400/40 bg-amber-950/20 rounded-r-lg py-2 pr-3">
+          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-amber-400/80 block mb-1">Note</span>
+          <span className="font-mono text-[11px] text-stone-200 leading-relaxed block">{note}</span>
         </span>
       )}
     </span>

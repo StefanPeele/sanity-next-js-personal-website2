@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { formatDate } from '@/lib/dates'
+import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 // components/blog/CredibilitySection.tsx
 
 interface Reviewer {
@@ -83,6 +85,7 @@ export function CredibilitySection({
   const responsesFromField = responsesProp ?? []
 
   const [changelogOpen, setChangelogOpen] = useState(false)
+  const reduced = useArticleReducedMotion()
 
   const hasCredibilityContent =
     reviewers.length > 0 ||
@@ -165,8 +168,8 @@ export function CredibilitySection({
                         </span>
                       )}
                       {reviewer.date && (
-                        <span className="font-mono text-[9px] text-stone-700 ml-auto">
-                          {new Date(reviewer.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                        <span className="font-mono text-[9px] text-stone-500 ml-auto">
+                          {formatDate(reviewer.date, 'month')}
                         </span>
                       )}
                     </div>
@@ -215,7 +218,7 @@ export function CredibilitySection({
                     </p>
                   )}
                   {response.author && (
-                    <p className="font-mono text-[9px] text-stone-700 mt-1">— {response.author}</p>
+                    <p className="font-mono text-[9px] text-stone-500 mt-1">— {response.author}</p>
                   )}
                 </div>
                 <span className="text-stone-600 group-hover:text-stone-400 transition-colors flex-shrink-0 mt-0.5">↗</span>
@@ -230,12 +233,14 @@ export function CredibilitySection({
         <div>
           <button
             onClick={() => setChangelogOpen((v) => !v)}
+            aria-expanded={changelogOpen}
+            type="button"
             className="flex items-center gap-3 group"
           >
-            <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-600 group-hover:text-stone-400 transition-colors">
+            <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 group-hover:text-stone-300 transition-colors">
               Revision History
             </span>
-            <span className="font-mono text-[9px] text-stone-700 group-hover:text-stone-500 transition-colors">
+            <span className="font-mono text-[9px] text-stone-500 group-hover:text-stone-300 transition-colors">
               {changelog.length} update{changelog.length !== 1 ? 's' : ''} {changelogOpen ? '↑' : '↓'}
             </span>
           </button>
@@ -245,17 +250,17 @@ export function CredibilitySection({
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: reduced ? 0 : 0.3 }}
                 className="overflow-hidden mt-4"
               >
                 <ol className="space-y-2 border-l border-white/[0.08] pl-4">
                   {changelog
                     .slice()
-                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
                     .map((entry) => (
                       <li key={entry._key} className="flex items-start gap-4">
                         <span className="font-mono text-[9px] text-stone-600 flex-shrink-0 mt-0.5 w-24">
-                          {new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          {formatDate(entry.date, 'short')}
                         </span>
                         <span className="font-mono text-[10px] text-stone-400 leading-relaxed">
                           {entry.description}
@@ -275,7 +280,7 @@ export function CredibilitySection({
           href="https://github.com/StefanPeele/sanity-next-js-personal-website2/issues/new?title=Correction+request&body=Post+URL%3A+%0A%0AError+found%3A+%0A%0ASuggested+correction%3A+"
           target="_blank"
           rel="noreferrer noopener"
-          className="font-mono text-[9px] uppercase tracking-widest text-stone-700 hover:text-stone-400 transition-colors"
+          className="font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-stone-300 transition-colors"
         >
           Found an error? Submit a correction →
         </a>

@@ -3,6 +3,7 @@
 import {apiVersion, dataset, projectId, studioUrl} from '@/sanity/lib/api'
 import * as resolve from '@/sanity/plugins/resolve'
 import {pageStructure, singletonPlugin} from '@/sanity/plugins/settings'
+import { gardenToolPlugin } from '@/sanity/plugins/garden-tool'
 import page from '@/sanity/schemas/documents/page'
 import project from '@/sanity/schemas/documents/project'
 import duration from '@/sanity/schemas/objects/duration'
@@ -52,6 +53,7 @@ import learningPath from '@/sanity/schemas/documents/learningPath'
 import certification from '@/sanity/schemas/documents/certification'
 import education from '@/sanity/schemas/documents/education'
 import testimonial from '@/sanity/schemas/documents/testimonial'
+import subscriber from '@/sanity/schemas/documents/subscriber'
 
 const title =
   process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Stefan Peele II | Digital Archive'
@@ -83,6 +85,7 @@ export default defineConfig({
       certification,
       education,
       testimonial,
+      subscriber,
       // Objects
       skill,
       milestone,
@@ -115,5 +118,6 @@ export default defineConfig({
     visionTool({ defaultApiVersion: apiVersion }),
     codeInput(),
     media(),
+    gardenToolPlugin(),
   ],
 })
