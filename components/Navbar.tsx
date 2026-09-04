@@ -1,40 +1,35 @@
 'use client'
 
-import { studioUrl } from '@/sanity/lib/api'
-import { resolveHref } from '@/sanity/lib/utils'
-import { createDataAttribute, stegaClean } from 'next-sanity'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { SearchModal } from '@/components/SearchModal'
+import { PRIMARY_NAV, SECONDARY_NAV } from '@/lib/site'
 // components/Navbar.tsx
-
-// Matches Sanity's SettingsQueryResult shape — _key and slug can be null
-// from the generated types, so we accept null and guard at render time
-interface MenuItem {
-  _key: string | null
-  _type: string
-  slug: string | null
-  title: string | null
-}
+// Primary navigation is hard-coded in lib/site.ts so every section of the site
+// is reachable. The `data` prop is accepted for backwards compatibility and ignored.
 
 interface NavbarProps {
-  data: {
-    _id?: string | null
-    _type?: string | null
-    menuItems?: MenuItem[] | null
-  } | null
+  data?: unknown
 }
 
-export function Navbar({ data }: NavbarProps) {
+export function Navbar(_props: NavbarProps = {}) {
   const pathname                    = usePathname()
   const [scrolled, setScrolled]     = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    let raf = 0
+    const handleScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => setScrolled(window.scrollY > 20))
+    }
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   useEffect(() => { setMobileOpen(false) }, [pathname])
@@ -44,16 +39,15 @@ export function Navbar({ data }: NavbarProps) {
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
-  const dataAttribute =
-    data?._id && data?._type
-      ? createDataAttribute({
-          baseUrl: studioUrl,
-          id: data._id,
-          type: data._type,
-        })
-      : null
+  useEffect(() => {
+    if (!mobileOpen) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMobileOpen(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [mobileOpen])
 
-  const menuItems = data?.menuItems ?? []
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/')
 
   return (
     <>
@@ -69,34 +63,27 @@ export function Navbar({ data }: NavbarProps) {
           {/* Logo */}
           <Link
             href="/"
-            className="text-white font-serif text-xl tracking-tighter uppercase z-10 flex-shrink-0"
+            aria-label="Stefan Peele — home"
+            className="text-white font-serif text-xl tracking-tighter uppercase z-10 flex-shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm"
           >
             S.P<span className="text-stone-600">.</span>
           </Link>
 
           {/* Desktop nav + search */}
           <div className="hidden md:flex items-center gap-x-8">
-            <nav className="flex items-center gap-x-8">
-              {menuItems.map((menuItem) => {
-                // Guard against null _key or slug from Sanity typegen
-                if (!menuItem._key || !menuItem._type) return null
-                const href = resolveHref(menuItem._type, menuItem.slug ?? '')
-                if (!href) return null
-                const isActive = pathname === href
-
+            <nav aria-label="Primary" className="flex items-center gap-x-7">
+              {PRIMARY_NAV.map((item) => {
+                const active = isActive(item.href)
                 return (
                   <Link
-                    key={menuItem._key}
-                    href={href}
-                    className={`font-mono text-[10px] tracking-[0.3em] uppercase transition-colors ${
-                      isActive ? 'text-white' : 'text-stone-500 hover:text-stone-200'
+                    key={item.href}
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={`font-mono text-[10px] tracking-[0.3em] uppercase transition-colors rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 ${
+                      active ? 'text-white' : 'text-stone-400 hover:text-stone-100'
                     }`}
-                    data-sanity={dataAttribute?.([
-                      'menuItems',
-                      { _key: menuItem._key },
-                    ])}
                   >
-                    {stegaClean(menuItem.title ?? '')}
+                    {item.name}
                   </Link>
                 )
               })}
@@ -111,7 +98,8 @@ export function Navbar({ data }: NavbarProps) {
               onClick={() => setMobileOpen((v) => !v)}
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileOpen}
-              className="w-8 h-8 flex flex-col items-center justify-center gap-1.5"
+              aria-controls="mobile-menu"
+              className="w-10 h-10 -mr-2 flex flex-col items-center justify-center gap-1.5 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
             >
               <span className={`block h-px w-5 bg-stone-400 transition-all duration-300 origin-center ${mobileOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
               <span className={`block h-px bg-stone-400 transition-all duration-300 ${mobileOpen ? 'w-0 opacity-0' : 'w-4'}`} />
@@ -123,35 +111,54 @@ export function Navbar({ data }: NavbarProps) {
 
       {/* Mobile menu overlay */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-[998] bg-black/95 backdrop-blur-md flex flex-col pt-24 px-8 pb-12">
-          <nav className="flex flex-col gap-1 mb-12">
-            {menuItems.map((menuItem, i) => {
-              if (!menuItem._key || !menuItem._type) return null
-              const href = resolveHref(menuItem._type, menuItem.slug ?? '')
-              if (!href) return null
-              const isActive = pathname === href
-
+        <div
+          id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site menu"
+          className="md:hidden fixed inset-0 z-[998] bg-black/95 backdrop-blur-md flex flex-col pt-24 px-8 pb-12 overflow-y-auto"
+        >
+          <nav aria-label="Primary" className="flex flex-col gap-1 mb-10">
+            {PRIMARY_NAV.map((item, i) => {
+              const active = isActive(item.href)
               return (
                 <Link
-                  key={menuItem._key}
-                  href={href}
+                  key={item.href}
+                  href={item.href}
                   onClick={() => setMobileOpen(false)}
+                  aria-current={active ? 'page' : undefined}
                   className={`font-serif text-4xl font-bold py-3 border-b border-white/5 transition-colors ${
-                    isActive ? 'text-white' : 'text-stone-600 hover:text-white'
+                    active ? 'text-white' : 'text-stone-500 hover:text-white'
                   }`}
                   style={{ transitionDelay: `${i * 40}ms` }}
                 >
-                  {stegaClean(menuItem.title ?? '')}
+                  {item.name}
+                  <span className="block font-mono text-[9px] font-normal tracking-[0.25em] uppercase text-stone-600 mt-1">
+                    {item.desc}
+                  </span>
                 </Link>
               )
             })}
           </nav>
 
+          <nav aria-label="Secondary" className="flex flex-wrap gap-x-5 gap-y-2 mb-12">
+            {SECONDARY_NAV.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className="font-mono text-[10px] tracking-[0.25em] uppercase text-stone-500 hover:text-white transition-colors"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+
           <div className="mt-auto">
-            <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-700">
+            <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-500">
               Stefan Peele — Digital Archive
             </p>
-            <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-800 mt-1">
+            <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-600 mt-1">
               NJIT // Newark, NJ
             </p>
           </div>

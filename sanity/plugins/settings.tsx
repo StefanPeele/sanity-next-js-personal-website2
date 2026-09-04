@@ -1,55 +1,69 @@
 /**
- * This plugin contains all the logic for setting up the singletons
+ * Singleton handling + Studio desk structure.
  */
 
-import {type DocumentDefinition} from 'sanity'
+import {definePlugin, type DocumentDefinition} from 'sanity'
 import {type StructureResolver} from 'sanity/structure'
 
-export const singletonPlugin = (types: string[]) => {
-  return {
-    name: 'singletonPlugin',
-    document: {
-      // Hide 'Singletons (such as Home)' from new document options
-      // https://user-images.githubusercontent.com/81981/195728798-e0c6cf7e-d442-4e58-af3a-8cd99d7fcc28.png
-      newDocumentOptions: (prev, {creationContext}) => {
-        if (creationContext.type === 'global') {
-          return prev.filter((templateItem) => !types.includes(templateItem.templateId))
-        }
-
-        return prev
-      },
-      // Removes the "duplicate" action on the Singletons (such as Home)
-      actions: (prev, {schemaType}) => {
-        if (types.includes(schemaType)) {
-          return prev.filter(({action}) => action !== 'duplicate')
-        }
-
-        return prev
-      },
+export const singletonPlugin = definePlugin<string[]>((types) => ({
+  name: 'singletonPlugin',
+  document: {
+    // Hide singletons (such as Home) from the global "new document" menu
+    newDocumentOptions: (prev, {creationContext}) => {
+      if (creationContext.type === 'global') {
+        return prev.filter((templateItem) => !types.includes(templateItem.templateId))
+      }
+      return prev
     },
-  }
-}
+    // Remove the "duplicate" action on singletons
+    actions: (prev, {schemaType}) => {
+      if (types.includes(schemaType)) {
+        return prev.filter(({action}) => action !== 'duplicate')
+      }
+      return prev
+    },
+  },
+}))
 
-// The StructureResolver is how we're changing the DeskTool structure to linking to document (named Singleton)
-// like how "Home" is handled.
-export const pageStructure = (typeDefArray: DocumentDefinition[]): StructureResolver => {
+// Grouped desk structure so the Studio reads like the site: Site, Writing, Knowledge, Work, Photography.
+export const pageStructure = (singletons: DocumentDefinition[]): StructureResolver => {
   return (S) => {
-    // Goes through all of the singletons that were provided and translates them into something the
-    // Desktool can understand
-    const singletonItems = typeDefArray.map((typeDef) => {
-      return S.listItem()
-        .title(typeDef.title!)
+    const singletonItems = singletons.map((typeDef) =>
+      S.listItem()
+        .title(typeDef.title ?? typeDef.name)
         .icon(typeDef.icon)
-        .child(S.editor().id(typeDef.name).schemaType(typeDef.name).documentId(typeDef.name))
-    })
-
-    // The default root list items (except custom ones)
-    const defaultListItems = S.documentTypeListItems().filter(
-      (listItem) => !typeDefArray.find((singleton) => singleton.name === listItem.getId()),
+        .child(S.editor().id(typeDef.name).schemaType(typeDef.name).documentId(typeDef.name)),
     )
+
+    const group = (title: string, types: string[]) =>
+      S.listItem()
+        .title(title)
+        .child(
+          S.list()
+            .title(title)
+            .items(types.map((t) => S.documentTypeListItem(t))),
+        )
+
+    const known = new Set([
+      ...singletons.map((s) => s.name),
+      'post', 'series', 'glossaryTerm', 'category',
+      'note', 'tag', 'mediaItem', 'learningPath',
+      'project', 'experience', 'skill', 'certification', 'education', 'page',
+      'gallery', 'testimonial',
+    ])
+
+    const rest = S.documentTypeListItems().filter((item) => !known.has(item.getId() ?? ''))
 
     return S.list()
       .title('Content')
-      .items([...singletonItems, S.divider(), ...defaultListItems])
+      .items([
+        ...singletonItems,
+        S.divider(),
+        group('Writing', ['post', 'series', 'glossaryTerm', 'category']),
+        group('Knowledge', ['note', 'tag', 'mediaItem', 'learningPath']),
+        group('Work', ['project', 'experience', 'skill', 'certification', 'education', 'page']),
+        group('Photography', ['gallery', 'testimonial']),
+        ...(rest.length ? [S.divider(), ...rest] : []),
+      ])
   }
 }

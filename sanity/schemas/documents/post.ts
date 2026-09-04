@@ -59,6 +59,16 @@ export default defineType({
     }),
 
     defineField({
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      group: 'content',
+      description: 'Shared tag library (same tags as garden notes). Tags connect posts and notes in the knowledge graph.',
+      of: [{ type: 'reference', to: [{ type: 'tag' }] }],
+      validation: (rule) => rule.max(8),
+    }),
+
+    defineField({
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',
@@ -81,6 +91,16 @@ export default defineType({
       group: 'content',
       rows: 3,
       description: 'Two to three sentences. The hook. Appears on the blog index and in OG previews. Write it last.',
+    }),
+
+    defineField({
+      name: 'tldr',
+      title: 'TL;DR',
+      type: 'array',
+      group: 'content',
+      description: 'Two to four bullets. What a busy engineer needs to know if they read nothing else. Rendered above the article body.',
+      of: [{ type: 'string' }],
+      validation: (rule) => rule.max(5),
     }),
 
     defineField({
@@ -121,7 +141,15 @@ export default defineType({
             ],
           },
         },
-        { type: 'image' },
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            defineField({ name: 'alt', type: 'string', title: 'Alt text', validation: (r) => r.required() }),
+            defineField({ name: 'caption', type: 'string', title: 'Caption' }),
+            defineField({ name: 'keepColor', type: 'boolean', title: 'Keep original colour (diagrams, screenshots)', initialValue: true }),
+          ],
+        },
         { type: 'code' },
         // Interactive components
         { type: 'knowledgeQuiz' },
@@ -210,6 +238,23 @@ export default defineType({
         layout: 'radio',
       },
       validation: (rule) => rule.required().error('Article type is required — it determines how the post is displayed and marketed.'),
+    }),
+
+    defineField({
+      name: 'series',
+      title: 'Part of a series',
+      type: 'reference',
+      group: 'presentation',
+      to: [{ type: 'series' }],
+      description: 'Optional. Shows a "Part N of M" banner with previous and next links.',
+    }),
+    defineField({
+      name: 'seriesOrder',
+      title: 'Position in series',
+      type: 'number',
+      group: 'presentation',
+      description: '1 for the first part. Only used when a series is set.',
+      validation: (rule) => rule.min(1).integer(),
     }),
 
     defineField({
@@ -335,6 +380,14 @@ export default defineType({
           },
         },
       ],
+    }),
+
+    defineField({
+      name: 'priorKnowledgeCheck',
+      title: 'Prior knowledge checkpoint',
+      type: 'knowledgeQuiz',
+      group: 'learning',
+      description: 'Optional short quiz shown collapsed at the top of Concept Deep Dives so readers can self-assess before reading.',
     }),
 
     defineField({

@@ -135,7 +135,7 @@ interface TheProblemSolvedProps {
 
 export function TheProblemSolved({ value }: TheProblemSolvedProps) {
   return (
-    <div className="my-8 rounded-xl overflow-hidden border border-amber-700/20 bg-amber-950/8">
+    <div className="my-8 rounded-xl overflow-hidden border border-amber-700/20 bg-amber-950/[0.08]">
       <div className="flex items-center gap-2.5 px-5 py-3 border-b border-amber-700/20">
         <span className="text-sm">🕰</span>
         <span className="font-mono text-[10px] uppercase tracking-[0.35em] font-bold text-amber-600/80">
@@ -247,7 +247,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="mt-6 pt-6 border-t border-white/8 overflow-hidden"
+              className="mt-6 pt-6 border-t border-white/[0.08] overflow-hidden"
             >
               <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-3">Answer</p>
               <p className="text-stone-300 text-sm leading-relaxed whitespace-pre-wrap">
@@ -289,7 +289,7 @@ export function ConceptCards({ cards }: ConceptCardsProps) {
   }
 
   return (
-    <section className="mt-16 pt-12 border-t border-white/8">
+    <section className="mt-16 pt-12 border-t border-white/[0.08]">
       <div className="flex items-center gap-4 mb-6">
         <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-600 pl-4">
           Concept Cards

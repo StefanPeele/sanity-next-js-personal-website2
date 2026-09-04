@@ -120,7 +120,7 @@ export default function ServicesPage() {
           ))}
         </div>
 
-        <div className="p-6 rounded-xl border border-white/8 bg-white/[0.02]">
+        <div className="p-6 rounded-xl border border-white/[0.08] bg-white/[0.02]">
           <p className="font-serif text-stone-400 text-base leading-relaxed italic max-w-2xl">
             "Every session can be extended into something physical — photo books, framed prints, matted portfolios, acrylic panels, engraved wood blocks, and more.
             We'll talk about what makes sense for you during your consultation."
@@ -188,7 +188,7 @@ export default function ServicesPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="p-6 border border-white/8 rounded-xl bg-white/[0.02] min-h-[160px] flex flex-col justify-between"
+              className="p-6 border border-white/[0.08] rounded-xl bg-white/[0.02] min-h-[160px] flex flex-col justify-between"
             >
               <div className="h-3 w-3/4 bg-white/5 rounded-sm mb-3 animate-pulse" />
               <div className="h-3 w-full bg-white/5 rounded-sm mb-2 animate-pulse" />

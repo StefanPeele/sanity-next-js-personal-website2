@@ -63,9 +63,9 @@ export default async function AlbumPage({ params }: { params: Promise<{ slug: st
             <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-white mb-6">
               {gallery.title}
             </h1>
-            {gallery.description && (
+            {gallery.overview && (
               <p className="text-stone-400 max-w-2xl font-serif text-lg italic leading-relaxed">
-                {gallery.description}
+                {gallery.overview}
               </p>
             )}
           </div>

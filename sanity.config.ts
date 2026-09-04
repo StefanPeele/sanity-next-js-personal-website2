@@ -43,6 +43,16 @@ import conceptStressTest from '@/sanity/schemas/objects/conceptStressTest'
 // Library Schema
 import mediaItem from '@/sanity/schemas/documents/mediaItem'
 
+// Digital Garden Schemas
+import note from '@/sanity/schemas/documents/note'
+import tag from '@/sanity/schemas/documents/tag'
+import series from '@/sanity/schemas/documents/series'
+import glossaryTerm from '@/sanity/schemas/documents/glossaryTerm'
+import learningPath from '@/sanity/schemas/documents/learningPath'
+import certification from '@/sanity/schemas/documents/certification'
+import education from '@/sanity/schemas/documents/education'
+import testimonial from '@/sanity/schemas/documents/testimonial'
+
 const title =
   process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Stefan Peele II | Digital Archive'
 
@@ -65,6 +75,14 @@ export default defineConfig({
       post,
       category,
       mediaItem,
+      note,
+      tag,
+      series,
+      glossaryTerm,
+      learningPath,
+      certification,
+      education,
+      testimonial,
       // Objects
       skill,
       milestone,

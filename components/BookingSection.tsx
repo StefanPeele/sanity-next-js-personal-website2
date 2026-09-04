@@ -78,8 +78,8 @@ function AddOnItem({
     <div className="relative">
       <div className={`flex items-center justify-between px-4 py-2.5 rounded-lg border transition-all duration-150 ${
         checked
-          ? 'border-white/30 bg-white/8 text-white'
-          : 'border-white/8 bg-white/[0.02] text-stone-400 hover:border-white/20 hover:text-stone-200'
+          ? 'border-white/30 bg-white/[0.08] text-white'
+          : 'border-white/[0.08] bg-white/[0.02] text-stone-400 hover:border-white/20 hover:text-stone-200'
       }`}>
         <div className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer" onClick={onToggle}>
           <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-all ${

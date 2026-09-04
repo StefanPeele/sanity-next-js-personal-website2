@@ -14,16 +14,6 @@ import { PortableText, type PortableTextBlock, type PortableTextComponents } fro
 import type { Image } from 'sanity'
 // components/CustomPortableText.tsx
 
-interface PortableTextNode {
-  _type: string
-  _key: string
-  children?: Array<{ _type: string; _key: string; text?: string }>
-  style?: string
-  listItem?: string
-  markDefs?: Array<{ _type: string; _key: string }>
-  level?: number
-}
-
 export function CustomPortableText({
   id = null,
   type = null,
@@ -35,7 +25,7 @@ export function CustomPortableText({
   type?: string | null
   path?: PathSegment[]
   paragraphClasses?: string
-  value: PortableTextNode[]
+  value: PortableTextBlock[]
 }) {
   const components: PortableTextComponents = {
 
@@ -180,7 +170,7 @@ export function CustomPortableText({
   return (
     <PortableText
       components={components}
-      value={value as unknown as PortableTextBlock[]}
+      value={value}
     />
   )
 }

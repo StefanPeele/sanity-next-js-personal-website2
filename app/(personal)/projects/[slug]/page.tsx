@@ -65,7 +65,7 @@ export default async function ProjectSlugRoute({params}: Props) {
       : null
 
   // EXTRACTING THE NEW DATA
-  const {client, coverImage, description, duration, overview, site, tags, title, techStack, githubUrl, liveUrl, boardUrl, architecture} = data ?? {}
+  const {client, coverImage, description, duration, overview, tags, title, techStack, githubUrl, liveUrl, boardUrl, architecture} = data ?? {}
 
   const startYear = duration?.start ? new Date(duration.start).getFullYear() : undefined
   const endYear = duration?.end ? new Date(duration?.end).getFullYear() : 'Now'
@@ -111,11 +111,11 @@ export default async function ProjectSlugRoute({params}: Props) {
               </div>
             )}
 
-            {site && (
+            {liveUrl && (
               <div className="p-4 flex flex-col justify-center">
                 <span className="text-stone-600 mb-1">Production URL</span>
-                <Link target="_blank" className="text-stone-300 hover:text-white transition-colors truncate" href={site}>
-                  {(site as string).replace(/^https?:\/\//, '')}        
+                <Link target="_blank" className="text-stone-300 hover:text-white transition-colors truncate" href={liveUrl}>
+                  {liveUrl.replace(/^https?:\/\//, '')}        
                 </Link>
               </div>
             )}

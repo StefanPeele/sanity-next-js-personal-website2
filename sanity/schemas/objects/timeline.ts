@@ -41,9 +41,9 @@ export default defineType({
               items: 'milestones',
               title: 'title',
             },
-            prepare({items, title}) {
+            prepare({items, title}: {items?: {title?: string}[]; title?: string}) {
               const hasItems = items && items.length > 0
-              const milestoneNames = hasItems && items.map((timeline) => timeline.title).join(', ')
+              const milestoneNames = hasItems && items.map((timeline) => timeline.title ?? "").join(', ')
 
               return {
                 subtitle: hasItems
@@ -61,9 +61,10 @@ export default defineType({
     select: {
       items: 'items',
     },
-    prepare({items}: {items: {title: string}[]}) {
+    prepare(selection) {
+      const items = (selection.items ?? []) as {title?: string}[]
       const hasItems = items && items.length > 0
-      const timelineNames = hasItems && items.map((timeline) => timeline.title).join(', ')
+      const timelineNames = hasItems && items.map((timeline) => timeline.title ?? "").join(', ')
 
       return {
         title: 'Timelines',

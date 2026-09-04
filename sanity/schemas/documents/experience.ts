@@ -21,6 +21,12 @@ export default defineType({
       type: 'string',
       description: 'e.g., Jan 2023 - Present',
     }),
+    defineField({ name: 'startDate', title: 'Start date', type: 'date', description: 'Used for ordering. The Duration text above is what is displayed.' }),
+    defineField({ name: 'endDate', title: 'End date', type: 'date' }),
+    defineField({ name: 'current', title: 'Current role', type: 'boolean', initialValue: false }),
+    defineField({ name: 'location', title: 'Location', type: 'string' }),
+    defineField({ name: 'highlights', title: 'Highlights', type: 'array', of: [{ type: 'string' }], description: 'Three to five outcome-led bullets. These are what a recruiter scans.' }),
+    defineField({ name: 'techStack', title: 'Tools and technologies', type: 'array', of: [{ type: 'string' }] }),
     defineField({
       name: 'description',
       title: 'Job Description',
@@ -28,4 +34,6 @@ export default defineType({
       of: [{ type: 'block' }], // This creates a rich-text editor so you can make bullet points!
     }),
   ],
+  orderings: [{ title: 'Newest first', name: 'startDesc', by: [{ field: 'startDate', direction: 'desc' }] }],
+  preview: { select: { title: 'role', subtitle: 'company' } },
 })

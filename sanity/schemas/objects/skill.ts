@@ -22,6 +22,21 @@ export default defineType({
       }
     }),
     defineField({
+      name: 'level',
+      title: 'Level',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Learning', value: 'learning' },
+          { title: 'Working knowledge', value: 'working' },
+          { title: 'Proficient', value: 'proficient' },
+          { title: 'Deep', value: 'deep' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'working',
+    }),
+    defineField({
       name: 'description',
       title: 'Detailed Intel (Toggle Content)',
       type: 'array',

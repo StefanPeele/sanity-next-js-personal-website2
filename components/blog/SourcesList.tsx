@@ -27,7 +27,7 @@ export function SourcesList({ sources }: SourcesListProps) {
   if (!sources || sources.length === 0) return null
 
   return (
-    <section className="mt-20 pt-10 border-t border-white/8">
+    <section className="mt-20 pt-10 border-t border-white/[0.08]">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-600 pl-4">

@@ -69,13 +69,18 @@ const REVIEW_STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
 
 export function CredibilitySection({
   reviewStatus,
-  reviewers = [],
-  changelog = [],
-  responsesFromField = [],
+  reviewers: reviewersProp,
+  changelog: changelogProp,
+  responsesFromField: responsesProp,
   confidenceLevel,
   maturityIndicator,
   cognitiveLoad,
 }: CredibilitySectionProps) {
+
+  // Sanity returns null for unset array fields — coerce to empty array
+  const reviewers          = reviewersProp ?? []
+  const changelog          = changelogProp ?? []
+  const responsesFromField = responsesProp ?? []
 
   const [changelogOpen, setChangelogOpen] = useState(false)
 
@@ -94,7 +99,7 @@ export function CredibilitySection({
   const reviewBadge = reviewStatus ? REVIEW_STATUS_CONFIG[reviewStatus] : null
 
   return (
-    <section className="mt-16 pt-12 border-t border-white/8 space-y-8">
+    <section className="mt-16 pt-12 border-t border-white/[0.08] space-y-8">
 
       {/* ── Metadata badges ────────────────────────────────────────── */}
       {(confidence || maturity || load || reviewBadge) && (
@@ -132,7 +137,7 @@ export function CredibilitySection({
             {reviewers.map((reviewer) => (
               <div
                 key={reviewer._key}
-                className="p-5 rounded-xl border border-emerald-500/20 bg-emerald-950/8"
+                className="p-5 rounded-xl border border-emerald-500/20 bg-emerald-950/[0.08]"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -191,7 +196,7 @@ export function CredibilitySection({
                 href={response.url}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="flex items-start gap-4 p-4 rounded-lg border border-white/8 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all group"
+                className="flex items-start gap-4 p-4 rounded-lg border border-white/[0.08] hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all group"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -243,7 +248,7 @@ export function CredibilitySection({
                 transition={{ duration: 0.3 }}
                 className="overflow-hidden mt-4"
               >
-                <ol className="space-y-2 border-l border-white/8 pl-4">
+                <ol className="space-y-2 border-l border-white/[0.08] pl-4">
                   {changelog
                     .slice()
                     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())

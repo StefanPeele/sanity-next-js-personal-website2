@@ -194,6 +194,21 @@ export default defineType({
       description: 'Which blog posts or notes did reading this directly contribute to? This is the most important field in the Library — it makes the connection between your reading and your writing visible to readers.',
       of: [{ type: 'reference', to: [{ type: 'post' }] }],
     }),
+    defineField({
+      name: 'influencedNotes',
+      title: 'Garden notes this influenced',
+      type: 'array',
+      group: 'connections',
+      of: [{ type: 'reference', to: [{ type: 'note' }] }],
+    }),
+    defineField({
+      name: 'highlights',
+      title: 'Highlights',
+      type: 'array',
+      group: 'assessment',
+      description: 'Passages worth keeping. One per entry.',
+      of: [{ type: 'text', rows: 3 }],
+    }),
 
   ],
 

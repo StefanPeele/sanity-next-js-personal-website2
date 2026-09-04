@@ -74,7 +74,7 @@ export function ServiceFAQ() {
                 transition={{ duration: 0.3, ease: 'easeOut' }}
                 className="overflow-hidden"
               >
-                <p className="px-6 pb-6 text-stone-400 text-sm leading-relaxed border-t border-white/8 pt-4">
+                <p className="px-6 pb-6 text-stone-400 text-sm leading-relaxed border-t border-white/[0.08] pt-4">
                   {faq.a}
                 </p>
               </motion.div>

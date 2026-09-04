@@ -1,27 +1,15 @@
-import { client } from '@/sanity/lib/client'
-import { Navbar } from '@/components/Navbar'
-import { BlogBackground } from '@/components/blog/BlogBackground'
+import { sanityFetch } from '@/sanity/lib/live'
+import { libraryQuery } from '@/sanity/lib/queries'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
-// app/(personal)/library/page.tsx
+// app/(archive)/library/page.tsx
 
 export const metadata: Metadata = {
   title: 'Library | Stefan Peele',
   description: 'Books, articles, white papers, podcasts, and courses I\'ve read, am reading, or want to read — and how they connect to my work.',
 }
 
-const libraryQuery = `*[_type == "mediaItem"] | order(finishedAt desc) {
-  _id, title, author, mediaType, status, url,
-  "coverUrl": coverImage.asset->url,
-  startedAt, finishedAt, progressPercent, category,
-  oneSentenceTake, rating, keyIdea, quote, abandonedReason,
-  "influencedPosts": influencedPosts[]->{
-    title, "slug": slug.current
-  }
-}`
-
-const settingsQuery = `*[_type == "settings"][0]`
 
 const MEDIA_ICONS: Record<string, string> = {
   'book': '📚', 'article': '📰', 'whitepaper': '📑', 'industry-paper': '🏭',
@@ -41,9 +29,9 @@ function MediaCard({ item, size = 'normal' }: { item: any; size?: 'large' | 'nor
   const ratingConfig = item.rating ? RATING_CONFIG[item.rating] : null
 
   return (
-    <div className={`flex gap-5 p-5 rounded-xl border border-white/8 bg-white/[0.02] hover:border-white/15 transition-all ${size === 'large' ? 'md:gap-6 md:p-6' : ''}`}>
+    <div className={`flex gap-5 p-5 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:border-white/15 transition-all ${size === 'large' ? 'md:gap-6 md:p-6' : ''}`}>
       {/* Cover */}
-      <div className={`flex-shrink-0 bg-stone-900 rounded-lg border border-white/8 overflow-hidden flex items-center justify-center ${
+      <div className={`flex-shrink-0 bg-stone-900 rounded-lg border border-white/[0.08] overflow-hidden flex items-center justify-center ${
         size === 'large' ? 'w-20 h-28 md:w-24 md:h-32' : 'w-14 h-20'
       }`}>
         {item.coverUrl ? (
@@ -90,7 +78,7 @@ function MediaCard({ item, size = 'normal' }: { item: any; size?: 'large' | 'nor
         {item.status === 'current' && item.progressPercent !== undefined && (
           <div className="mb-3">
             <div className="flex items-center gap-2 mb-1">
-              <div className="flex-1 h-0.5 bg-white/8 rounded-full overflow-hidden">
+              <div className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden">
                 <div className="h-full bg-emerald-500/60 rounded-full" style={{ width: `${item.progressPercent}%` }} />
               </div>
               <span className="font-mono text-[9px] text-stone-600">{item.progressPercent}%</span>
@@ -137,10 +125,8 @@ function MediaCard({ item, size = 'normal' }: { item: any; size?: 'large' | 'nor
 }
 
 export default async function LibraryPage() {
-  const [items, settings] = await Promise.all([
-    client.fetch<any[]>(libraryQuery),
-    client.fetch<any>(settingsQuery),
-  ])
+  const { data } = await sanityFetch({ query: libraryQuery })
+  const items = (data ?? []) as any[]
 
   const current   = items.filter((i) => i.status === 'current')
   const finished  = items.filter((i) => i.status === 'finished')
@@ -158,11 +144,8 @@ export default async function LibraryPage() {
   const years = Object.keys(finishedByYear).sort((a, b) => Number(b) - Number(a))
 
   return (
-    <div className="relative min-h-screen bg-transparent text-stone-300">
-      <BlogBackground />
-      <Navbar data={settings} />
-
-      <main className="relative max-w-4xl mx-auto px-6 pt-32 pb-24">
+    <div className="relative min-h-screen text-stone-300">
+      <main id="content" className="relative max-w-4xl mx-auto px-6 pt-32 pb-24">
 
         {/* Header */}
         <header className="mb-16 border-b border-white/5 pb-10">
@@ -192,7 +175,7 @@ export default async function LibraryPage() {
         {/* Currently reading */}
         {current.length > 0 && (
           <section className="mb-16">
-            <div className="mb-6 pb-4 border-b border-white/8">
+            <div className="mb-6 pb-4 border-b border-white/[0.08]">
               <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 border-l-2 border-emerald-600 pl-4">
                 Currently Reading
               </span>
@@ -208,7 +191,7 @@ export default async function LibraryPage() {
         {/* Reference items */}
         {reference.length > 0 && (
           <section className="mb-16">
-            <div className="mb-6 pb-4 border-b border-white/8">
+            <div className="mb-6 pb-4 border-b border-white/[0.08]">
               <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 border-l-2 border-stone-600 pl-4">
                 Reference — Constantly Returning
               </span>
@@ -224,7 +207,7 @@ export default async function LibraryPage() {
         {/* Finished by year */}
         {years.map((year) => (
           <section key={year} className="mb-16">
-            <div className="mb-6 pb-4 border-b border-white/8">
+            <div className="mb-6 pb-4 border-b border-white/[0.08]">
               <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 border-l-2 border-stone-600 pl-4">
                 Finished {year}
               </span>
@@ -240,7 +223,7 @@ export default async function LibraryPage() {
         {/* Want to read */}
         {wantToRead.length > 0 && (
           <section className="mb-16">
-            <div className="mb-6 pb-4 border-b border-white/8">
+            <div className="mb-6 pb-4 border-b border-white/[0.08]">
               <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 border-l-2 border-stone-600 pl-4">
                 On Deck
               </span>

@@ -1,20 +1,12 @@
 // app/(personal)/resume/page.tsx
-import { client } from '@/sanity/lib/client'
+import { sanityFetch } from '@/sanity/lib/live'
+import { resumeQuery } from '@/sanity/lib/queries'
 import { PortableText } from '@portabletext/react'
 
 // Updated Query: Fetches the timestamp and the new activeDirective field (removed settings)
-const resumeQuery = `{
-  "experiences": *[_type == "experience"] | order(duration desc),
-  "skills": *[_type == "skill"] | order(category asc),
-  "page": *[_type == "page" && slug.current == "resume"][0] {
-    _updatedAt,
-    activeDirective,
-    "resumeUrl": resumeFile.asset->url
-  }
-}`
-
 export default async function ResumePage() {
-  const { experiences, skills, page } = await client.fetch(resumeQuery)
+  const { data } = await sanityFetch({ query: resumeQuery })
+  const { experiences, skills, page } = (data ?? {}) as any
 
   // Format the "Last Updated" date dynamically from Sanity
   const lastUpdated = page?._updatedAt 

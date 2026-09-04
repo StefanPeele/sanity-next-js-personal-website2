@@ -48,6 +48,21 @@ export default defineType({
       type: 'url',
       description: 'Link to your public project board or portfolio tracking.',
     }),
+    defineField({ name: 'instagram', title: 'Instagram URL', type: 'url' }),
+    defineField({ name: 'bluesky', title: 'Bluesky URL', type: 'url' }),
+    defineField({ name: 'gitbook', title: 'Gitbook URL', type: 'url' }),
+    defineField({
+      name: 'calendlyUrl',
+      title: 'Scheduling link (Calendly)',
+      type: 'url',
+      description: 'When set, "Schedule a consultation" buttons open this. When empty they scroll to the inquiry form.',
+    }),
+    defineField({
+      name: 'openTo',
+      title: 'Open-to status line',
+      type: 'string',
+      description: 'Shown on the contact page and homepage, e.g. "Open to Summer 2027 network / infrastructure internships".',
+    }),
     
     // --- DYNAMIC FOOTER HEADLINE (SPLIT FOR STYLING) ---
     defineField({

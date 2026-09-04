@@ -30,9 +30,10 @@ const postQuery = `
 export default async function OGImage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const post = await client.fetch<Post | null>(postQuery, { slug: params.slug })
+  const { slug } = await params
+  const post = await client.fetch<Post | null>(postQuery, { slug })
 
   const title      = post?.title      ?? 'Stefan Peele | Digital Archive'
   const excerpt    = post?.excerpt    ?? 'Networking insights and CCNA deep-dives.'

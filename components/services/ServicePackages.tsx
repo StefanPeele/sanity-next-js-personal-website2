@@ -382,7 +382,7 @@ export function ServicePackages() {
                 key={pkg.name}
                 className={`relative flex flex-col rounded-xl border transition-all duration-300 overflow-hidden ${
                   isComing
-                    ? 'border-white/8 opacity-50'
+                    ? 'border-white/[0.08] opacity-50'
                     : isCore
                     ? 'border-amber-500/40 shadow-lg shadow-amber-900/10'
                     : 'border-white/10'
@@ -419,7 +419,7 @@ export function ServicePackages() {
                   </div>
 
                   {/* Price */}
-                  <div className="mb-6 pb-6 border-b border-white/8">
+                  <div className="mb-6 pb-6 border-b border-white/[0.08]">
                     {pkg.priceNote === 'starting at' && (
                       <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest block mb-1">
                         Starting at
@@ -472,7 +472,7 @@ export function ServicePackages() {
                   <PhysicalProductBadge tier={pkg.physicalProduct} />
 
                   {/* Recommended */}
-                  <div className="pt-4 border-t border-white/8 mb-6">
+                  <div className="pt-4 border-t border-white/[0.08] mb-6">
                     <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-stone-600 block mb-1">
                       Ideal for
                     </span>
@@ -536,7 +536,7 @@ export function ServicePackages() {
                   <p className="font-serif italic text-stone-400 text-base">{svc.tagline}</p>
                 </div>
 
-                <div className="mb-5 pb-5 border-b border-white/8">
+                <div className="mb-5 pb-5 border-b border-white/[0.08]">
                   <div className="flex items-center gap-6">
                     <div>
                       <span className="font-mono text-[9px] text-stone-600 uppercase tracking-widest block mb-0.5">NJIT</span>
@@ -612,7 +612,7 @@ export function ServicePackages() {
           {ADD_ONS.map((addon) => (
             <div
               key={addon.label}
-              className="px-5 py-4 rounded-lg border border-white/8"
+              className="px-5 py-4 rounded-lg border border-white/[0.08]"
               style={{ backgroundColor: 'rgba(20,20,24,0.6)' }}
             >
               <div className="flex items-center justify-between mb-1.5">

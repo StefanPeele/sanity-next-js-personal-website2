@@ -107,6 +107,36 @@ export default defineType({
       ]
     }),
 
+    // --- STRUCTURED CASE STUDY ---
+    defineField({ name: 'featured', title: 'Feature on homepage', type: 'boolean', initialValue: false }),
+    defineField({ name: 'role', title: 'My role', type: 'string', description: 'What you personally owned, e.g. "Sole engineer" or "Storage assessment lead (team of 3)".' }),
+    defineField({ name: 'problem', title: 'Problem', type: 'text', rows: 3, description: 'The situation before. What was broken, missing, or at risk.' }),
+    defineField({ name: 'constraints', title: 'Constraints', type: 'array', of: [{ type: 'string' }], description: 'Budget, access, time, legacy systems. One per line.' }),
+    defineField({ name: 'approach', title: 'Approach', type: 'text', rows: 4, description: 'What you did and why that path over the alternatives.' }),
+    defineField({ name: 'outcome', title: 'Outcome', type: 'text', rows: 3, description: 'What changed. Lead with the measurable result.' }),
+    defineField({
+      name: 'metrics',
+      title: 'Metrics',
+      type: 'array',
+      description: 'Numbers that prove the outcome, e.g. label "Free SSD tier", value "444 GB → 2.1 TB".',
+      of: [
+        {
+          type: 'object',
+          name: 'metric',
+          fields: [
+            defineField({ name: 'label', title: 'Label', type: 'string', validation: (r) => r.required() }),
+            defineField({ name: 'value', title: 'Value', type: 'string', validation: (r) => r.required() }),
+            defineField({ name: 'note', title: 'Note', type: 'string' }),
+          ],
+          preview: { select: { title: 'value', subtitle: 'label' } },
+        },
+      ],
+    }),
+    defineField({ name: 'retrospective', title: 'What I would do differently', type: 'text', rows: 3 }),
+    defineField({ name: 'docsUrl', title: 'Documentation URL (Gitbook etc.)', type: 'url' }),
+    defineField({ name: 'relatedPosts', title: 'Related posts', type: 'array', of: [{ type: 'reference', to: [{ type: 'post' }] }] }),
+    defineField({ name: 'relatedNotes', title: 'Related garden notes', type: 'array', of: [{ type: 'reference', to: [{ type: 'note' }] }] }),
+
     // --- CASE STUDY CONTENT ---
     defineField({
       name: 'description',

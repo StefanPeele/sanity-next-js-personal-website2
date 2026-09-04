@@ -1,17 +1,17 @@
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { type NextRequest, NextResponse } from 'next/server'
 import { parseBody } from 'next-sanity/webhook'
-// app/api/revalidate/route.ts
+// app/api/draft-mode/enable/revalidate/route.ts
 //
 // Sanity calls this endpoint via webhook on every document publish/unpublish.
 // It revalidates only the affected paths rather than triggering a full redeploy.
 //
 // Setup in Sanity:
 //   Dashboard → API → Webhooks → Add webhook
-//   URL: https://stefanpeele.com/api/revalidate
+//   URL: https://stefanpeele.com/api/draft-mode/enable/revalidate
 //   Dataset: production
 //   Trigger on: Create, Update, Delete
-//   Filter: _type == "post" || _type == "settings" || _type == "home"
+//   Filter: leave empty (all types) — every type is handled below
 //   Secret: <generate a random string, add as SANITY_REVALIDATE_SECRET in Vercel>
 
 export async function POST(req: NextRequest) {
@@ -61,14 +61,17 @@ export async function POST(req: NextRequest) {
         }
 
         // Revalidate the sitemap and RSS feed
+        revalidatePath('/')
+        revalidatePath('/graph')
         revalidatePath('/sitemap.xml')
         revalidatePath('/blog/feed.xml')
+        revalidatePath('/blog/feed.json')
 
         return NextResponse.json({
           revalidated: true,
           paths: postSlug
-            ? ['/blog', `/blog/${postSlug}`, '/sitemap.xml', '/blog/feed.xml']
-            : ['/blog', '/sitemap.xml', '/blog/feed.xml'],
+            ? ['/', '/blog', `/blog/${postSlug}`, '/graph', '/sitemap.xml', '/blog/feed.xml']
+            : ['/', '/blog', '/graph', '/sitemap.xml', '/blog/feed.xml'],
         })
       }
 
@@ -114,8 +117,50 @@ export async function POST(req: NextRequest) {
         })
       }
 
+      case 'note': {
+        const noteSlug = slug?.current
+        revalidatePath('/garden')
+        if (noteSlug) revalidatePath(`/garden/${noteSlug}`)
+        revalidatePath('/graph')
+        revalidatePath('/sitemap.xml')
+        return NextResponse.json({ revalidated: true, paths: ['/garden', '/graph', '/sitemap.xml'] })
+      }
+
+      case 'tag':
+      case 'series':
+      case 'glossaryTerm':
+      case 'learningPath': {
+        revalidatePath('/blog')
+        revalidatePath('/garden')
+        revalidatePath('/graph')
+        revalidatePath('/glossary')
+        revalidatePath('/paths', 'layout')
+        revalidatePath('/sitemap.xml')
+        return NextResponse.json({ revalidated: true, paths: ['/blog', '/garden', '/graph', '/glossary', '/paths', '/sitemap.xml'] })
+      }
+
+      case 'mediaItem': {
+        revalidatePath('/library')
+        revalidatePath('/graph')
+        revalidatePath('/now')
+        return NextResponse.json({ revalidated: true, paths: ['/library', '/graph', '/now'] })
+      }
+
+      case 'experience':
+      case 'skill':
+      case 'certification':
+      case 'education': {
+        revalidatePath('/resume')
+        revalidatePath('/now')
+        return NextResponse.json({ revalidated: true, paths: ['/resume', '/now'] })
+      }
+
+      case 'testimonial': {
+        revalidatePath('/services')
+        return NextResponse.json({ revalidated: true, paths: ['/services'] })
+      }
+
       default: {
-        // Unknown type — revalidate everything as a safety net
         revalidatePath('/', 'layout')
         return NextResponse.json({
           revalidated: true,

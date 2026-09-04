@@ -1,13 +1,14 @@
-import {NextConfig} from 'next'
+import { NextConfig } from 'next'
 
 const config: NextConfig = {
   reactCompiler: true,
   images: {
-    remotePatterns: [{hostname: 'cdn.sanity.io'}],
+    remotePatterns: [{ hostname: 'cdn.sanity.io' }],
+    formats: ['image/avif', 'image/webp'],
   },
   typescript: {
-    // Set this to false if you want production builds to abort if there's type errors
-    ignoreBuildErrors: process.env.VERCEL_ENV === 'production',
+    // Type errors block every build, including production.
+    ignoreBuildErrors: false,
   },
   logging: {
     fetches: {
@@ -15,17 +16,28 @@ const config: NextConfig = {
     },
   },
   env: {
-    // Matches the behavior of `sanity dev` which sets styled-components to use the fastest way of inserting CSS rules in both dev and production. It's default behavior is to disable it in dev mode.
+    // Matches the behavior of `sanity dev` which sets styled-components to use the fastest way of inserting CSS rules in both dev and production.
     SC_DISABLE_SPEEDY: 'false',
   },
-  // --- NEW: Added to fix Codespaces Server Actions block ---
-  experimental: {
-    serverActions: {
-      allowedOrigins: [
-        'localhost:3000',
-        'musical-invention-wrgvr45795jj3jp6-3000.app.github.dev'
-      ],
-    },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
+      {
+        source: '/sw.js',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+          { key: 'Service-Worker-Allowed', value: '/' },
+        ],
+      },
+    ]
   },
 }
 
