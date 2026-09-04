@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { client } from '@/sanity/lib/client'
 import { sitemapQuery } from '@/sanity/lib/queries'
 import { absoluteUrl } from '@/lib/site'
+import { isReservedSlug } from '@/lib/site'
 import type { SitemapQueryResult } from '@/sanity.types'
 // app/sitemap.ts
 // Static routes + every published slug from Sanity. lastModified comes from `updated`
@@ -82,7 +83,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Page documents live at the root (/resume, /services, ...). Skip ones already static.
   const staticPaths = new Set(STATIC_ROUTES.map(([p]) => p))
   const pageEntries = entries(data.pages, '/', 0.6, 'monthly').filter(
-    (e) => !staticPaths.has(new URL(e.url).pathname),
+    (e) => !staticPaths.has(new URL(e.url).pathname) && !isReservedSlug(new URL(e.url).pathname.slice(1)),
   )
 
   return [

@@ -9,7 +9,7 @@ import { absoluteUrl } from '@/lib/site'
 // Spaced-repetition review over every post's concept cards and knowledge checks.
 
 export const metadata: Metadata = {
-  title: 'Review | Stefan Peele',
+  title: 'Review',
   description: 'Spaced-repetition review of the concept cards and knowledge checks from every post. Progress stays in your browser.',
   alternates: { canonical: '/review' },
 }

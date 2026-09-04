@@ -63,3 +63,17 @@ export function articleTypeMeta(type?: string | null) {
 export function absoluteUrl(path = '/') {
   return new URL(path, SITE.url).toString()
 }
+
+/**
+ * Top-level path segments owned by real routes. A generic Sanity "page" document
+ * must never be served at one of these, or its prerender overwrites the real route.
+ */
+export const RESERVED_SLUGS = new Set<string>([
+  'blog', 'garden', 'graph', 'library', 'glossary', 'paths', 'review',
+  'projects', 'resume', 'photography', 'services', 'contact', 'now', 'uses', 'delivery',
+  'studio', 'api', 'sitemap.xml', 'robots.txt', 'manifest.webmanifest', 'humans.txt', 'sw.js',
+])
+
+export function isReservedSlug(slug?: string | null): boolean {
+  return !!slug && RESERVED_SLUGS.has(slug.toLowerCase())
+}

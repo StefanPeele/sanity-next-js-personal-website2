@@ -9,11 +9,11 @@ import type { Metadata } from 'next'
 const settingsQuery = `*[_type == "settings"][0]`
 
 export const metadata: Metadata = {
-  title: 'OSI Model Reference | Stefan Peele',
+  title: 'OSI Model Reference',
   description:
     'An interactive reference for the 7-layer OSI model — protocols, real-world examples, and a full packet journey walkthrough. Built for CCNA students and network engineers.',
   openGraph: {
-    title: 'OSI Model Reference | Stefan Peele',
+    title: 'OSI Model Reference',
     description:
       'Interactive 7-layer OSI model explorer with packet journey animator. Click any layer to inspect protocols and real-world deployment examples.',
     type: 'article',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'OSI Model Reference | Stefan Peele',
+    title: 'OSI Model Reference',
     description: 'Interactive OSI model explorer with packet journey animator.',
   },
 }

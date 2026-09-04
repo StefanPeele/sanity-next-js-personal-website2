@@ -10,7 +10,7 @@ import { absoluteUrl } from '@/lib/site'
 // Full-bleed graph page — outside (archive) layout for full viewport use.
 
 export const metadata: Metadata = {
-  title: 'Knowledge Graph | Stefan Peele',
+  title: 'Knowledge Graph',
   description: 'An interactive map of every post, note, tag, library item, project and series — and how they connect.',
   alternates: { canonical: '/graph' },
 }

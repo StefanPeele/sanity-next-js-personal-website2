@@ -7,13 +7,16 @@ import type {Metadata, ResolvingMetadata} from 'next'
 import {toPlainText, type PortableTextBlock} from 'next-sanity'
 import {draftMode} from 'next/headers'
 import {notFound} from 'next/navigation'
+import {isReservedSlug} from '@/lib/site'
 
 type Props = {
   params: Promise<{slug: string}>
 }
 
 export async function generateMetadata({params}: Props, parent: ResolvingMetadata): Promise<Metadata> {
-  const {data: page} = await sanityFetch({query: pagesBySlugQuery, params, stega: false})
+  const {slug} = await params
+  if (isReservedSlug(slug)) return {}
+  const {data: page} = await sanityFetch({query: pagesBySlugQuery, params: {slug}, stega: false})
   return {
     title: page?.title,
     description: page?.overview ? toPlainText(page.overview) : (await parent).description,
@@ -22,11 +25,16 @@ export async function generateMetadata({params}: Props, parent: ResolvingMetadat
 
 export async function generateStaticParams() {
   const data = await client.fetch(slugsByTypeQuery, {type: 'page'})
-  return data.filter((d) => !!d.slug).map((d) => ({slug: d.slug as string}))
+  return data
+    .filter((d) => !!d.slug && !isReservedSlug(d.slug))
+    .map((d) => ({slug: d.slug as string}))
 }
 
 export default async function PageSlugRoute({params}: Props) {
-  const {data} = await sanityFetch({query: pagesBySlugQuery, params})
+  const {slug} = await params
+  // Never let a generic page document shadow a real route such as /blog or /resume.
+  if (isReservedSlug(slug)) notFound()
+  const {data} = await sanityFetch({query: pagesBySlugQuery, params: {slug}})
 
   // In draft mode we may be about to create a page on this slug; never 404 there.
   if (!data?._id && !(await draftMode()).isEnabled) {

@@ -9,7 +9,7 @@ import type { LibraryItem } from '@/components/library/types'
 // app/(archive)/library/page.tsx
 
 export const metadata: Metadata = {
-  title: 'Library | Stefan Peele',
+  title: 'Library',
   description: "Books, articles, white papers, podcasts, and courses I've read, am reading, or want to read — and how they connect to my work.",
   alternates: { canonical: '/library' },
 }

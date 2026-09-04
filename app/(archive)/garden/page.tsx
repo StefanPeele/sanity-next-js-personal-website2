@@ -15,7 +15,7 @@ import type { PortableTextBlock } from 'next-sanity'
 // app/(archive)/garden/page.tsx
 
 export const metadata: Metadata = {
-  title: 'The Garden | Stefan Peele',
+  title: 'The Garden',
   description:
     'A digital garden — notes, ideas, and developing thoughts on networking, infrastructure, and photography. Shorter and rougher than blog posts. Allowed to be incomplete.',
   alternates: { canonical: '/garden' },

@@ -8,7 +8,7 @@ import { absoluteUrl } from '@/lib/site'
 // app/(archive)/paths/page.tsx
 
 export const metadata: Metadata = {
-  title: 'Learning Paths | Stefan Peele',
+  title: 'Learning Paths',
   description: 'Ordered routes through posts and garden notes — read them in sequence to build a topic from the ground up.',
   alternates: { canonical: '/paths' },
 }
