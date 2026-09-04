@@ -25,44 +25,61 @@ export const singletonPlugin = definePlugin<string[]>((types) => ({
   },
 }))
 
-// Grouped desk structure so the Studio reads like the site: Site, Writing, Knowledge, Work, Photography.
+// Desk structure. Singletons are grouped under "Site"; documents by area.
+const SITE_ORDER = [
+  'settings', 'navigation', 'home',
+  'blogPage', 'gardenPage', 'libraryPage', 'knowledgePages',
+  'projectsPage', 'resumePage', 'contactPage', 'nowPage', 'usesPage', 'photographyPage', 'servicesPage',
+  'articleUi', 'taxonomy', 'errorPages',
+]
+const SITE_TITLES: Record<string, string> = {
+  settings: 'Identity & SEO', navigation: 'Navigation', home: 'Home',
+  blogPage: 'Writing index', gardenPage: 'Garden', libraryPage: 'Library', knowledgePages: 'Knowledge pages',
+  projectsPage: 'Projects', resumePage: 'Resume', contactPage: 'Contact', nowPage: 'Now', usesPage: 'Uses',
+  photographyPage: 'Photography', servicesPage: 'Services page', articleUi: 'Article UI', taxonomy: 'Taxonomy', errorPages: 'Error pages',
+}
+
 export const pageStructure = (singletons: DocumentDefinition[]): StructureResolver => {
   return (S) => {
-    const singletonItems = singletons.map((typeDef) =>
+    const byName = new Map(singletons.map((s) => [s.name, s]))
+    const ordered = [
+      ...SITE_ORDER.filter((n) => byName.has(n)).map((n) => byName.get(n)!),
+      ...singletons.filter((s) => !SITE_ORDER.includes(s.name)),
+    ]
+    const singletonItems = ordered.map((typeDef) =>
       S.listItem()
-        .title(typeDef.title ?? typeDef.name)
+        .title(SITE_TITLES[typeDef.name] ?? typeDef.title ?? typeDef.name)
         .icon(typeDef.icon)
         .child(S.editor().id(typeDef.name).schemaType(typeDef.name).documentId(typeDef.name)),
     )
 
-    const group = (title: string, types: string[]) =>
+    const group = (title: string, types: string[], icon?: DocumentDefinition['icon']) =>
       S.listItem()
         .title(title)
-        .child(
-          S.list()
-            .title(title)
-            .items(types.map((t) => S.documentTypeListItem(t))),
-        )
+        .icon(icon)
+        .child(S.list().title(title).items(types.map((t) => S.documentTypeListItem(t))))
 
-    const known = new Set([
-      ...singletons.map((s) => s.name),
-      'post', 'series', 'glossaryTerm', 'category',
-      'note', 'tag', 'mediaItem', 'learningPath',
-      'project', 'experience', 'skill', 'certification', 'education', 'page',
-      'gallery', 'testimonial',
-    ])
-
+    const groups: [string, string[]][] = [
+      ['Writing', ['post', 'series', 'glossaryTerm']],
+      ['Knowledge', ['note', 'tag', 'mediaItem', 'learningPath']],
+      ['Work', ['project', 'experience', 'skill', 'certification', 'education', 'page']],
+      ['Photography', ['gallery', 'category', 'testimonial']],
+      ['Services', ['servicePackage', 'serviceAddOn']],
+      ['Audience', ['subscriber']],
+    ]
+    const registered = new Set(S.documentTypeListItems().map((i) => i.getId()))
+    const known = new Set([...singletons.map((s) => s.name), ...groups.flatMap(([, t]) => t)])
     const rest = S.documentTypeListItems().filter((item) => !known.has(item.getId() ?? ''))
 
     return S.list()
       .title('Content')
       .items([
-        ...singletonItems,
+        S.listItem().title('Site').child(S.list().title('Site').items(singletonItems)),
         S.divider(),
-        group('Writing', ['post', 'series', 'glossaryTerm', 'category']),
-        group('Knowledge', ['note', 'tag', 'mediaItem', 'learningPath']),
-        group('Work', ['project', 'experience', 'skill', 'certification', 'education', 'page']),
-        group('Photography', ['gallery', 'testimonial']),
+        ...groups
+          .map(([title, types]) => [title, types.filter((t) => registered.has(t))] as [string, string[]])
+          .filter(([, types]) => types.length > 0)
+          .map(([title, types]) => group(title, types)),
         ...(rest.length ? [S.divider(), ...rest] : []),
       ])
   }

@@ -25,38 +25,34 @@ export const SITE = {
   calendlyUrl: '',
 } as const
 
-/** Primary navigation. Order matters: work first, writing second, personal last. */
-export const PRIMARY_NAV = [
-  { name: 'Projects',    href: '/projects',    desc: 'Case studies and infrastructure' },
-  { name: 'Writing',     href: '/blog',        desc: 'Editorial, deep dives, field notes' },
-  { name: 'Garden',      href: '/garden',      desc: 'Notes in progress' },
-  { name: 'Library',     href: '/library',     desc: 'What I read' },
-  { name: 'Photography', href: '/photography', desc: 'Visual archive and galleries' },
-  { name: 'Resume',      href: '/resume',      desc: 'Professional history' },
-] as const
+import { DEFAULT_NAVIGATION } from '@/lib/cms/defaults/navigation'
+import { DEFAULT_TAXONOMY, type VocabEntry } from '@/lib/cms/defaults/taxonomy'
 
-/** Secondary destinations for the footer and sitemap. */
-export const SECONDARY_NAV = [
-  { name: 'Knowledge Graph', href: '/graph' },
-  { name: 'Services',        href: '/services' },
-  { name: 'Contact',         href: '/contact' },
-  { name: 'Now',             href: '/now' },
-  { name: 'Uses',            href: '/uses' },
-  { name: 'OSI Reference',   href: '/blog/osi-model' },
-] as const
+/** @deprecated Read navigation from getNavigation() (lib/cms/loaders). Kept so existing imports compile. */
+export const PRIMARY_NAV = DEFAULT_NAVIGATION.primary.map((l) => ({ name: l.label, href: l.path ?? '/', desc: l.description ?? '' }))
+/** @deprecated Read navigation from getNavigation() (lib/cms/loaders). */
+export const SECONDARY_NAV = DEFAULT_NAVIGATION.secondary.map((l) => ({ name: l.label, href: l.path ?? '/' }))
 
-/** Article lanes shared by the schema, directory, header, graph and OG image. */
-export const ARTICLE_TYPES = {
-  'perspective':       { label: 'Perspective',       short: 'PERSP', color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', description: 'Opinion and analysis on where the field is going.' },
-  'concept-deep-dive': { label: 'Concept Deep Dive', short: 'DEEP',  color: '#fbbf24', bg: 'rgba(251,191,36,0.12)',  description: 'One idea, explained until it clicks.' },
-  'field-notes':       { label: 'Field Notes',       short: 'FIELD', color: '#34d399', bg: 'rgba(52,211,153,0.12)',  description: 'What actually happened in the lab or on the job.' },
-  'transmission':      { label: 'Transmission',      short: 'TX',    color: '#60a5fa', bg: 'rgba(96,165,250,0.12)',  description: 'Short signals, updates, and announcements.' },
-} as const
+export type ArticleType = 'perspective' | 'concept-deep-dive' | 'field-notes' | 'transmission'
+type LaneMeta = { label: string; short: string; color: string; bg: string; description: string }
 
-export type ArticleType = keyof typeof ARTICLE_TYPES
+function laneFromVocab(v: VocabEntry): LaneMeta {
+  const color = v.color ?? '#d6d3d1'
+  const r = parseInt(color.slice(1, 3), 16), g = parseInt(color.slice(3, 5), 16), b = parseInt(color.slice(5, 7), 16)
+  return { label: v.label, short: v.short ?? v.label, color, bg: `rgba(${r},${g},${b},0.12)`, description: v.description ?? '' }
+}
 
-export function articleTypeMeta(type?: string | null) {
-  return (type && ARTICLE_TYPES[type as ArticleType]) || null
+/** Article lanes. Labels/colours are editable in Studio → Site → Taxonomy; keys are fixed. */
+export const ARTICLE_TYPES: Record<ArticleType, LaneMeta> = Object.fromEntries(
+  DEFAULT_TAXONOMY.articleLanes.map((v) => [v.key, laneFromVocab(v)]),
+) as Record<ArticleType, LaneMeta>
+
+/** Lane metadata, optionally overridden by a taxonomy document's articleLanes. */
+export function articleTypeMeta(type?: string | null, lanes?: VocabEntry[] | null): LaneMeta | null {
+  if (!type) return null
+  const override = lanes?.find((l) => l.key === type)
+  if (override) return laneFromVocab(override)
+  return ARTICLE_TYPES[type as ArticleType] ?? null
 }
 
 /** Absolute URL helper for metadata, feeds and JSON-LD. */

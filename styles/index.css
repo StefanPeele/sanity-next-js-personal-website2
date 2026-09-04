@@ -107,3 +107,20 @@ ol {
     break-inside: avoid;
   }
 }
+
+/* Small section heading used instead of the old uppercase "eyebrow" labels */
+@layer components {
+  .section-label {
+    font-family: var(--font-serif), Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #e7e5e4;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .meta-label {
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-size: 0.8rem;
+    color: #a8a29e;
+  }
+}

@@ -54,6 +54,11 @@ import certification from '@/sanity/schemas/documents/certification'
 import education from '@/sanity/schemas/documents/education'
 import testimonial from '@/sanity/schemas/documents/testimonial'
 import subscriber from '@/sanity/schemas/documents/subscriber'
+import { siteSingletons, siteTypes } from '@/sanity/schemas/site'
+import { articleUiSingletons, articleUiTypes } from '@/sanity/schemas/articleUi'
+import { servicesSingletons, servicesTypes } from '@/sanity/schemas/services'
+
+const allSingletons = [home, settings, ...siteSingletons, ...articleUiSingletons, ...servicesSingletons]
 
 const title =
   process.env.NEXT_PUBLIC_SANITY_PROJECT_TITLE || 'Stefan Peele II | Digital Archive'
@@ -103,17 +108,21 @@ export default defineConfig({
       whatEngineersUse,
       theProblemSolved,
       conceptStressTest,
+      // Site copy, navigation, taxonomy, services (barrels)
+      ...siteTypes,
+      ...articleUiTypes,
+      ...servicesTypes,
     ],
   },
   plugins: [
     structureTool({
-      structure: pageStructure([home, settings]),
+      structure: pageStructure(allSingletons),
     }),
     presentationTool({
       resolve,
       previewUrl: { previewMode: { enable: '/api/draft-mode/enable' } },
     }),
-    singletonPlugin([home.name, settings.name]),
+    singletonPlugin(allSingletons.map((s) => s.name)),
     unsplashImageAsset(),
     visionTool({ defaultApiVersion: apiVersion }),
     codeInput(),

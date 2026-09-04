@@ -1,5 +1,6 @@
 import {DocumentIcon, ImageIcon, TagIcon} from '@sanity/icons'
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {isReservedSlug} from '@/lib/site'
 
 export default defineType({
   type: 'document',
@@ -20,7 +21,12 @@ export default defineType({
       options: {
         source: 'title',
       },
-      validation: (rule) => rule.required(),
+      validation: (rule) =>
+        rule.required().custom((slug) =>
+          isReservedSlug((slug as {current?: string} | undefined)?.current)
+            ? `"${(slug as {current?: string}).current}" is a built-in route. Pick another slug.`
+            : true,
+        ),
     }),
     defineField({
       name: 'overview',
