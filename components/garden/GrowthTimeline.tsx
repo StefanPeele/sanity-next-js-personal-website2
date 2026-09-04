@@ -39,7 +39,9 @@ export function GrowthTimeline({ notes, onSelect }: { notes: TimelineNote[]; onS
       .filter((r): r is NonNullable<typeof r> => r !== null)
     if (rows.length === 0) return null
     const min = Math.min(...rows.map((r) => r.created.getTime()))
-    const max = Math.max(Date.now(), ...rows.map((r) => r.tended.getTime()))
+    // No Date.now() here: the component is server-rendered, and a clock read during render
+    // would give the server and client different scales (hydration mismatch).
+    const max = Math.max(...rows.map((r) => r.tended.getTime()))
     const span = Math.max(max - min, 86400000 * 30)
     const x = (t: number) => PAD_L + ((t - min) / span) * (W - PAD_L - PAD_R)
     return { rows, min, max, x }
