@@ -16,7 +16,7 @@ export interface ContactResult {
 }
 
 const ContactSchema = z.object({
-  name: z.string().trim().min(2, 'Please enter your name.').max(100, 'Name is too long.'),
+  name: z.string().trim().min(2, 'Please enter your name.').max(100, 'Name is too long.').transform((s) => s.replace(/s+/g, ' ')),
   email: z.email('Please enter a valid email address.').trim().toLowerCase().max(200),
   company: z.string().trim().max(120, 'Company is too long.').default(''),
   message: z.string().trim().min(10, 'A sentence or two helps me reply well.').max(2000, 'Message is too long (2000 characters max).'),

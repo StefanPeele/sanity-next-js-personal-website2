@@ -20,7 +20,7 @@ export interface BookingResult {
 
 // ── Validation ────────────────────────────────────────────────────
 const BookingSchema = z.object({
-  name: z.string().trim().min(2, 'Please enter your name.').max(100, 'Name is too long.'),
+  name: z.string().trim().min(2, 'Please enter your name.').max(100, 'Name is too long.').transform((s) => s.replace(/s+/g, ' ')),
   email: z.email('Please enter a valid email address.').trim().toLowerCase().max(200),
   phone: z.string().trim().max(40, 'Phone number is too long.').default(''),
   preferredDate: z
