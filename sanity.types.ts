@@ -213,6 +213,62 @@ export type Navigation = {
   drawerFooterLine?: string
 }
 
+export type HomeNotes = {
+  _type: 'homeNotes'
+  enabled?: boolean
+  heading?: string
+  ctaLabel?: string
+}
+
+export type HomeReading = {
+  _type: 'homeReading'
+  enabled?: boolean
+  heading?: string
+  ctaLabel?: string
+}
+
+export type HomeWriting = {
+  _type: 'homeWriting'
+  enabled?: boolean
+  heading?: string
+  featuredBadge?: string
+  recentHeading?: string
+  readLabel?: string
+  limit?: number
+}
+
+export type HomeShowcase = {
+  _type: 'homeShowcase'
+  enabled?: boolean
+  heading?: string
+  ctaLabel?: string
+  limit?: number
+}
+
+export type HomeAbout = {
+  _type: 'homeAbout'
+  enabled?: boolean
+  heading?: string
+  fallbackManifesto?: string
+  fallbackBio?: string
+  imagePlaceholder?: string
+}
+
+export type HomeOpenTo = {
+  _type: 'homeOpenTo'
+  enabled?: boolean
+  ctaLabel?: string
+}
+
+export type HomeHero = {
+  _type: 'homeHero'
+  enabled?: boolean
+  showNav?: boolean
+  currentlyLabel?: string
+  locationLabel?: string
+  footnote?: string
+}
+
 export type VocabEntry = {
   _type: 'vocabEntry'
   key?: string
@@ -1370,6 +1426,29 @@ export type Home = {
       _key: string
     } & ProjectReference
   >
+  sections?: Array<
+    | ({
+        _key: string
+      } & HomeHero)
+    | ({
+        _key: string
+      } & HomeOpenTo)
+    | ({
+        _key: string
+      } & HomeAbout)
+    | ({
+        _key: string
+      } & HomeShowcase)
+    | ({
+        _key: string
+      } & HomeWriting)
+    | ({
+        _key: string
+      } & HomeReading)
+    | ({
+        _key: string
+      } & HomeNotes)
+  >
 }
 
 export type MediaTag = {
@@ -1497,6 +1576,13 @@ export type AllSanitySchemaTypes =
   | NavLink
   | Taxonomy
   | Navigation
+  | HomeNotes
+  | HomeReading
+  | HomeWriting
+  | HomeShowcase
+  | HomeAbout
+  | HomeOpenTo
+  | HomeHero
   | VocabEntry
   | UsesSection
   | UsesItem
@@ -2170,7 +2256,7 @@ export type SettingsQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: homePageQuery
-// Query: *[_type == "home"][0]{    _id,    _type,    title,    profileImage {   ...,  "url": asset->url,  "alt": coalesce(alt, asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },    overview,    currently,    location,    manifesto,    aspirations,    expertisePillars[]{      title,      description    },    showcaseProjects[]{      _key,      ...@->{        _id,        _type,        coverImage {   ...,  "url": asset->url,  "alt": coalesce(alt, asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },        overview,        "slug": coalesce(slug.current, ""),        tags,        title,        techStack,        githubUrl,        liveUrl,        outcome,        role      }    }  }
+// Query: *[_type == "home"][0]{    _id,    _type,    title,    profileImage {   ...,  "url": asset->url,  "alt": coalesce(alt, asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },    overview,    currently,    location,    manifesto,    aspirations,    expertisePillars[]{      title,      description    },    showcaseProjects[]{      _key,      ...@->{        _id,        _type,        coverImage {   ...,  "url": asset->url,  "alt": coalesce(alt, asset->altText, "Image"),  "metadata": asset->metadata { lqip, dimensions } },        overview,        "slug": coalesce(slug.current, ""),        tags,        title,        techStack,        githubUrl,        liveUrl,        outcome,        role      }    },    "sections": sections[]{      _key, _type, enabled, showNav, currentlyLabel, locationLabel, footnote, ctaLabel, heading,      fallbackManifesto, fallbackBio, imagePlaceholder, limit, featuredBadge, recentHeading, readLabel    }  }
 export type HomePageQueryResult = {
   _id: string
   _type: 'home'
@@ -2254,6 +2340,134 @@ export type HomePageQueryResult = {
     outcome: string | null
     role: string | null
   }> | null
+  sections: Array<
+    | {
+        _key: string
+        _type: 'homeAbout'
+        enabled: boolean | null
+        showNav: null
+        currentlyLabel: null
+        locationLabel: null
+        footnote: null
+        ctaLabel: null
+        heading: string | null
+        fallbackManifesto: string | null
+        fallbackBio: string | null
+        imagePlaceholder: string | null
+        limit: null
+        featuredBadge: null
+        recentHeading: null
+        readLabel: null
+      }
+    | {
+        _key: string
+        _type: 'homeHero'
+        enabled: boolean | null
+        showNav: boolean | null
+        currentlyLabel: string | null
+        locationLabel: string | null
+        footnote: string | null
+        ctaLabel: null
+        heading: null
+        fallbackManifesto: null
+        fallbackBio: null
+        imagePlaceholder: null
+        limit: null
+        featuredBadge: null
+        recentHeading: null
+        readLabel: null
+      }
+    | {
+        _key: string
+        _type: 'homeNotes'
+        enabled: boolean | null
+        showNav: null
+        currentlyLabel: null
+        locationLabel: null
+        footnote: null
+        ctaLabel: string | null
+        heading: string | null
+        fallbackManifesto: null
+        fallbackBio: null
+        imagePlaceholder: null
+        limit: null
+        featuredBadge: null
+        recentHeading: null
+        readLabel: null
+      }
+    | {
+        _key: string
+        _type: 'homeOpenTo'
+        enabled: boolean | null
+        showNav: null
+        currentlyLabel: null
+        locationLabel: null
+        footnote: null
+        ctaLabel: string | null
+        heading: null
+        fallbackManifesto: null
+        fallbackBio: null
+        imagePlaceholder: null
+        limit: null
+        featuredBadge: null
+        recentHeading: null
+        readLabel: null
+      }
+    | {
+        _key: string
+        _type: 'homeReading'
+        enabled: boolean | null
+        showNav: null
+        currentlyLabel: null
+        locationLabel: null
+        footnote: null
+        ctaLabel: string | null
+        heading: string | null
+        fallbackManifesto: null
+        fallbackBio: null
+        imagePlaceholder: null
+        limit: null
+        featuredBadge: null
+        recentHeading: null
+        readLabel: null
+      }
+    | {
+        _key: string
+        _type: 'homeShowcase'
+        enabled: boolean | null
+        showNav: null
+        currentlyLabel: null
+        locationLabel: null
+        footnote: null
+        ctaLabel: string | null
+        heading: string | null
+        fallbackManifesto: null
+        fallbackBio: null
+        imagePlaceholder: null
+        limit: number | null
+        featuredBadge: null
+        recentHeading: null
+        readLabel: null
+      }
+    | {
+        _key: string
+        _type: 'homeWriting'
+        enabled: boolean | null
+        showNav: null
+        currentlyLabel: null
+        locationLabel: null
+        footnote: null
+        ctaLabel: null
+        heading: string | null
+        fallbackManifesto: null
+        fallbackBio: null
+        imagePlaceholder: null
+        limit: number | null
+        featuredBadge: string | null
+        recentHeading: string | null
+        readLabel: string | null
+      }
+  > | null
 } | null
 
 // Source: sanity/lib/queries.ts
@@ -3812,7 +4026,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "taxonomy"][0]{\n    "articleLanes": articleLanes[]{ _key, key, label, short, description, banner, color, dots },\n    "noteStatuses": noteStatuses[]{ _key, key, label, short, description, banner, color, dots },\n    "noteOrigins": noteOrigins[]{ _key, key, label, short, description, banner, color, dots },\n    "mediaTypes": mediaTypes[]{ _key, key, label, short, description, banner, color, dots },\n    "libraryStatuses": libraryStatuses[]{ _key, key, label, short, description, banner, color, dots },\n    "skillLevels": skillLevels[]{ _key, key, label, short, description, banner, color, dots },\n    "packageCategories": packageCategories[]{ _key, key, label, short, description, banner, color, dots }\n  }\n': TaxonomyQueryResult
     '\n  *[_type == "errorPages"][0]{\n    notFound{ title, body, hint, primaryCta{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "learningPath" => "/paths/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n }, "links": links[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "learningPath" => "/paths/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n } },\n    error{ title, body, retryLabel, homeLabel, referenceLabel },\n    offline{ title, body }\n  }\n': ErrorPagesQueryResult
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    instagram,\n    bluesky,\n    gitbook,\n    calendlyUrl,\n    openTo,\n    footerHeadlinePrefix,\n    footerHeadlineHighlight,\n    footerHeadlineSuffix,\n    archiveTitle,\n    archiveSubtitle,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": coalesce(slug.current, ""),\n        title\n      }\n    },\n    ogImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n  }\n': SettingsQueryResult
-    '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n        overview,\n        "slug": coalesce(slug.current, ""),\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl,\n        outcome,\n        role\n      }\n    }\n  }\n': HomePageQueryResult
+    '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n        overview,\n        "slug": coalesce(slug.current, ""),\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl,\n        outcome,\n        role\n      }\n    },\n    "sections": sections[]{\n      _key, _type, enabled, showNav, currentlyLabel, locationLabel, footnote, ctaLabel, heading,\n      fallbackManifesto, fallbackBio, imagePlaceholder, limit, featuredBadge, recentHeading, readLabel\n    }\n  }\n': HomePageQueryResult
     '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  "wordCount": length(pt::text(body)),\n  "series": series->{ title, "slug": slug.current }\n },\n  "recentPosts": *[_type == "post" && isFeatured != true] | order(publishedAt desc)[0...3] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  "wordCount": length(pt::text(body)),\n  "series": series->{ title, "slug": slug.current }\n },\n  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {\n    _id, title, author, mediaType, progressPercent, "coverUrl": coverImage.asset->url\n  },\n  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...3] {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  }\n}': HomeIntelQueryResult
     '\n  *[_type == $type && defined(slug.current)]{"slug": slug.current}\n': SlugsByTypeQueryResult
     '{\n  "posts": *[_type == "post" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(_updatedAt, publishedAt) },\n  "projects": *[_type == "project" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "galleries": *[_type == "gallery" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "pages": *[_type == "page" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "notes": *[_type == "note" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(lastTended, _updatedAt) },\n  "series": *[_type == "series" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "glossary": *[_type == "glossaryTerm" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt }\n}': SitemapQueryResult

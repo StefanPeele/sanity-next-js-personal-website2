@@ -19,12 +19,12 @@ export function CurrentlyReading({ items, title = 'Currently reading' }: { items
   const list = (items ?? []).filter((i) => i.title)
   return (
     <section aria-label={title}>
-      <div className="mb-3 flex items-center justify-between">
-        <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-emerald-600 pl-3">{title}</span>
-        <Link href="/library" className="font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
+      {title && <div className="mb-3 flex items-center justify-between">
+        <span className="section-label">{title}</span>
+        <Link href="/library" className="font-sans text-sm text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
           Library →
         </Link>
-      </div>
+      </div>}
       {list.length > 0 ? (
         <ul className="space-y-3">
           {list.map((item, i) => {

@@ -1,19 +1,21 @@
 // app/(personal)/layout.tsx
 import { Navbar } from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import { sanityFetch } from '@/sanity/lib/live'
-import { settingsQuery } from '@/sanity/lib/queries'
+import { TaxonomyProvider } from '@/components/TaxonomyProvider'
+import { getSiteChrome, getTaxonomy } from '@/lib/cms/loaders'
 
 export default async function PersonalLayout({ children }: { children: React.ReactNode }) {
-  const { data } = await sanityFetch({ query: settingsQuery })
+  const [{ settings, navigation }, taxonomy] = await Promise.all([getSiteChrome(), getTaxonomy()])
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
-      <main id="content" className="mt-20 flex-grow">
-        <div className="px-4 md:px-16 lg:px-32">{children}</div>
-      </main>
-      <Footer data={data} />
-    </div>
+    <TaxonomyProvider value={taxonomy}>
+      <div className="flex min-h-screen flex-col">
+        <Navbar nav={navigation} />
+        <main id="content" className="mt-20 flex-grow">
+          <div className="px-4 md:px-16 lg:px-32">{children}</div>
+        </main>
+        <Footer settings={settings} nav={navigation} />
+      </div>
+    </TaxonomyProvider>
   )
 }

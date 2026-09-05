@@ -1,5 +1,7 @@
 import {HomeIcon} from '@sanity/icons'
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import { DEFAULT_HOME_SECTIONS } from '@/lib/cms/defaults/home'
+import { HOME_SECTION_NAMES } from '@/sanity/schemas/objects/home-sections'
 
 export default defineType({
   name: 'home',
@@ -112,9 +114,24 @@ export default defineType({
         }),
       ],
     }),
+
+    defineField({
+      name: 'sections',
+      title: 'Sections',
+      description: 'Which blocks the homepage shows, in this order. Drag to reorder; open a block to hide it or change its labels.',
+      type: 'array',
+      initialValue: DEFAULT_HOME_SECTIONS,
+      of: HOME_SECTION_NAMES.map((name) => defineArrayMember({ type: name })),
+      validation: (rule) =>
+        rule.custom((value) => {
+          const types = ((value as { _type?: string }[] | undefined) ?? []).map((v) => v._type)
+          const dupes = types.filter((t, i) => types.indexOf(t) !== i)
+          return dupes.length ? `Each section can appear once (duplicate: ${dupes.join(', ')})` : true
+        }),
+    }),
   ],
   preview: {
-    select: { 
+    select: {
       title: 'title',
       media: 'profileImage' // Shows the uploaded photo in the Sanity sidebar
     },

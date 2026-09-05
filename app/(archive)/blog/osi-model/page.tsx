@@ -1,12 +1,8 @@
 import Link from 'next/link'
-import { Navbar } from '@/components/Navbar'
 import { LayerExplorer } from '@/components/blog/LayerExplorer'
 import { PacketAnimator } from '@/components/blog/PacketAnimator'
-import { client } from '@/sanity/lib/client'
 import type { Metadata } from 'next'
 // app/blog/osi-model/page.tsx
-
-const settingsQuery = `*[_type == "settings"][0]`
 
 export const metadata: Metadata = {
   title: 'OSI Model Reference',
@@ -77,35 +73,25 @@ const PACKET_STEPS = [
   },
 ]
 
-export default async function OSIModelPage() {
-  const settings = await client.fetch(settingsQuery)
-
+export default function OSIModelPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-stone-300 selection:bg-stone-500/30">
-      <Navbar data={settings} />
+    <div className="min-h-screen text-stone-300 selection:bg-stone-500/30">
 
-      <main className="max-w-5xl mx-auto px-6 pt-32 pb-24">
+      <main id="content" className="max-w-5xl mx-auto px-6 pt-32 pb-24">
 
         {/* Breadcrumb */}
-        <div className="mb-12 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-stone-600">
-          <Link href="/blog" className="hover:text-stone-400 transition-colors">
-            Editorial
-          </Link>
-          <span>/</span>
-          <span className="text-stone-500">Reference</span>
-          <span>/</span>
-          <span className="text-white">OSI Model</span>
-        </div>
+        <nav aria-label="Breadcrumb" className="mb-10 flex items-center gap-2 font-sans text-sm text-stone-400">
+          <Link href="/blog" className="hover:text-white transition-colors">Writing</Link>
+          <span aria-hidden="true">/</span>
+          <span className="text-stone-200">OSI model reference</span>
+        </nav>
 
         {/* Header */}
         <header className="mb-16 border-b border-white/5 pb-10">
-          <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 block mb-4 border-l border-stone-700 pl-4">
-            Reference // Layer Architecture
-          </span>
           <h1 className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none mb-6">
-            OSI Model<span className="text-stone-600">.</span>
+            OSI model
           </h1>
-          <p className="text-stone-500 font-sans text-base max-w-2xl leading-relaxed">
+          <p className="text-stone-400 font-sans text-base max-w-2xl leading-relaxed">
             The Open Systems Interconnection model is the conceptual framework that everything in
             networking is built on. Seven layers. Each with a job. Click any layer to inspect its
             protocols, what it actually does, and how it shows up in the real world.
@@ -176,15 +162,6 @@ export default async function OSIModelPage() {
           </div>
         </section>
 
-        {/* Related posts placeholder */}
-        <section>
-          <h2 className="font-serif text-2xl text-white mb-6 pb-4 border-b border-white/5">
-            Related Posts
-          </h2>
-          <p className="font-mono text-[10px] text-stone-700 uppercase tracking-widest">
-            Posts tagged with OSI Model will appear here.
-          </p>
-        </section>
 
       </main>
     </div>

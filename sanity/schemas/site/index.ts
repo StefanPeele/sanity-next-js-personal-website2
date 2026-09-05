@@ -1,5 +1,6 @@
 import type { DocumentDefinition, SchemaTypeDefinition } from 'sanity'
 import { siteObjects } from '@/sanity/schemas/objects/site'
+import { homeSectionTypes } from '@/sanity/schemas/objects/home-sections'
 import navigation from '@/sanity/schemas/singletons/navigation'
 import taxonomy from '@/sanity/schemas/singletons/taxonomy'
 import errorPages from '@/sanity/schemas/singletons/errorPages'
@@ -9,4 +10,4 @@ import errorPages from '@/sanity/schemas/singletons/errorPages'
 
 export const siteSingletons: DocumentDefinition[] = [navigation, taxonomy, errorPages]
 
-export const siteTypes: SchemaTypeDefinition[] = [...siteObjects, ...siteSingletons]
+export const siteTypes: SchemaTypeDefinition[] = [...siteObjects, ...homeSectionTypes, ...siteSingletons]

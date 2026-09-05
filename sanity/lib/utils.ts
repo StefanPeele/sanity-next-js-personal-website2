@@ -28,8 +28,30 @@ export function resolveHref(documentType?: string, slug?: string | null): string
       return slug ? `/${slug}` : undefined
     case 'project':
       return slug ? `/projects/${slug}` : undefined
+    case 'post':
+      return slug ? `/blog/${slug}` : undefined
+    case 'note':
+      return slug ? `/garden/${slug}` : undefined
+    case 'gallery':
+      return slug ? `/photography/${slug}` : undefined
+    case 'series':
+      return slug ? `/blog/series/${slug}` : undefined
+    case 'learningPath':
+      return slug ? `/paths/${slug}` : undefined
+    case 'glossaryTerm':
+      return slug ? `/glossary#${slug}` : '/glossary'
+    case 'blogPage': return '/blog'
+    case 'gardenPage': return '/garden'
+    case 'libraryPage': return '/library'
+    case 'projectsPage': return '/projects'
+    case 'resumePage': return '/resume'
+    case 'contactPage': return '/contact'
+    case 'nowPage': return '/now'
+    case 'usesPage': return '/uses'
+    case 'photographyPage': return '/photography'
+    case 'servicesPage': return '/services'
+    case 'errorPages': return '/this-page-does-not-exist'
     default:
-      console.warn('Invalid document type:', documentType)
       return undefined
   }
 }

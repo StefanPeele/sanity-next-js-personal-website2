@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition, useCallback, useId } from '
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, usePathname } from 'next/navigation'
 import { searchSite, type SearchGroup, type SearchResult, type SearchType } from '@/app/actions/search'
+import { DEFAULT_NAVIGATION, navHref, type NavLink } from '@/lib/cms/defaults/navigation'
 // components/SearchModal.tsx
 // Cmd/Ctrl+K site search. Grouped results with type chips, keyboard navigation across
 // groups, dialog semantics + focus trap, closes on route change, recent searches in
@@ -20,14 +21,7 @@ const TYPE_CHIP: Record<SearchType, { label: string; className: string }> = {
   glossary: { label: 'Term', className: 'text-violet-300 border-violet-400/30' },
 }
 
-const QUICK_LINKS = [
-  { label: 'The Garden', href: '/garden', hint: 'Notes in progress' },
-  { label: 'Knowledge Graph', href: '/graph', hint: 'How everything connects' },
-  { label: 'Library', href: '/library', hint: 'What I read' },
-  { label: 'Glossary', href: '/glossary', hint: 'Terms, defined' },
-  { label: 'Learning Paths', href: '/paths', hint: 'Ordered routes through the archive' },
-  { label: 'OSI Model Explorer', href: '/blog/osi-model', hint: 'Interactive reference' },
-]
+const DEFAULT_QUICK_LINKS = DEFAULT_NAVIGATION.searchQuickLinks.map((l) => ({ label: l.label, href: navHref(l), hint: l.description ?? '' }))
 
 function loadRecent(): string[] {
   try {
@@ -44,7 +38,8 @@ function saveRecent(q: string) {
   } catch {}
 }
 
-export function SearchModal() {
+export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
+  const QUICK_LINKS = quickLinks?.length ? quickLinks.map((l) => ({ label: l.label, href: navHref(l), hint: l.description ?? '' })) : DEFAULT_QUICK_LINKS
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [groups, setGroups] = useState<SearchGroup[]>([])

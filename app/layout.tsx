@@ -11,7 +11,9 @@ import { sanityFetch } from '@/sanity/lib/live'
 import { homePageQuery, settingsQuery } from '@/sanity/lib/queries'
 import { urlForOpenGraphImage } from '@/sanity/lib/utils'
 import { toPlainText } from 'next-sanity'
-import { Inter, Lora, IBM_Plex_Mono } from 'next/font/google'
+import { Inter, Lora, IBM_Plex_Mono, Lexend } from 'next/font/google'
+import { ErrorCopyProvider } from '@/components/ErrorCopyProvider'
+import { getErrorPages, getSettings } from '@/lib/cms/loaders'
 import { Analytics } from '@/components/Analytics'
 import { JsonLd } from '@/components/JsonLd'
 import { MotionProvider } from '@/components/MotionProvider'
@@ -44,23 +46,33 @@ const ibmPlexMono = IBM_Plex_Mono({
   weight: ['400', '500', '600'],
 })
 
+// Lexend — dyslexia-friendly reading option (self-hosted, no runtime Google Fonts request)
+const lexend = Lexend({
+  subsets: ['latin'],
+  variable: '--font-lexend',
+  display: 'swap',
+  weight: ['400', '500'],
+})
+
 const WEBMENTION_ENABLED = process.env.NEXT_PUBLIC_WEBMENTION_ENABLED === 'true'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [{ data: settings }, { data: homePage }] = await Promise.all([
+  const [{ data: settings }, { data: homePage }, copy] = await Promise.all([
     sanityFetch({ query: settingsQuery, stega: false }),
     sanityFetch({ query: homePageQuery, stega: false }),
+    getSettings(),
   ])
 
   const ogImage = urlForOpenGraphImage(settings?.ogImage as any)
-  const siteTitle = homePage?.title || SITE.title
-  const description = homePage?.overview ? toPlainText(homePage.overview) : SITE.description
+  const siteTitle = copy.siteName || homePage?.title || SITE.name
+  const description = copy.description || (homePage?.overview ? toPlainText(homePage.overview) : SITE.description)
 
   return {
     metadataBase: new URL(SITE.url),
     title: {
       template: `%s | ${siteTitle}`,
-      default: siteTitle,
+      // tagline is appended only to the default title
+      default: copy.tagline ? `${siteTitle} | ${copy.tagline}` : siteTitle,
     },
     description,
     applicationName: SITE.name,
@@ -68,7 +80,7 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: SITE.name,
     publisher: SITE.name,
     category: 'technology',
-    keywords: ['network engineering', 'infrastructure', 'NJIT', 'photography', 'Newark NJ', 'Stefan Peele'],
+    keywords: copy.keywords,
     formatDetection: { email: false, address: false, telephone: false },
     openGraph: {
       type: 'website',
@@ -115,7 +127,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { data: settings } = await sanityFetch({ query: settingsQuery, stega: false })
+  const [{ data: settings }, copy, errorPages] = await Promise.all([
+    sanityFetch({ query: settingsQuery, stega: false }),
+    getSettings(),
+    getErrorPages(),
+  ])
 
   const sameAs = [
     settings?.github || SITE.handles.github,
@@ -131,20 +147,20 @@ export default async function RootLayout({
       '@context': 'https://schema.org',
       '@type': 'Person',
       '@id': personId,
-      name: SITE.name,
-      alternateName: SITE.legalName,
+      name: copy.siteName,
+      alternateName: copy.legalName,
       url: SITE.url,
       email: `mailto:${settings?.email || SITE.email}`,
-      jobTitle: 'Network Engineer Associate (Intern)',
-      alumniOf: { '@type': 'CollegeOrUniversity', name: SITE.school },
-      affiliation: { '@type': 'CollegeOrUniversity', name: SITE.school },
+      jobTitle: copy.jobTitle,
+      alumniOf: { '@type': 'CollegeOrUniversity', name: copy.school },
+      affiliation: { '@type': 'CollegeOrUniversity', name: copy.school },
       address: {
         '@type': 'PostalAddress',
-        addressLocality: SITE.location.city,
-        addressRegion: SITE.location.region,
+        addressLocality: copy.location.city,
+        addressRegion: copy.location.region,
         addressCountry: 'US',
       },
-      knowsAbout: ['Network engineering', 'IT infrastructure', 'Photography'],
+      knowsAbout: copy.knowsAbout,
       sameAs,
     },
     {
@@ -152,8 +168,8 @@ export default async function RootLayout({
       '@type': 'WebSite',
       '@id': `${SITE.url}/#website`,
       url: SITE.url,
-      name: SITE.title,
-      description: SITE.description,
+      name: copy.siteName,
+      description: copy.description,
       inLanguage: 'en-US',
       publisher: { '@id': personId },
       // No SearchAction: /blog does not read a ?q= or ?search= param. Add one here once it does.
@@ -163,7 +179,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${lora.variable} ${inter.variable} ${ibmPlexMono.variable}`}
+      className={`${lora.variable} ${inter.variable} ${ibmPlexMono.variable} ${lexend.variable}`}
     >
       <head>
         {WEBMENTION_ENABLED && (
@@ -176,7 +192,9 @@ export default async function RootLayout({
       </head>
       <body className="bg-[#0a0a0a] text-stone-300 font-sans selection:bg-white/20 antialiased">
         <a href="#content" className="skip-link">Skip to content</a>
-        <MotionProvider>{children}</MotionProvider>
+        <ErrorCopyProvider value={errorPages.error}>
+          <MotionProvider>{children}</MotionProvider>
+        </ErrorCopyProvider>
         <JsonLd data={jsonLd} />
 
         <Toaster />

@@ -90,6 +90,10 @@ export const homePageQuery = defineQuery(`
         outcome,
         role
       }
+    },
+    "sections": sections[]{
+      _key, _type, enabled, showNav, currentlyLabel, locationLabel, footnote, ctaLabel, heading,
+      fallbackManifesto, fallbackBio, imagePlaceholder, limit, featuredBadge, recentHeading, readLabel
     }
   }
 `)

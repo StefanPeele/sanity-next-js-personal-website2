@@ -1,15 +1,16 @@
 // lib/cms/defaults/errorPages.ts
+import type { NavLink } from './navigation'
 
 export const DEFAULT_ERROR_PAGES = {
   notFound: {
     title: 'Page not found',
     body: 'That page does not exist, or it moved.',
     hint: 'Check the address, or start from one of these.',
-    primaryCta: { label: 'Home', kind: 'internal', path: '/' },
+    primaryCta: { label: 'Home', kind: 'internal', path: '/' } as NavLink,
     links: [
       { label: 'Writing', kind: 'internal', path: '/blog' },
       { label: 'Projects', kind: 'internal', path: '/projects' },
-    ],
+    ] as NavLink[],
   },
   error: {
     title: 'Something went wrong',
