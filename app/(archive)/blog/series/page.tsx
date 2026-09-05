@@ -5,13 +5,17 @@ import { SITE, absoluteUrl } from '@/lib/site'
 import { formatDate } from '@/lib/dates'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { getCopy } from '@/lib/cms/loaders'
+import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
+import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
+import { navHref } from '@/lib/cms/defaults/navigation'
 // app/(archive)/blog/series/page.tsx
 // Every series with its parts, status and how far along it is.
 
-export const metadata: Metadata = {
-  title: 'Series',
-  description: 'Multi-part writing from Stefan Peele — home lab builds, protocol deep dives and PowerShell, in reading order.',
-  alternates: { canonical: absoluteUrl('/blog/series') },
+export async function generateMetadata(): Promise<Metadata> {
+  const all = await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)
+  const h = all.series.header
+  return { title: h.metaTitle || h.title, description: h.metaDescription || h.lede }
 }
 
 const STATUS: Record<string, { label: string; className: string }> = {
@@ -21,6 +25,7 @@ const STATUS: Record<string, { label: string; className: string }> = {
 }
 
 export default async function SeriesIndexPage() {
+  const copy = (await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)).series
   const { data } = await sanityFetch({ query: allSeriesQuery })
   const series = (data ?? []).filter((s) => s.slug)
 
@@ -37,20 +42,13 @@ export default async function SeriesIndexPage() {
 
       <main id="content" className="relative max-w-5xl mx-auto px-6 pt-32 pb-24">
         <header className="mb-12 border-b border-white/5 pb-8">
-          <Link href="/blog" className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
-            ← Writing
-          </Link>
-          <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 block mt-6 mb-4 border-l border-stone-700 pl-4">
-            Archive // Series
-          </span>
-          <h1 className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none">Series</h1>
-          <p className="mt-4 max-w-xl font-serif italic text-stone-400">
-            Longer arguments broken into parts. Each series is meant to be read in order — start at part one.
-          </p>
+          <Link href="/blog" className="font-sans text-sm text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">← {copy.backLabel}</Link>
+          <h1 className="mt-6 text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
+          <p className="mt-4 max-w-xl font-sans text-base text-stone-400">{copy.header.lede}</p>
         </header>
 
         {series.length === 0 ? (
-          <p className="font-mono text-[11px] uppercase tracking-widest text-stone-500">No series published yet.</p>
+          <p className="font-sans text-sm text-stone-400">{copy.emptyState.title}</p>
         ) : (
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {series.map((s) => {

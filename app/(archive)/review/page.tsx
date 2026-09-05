@@ -5,16 +5,21 @@ import { reviewQuery } from '@/sanity/lib/queries-knowledge'
 import { ReviewDeck, type ReviewCard } from '@/components/knowledge/ReviewDeck'
 import { JsonLd } from '@/components/JsonLd'
 import { absoluteUrl } from '@/lib/site'
+import { getCopy } from '@/lib/cms/loaders'
+import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
+import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
+import { navHref } from '@/lib/cms/defaults/navigation'
 // app/(archive)/review/page.tsx
 // Spaced-repetition review over every post's concept cards and knowledge checks.
 
-export const metadata: Metadata = {
-  title: 'Review',
-  description: 'Spaced-repetition review of the concept cards and knowledge checks from every post. Progress stays in your browser.',
-  alternates: { canonical: '/review' },
+export async function generateMetadata(): Promise<Metadata> {
+  const all = await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)
+  const h = all.review.header
+  return { title: h.metaTitle || h.title, description: h.metaDescription || h.lede }
 }
 
 export default async function ReviewPage() {
+  const copy = (await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)).review
   const { data } = await sanityFetch({ query: reviewQuery, stega: false })
   const posts = data ?? []
 
@@ -48,35 +53,25 @@ export default async function ReviewPage() {
           '@type': 'WebPage',
           name: 'Review deck',
           url: absoluteUrl('/review'),
-          description: metadata.description,
+          description: copy.header.metaDescription || copy.header.lede,
           learningResourceType: 'flashcards',
         }}
       />
       <main id="content" className="relative max-w-3xl mx-auto px-6 pt-32 pb-24">
         <header className="mb-10 border-b border-white/5 pb-10">
-          <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 block mb-4 border-l border-stone-700 pl-4">
-            Editorial // Review
-          </span>
-          <h1 className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none mb-4">
-            Review<span className="text-stone-600">.</span>
-          </h1>
+          <h1 className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none mb-4">{copy.header.title}</h1>
           <p className="text-stone-400 text-base leading-relaxed max-w-2xl">
-            Every post ends with concept cards and knowledge checks. This deck pulls all of them together and
-            schedules them with spaced repetition — grade a card and it comes back right before you would forget it.
-            {cards.length > 0 && (
-              <>
-                {' '}Right now: {conceptCount} concept{conceptCount === 1 ? '' : 's'} and {quizCount} question{quizCount === 1 ? '' : 's'} from {postCount} post{postCount === 1 ? '' : 's'}.
-              </>
-            )}
+            {copy.header.lede}
+            {cards.length > 0 && <> {copy.countLine.replace('{concepts}', String(conceptCount)).replace('{questions}', String(quizCount)).replace('{posts}', String(postCount))}</>}
           </p>
         </header>
 
         <ReviewDeck cards={cards} />
 
-        <nav className="mt-16 pt-8 border-t border-white/5 flex flex-wrap gap-6" aria-label="Related sections">
-          <Link href="/blog" className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 hover:text-white transition-colors">← Back to Editorial</Link>
-          <Link href="/paths" className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 hover:text-white transition-colors">Learning Paths →</Link>
-          <Link href="/glossary" className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 hover:text-white transition-colors">Glossary →</Link>
+<nav className="mt-16 pt-8 border-t border-white/5 flex flex-wrap gap-6" aria-label="Related sections">
+          {copy.relatedNav.map((l) => (
+            <Link key={navHref(l) + l.label} href={navHref(l)} className="font-sans text-sm text-stone-400 hover:text-white transition-colors">{l.label}</Link>
+          ))}
         </nav>
       </main>
     </div>

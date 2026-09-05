@@ -12,18 +12,22 @@ import { absoluteUrl } from '@/lib/site'
 import type { GardenNote, GardenNoteView, GardenTag } from '@/components/garden/types'
 import type { GardenQueryResult } from '@/sanity.types'
 import type { PortableTextBlock } from 'next-sanity'
+import { getCopy } from '@/lib/cms/loaders'
+import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
+import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
+import { navHref } from '@/lib/cms/defaults/navigation'
 // app/(archive)/garden/page.tsx
 
-export const metadata: Metadata = {
-  title: 'The Garden',
-  description:
-    'A digital garden — notes, ideas, and developing thoughts on networking, infrastructure, and photography. Shorter and rougher than blog posts. Allowed to be incomplete.',
-  alternates: { canonical: '/garden' },
+export async function generateMetadata(): Promise<Metadata> {
+  const all = await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)
+  const h = all.garden.header
+  return { title: h.metaTitle || h.title, description: h.metaDescription || h.lede }
 }
 
 type RawNote = GardenQueryResult['notes'][number]
 
 export default async function GardenPage() {
+  const copy = (await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)).garden
   const { data } = await sanityFetch({ query: gardenQuery })
   const rawNotes: RawNote[] = data?.notes ?? []
   const tags = (data?.tags ?? []) as GardenTag[]
@@ -62,7 +66,7 @@ export default async function GardenPage() {
           '@type': 'CollectionPage',
           name: 'The Garden',
           url: absoluteUrl('/garden'),
-          description: metadata.description,
+          description: copy.header.metaDescription || copy.header.lede,
           hasPart: notes.slice(0, 50).map((n) => ({
             '@type': 'CreativeWork',
             name: n.title,
@@ -73,25 +77,17 @@ export default async function GardenPage() {
       />
       <main id="content" className="relative max-w-4xl mx-auto px-6 pt-32 pb-24">
         <header className="mb-12 border-b border-white/5 pb-12">
-          <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 block mb-4 border-l border-stone-700 pl-4">
-            Editorial // The Garden
-          </span>
-          <h1 className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none mb-4">
-            The Garden<span className="text-stone-600">.</span>
-          </h1>
-          <p className="text-stone-400 text-base leading-relaxed max-w-2xl mb-6">
-            Notes are unfinished by design. A seedling is an idea worth capturing. A growing note is being
-            developed. An evergreen note is worth returning to. This is where thinking happens before it becomes a post.
-          </p>
+          <h1 className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none mb-4">{copy.header.title}</h1>
+          <p className="text-stone-400 text-base leading-relaxed max-w-2xl mb-6">{copy.header.lede}</p>
           <dl className="flex gap-6">
             {[
-              { label: 'Total notes', value: noteCount },
-              { label: 'Evergreen', value: evergreenCount },
-              { label: 'Tags in use', value: usedTagCount },
+              { label: copy.stats.notes, value: noteCount },
+              { label: copy.stats.evergreen, value: evergreenCount },
+              { label: copy.stats.tags, value: usedTagCount },
             ].map((s) => (
               <div key={s.label}>
                 <dd className="font-serif text-3xl text-white font-bold">{s.value}</dd>
-                <dt className="font-mono text-[9px] uppercase tracking-widest text-stone-500 mt-0.5">{s.label}</dt>
+                <dt className="font-sans text-sm text-stone-400 mt-0.5">{s.label}</dt>
               </div>
             ))}
           </dl>
@@ -103,23 +99,15 @@ export default async function GardenPage() {
           </Suspense>
         ) : (
           <div className="py-24 text-center border border-white/5 rounded-xl">
-            <p className="font-serif italic text-stone-400 text-lg mb-2">The garden is empty.</p>
-            <p className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
-              Add your first note in Sanity Studio → Notes
-            </p>
+            <p className="font-serif italic text-stone-400 text-lg mb-2">{copy.emptyState.title}</p>
+            <p className="font-sans text-sm text-stone-400">{copy.emptyState.hint}</p>
           </div>
         )}
 
-        <nav className="mt-16 pt-8 border-t border-white/5 flex flex-wrap gap-6" aria-label="Related sections">
-          <Link href="/blog" className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 hover:text-white transition-colors">
-            ← Back to Editorial
-          </Link>
-          <Link href="/graph" className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 hover:text-white transition-colors">
-            Knowledge Graph →
-          </Link>
-          <Link href="/paths" className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 hover:text-white transition-colors">
-            Learning Paths →
-          </Link>
+<nav className="mt-16 pt-8 border-t border-white/5 flex flex-wrap gap-6" aria-label="Related sections">
+          {copy.relatedNav.map((l) => (
+            <Link key={navHref(l) + l.label} href={navHref(l)} className="font-sans text-sm text-stone-400 hover:text-white transition-colors">{l.label}</Link>
+          ))}
         </nav>
       </main>
     </div>

@@ -7,17 +7,22 @@ import { SITE, absoluteUrl } from '@/lib/site'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { PortableTextBlock } from 'next-sanity'
+import { getCopy } from '@/lib/cms/loaders'
+import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
+import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
+import { navHref } from '@/lib/cms/defaults/navigation'
 // app/(archive)/glossary/page.tsx
 // Every glossary term, A–Z, filterable by category. Terms also power the hover
 // cards inside articles (lib/glossary.ts).
 
-export const metadata: Metadata = {
-  title: 'Glossary',
-  description: 'Networking and infrastructure terms as Stefan Peele uses them in his writing — short definitions, longer explanations, and the posts where each one shows up.',
-  alternates: { canonical: absoluteUrl('/glossary') },
+export async function generateMetadata(): Promise<Metadata> {
+  const all = await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)
+  const h = all.glossary.header
+  return { title: h.metaTitle || h.title, description: h.metaDescription || h.lede }
 }
 
 export default async function GlossaryPage() {
+  const copy = (await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)).glossary
   const { data } = await sanityFetch({ query: glossaryQuery })
   const raw = (data ?? []).filter((t) => t.term && t.slug && t.definition)
 
@@ -57,20 +62,13 @@ export default async function GlossaryPage() {
 
       <main id="content" className="relative max-w-4xl mx-auto px-6 pt-32 pb-24">
         <header className="mb-12 border-b border-white/5 pb-8">
-          <Link href="/blog" className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
-            ← Writing
-          </Link>
-          <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 block mt-6 mb-4 border-l border-stone-700 pl-4">
-            Archive // Reference
-          </span>
-          <h1 className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none">Glossary</h1>
-          <p className="mt-4 max-w-xl font-serif italic text-stone-400">
-            {entries.length} term{entries.length !== 1 ? 's' : ''}. When one of these appears in an article, hovering it shows the short definition; this page holds the longer version.
-          </p>
+          <Link href="/blog" className="font-sans text-sm text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">← {copy.backLabel}</Link>
+          <h1 className="mt-6 text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
+          <p className="mt-4 max-w-xl font-sans text-base text-stone-400">{copy.termsCount.replace('{n}', String(entries.length))}. {copy.header.lede}</p>
         </header>
 
         {entries.length === 0 ? (
-          <p className="font-mono text-[11px] uppercase tracking-widest text-stone-500">No terms defined yet.</p>
+          <p className="font-sans text-sm text-stone-400">{copy.emptyState.title}</p>
         ) : (
           <GlossaryList entries={entries} categories={categories} />
         )}

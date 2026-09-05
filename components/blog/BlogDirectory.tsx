@@ -10,6 +10,10 @@ import { formatDate } from '@/lib/dates'
 import { readingTime } from '@/lib/reading'
 import { noteStatus } from '@/components/garden/status'
 import type { BlogIndexQueryResult } from '@/sanity.types'
+import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPage'
+import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
+import { navHref } from '@/lib/cms/defaults/navigation'
+import { Icon } from '@/lib/cms/icons'
 // components/blog/BlogDirectory.tsx
 // Directory + filters + grid for /blog. Filters live in the URL:
 //   ?category=  ?lane=  ?tag=  ?sort=newest|oldest|longest
@@ -18,6 +22,9 @@ import type { BlogIndexQueryResult } from '@/sanity.types'
 export type DirectoryPost = BlogIndexQueryResult['posts'][number]
 
 interface BlogDirectoryProps {
+  copy?: BlogPageCopy
+  lanes?: VocabEntry[]
+  mediaTypes?: VocabEntry[]
   posts: DirectoryPost[]
   categories: string[]
   totalCount: number
@@ -47,20 +54,19 @@ function markPostRead(slug: string) {
   } catch {}
 }
 
-const MEDIA_LABEL: Record<string, string> = {
-  book: 'Book', article: 'Article', whitepaper: 'White paper', 'industry-paper': 'Industry paper',
-  rfc: 'RFC', 'research-paper': 'Paper', podcast: 'Podcast', newsletter: 'Newsletter', video: 'Video', documentation: 'Docs',
-}
 
 function chip(active: boolean) {
-  return `font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 rounded-sm border transition-all duration-200 ${FOCUS} ${
+  return `font-sans text-sm px-3 py-1.5 rounded-full border transition-all duration-200 ${FOCUS} ${
     active
       ? 'border-white/50 text-white bg-white/15 shadow-sm'
       : 'border-white/20 text-stone-300 hover:border-white/40 hover:text-white hover:bg-white/[0.08]'
   }`
 }
 
-export function BlogDirectory({ posts, categories, totalCount, latestDate, series, currentlyReading, recentNotes }: BlogDirectoryProps) {
+export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, posts, categories, totalCount, latestDate, series, currentlyReading, recentNotes }: BlogDirectoryProps) {
+  const L = copy.list
+  const mediaLabel = (key?: string | null) => mediaTypes?.find((m) => m.key === key)?.label ?? key ?? ''
+  const laneMeta = (key: string) => articleTypeMeta(key, lanes) ?? ARTICLE_TYPES[key as ArticleType]
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -125,14 +131,14 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
   return (
     <>
       {/* ── Section Directory ──────────────────────────────────────── */}
-      <nav
+      {copy.directory.enabled && <nav
         aria-label="Directory"
         className="mb-12 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10 border border-white/15 rounded-lg overflow-hidden"
         style={{ backgroundColor: 'rgba(20,20,24,0.85)', backdropFilter: 'blur(12px)' }}
       >
         {/* Column 1 — Content Pillars */}
         <div className="p-6">
-          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 mb-5 pb-3 border-b border-white/10">Content Pillars</p>
+          <p className="section-label mb-5 pb-3 border-b border-white/10">{copy.directory.topicsHeading}</p>
           <ul className="space-y-1">
             {categories.length > 0 ? categories.map((cat) => (
               <li key={cat}>
@@ -140,7 +146,7 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
                   type="button"
                   onClick={() => handleDirectoryClick(cat)}
                   aria-pressed={active === cat}
-                  className={`w-full text-left font-mono text-[11px] uppercase tracking-[0.2em] transition-all duration-200 flex items-center justify-between px-3 py-2.5 rounded-md border group ${FOCUS} ${
+                  className={`w-full text-left font-sans text-xs transition-all duration-200 flex items-center justify-between px-3 py-2.5 rounded-md border group ${FOCUS} ${
                     active === cat
                       ? 'text-white bg-white/15 border-white/30 shadow-sm'
                       : 'text-stone-300 hover:text-white hover:bg-white/[0.08] border-transparent hover:border-white/15'
@@ -160,7 +166,7 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
             )}
             {anyFilter && (
               <li className="pt-3 mt-2 border-t border-white/10">
-                <button type="button" onClick={clearAll} className={`font-mono text-[10px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors flex items-center gap-2 px-3 py-1 rounded-sm ${FOCUS}`}>
+                <button type="button" onClick={clearAll} className={`font-sans text-xs text-stone-400 hover:text-white transition-colors flex items-center gap-2 px-3 py-1 rounded-sm ${FOCUS}`}>
                   <span className="text-xs" aria-hidden="true">✕</span> Clear filters
                 </button>
               </li>
@@ -170,25 +176,16 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
 
         {/* Column 2 — Reference Tools */}
         <div className="p-6">
-          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 mb-5 pb-3 border-b border-white/10">Reference Tools</p>
+          <p className="section-label mb-5 pb-3 border-b border-white/10">{copy.directory.toolsHeading}</p>
           <ul className="space-y-1">
-            {[
-              { href: '/blog/osi-model', label: 'OSI Model Explorer', icon: '◎' },
-              { href: '/garden', label: 'The Garden', icon: '🌱' },
-              { href: '/graph', label: 'Knowledge Graph', icon: '◉' },
-              { href: '/library', label: 'Library', icon: '▤' },
-              { href: '/glossary', label: 'Glossary', icon: 'Aa' },
-              { href: '/paths', label: 'Learning Paths', icon: '⇢' },
-              { href: '/blog/series', label: 'Series', icon: '≡' },
-              { href: '/review', label: 'Review deck', icon: '↻' },
-            ].map((item) => (
-              <li key={item.href}>
+            {copy.referenceLinks.map((item) => (
+              <li key={navHref(item) + item.label}>
                 <Link
-                  href={item.href}
-                  className={`group font-mono text-[11px] uppercase tracking-[0.2em] text-stone-300 hover:text-white transition-all duration-200 flex items-center justify-between px-3 py-2 rounded-md border border-transparent hover:border-white/15 hover:bg-white/[0.08] ${FOCUS}`}
+                  href={navHref(item)}
+                  className={`group font-sans text-sm text-stone-300 hover:text-white transition-all duration-200 flex items-center justify-between px-3 py-2 rounded-md border border-transparent hover:border-white/15 hover:bg-white/[0.08] ${FOCUS}`}
                 >
                   <span className="flex items-center gap-2.5">
-                    <span className="w-4 text-center text-[11px] text-stone-500 group-hover:text-white" aria-hidden="true">{item.icon}</span>
+                    <span className="w-4 text-stone-500 group-hover:text-white" aria-hidden="true"><Icon name={item.icon} /></span>
                     {item.label}
                   </span>
                   <span className="text-stone-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" aria-hidden="true">→</span>
@@ -200,36 +197,36 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
 
         {/* Column 3 — Archive Stats */}
         <div className="p-6">
-          <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 mb-5 pb-3 border-b border-white/10">Archive</p>
+          <p className="section-label mb-5 pb-3 border-b border-white/10">{copy.directory.statsHeading}</p>
           <ul className="space-y-4">
             <li className="flex items-baseline justify-between">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400">Total Posts</span>
+              <span className="font-sans text-sm text-stone-400">{copy.directory.totalLabel}</span>
               <span className="font-serif text-3xl text-white font-bold">{totalCount}</span>
             </li>
             <li className="flex items-baseline justify-between">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400">Latest</span>
+              <span className="font-sans text-sm text-stone-400">{copy.directory.latestLabel}</span>
               <span className="font-mono text-[10px] text-stone-200">{latestDate ?? '—'}</span>
             </li>
             <li className="flex items-baseline justify-between">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400">Series</span>
+              <span className="font-sans text-sm text-stone-400">{copy.directory.seriesLabel}</span>
               <span className="font-mono text-[10px] text-stone-200">{series.length}</span>
             </li>
             {mounted && readPosts.size > 0 && (
               <li className="flex items-baseline justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-stone-400">Read</span>
+                <span className="font-sans text-sm text-stone-400">{copy.directory.readLabel}</span>
                 <span className="font-mono text-[10px] text-stone-300">{Math.min(readPosts.size, totalCount)} / {totalCount}</span>
               </li>
             )}
           </ul>
         </div>
-      </nav>
+      </nav>}
 
       {/* ── Series rail ───────────────────────────────────────────── */}
-      {series.length > 0 && (
+      {copy.seriesRail.enabled && series.length > 0 && (
         <section className="mb-12" aria-labelledby="series-rail">
           <div className="mb-4 flex items-center justify-between">
-            <span id="series-rail" className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-600 pl-3">Series</span>
-            <Link href="/blog/series" className={`font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-white transition-colors rounded-sm ${FOCUS}`}>All series →</Link>
+            <h2 id="series-rail" className="section-label">{copy.seriesRail.heading}</h2>
+            <Link href={copy.seriesRail.ctaHref || '/blog/series'} className={`font-sans text-sm text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>{copy.seriesRail.ctaLabel} →</Link>
           </div>
           <ul className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x">
             {series.map((s) => (
@@ -238,7 +235,7 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
                   href={`/blog/series/${s.slug}`}
                   className={`block h-full rounded-lg border border-white/10 hover:border-white/30 bg-white/[0.02] p-4 transition-colors ${FOCUS}`}
                 >
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 block mb-2">{s.count} part{s.count === 1 ? '' : 's'}</span>
+                  <span className="font-sans text-xs text-stone-500 block mb-2">{s.count} part{s.count === 1 ? '' : 's'}</span>
                   <span className="font-serif text-white text-base leading-snug block mb-1">{s.title}</span>
                   {s.description && <span className="text-stone-400 text-xs line-clamp-2 block">{s.description}</span>}
                 </Link>
@@ -249,13 +246,13 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
       )}
 
       {/* ── Currently reading + Recently tended ───────────────────── */}
-      {(currentlyReading.length > 0 || recentNotes.length > 0) && (
+      {((copy.readingStrip.enabled && currentlyReading.length > 0) || (copy.notesStrip.enabled && recentNotes.length > 0)) && (
         <div className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {currentlyReading.length > 0 && (
+          {copy.readingStrip.enabled && currentlyReading.length > 0 && (
             <section className="rounded-lg border border-white/10 bg-white/[0.02] p-5" aria-labelledby="reading-strip">
               <div className="mb-3 flex items-center justify-between">
-                <span id="reading-strip" className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-emerald-600 pl-3">Currently reading</span>
-                <Link href="/library" className={`font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-white transition-colors rounded-sm ${FOCUS}`}>Library →</Link>
+                <h2 id="reading-strip" className="section-label">{copy.readingStrip.heading}</h2>
+                <Link href={copy.readingStrip.ctaHref || '/library'} className={`font-sans text-sm text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>{copy.readingStrip.ctaLabel} →</Link>
               </div>
               <ul className="space-y-3">
                 {currentlyReading.map((item) => (
@@ -263,7 +260,7 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
                     <Link href={`/library#${item._id}`} className={`block rounded-sm ${FOCUS}`}>
                       <span className="flex items-baseline justify-between gap-3">
                         <span className="font-serif text-sm text-white leading-snug">{item.title}</span>
-                        <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 flex-shrink-0">{MEDIA_LABEL[item.mediaType ?? ''] ?? item.mediaType}</span>
+                        <span className="font-sans text-xs text-stone-500 flex-shrink-0">{mediaLabel(item.mediaType)}</span>
                       </span>
                       {item.author && <span className="font-mono text-[9px] text-stone-500 block">{item.author}</span>}
                       {typeof item.progressPercent === 'number' && (
@@ -280,11 +277,11 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
               </ul>
             </section>
           )}
-          {recentNotes.length > 0 && (
+          {copy.notesStrip.enabled && recentNotes.length > 0 && (
             <section className="rounded-lg border border-white/10 bg-white/[0.02] p-5" aria-labelledby="notes-strip">
               <div className="mb-3 flex items-center justify-between">
-                <span id="notes-strip" className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-green-600 pl-3">Recently tended notes</span>
-                <Link href="/garden" className={`font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-white transition-colors rounded-sm ${FOCUS}`}>Garden →</Link>
+                <h2 id="notes-strip" className="section-label">{copy.notesStrip.heading}</h2>
+                <Link href={copy.notesStrip.ctaHref || '/garden'} className={`font-sans text-sm text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>{copy.notesStrip.ctaLabel} →</Link>
               </div>
               <ul className="space-y-2">
                 {recentNotes.map((n) => {
@@ -294,7 +291,7 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
                       <Link href={`/garden/${n.slug}`} className={`group flex items-center gap-2.5 rounded-sm ${FOCUS}`}>
                         <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${s.dot}`} aria-hidden="true" />
                         <span className="font-serif text-sm text-stone-200 group-hover:text-white transition-colors">{n.title}</span>
-                        <span className="ml-auto font-mono text-[8px] uppercase tracking-widest text-stone-500 flex-shrink-0">{s.label}</span>
+                        <span className="ml-auto font-sans text-xs text-stone-500 flex-shrink-0">{s.label}</span>
                       </Link>
                     </li>
                   )
@@ -307,21 +304,21 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
 
       {/* ── Archive header ─────────────────────────────────────────── */}
       <div ref={archiveRef} className="mb-6 border-b border-white/10 pb-5 flex items-end justify-between scroll-mt-24">
-        <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-300 border-l-2 border-stone-400 pl-4">
-          Archive // {activeLabel || 'All Posts'}
-        </span>
-        <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest" aria-live="polite">
-          {filtered.length} post{filtered.length !== 1 ? 's' : ''}
+        <h2 className="text-2xl font-serif font-bold text-white">
+          {activeLabel || L.heading}
+        </h2>
+        <span className="font-sans text-sm text-stone-400" aria-live="polite">
+          {L.postCount.replace('{n}', String(filtered.length))}
         </span>
       </div>
 
       {/* ── Filter bars ────────────────────────────────────────────── */}
       <div className="space-y-3 mb-10">
         <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by lane">
-          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 w-16">Lane</span>
-          <button type="button" onClick={() => setParam('lane', null)} aria-pressed={lane === null} className={chip(lane === null)}>All</button>
+          <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.lane}</span>
+          <button type="button" onClick={() => setParam('lane', null)} aria-pressed={lane === null} className={chip(lane === null)}>{L.allLabel}</button>
           {(Object.keys(ARTICLE_TYPES) as ArticleType[]).map((key) => {
-            const meta = ARTICLE_TYPES[key]
+            const meta = laneMeta(key)
             const on = lane === key
             return (
               <button
@@ -341,8 +338,8 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
 
         {categories.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by category">
-            <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 w-16">Pillar</span>
-            <button type="button" onClick={() => setParam('category', null)} aria-pressed={active === null} className={chip(active === null)}>All</button>
+            <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.category}</span>
+            <button type="button" onClick={() => setParam('category', null)} aria-pressed={active === null} className={chip(active === null)}>{L.allLabel}</button>
             {categories.map((cat) => (
               <button key={cat} type="button" onClick={() => setParam('category', active === cat ? null : cat)} aria-pressed={active === cat} className={chip(active === cat)}>
                 {cat}
@@ -353,7 +350,7 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
 
         {allTags.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by tag">
-            <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 w-16">Tag</span>
+            <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.tag}</span>
             {allTags.map((t) => (
               <button key={t.slug} type="button" onClick={() => setParam('tag', tag === t.slug ? null : t.slug)} aria-pressed={tag === t.slug} className={chip(tag === t.slug)}>
                 #{t.title} <span className="opacity-60 text-[8px]">{t.count}</span>
@@ -363,10 +360,10 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
         )}
 
         <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Sort">
-          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 w-16">Sort</span>
+          <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.sort}</span>
           {(['newest', 'oldest', 'longest'] as Sort[]).map((s) => (
             <button key={s} type="button" onClick={() => setParam('sort', s === 'newest' ? null : s)} aria-pressed={sort === s} className={chip(sort === s)}>
-              {s}
+              {L.sortLabels[s]}
             </button>
           ))}
         </div>
@@ -407,7 +404,7 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
 
                 {meta && (
                   <div
-                    className="absolute top-3 left-3 z-20 font-mono text-[8px] uppercase tracking-widest px-2 py-1 rounded-sm border backdrop-blur-sm"
+                    className="absolute top-3 left-3 z-20 font-sans text-xs px-2 py-1 rounded-sm border backdrop-blur-sm"
                     style={{ color: meta.color, borderColor: `${meta.color}55`, backgroundColor: meta.bg }}
                   >
                     {meta.short}
@@ -415,14 +412,14 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
                 )}
 
                 {isRead && (
-                  <div className="absolute top-3 right-3 z-20 font-mono text-[8px] uppercase tracking-widest text-stone-300 bg-black/70 px-2 py-1 rounded-sm border border-white/15 backdrop-blur-sm">
+                  <div className="absolute top-3 right-3 z-20 font-sans text-xs text-stone-300 bg-black/70 px-2 py-1 rounded-sm border border-white/15 backdrop-blur-sm">
                     Read
                   </div>
                 )}
 
                 <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
-                  <span className="font-mono text-[11px] uppercase tracking-widest text-white bg-black/75 px-5 py-2.5 rounded-sm backdrop-blur-sm border border-white/25 shadow-lg">
-                    {isRead ? 'Read Again →' : 'Read Article →'}
+                  <span className="font-sans text-xs text-white bg-black/75 px-5 py-2.5 rounded-sm backdrop-blur-sm border border-white/25 shadow-lg">
+                    {isRead ? `${L.readAgainLabel} →` : `${L.readLabel} →`}
                   </span>
                 </div>
               </div>
@@ -451,7 +448,7 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
 
                 <p className="text-stone-300 text-sm line-clamp-2 mb-4 flex-grow leading-relaxed">{post.excerpt}</p>
 
-                <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-widest border-t border-white/10 pt-4">
+                <div className="flex items-center justify-between font-sans text-xs border-t border-white/10 pt-4">
                   <time dateTime={formatDate(post.publishedAt, 'iso')} className="text-stone-400">{formatDate(post.publishedAt, 'short', 'Undated')}</time>
                   <span className="text-stone-300 group-hover:text-white flex items-center gap-1.5 transition-colors">
                     Read <span className="group-hover:translate-x-0.5 transition-transform inline-block" aria-hidden="true">→</span>
@@ -462,10 +459,10 @@ export function BlogDirectory({ posts, categories, totalCount, latestDate, serie
           )
         }) : (
           <div className="col-span-3 py-20 text-center">
-            <p className="font-mono text-[10px] text-stone-500 uppercase tracking-widest mb-3">No posts match these filters yet.</p>
+            <p className="font-sans text-sm text-stone-400 mb-3">{L.emptyState}</p>
             {anyFilter && (
-              <button type="button" onClick={clearAll} className={`font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white underline underline-offset-4 rounded-sm ${FOCUS}`}>
-                Clear filters
+              <button type="button" onClick={clearAll} className={`font-sans text-xs text-stone-400 hover:text-white underline underline-offset-4 rounded-sm ${FOCUS}`}>
+                {L.clearLabel}
               </button>
             )}
           </div>

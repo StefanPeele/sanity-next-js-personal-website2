@@ -10,17 +10,19 @@ import { JsonLd } from '@/components/JsonLd'
 import { formatDate } from '@/lib/dates'
 import { readingTime } from '@/lib/reading'
 import { absoluteUrl, articleTypeMeta, SITE } from '@/lib/site'
+import { getCopy, getTaxonomy } from '@/lib/cms/loaders'
+import { blogPageQuery } from '@/sanity/lib/queries-article-ui'
+import { DEFAULT_BLOG_PAGE } from '@/lib/cms/defaults/blogPage'
 // app/(archive)/blog/page.tsx
 // Supports ?category= ?lane= ?tag= ?sort= (handled client-side in BlogDirectory).
 
-export const metadata: Metadata = {
-  title: 'Writing',
-  description: 'Perspective pieces, concept deep dives, and field notes on network engineering, infrastructure, and the work of learning it.',
-  alternates: { canonical: '/blog' },
+export async function generateMetadata(): Promise<Metadata> {
+  const copy = await getCopy(blogPageQuery, DEFAULT_BLOG_PAGE)
+  return { title: copy.header.metaTitle || copy.header.title, description: copy.header.metaDescription || copy.header.lede, alternates: { canonical: '/blog' } }
 }
 
 export default async function BlogPage() {
-  const { data } = await sanityFetch({ query: blogIndexQuery })
+  const [{ data }, copy, taxonomy] = await Promise.all([sanityFetch({ query: blogIndexQuery }), getCopy(blogPageQuery, DEFAULT_BLOG_PAGE), getTaxonomy()])
   const featuredPost = data?.featuredPost ?? null
   const posts = (data?.posts ?? []).filter((p) => p.slug && p.title)
   const series = data?.series ?? []
@@ -33,7 +35,7 @@ export default async function BlogPage() {
 
   const totalCount = posts.length + (featuredPost ? 1 : 0)
   const latestDate = formatDate(posts[0]?.publishedAt ?? featuredPost?.publishedAt, 'short') || null
-  const featuredMeta = articleTypeMeta(featuredPost?.articleType)
+  const featuredMeta = articleTypeMeta(featuredPost?.articleType, taxonomy.articleLanes)
 
   const allPosts = [featuredPost, ...posts].filter((p): p is NonNullable<typeof p> => Boolean(p))
 
@@ -44,9 +46,9 @@ export default async function BlogPage() {
           {
             '@context': 'https://schema.org',
             '@type': 'Blog',
-            name: 'Editorial',
+            name: copy.header.title,
             url: absoluteUrl('/blog'),
-            description: metadata.description,
+            description: copy.header.metaDescription || copy.header.lede,
             author: { '@type': 'Person', name: SITE.name, url: SITE.url },
             blogPost: allPosts.slice(0, 30).map((p) => ({
               '@type': 'BlogPosting',
@@ -71,27 +73,19 @@ export default async function BlogPage() {
         {/* ─── HEADER ─────────────────────────────────────────────── */}
         <header className="mb-12 border-b border-white/5 pb-8 flex flex-col md:flex-row justify-between items-end gap-6">
           <div>
-            <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 block mb-4 border-l border-stone-700 pl-4">
-              Intelligence // Archive
-            </span>
-            <h1 className="text-5xl md:text-7xl font-serif font-bold tracking-tight text-white leading-none">
-              Editorial<span className="text-stone-600">.</span>
-            </h1>
+            <h1 className="text-5xl md:text-7xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
+            {copy.header.lede && <p className="mt-4 max-w-2xl font-sans text-base text-stone-400 leading-relaxed">{copy.header.lede}</p>}
           </div>
-          <div className="font-mono text-[9px] uppercase tracking-widest text-stone-500 text-right">
-            {totalCount} post{totalCount === 1 ? '' : 's'} · {series.length} series<br />
-            Latest: {latestDate ?? '—'}
+          <div className="font-sans text-sm text-stone-400 text-right">
+            {totalCount} {copy.statsLabels.posts} · {series.length} {copy.statsLabels.series}<br />
+            {copy.statsLabels.latest}: {latestDate ?? '—'}
           </div>
         </header>
 
         {/* ─── HERO FEATURED POST ──────────────────────────────────── */}
         {featuredPost && featuredPost.slug && (
           <>
-            <div className="mb-6 pb-6">
-              <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 block border-l border-stone-700 pl-4">
-                Featured // Latest Report
-              </span>
-            </div>
+            <h2 className="section-label mb-4">{copy.featured.heading}</h2>
 
             <Link
               href={`/blog/${featuredPost.slug}`}
@@ -141,11 +135,11 @@ export default async function BlogPage() {
 
                 <p className="text-stone-300 font-sans text-base md:text-lg max-w-2xl mb-6 line-clamp-2 leading-relaxed">{featuredPost.excerpt}</p>
 
-                <div className="flex items-center gap-4 font-mono text-[10px] text-stone-400 uppercase tracking-widest">
+                <div className="flex items-center gap-4 font-sans text-sm text-stone-400">
                   <time dateTime={formatDate(featuredPost.publishedAt, 'iso')}>{formatDate(featuredPost.publishedAt, 'short', 'Undated')}</time>
                   <span className="text-stone-600" aria-hidden="true">•</span>
                   <span>{readingTime(featuredPost.wordCount ?? 0)} min read</span>
-                  <span className="ml-auto text-white group-hover:translate-x-1 transition-transform inline-block">Read Report →</span>
+                  <span className="ml-auto text-white group-hover:translate-x-1 transition-transform inline-block">{copy.featured.readLabel} →</span>
                 </div>
               </div>
             </Link>
@@ -161,6 +155,9 @@ export default async function BlogPage() {
           }
         >
           <BlogDirectory
+            copy={copy}
+            lanes={taxonomy.articleLanes}
+            mediaTypes={taxonomy.mediaTypes}
             posts={posts}
             categories={allCategories}
             totalCount={totalCount}
