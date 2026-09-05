@@ -10,7 +10,6 @@ import type { PortableTextBlock } from 'next-sanity'
 import { getCopy } from '@/lib/cms/loaders'
 import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
-import { navHref } from '@/lib/cms/defaults/navigation'
 // app/(archive)/glossary/page.tsx
 // Every glossary term, A–Z, filterable by category. Terms also power the hover
 // cards inside articles (lib/glossary.ts).

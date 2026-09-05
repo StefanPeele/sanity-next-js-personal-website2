@@ -2,7 +2,7 @@
 import { CurrentlyReading } from '@/components/knowledge/CurrentlyReading'
 import { RecentlyTended } from '@/components/knowledge/RecentlyTended'
 import { formatDate } from '@/lib/dates'
-import { SITE, absoluteUrl, articleTypeMeta } from '@/lib/site'
+import { SITE, articleTypeMeta } from '@/lib/site'
 import { sanityFetch } from '@/sanity/lib/live'
 import { nowQuery } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'

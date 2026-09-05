@@ -73,12 +73,17 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
     return () => window.removeEventListener('keydown', handler)
   }, [])
 
-  // Close on route change
-  useEffect(() => { setOpen(false) }, [pathname])
+  // Close on route change (state adjusted during render, per React docs).
+  const [openedAt, setOpenedAt] = useState(pathname)
+  if (openedAt !== pathname) {
+    setOpenedAt(pathname)
+    setOpen(false)
+  }
 
   // Open: reset, focus, lock scroll. Close: restore focus to trigger.
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset the dialog each time it opens
       setQuery('')
       setGroups([])
       setTotal(0)
@@ -95,7 +100,10 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
 
   // Debounced search
   useEffect(() => {
-    if (query.trim().length < 2) { setGroups([]); setTotal(0); setError(null); return }
+    if (query.trim().length < 2) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clear results when the query empties
+      setGroups([]); setTotal(0); setError(null); return
+    }
     const timer = setTimeout(() => {
       startTransition(async () => {
         const res = await searchSite(query)

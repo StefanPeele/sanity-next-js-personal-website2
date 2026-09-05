@@ -108,7 +108,8 @@ export function CredibilitySection({
   const reviewBadge = reviewStatus ? REVIEW_STATUS_CONFIG[reviewStatus] : null
 
   return (
-    <section className="mt-16 pt-12 border-t border-white/[0.08] space-y-8">
+    <section className="mt-16 pt-12 border-t border-white/[0.08] space-y-8" aria-label={heading}>
+      <h2 className="sr-only">{heading}</h2>
 
       {/* ── Metadata badges ────────────────────────────────────────── */}
       {(confidence || maturity || load || reviewBadge) && (

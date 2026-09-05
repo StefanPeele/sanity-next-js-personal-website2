@@ -6,7 +6,7 @@ import { Navbar } from '@/components/Navbar'
 import { KnowledgeGraph } from '@/components/graph/KnowledgeGraph'
 import { JsonLd } from '@/components/JsonLd'
 import { absoluteUrl } from '@/lib/site'
-import { getCopy } from '@/lib/cms/loaders'
+import { getCopy, getTaxonomy } from '@/lib/cms/loaders'
 import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
 // app/graph/page.tsx
@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function GraphPage() {
   const copy = (await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)).graph
-  const { data } = await sanityFetch({ query: graphQuery, stega: false })
+  const [{ data }, taxonomy] = await Promise.all([sanityFetch({ query: graphQuery, stega: false }), getTaxonomy()])
 
   const graph = {
     posts: (data?.posts ?? []).filter((p) => p._id && p.title),
@@ -50,7 +50,7 @@ export default async function GraphPage() {
       {/* Navbar is fixed; pad the graph below it. */}
       <main id="content" className="flex-1 relative overflow-hidden pt-20">
         {totalNodes > 0 ? (
-          <KnowledgeGraph data={graph} />
+          <KnowledgeGraph data={graph} copy={copy} lanes={taxonomy.articleLanes} />
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-center px-6">
             <p className="font-serif italic text-stone-400 text-xl mb-3">{copy.emptyState.title}</p>

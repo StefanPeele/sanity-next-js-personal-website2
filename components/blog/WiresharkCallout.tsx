@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import ImageBox from '@/components/ImageBox'
+import ImageBox, { type ImageBoxImage } from '@/components/ImageBox'
 // components/blog/WiresharkCallout.tsx
 
 interface Callout {
@@ -13,7 +13,7 @@ interface Callout {
 
 interface WiresharkCalloutProps {
   value: {
-    image: any
+    image: ImageBoxImage | null
     caption?: string
     callouts?: Callout[]
   }

@@ -66,8 +66,8 @@ export default function CinematicGallery({ photos, developing = true }: Cinemati
     setSelectedIndex(null)
     setIsZoomed(false)
   }, [])
-  const next = useCallback(() => setSelectedIndex((i) => (i === null ? i : (i + 1) % count)), [count])
-  const prev = useCallback(() => setSelectedIndex((i) => (i === null ? i : (i - 1 + count) % count)), [count])
+  const next = useCallback(() => { setIsZoomed(false); setSelectedIndex((i) => (i === null ? i : (i + 1) % count)) }, [count])
+  const prev = useCallback(() => { setIsZoomed(false); setSelectedIndex((i) => (i === null ? i : (i - 1 + count) % count)) }, [count])
 
   const open = (index: number, el: HTMLElement) => {
     lastTileRef.current = el
@@ -104,8 +104,6 @@ export default function CinematicGallery({ photos, developing = true }: Cinemati
       previouslyFocused?.focus()
     }
   }, [selectedIndex, next, prev, close])
-
-  useEffect(() => { setIsZoomed(false) }, [selectedIndex])
 
   const handleDragEnd = (_e: unknown, { offset }: { offset: { x: number } }) => {
     if (isZoomed || selectedIndex === null) return

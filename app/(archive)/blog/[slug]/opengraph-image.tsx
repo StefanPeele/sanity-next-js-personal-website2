@@ -39,6 +39,7 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
         }}
       >
         {post?.mainImageUrl && (
+          // eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain elements
           <img
             src={`${post.mainImageUrl}?w=1200&h=630&fit=crop&auto=format&q=60`}
             alt=""

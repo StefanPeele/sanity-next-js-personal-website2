@@ -263,6 +263,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
     if (!el) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' })
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs from the DOM after layout
     setPendingScroll(null)
   }, [pendingScroll, activeTag, statusFilter, search])
 
@@ -270,6 +271,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
   useEffect(() => {
     if (!focusSlug || handledFocus.current === focusSlug) return
     handledFocus.current = focusSlug
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off deep link (?note=slug) after mount
     reveal(focusSlug)
   }, [focusSlug, reveal])
 

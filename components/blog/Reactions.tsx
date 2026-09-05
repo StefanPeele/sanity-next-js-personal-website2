@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ArrowRight, Check, Lightbulb } from 'lucide-react'
 import { DEFAULT_ARTICLE_UI } from '@/lib/cms/defaults/articleUi'
 import type { VocabEntry } from '@/lib/cms/defaults/taxonomy'
@@ -14,7 +14,7 @@ const ICONS: Record<string, React.ComponentType<{ size?: number; 'aria-hidden'?:
 type ReactionId = string
 
 export function Reactions({ slug, heading = DEFAULT_ARTICLE_UI.reactionsHeading, options = DEFAULT_ARTICLE_UI.reactions }: { slug: string; heading?: string; options?: VocabEntry[] }) {
-  const REACTIONS = options.map((o) => ({ id: o.key, label: o.label }))
+  const REACTIONS = useMemo(() => options.map((o) => ({ id: o.key, label: o.label })), [options])
   const key = `sp_reaction_${slug}`
   const [chosen, setChosen] = useState<Set<ReactionId>>(new Set())
 
@@ -25,10 +25,11 @@ export function Reactions({ slug, heading = DEFAULT_ARTICLE_UI.reactionsHeading,
       const parsed: unknown = JSON.parse(raw)
       if (Array.isArray(parsed)) {
         const valid = parsed.filter((v): v is ReactionId => REACTIONS.some((r) => r.id === v))
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate from localStorage after mount (avoids a server/client mismatch)
         setChosen(new Set(valid))
       }
     } catch { /* ignore */ }
-  }, [key])
+  }, [key, REACTIONS])
 
   const persist = (next: Set<ReactionId>) => {
     try { localStorage.setItem(key, JSON.stringify(Array.from(next))) } catch { /* ignore */ }

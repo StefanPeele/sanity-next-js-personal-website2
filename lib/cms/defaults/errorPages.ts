@@ -22,6 +22,8 @@ export const DEFAULT_ERROR_PAGES = {
   offline: {
     title: 'You are offline',
     body: 'This article is not saved on this device yet. The last articles you opened are kept for offline reading.',
+    ctaLabel: 'Back to writing',
+    ctaHref: '/blog',
   },
 }
 

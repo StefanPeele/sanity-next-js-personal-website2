@@ -64,7 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
     getSettings(),
   ])
 
-  const ogImage = urlForOpenGraphImage(settings?.ogImage as any)
+  const ogImage = urlForOpenGraphImage(settings?.ogImage as Parameters<typeof urlForOpenGraphImage>[0])
   const siteTitle = copy.siteName || homePage?.title || SITE.name
   const description = copy.description || (homePage?.overview ? toPlainText(homePage.overview) : SITE.description)
 

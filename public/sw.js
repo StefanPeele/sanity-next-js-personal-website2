@@ -3,14 +3,22 @@
 //   - Article navigations (/blog/<slug>): network-first, cached for offline; last 12 kept.
 //   - /_next/static/**: cache-first (hashed, immutable) so offline pages are styled and hydrate.
 //   - Everything else (RSC payloads, prefetches, API, images): untouched.
-// Registered only in production by components/blog/ArticleEffects.tsx.
+// Registered only in production by components/ServiceWorkerRegister.tsx.
+//   - /offline (copy from Studio → Site → Error pages) is precached on install and served when
+//     an article is requested offline and is not cached; the inline page below is the last resort.
 
-const PAGE_CACHE = 'sp-pages-v3'
-const STATIC_CACHE = 'sp-static-v3'
+const PAGE_CACHE = 'sp-pages-v4'
+const STATIC_CACHE = 'sp-static-v4'
+const OFFLINE_URL = '/offline'
 const MAX_PAGES = 12
 
-self.addEventListener('install', () => {
-  self.skipWaiting()
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(PAGE_CACHE)
+      .then((cache) => cache.add(new Request(OFFLINE_URL, { cache: 'reload' })))
+      .catch(() => {})
+      .then(() => self.skipWaiting()),
+  )
 })
 
 self.addEventListener('activate', (event) => {
@@ -31,7 +39,7 @@ function isArticleNavigation(request, url) {
 
 async function trimPages() {
   const cache = await caches.open(PAGE_CACHE)
-  const keys = await cache.keys()
+  const keys = (await cache.keys()).filter((k) => !new URL(k.url).pathname.startsWith(OFFLINE_URL))
   if (keys.length > MAX_PAGES) {
     await Promise.all(keys.slice(0, keys.length - MAX_PAGES).map((k) => cache.delete(k)))
   }
@@ -99,7 +107,9 @@ self.addEventListener('fetch', (event) => {
       })
       .catch(async () => {
         const cached = await caches.match(request, { cacheName: PAGE_CACHE, ignoreSearch: true })
-        return cached ?? offlinePage()
+        if (cached) return cached
+        const offline = await caches.match(OFFLINE_URL, { cacheName: PAGE_CACHE })
+        return offline ?? offlinePage()
       }),
   )
 })

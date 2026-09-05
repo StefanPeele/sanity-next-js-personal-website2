@@ -1,5 +1,4 @@
 // app/(personal)/photography/albums/page.tsx
-import { absoluteUrl } from '@/lib/site'
 import { sanityFetch } from '@/sanity/lib/live'
 import { galleriesQuery } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'

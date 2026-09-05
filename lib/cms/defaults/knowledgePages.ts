@@ -57,6 +57,27 @@ export const DEFAULT_KNOWLEDGE_PAGES = {
     legendHeading: 'Legend', visibleHeading: 'Show', nodesLabel: 'Nodes', edgesLabel: 'Links', searchPlaceholder: 'Search',
     helpLine: 'Scroll to zoom. Drag to pan. Drag nodes to move them.',
     typeLabels: { post: 'Posts', note: 'Notes', tag: 'Tags', library: 'Library', project: 'Projects', series: 'Series' },
+    legendLabels: {
+      evergreen: 'Evergreen note', growing: 'Growing note', seedling: 'Seedling note', tag: 'Tag',
+      libraryCurrent: 'Library, reading now', libraryFinished: 'Library, finished', libraryReference: 'Library, reference',
+      project: 'Project', series: 'Series',
+    },
+    linesNote: 'Lines: prerequisites, read next, related, tags, influence',
+    nodeListLabel: 'Node list', openHint: 'Click to open',
+    ariaSummary: 'Knowledge graph with {nodes} nodes and {edges} connections between posts, notes, tags, library items, projects and series. A text list of every node follows.',
+  },
+  osi: {
+    header: header('OSI model', 'The Open Systems Interconnection model is the conceptual framework that everything in networking is built on. Seven layers. Each with a job. Click any layer to inspect its protocols, what it actually does, and how it shows up in the real world.', 'An interactive reference for the 7-layer OSI model: protocols, real-world examples, and a full packet journey walkthrough. Built for CCNA students and network engineers.'),
+    breadcrumbLabel: 'OSI model reference', backLabel: 'Writing',
+    packetJourney: {
+      heading: 'Packet journey',
+      lede: 'Step through how a real HTTPS request travels down the OSI stack from your browser to the wire, one layer at a time.',
+      scenario: 'HTTPS GET request, full stack walkthrough',
+    },
+    quickReference: {
+      heading: 'Quick reference',
+      columns: { n: '#', layer: 'Layer', pdu: 'PDU', addressing: 'Addressing', protocols: 'Key protocols' },
+    },
   },
 }
 

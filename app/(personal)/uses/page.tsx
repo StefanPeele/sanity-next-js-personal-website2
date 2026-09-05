@@ -2,7 +2,6 @@
 // HARD-CODED CONTENT. Stefan: replace every "[Add: …]" placeholder with the real
 // item, or delete the line. Nothing here is invented — unknown gear is marked.
 
-import { SITE, absoluteUrl } from '@/lib/site'
 import type { Metadata } from 'next'
 import { getCopy } from '@/lib/cms/loaders'
 import { personalPagesQuery } from '@/sanity/lib/queries-services'

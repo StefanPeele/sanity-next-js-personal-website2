@@ -67,7 +67,7 @@ export function absoluteUrl(path = '/') {
 export const RESERVED_SLUGS = new Set<string>([
   'blog', 'garden', 'graph', 'library', 'glossary', 'paths', 'review',
   'projects', 'resume', 'photography', 'services', 'contact', 'now', 'uses', 'delivery',
-  'studio', 'api', 'sitemap.xml', 'robots.txt', 'manifest.webmanifest', 'humans.txt', 'sw.js',
+  'studio', 'api', 'offline', 'sitemap.xml', 'robots.txt', 'manifest.webmanifest', 'humans.txt', 'sw.js',
 ])
 
 export function isReservedSlug(slug?: string | null): boolean {

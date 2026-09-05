@@ -1,6 +1,6 @@
 // app/(personal)/resume/page.tsx
 import { formatDate } from '@/lib/dates'
-import { SITE, absoluteUrl } from '@/lib/site'
+import { SITE } from '@/lib/site'
 import { sanityFetch } from '@/sanity/lib/live'
 import { resumeQuery } from '@/sanity/lib/queries'
 import type { ResumeQueryResult } from '@/sanity.types'

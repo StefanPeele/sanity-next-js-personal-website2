@@ -27,7 +27,7 @@ export function DraftModeToast({action}: {action: () => Promise<void>}) {
         toast.dismiss(toastId)
       }
     }
-  }, [isPresentationTool])
+  }, [isPresentationTool, action])
 
   return null
 }

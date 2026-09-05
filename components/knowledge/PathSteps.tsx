@@ -41,6 +41,7 @@ export function PathSteps({ slug, steps }: { slug: string; steps: Step[] }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate from localStorage after mount (avoids a server/client mismatch)
     setDone(load(slug))
     setMounted(true)
   }, [slug])

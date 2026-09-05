@@ -88,7 +88,10 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const id = useId()
 
-  useEffect(() => { setHasBookmark(!!readBookmark(slug)) }, [slug])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate from localStorage after mount (avoids a server/client mismatch)
+    setHasBookmark(!!readBookmark(slug))
+  }, [slug])
 
   useEffect(() => {
     if (!open) return

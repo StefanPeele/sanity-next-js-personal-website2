@@ -8,7 +8,6 @@ import type { Metadata } from 'next'
 import { getCopy } from '@/lib/cms/loaders'
 import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
-import { navHref } from '@/lib/cms/defaults/navigation'
 // app/(archive)/blog/series/page.tsx
 // Every series with its parts, status and how far along it is.
 

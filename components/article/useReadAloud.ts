@@ -14,11 +14,13 @@ export function useReadAloud() {
   const [supported, setSupported] = useState(false)
   const [status, setStatus] = useState<ReadAloudStatus>('idle')
   const [index, setIndex] = useState(-1)
+  const [total, setTotal] = useState(0)
   const nodesRef = useRef<HTMLElement[]>([])
   const currentRef = useRef<HTMLElement | null>(null)
   const stoppedRef = useRef(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- feature detection after mount (avoids a server/client mismatch)
     setSupported(typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window)
     return () => {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel()
@@ -31,6 +33,7 @@ export function useReadAloud() {
     currentRef.current = null
   }
 
+  const speakFromRef = useRef<(i: number) => void>(() => {})
   const speakFrom = useCallback((i: number) => {
     const nodes = nodesRef.current
     if (i >= nodes.length) {
@@ -47,7 +50,7 @@ export function useReadAloud() {
       .join('')
       .replace(/※/g, '')
       .trim()
-    if (!text) { speakFrom(i + 1); return }
+    if (!text) { speakFromRef.current(i + 1); return }
 
     clearHighlight()
     el.classList.add('sp-reading-now')
@@ -58,10 +61,11 @@ export function useReadAloud() {
     const u = new SpeechSynthesisUtterance(text)
     u.lang = 'en-US'
     u.rate = 1
-    u.onend = () => { if (!stoppedRef.current) speakFrom(i + 1) }
+    u.onend = () => { if (!stoppedRef.current) speakFromRef.current(i + 1) }
     u.onerror = () => { if (!stoppedRef.current) { clearHighlight(); setStatus('idle'); setIndex(-1) } }
     window.speechSynthesis.speak(u)
   }, [])
+  useEffect(() => { speakFromRef.current = speakFrom }, [speakFrom])
 
   const play = useCallback(() => {
     if (!supported) return
@@ -70,6 +74,7 @@ export function useReadAloud() {
     stoppedRef.current = false
     synth.cancel()
     nodesRef.current = Array.from(document.querySelectorAll<HTMLElement>(SELECTOR))
+    setTotal(nodesRef.current.length)
     setStatus('playing')
     speakFrom(0)
   }, [supported, status, speakFrom])
@@ -89,5 +94,5 @@ export function useReadAloud() {
     setIndex(-1)
   }, [supported])
 
-  return { supported, status, index, total: nodesRef.current.length, play, pause, stop }
+  return { supported, status, index, total, play, pause, stop }
 }

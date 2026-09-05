@@ -28,7 +28,12 @@ export function Navbar({ nav = DEFAULT_NAVIGATION }: { nav?: NavigationData }) {
     }
   }, [])
 
-  useEffect(() => { setMobileOpen(false) }, [pathname])
+  // Close the drawer on navigation (state adjusted during render, per React docs).
+  const [drawerPath, setDrawerPath] = useState(pathname)
+  if (drawerPath !== pathname) {
+    setDrawerPath(pathname)
+    setMobileOpen(false)
+  }
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : ''

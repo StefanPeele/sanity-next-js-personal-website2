@@ -57,6 +57,6 @@ export const errorPagesQuery = defineQuery(`
   *[_type == "errorPages"][0]{
     notFound{ title, body, hint, primaryCta{ ${navLinkFields} }, "links": links[]{ ${navLinkFields} } },
     error{ title, body, retryLabel, homeLabel, referenceLabel },
-    offline{ title, body }
+    offline{ title, body, ctaLabel, ctaHref }
   }
 `)

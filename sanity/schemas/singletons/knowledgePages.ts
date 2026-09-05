@@ -24,6 +24,7 @@ export default defineType({
     { name: 'review', title: 'Review' },
     { name: 'series', title: 'Series' },
     { name: 'graph', title: 'Graph' },
+    { name: 'osi', title: 'OSI model' },
   ],
   fields: [
     obj('garden', 'Garden', [
@@ -54,7 +55,14 @@ export default defineType({
     obj('graph', 'Knowledge graph', [
       header, empty, str('backLabel', 'Back link'), str('legendHeading'), str('visibleHeading'), str('nodesLabel'), str('edgesLabel'), str('searchPlaceholder'), str('helpLine'),
       obj('typeLabels', 'Node type names', [str('post'), str('note'), str('tag'), str('library'), str('project'), str('series')]),
+      obj('legendLabels', 'Legend labels', ['evergreen', 'growing', 'seedling', 'tag', 'libraryCurrent', 'libraryFinished', 'libraryReference', 'project', 'series'].map((n) => str(n))),
+      str('linesNote', 'Legend footnote'), str('nodeListLabel', 'Node list button'), str('openHint', 'Hover hint'), str('ariaSummary', 'Screen-reader summary ({nodes}, {edges})'),
     ], { group: 'graph' }),
+    obj('osi', 'OSI model reference', [
+      header, str('breadcrumbLabel', 'Breadcrumb label'), str('backLabel', 'Back link'),
+      obj('packetJourney', 'Packet journey', [str('heading'), defineField({ name: 'lede', title: 'Intro', type: 'text', rows: 2 }), str('scenario', 'Scenario title')]),
+      obj('quickReference', 'Quick reference table', [str('heading'), obj('columns', 'Column labels', [str('n', '#'), str('layer'), str('pdu', 'PDU'), str('addressing'), str('protocols')])]),
+    ], { group: 'osi' }),
   ],
   preview: { prepare: () => ({ title: 'Knowledge pages' }) },
 })

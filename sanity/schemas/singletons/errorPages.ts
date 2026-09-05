@@ -38,12 +38,13 @@ export default defineType({
     defineField({
       name: 'offline',
       title: 'Offline page',
-      description: 'For reference only. The offline page is a static file (public/sw.js); edit it in code.',
+      description: 'Shown by the service worker when an article is opened without a connection and is not cached yet.',
       type: 'object',
-      readOnly: true,
       fields: [
         defineField({ name: 'title', title: 'Title', type: 'string' }),
         defineField({ name: 'body', title: 'Body', type: 'text', rows: 2 }),
+        defineField({ name: 'ctaLabel', title: 'Button label', type: 'string' }),
+        defineField({ name: 'ctaHref', title: 'Button link', type: 'string' }),
       ],
     }),
   ],

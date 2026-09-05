@@ -7,6 +7,10 @@ import * as d3 from 'd3'
 import { ARTICLE_TYPES } from '@/lib/site'
 import { NOTE_STATUS } from '@/components/garden/status'
 import type { GraphQueryResult } from '@/sanity.types'
+import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
+import { DEFAULT_TAXONOMY, type VocabEntry } from '@/lib/cms/defaults/taxonomy'
+
+type GraphCopy = typeof DEFAULT_KNOWLEDGE_PAGES.graph
 // components/graph/KnowledgeGraph.tsx
 // D3 force-directed graph connecting posts, notes, tags, library items, projects and series.
 // D3 owns the SVG DOM. React manages overlay UI (hover card, filters, legend, a11y list).
@@ -74,18 +78,20 @@ const LINK_COLORS: Record<string, string> = {
 }
 const DIM = 'rgba(255,255,255,0.07)'
 
-export const GRAPH_LEGEND: { color: string; label: string; shape?: 'ring' }[] = [
-  ...Object.values(ARTICLE_TYPES).map((t) => ({ color: t.color, label: t.label })),
-  { color: NOTE_STATUS.evergreen.hex, label: 'Evergreen note' },
-  { color: NOTE_STATUS.growing.hex, label: 'Growing note' },
-  { color: NOTE_STATUS.seedling.hex, label: 'Seedling note' },
-  { color: TYPE_COLORS.tag, label: 'Tag' },
-  { color: LIBRARY_STATUS_COLORS.current, label: 'Library — reading now', shape: 'ring' },
-  { color: LIBRARY_STATUS_COLORS.finished, label: 'Library — finished' },
-  { color: LIBRARY_STATUS_COLORS.reference, label: 'Library — reference' },
-  { color: TYPE_COLORS.project, label: 'Project' },
-  { color: TYPE_COLORS.series, label: 'Series' },
-]
+export function graphLegend(copy: GraphCopy['legendLabels'], lanes: VocabEntry[]): { color: string; label: string; shape?: 'ring' }[] {
+  return [
+    ...lanes.map((t) => ({ color: t.color ?? POST_COLORS[t.key] ?? '#a8a29e', label: t.label })),
+    { color: NOTE_STATUS.evergreen.hex, label: copy.evergreen },
+    { color: NOTE_STATUS.growing.hex, label: copy.growing },
+    { color: NOTE_STATUS.seedling.hex, label: copy.seedling },
+    { color: TYPE_COLORS.tag, label: copy.tag },
+    { color: LIBRARY_STATUS_COLORS.current, label: copy.libraryCurrent, shape: 'ring' },
+    { color: LIBRARY_STATUS_COLORS.finished, label: copy.libraryFinished },
+    { color: LIBRARY_STATUS_COLORS.reference, label: copy.libraryReference },
+    { color: TYPE_COLORS.project, label: copy.project },
+    { color: TYPE_COLORS.series, label: copy.series },
+  ]
+}
 
 // ── Graph model ───────────────────────────────────────────────────
 export function buildGraphModel(data: GraphData, filters: FilterState) {
@@ -314,8 +320,9 @@ function render(o: RenderOpts) {
 }
 
 // ── Main component ────────────────────────────────────────────────
-export function KnowledgeGraph({ data }: { data: GraphData }) {
+export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lanes = DEFAULT_TAXONOMY.articleLanes }: { data: GraphData; copy?: GraphCopy; lanes?: VocabEntry[] }) {
   const router = useRouter()
+  const legend = graphLegend(copy.legendLabels, lanes)
   const reduceMotion = useReducedMotion() ?? false
   const glowId = useId().replace(/:/g, '')
   const svgRef = useRef<SVGSVGElement>(null)
@@ -397,12 +404,12 @@ export function KnowledgeGraph({ data }: { data: GraphData }) {
   const toggleFilter = (key: NodeType) => setFilters((f) => ({ ...f, [key]: !f[key] }))
 
   const filterRows: { key: NodeType; label: string; color: string; count: number }[] = [
-    { key: 'post', label: 'Posts', color: TYPE_COLORS.post, count: data.posts.length },
-    { key: 'note', label: 'Notes', color: TYPE_COLORS.note, count: data.notes.length },
-    { key: 'tag', label: 'Tags', color: TYPE_COLORS.tag, count: data.tags.length },
-    { key: 'library', label: 'Library', color: TYPE_COLORS.library, count: data.library.length },
-    { key: 'project', label: 'Projects', color: TYPE_COLORS.project, count: data.projects.length },
-    { key: 'series', label: 'Series', color: TYPE_COLORS.series, count: data.series.length },
+    { key: 'post', label: copy.typeLabels.post, color: TYPE_COLORS.post, count: data.posts.length },
+    { key: 'note', label: copy.typeLabels.note, color: TYPE_COLORS.note, count: data.notes.length },
+    { key: 'tag', label: copy.typeLabels.tag, color: TYPE_COLORS.tag, count: data.tags.length },
+    { key: 'library', label: copy.typeLabels.library, color: TYPE_COLORS.library, count: data.library.length },
+    { key: 'project', label: copy.typeLabels.project, color: TYPE_COLORS.project, count: data.projects.length },
+    { key: 'series', label: copy.typeLabels.series, color: TYPE_COLORS.series, count: data.series.length },
   ]
 
   const q = search.trim().toLowerCase()
@@ -414,7 +421,7 @@ export function KnowledgeGraph({ data }: { data: GraphData }) {
         ref={svgRef}
         className="w-full h-full"
         role="img"
-        aria-label={`Knowledge graph with ${model.nodes.length} nodes and ${model.links.length} connections between posts, notes, tags, library items, projects and series. A text list of every node follows.`}
+        aria-label={copy.ariaSummary.replace('{nodes}', String(model.nodes.length)).replace('{edges}', String(model.links.length))}
         style={{ background: 'radial-gradient(circle at 50% 50%, #0f0f13 0%, #0a0a0a 100%)' }}
       />
 
@@ -446,7 +453,7 @@ export function KnowledgeGraph({ data }: { data: GraphData }) {
               <p className="font-mono text-[9px] text-stone-500 leading-relaxed line-clamp-2">{hoveredNode.description}</p>
             )}
             {hoveredNode.url && (
-              <p className="font-mono text-[8px] text-stone-500 mt-2 uppercase tracking-widest">Click to open →</p>
+              <p className="font-mono text-[8px] text-stone-500 mt-2 uppercase tracking-widest">{copy.openHint}</p>
             )}
           </div>
         </div>
@@ -457,15 +464,15 @@ export function KnowledgeGraph({ data }: { data: GraphData }) {
         <div className="flex gap-4 mb-4 pb-3 border-b border-white/[0.08]">
           <div>
             <div className="font-serif text-lg text-white font-bold">{model.nodes.length}</div>
-            <div className="font-mono text-[7px] uppercase tracking-widest text-stone-500">Nodes</div>
+            <div className="font-mono text-[7px] uppercase tracking-widest text-stone-500">{copy.nodesLabel}</div>
           </div>
           <div>
             <div className="font-serif text-lg text-white font-bold">{model.links.length}</div>
-            <div className="font-mono text-[7px] uppercase tracking-widest text-stone-500">Edges</div>
+            <div className="font-mono text-[7px] uppercase tracking-widest text-stone-500">{copy.edgesLabel}</div>
           </div>
         </div>
 
-        <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 mb-2.5" id={`${glowId}-visible`}>Visible</p>
+        <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 mb-2.5" id={`${glowId}-visible`}>{copy.visibleHeading}</p>
         <div className="space-y-1 mb-4" role="group" aria-labelledby={`${glowId}-visible`}>
           {filterRows.map(({ key, label, color, count }) => (
             <button
@@ -486,28 +493,28 @@ export function KnowledgeGraph({ data }: { data: GraphData }) {
           ))}
         </div>
 
-        <label htmlFor={`${glowId}-search`} className="sr-only">Search nodes</label>
+        <label htmlFor={`${glowId}-search`} className="sr-only">{copy.searchPlaceholder}</label>
         <input
           id={`${glowId}-search`}
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search nodes…"
+          placeholder={copy.searchPlaceholder}
           className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-1.5 font-mono text-[10px] text-white placeholder:text-stone-500 focus:border-white/25 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
         />
 
         <p className="font-mono text-[7px] text-stone-500 uppercase tracking-widest mt-3 leading-loose">
-          Scroll to zoom · Drag to pan · Drag nodes to reposition
+          {copy.helpLine}
         </p>
       </div>
 
       {/* Legend */}
       <details className="absolute bottom-4 left-4 bg-[#0d0d0f]/85 border border-white/[0.08] rounded-lg backdrop-blur-xl max-w-[220px]" open>
         <summary className="cursor-pointer px-3 py-2 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-lg">
-          Legend
+          {copy.legendHeading}
         </summary>
         <ul className="px-3 pb-3 space-y-1.5">
-          {GRAPH_LEGEND.map(({ color, label, shape }) => (
+          {legend.map(({ color, label, shape }) => (
             <li key={label} className="flex items-center gap-2">
               <span
                 className="w-2 h-2 rounded-full flex-shrink-0"
@@ -518,7 +525,7 @@ export function KnowledgeGraph({ data }: { data: GraphData }) {
             </li>
           ))}
           <li className="pt-1 mt-1 border-t border-white/[0.06] font-mono text-[7px] text-stone-500 uppercase tracking-widest">
-            Lines: prerequisites, read-next, related, tags, influence
+            {copy.linesNote}
           </li>
         </ul>
       </details>
@@ -527,9 +534,9 @@ export function KnowledgeGraph({ data }: { data: GraphData }) {
       <div className="absolute bottom-4 right-4">
         <details className="bg-[#0d0d0f]/90 border border-white/[0.08] rounded-lg backdrop-blur-xl max-w-xs">
           <summary className="cursor-pointer px-3 py-2 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-lg">
-            Node list ({listNodes.length})
+            {copy.nodeListLabel} ({listNodes.length})
           </summary>
-          <ul ref={listRef} className="max-h-64 overflow-y-auto px-3 pb-3 space-y-1" aria-label="All graph nodes">
+          <ul ref={listRef} className="max-h-64 overflow-y-auto px-3 pb-3 space-y-1" aria-label={copy.nodeListLabel}>
             {listNodes.map((n) => (
               <li key={n.id}>
                 {n.url ? (

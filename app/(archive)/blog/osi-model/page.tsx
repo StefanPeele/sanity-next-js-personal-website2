@@ -2,24 +2,22 @@ import Link from 'next/link'
 import { LayerExplorer } from '@/components/blog/LayerExplorer'
 import { PacketAnimator } from '@/components/blog/PacketAnimator'
 import type { Metadata } from 'next'
+import { getCopy } from '@/lib/cms/loaders'
+import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
+import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
+import { absoluteUrl } from '@/lib/site'
 // app/blog/osi-model/page.tsx
 
-export const metadata: Metadata = {
-  title: 'OSI Model Reference',
-  description:
-    'An interactive reference for the 7-layer OSI model — protocols, real-world examples, and a full packet journey walkthrough. Built for CCNA students and network engineers.',
-  openGraph: {
-    title: 'OSI Model Reference',
-    description:
-      'Interactive 7-layer OSI model explorer with packet journey animator. Click any layer to inspect protocols and real-world deployment examples.',
-    type: 'article',
-    url: 'https://stefanpeele.com/blog/osi-model',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'OSI Model Reference',
-    description: 'Interactive OSI model explorer with packet journey animator.',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const h = (await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)).osi.header
+  const title = h.metaTitle || h.title
+  const description = h.metaDescription || h.lede
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: 'article', url: absoluteUrl('/blog/osi-model') },
+    twitter: { card: 'summary_large_image', title, description },
+  }
 }
 
 const PACKET_STEPS = [
@@ -73,7 +71,9 @@ const PACKET_STEPS = [
   },
 ]
 
-export default function OSIModelPage() {
+export default async function OSIModelPage() {
+  const copy = (await getCopy(knowledgePagesQuery, DEFAULT_KNOWLEDGE_PAGES)).osi
+  const col = copy.quickReference.columns
   return (
     <div className="min-h-screen text-stone-300 selection:bg-stone-500/30">
 
@@ -81,20 +81,18 @@ export default function OSIModelPage() {
 
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-10 flex items-center gap-2 font-sans text-sm text-stone-400">
-          <Link href="/blog" className="hover:text-white transition-colors">Writing</Link>
+          <Link href="/blog" className="hover:text-white transition-colors">{copy.backLabel}</Link>
           <span aria-hidden="true">/</span>
-          <span className="text-stone-200">OSI model reference</span>
+          <span className="text-stone-200">{copy.breadcrumbLabel}</span>
         </nav>
 
         {/* Header */}
         <header className="mb-16 border-b border-white/5 pb-10">
           <h1 className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none mb-6">
-            OSI model
+            {copy.header.title}
           </h1>
           <p className="text-stone-400 font-sans text-base max-w-2xl leading-relaxed">
-            The Open Systems Interconnection model is the conceptual framework that everything in
-            networking is built on. Seven layers. Each with a job. Click any layer to inspect its
-            protocols, what it actually does, and how it shows up in the real world.
+            {copy.header.lede}
           </p>
         </header>
 
@@ -106,15 +104,14 @@ export default function OSIModelPage() {
         {/* Packet Journey */}
         <section className="mb-20">
           <h2 className="font-serif text-2xl text-white mb-3 pb-4 border-b border-white/5">
-            Packet Journey
+            {copy.packetJourney.heading}
           </h2>
-          <p className="text-stone-500 text-sm mb-6 max-w-xl">
-            Step through how a real HTTPS request travels down the OSI stack from your browser
-            to the wire — one layer at a time.
+          <p className="text-stone-400 text-sm mb-6 max-w-xl">
+            {copy.packetJourney.lede}
           </p>
           <PacketAnimator
             value={{
-              scenario: 'HTTPS GET Request — Full Stack Walkthrough',
+              scenario: copy.packetJourney.scenario,
               steps: PACKET_STEPS,
             }}
           />
@@ -123,20 +120,20 @@ export default function OSIModelPage() {
         {/* Quick Reference Table */}
         <section className="mb-20">
           <h2 className="font-serif text-2xl text-white mb-6 pb-4 border-b border-white/5">
-            Quick Reference
+            {copy.quickReference.heading}
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full font-mono text-[11px]">
               <thead>
-                <tr className="border-b border-white/5 text-stone-600 uppercase tracking-widest">
-                  <th className="text-left py-3 pr-6 w-8">#</th>
-                  <th className="text-left py-3 pr-6">Layer</th>
-                  <th className="text-left py-3 pr-6">PDU</th>
-                  <th className="text-left py-3 pr-6">Addressing</th>
-                  <th className="text-left py-3">Key Protocols</th>
+                <tr className="border-b border-white/5 text-stone-400 uppercase tracking-widest">
+                  <th className="text-left py-3 pr-6 w-8">{col.n}</th>
+                  <th className="text-left py-3 pr-6">{col.layer}</th>
+                  <th className="text-left py-3 pr-6">{col.pdu}</th>
+                  <th className="text-left py-3 pr-6">{col.addressing}</th>
+                  <th className="text-left py-3">{col.protocols}</th>
                 </tr>
               </thead>
-              <tbody className="text-stone-500">
+              <tbody className="text-stone-400">
                 {[
                   { n: 7, name: 'Application',  pdu: 'Data',    addr: 'URL / FQDN',  proto: 'HTTP, HTTPS, DNS, SMTP, FTP, SNMP' },
                   { n: 6, name: 'Presentation', pdu: 'Data',    addr: '—',           proto: 'TLS/SSL, JPEG, ASCII, MPEG' },
@@ -150,11 +147,11 @@ export default function OSIModelPage() {
                     key={row.n}
                     className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
                   >
-                    <td className="py-3 pr-6 text-stone-700">{row.n}</td>
+                    <td className="py-3 pr-6 text-stone-500">{row.n}</td>
                     <td className="py-3 pr-6 text-stone-300">{row.name}</td>
                     <td className="py-3 pr-6">{row.pdu}</td>
                     <td className="py-3 pr-6">{row.addr}</td>
-                    <td className="py-3 text-stone-600">{row.proto}</td>
+                    <td className="py-3 text-stone-400">{row.proto}</td>
                   </tr>
                 ))}
               </tbody>

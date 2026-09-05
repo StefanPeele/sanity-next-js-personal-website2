@@ -57,6 +57,9 @@ export const knowledgePagesQuery = defineQuery(`
     paths{ header{ ${header} }, emptyState{ title, hint }, hoursLabel, stepsLabel, startLabel, levelLabels{ foundations, intermediate, advanced }, "relatedNav": relatedNav[]{ ${navLink} } },
     review{ header{ ${header} }, countLine, emptyState{ title, hint }, "relatedNav": relatedNav[]{ ${navLink} } },
     series{ header{ ${header} }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },
-    graph{ header{ ${header} }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series } }
+    graph{ header{ ${header} }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },
+      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },
+      linesNote, nodeListLabel, openHint, ariaSummary },
+    osi{ header{ ${header} }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }
   }
 `)

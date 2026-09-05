@@ -168,6 +168,7 @@ export function ArticleProvider({
 
   // ── Load persisted settings once on the client ─────────────────
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate from localStorage after mount (avoids a server/client mismatch)
     setSettings(readStoredSettings(initialTheme))
     setHydrated(true)
   }, [initialTheme])
@@ -184,6 +185,7 @@ export function ArticleProvider({
 
     const { headings: found, els } = collectHeadings(root)
     elsRef.current = els
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs from the DOM after layout
     setHeadings(found)
     measure()
 
