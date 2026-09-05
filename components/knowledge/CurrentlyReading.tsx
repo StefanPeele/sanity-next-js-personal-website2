@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { MEDIA_ICONS, MEDIA_LABELS } from '@/components/library/types'
+import { MEDIA_ICON_FALLBACK, MEDIA_ICONS, MEDIA_LABELS } from '@/components/library/types'
+import { Icon } from '@/lib/cms/icons'
 // components/knowledge/CurrentlyReading.tsx
 // Server component. Accepts already-fetched items (homeIntelQuery.currentlyReading / nowQuery.reading).
 //
@@ -36,7 +37,7 @@ export function CurrentlyReading({ items, title = 'Currently reading' }: { items
                     {item.coverUrl ? (
                       <Image src={item.coverUrl} alt="" width={36} height={48} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-base" aria-hidden="true">{MEDIA_ICONS[item.mediaType ?? ''] ?? '📖'}</span>
+                      <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={16} className="text-stone-500" />
                     )}
                   </span>
                   <span className="min-w-0 flex-1">

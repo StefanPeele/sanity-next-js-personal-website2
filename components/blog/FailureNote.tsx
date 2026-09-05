@@ -1,3 +1,4 @@
+import { Icon } from '@/lib/cms/icons'
 // components/blog/FailureNote.tsx
 
 interface FailureNoteProps {
@@ -9,31 +10,31 @@ interface FailureNoteProps {
 
 const CONFIG = {
   failed: {
-    icon: '⚠',
-    label: 'What Failed',
+    icon: 'alert-triangle',
+    label: 'What failed',
     border: 'border-red-500/30',
     bg: 'bg-red-950/15',
     accent: 'text-red-400',
     labelBg: 'bg-red-500/10 border-red-500/20',
   },
   lesson: {
-    icon: '⚡',
-    label: 'What I Learned',
+    icon: 'zap',
+    label: 'What I learned',
     border: 'border-amber-500/30',
     bg: 'bg-amber-950/15',
     accent: 'text-amber-400',
     labelBg: 'bg-amber-500/10 border-amber-500/20',
   },
   fixed: {
-    icon: '🔧',
-    label: 'What I Fixed',
+    icon: 'wrench',
+    label: 'What I fixed',
     border: 'border-emerald-500/30',
     bg: 'bg-emerald-950/15',
     accent: 'text-emerald-400',
     labelBg: 'bg-emerald-500/10 border-emerald-500/20',
   },
   warning: {
-    icon: '⚠',
+    icon: 'alert-triangle',
     label: 'Warning',
     border: 'border-amber-500/30',
     bg: 'bg-amber-950/15',
@@ -50,7 +51,7 @@ export function FailureNote({ value }: FailureNoteProps) {
     <div className={`my-8 rounded-xl border ${config.border} ${config.bg} overflow-hidden`}>
       {/* Header */}
       <div className={`flex items-center gap-2.5 px-5 py-3 border-b ${config.border}`}>
-        <span className="text-base">{config.icon}</span>
+        <Icon name={config.icon} size={16} className={config.accent} />
         <span className={`font-mono text-[10px] uppercase tracking-[0.35em] font-bold ${config.accent}`}>
           {config.label}
         </span>

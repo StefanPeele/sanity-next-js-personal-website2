@@ -154,7 +154,7 @@ function notificationEmail(input: BookingInput, packageName: string, shootType: 
   const addOns = input.addOns.map((id) => getAddOn(id)?.label ?? id).join(', ') || 'None'
   const e = escapeHtml
   return emailShell({
-    preheader: `New inquiry // ${e(SHOOT_LABEL[shootType]).toUpperCase()}`,
+    preheader: `New inquiry · ${e(SHOOT_LABEL[shootType])}`,
     title: e(input.name),
     body:
       kvTable([
@@ -180,7 +180,7 @@ function confirmationEmail(input: BookingInput, packageName: string, shootType: 
   const label = SHOOT_LABEL[shootType]
 
   return emailShell({
-    preheader: 'Stefan Peele Photography // Inquiry received',
+    preheader: 'Stefan Peele Photography · Inquiry received',
     title: `Got it, ${e(firstName)}.`,
     body:
       paragraph(

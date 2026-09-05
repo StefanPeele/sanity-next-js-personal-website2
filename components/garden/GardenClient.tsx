@@ -8,6 +8,7 @@ import { NOTE_STATUS, NOTE_STATUS_ORDER, ORIGIN_LABELS, noteStatus, type NoteSta
 import { GrowthTimeline } from './GrowthTimeline'
 import { formatDate } from '@/lib/dates'
 import type { GardenNoteView, GardenTag } from './types'
+import { Icon } from '@/lib/cms/icons'
 // components/garden/GardenClient.tsx
 // Interactive garden index: status legend, growth timeline, recently tended,
 // search, tag filter (synced to ?tag=), and expandable note cards whose titles
@@ -51,7 +52,7 @@ function NoteCard({
       <div className="p-5">
         <div className="flex items-start justify-between gap-4 mb-3">
           <span className={`font-mono text-[8px] uppercase tracking-[0.3em] px-2 py-1 rounded-sm border flex-shrink-0 ${config.badge}`}>
-            <span aria-hidden="true">{config.icon}</span> {config.label}
+            <Icon name={config.icon} size={10} className="inline -mt-px mr-1" /> {config.label}
           </span>
 
           <button
@@ -123,7 +124,7 @@ function NoteCard({
               {note.status === 'seedling' && (
                 <div className="mb-4 p-3 border border-stone-700/40 rounded-lg bg-stone-900/40">
                   <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">
-                    <span aria-hidden="true">🌱 </span>{NOTE_STATUS.seedling.banner}
+                    <Icon name="sprout" size={10} className="inline -mt-px mr-1" />{NOTE_STATUS.seedling.banner}
                   </p>
                 </div>
               )}
@@ -316,7 +317,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
               className={`p-3 rounded-lg border text-left transition-all ${config.badge} ${on ? 'ring-1 ring-white/40' : 'hover:brightness-125'} ${FOCUS}`}
             >
               <span className="flex items-center justify-between mb-1">
-                <span className="text-base" aria-hidden="true">{config.icon}</span>
+                <Icon name={config.icon} size={16} />
                 <span className="font-mono text-[9px] text-stone-400">{counts[key]}</span>
               </span>
               <span className="font-mono text-[9px] uppercase tracking-[0.25em] block mb-1">{config.label}</span>

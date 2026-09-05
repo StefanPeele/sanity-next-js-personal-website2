@@ -2,7 +2,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { formatDate } from '@/lib/dates'
 import type { LibraryItem } from './types'
-import { MEDIA_ICONS, MEDIA_LABELS, RATING_CONFIG } from './types'
+import { MEDIA_ICON_FALLBACK, MEDIA_ICONS, MEDIA_LABELS, RATING_CONFIG } from './types'
+import { Icon } from '@/lib/cms/icons'
 // components/library/MediaCard.tsx
 // One library entry. Renders the one-sentence take, key idea, pull quote,
 // highlights (disclosure), rating, progress and the posts/notes it influenced.
@@ -33,7 +34,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
             className="w-full h-full object-cover"
           />
         ) : (
-          <span className={large ? 'text-3xl' : 'text-2xl'} aria-hidden="true">{MEDIA_ICONS[item.mediaType ?? ''] ?? '📖'}</span>
+          <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={large ? 28 : 20} className="text-stone-500" />
         )}
       </div>
 
@@ -41,7 +42,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 flex-wrap mb-1">
           <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500">
-            <span aria-hidden="true">{MEDIA_ICONS[item.mediaType ?? ''] ?? '📖'} </span>{MEDIA_LABELS[item.mediaType ?? ''] ?? item.mediaType}
+            <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={10} className="inline -mt-px mr-1" />{MEDIA_LABELS[item.mediaType ?? ''] ?? item.mediaType}
           </span>
           {item.category && <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500">· {item.category}</span>}
           {item.finishedAt && item.status === 'finished' && (
@@ -130,7 +131,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
               {notes.map((note) => (
                 <li key={`n-${note.slug}`}>
                   <Link href={`/garden/${note.slug}`} className={`font-mono text-[9px] text-emerald-300/80 hover:text-white transition-colors underline underline-offset-4 decoration-emerald-900 hover:decoration-emerald-400 rounded-sm ${FOCUS}`}>
-                    <span aria-hidden="true">🌱 </span>{note.title}
+                    <Icon name="sprout" size={10} className="inline -mt-px mr-1" />{note.title}
                   </Link>
                 </li>
               ))}

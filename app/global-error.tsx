@@ -24,7 +24,7 @@ export default function GlobalError({
         >
           <div style={{ maxWidth: '32rem', width: '100%', textAlign: 'center' }}>
             <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '0.4em', textTransform: 'uppercase', color: '#a8a29e', marginBottom: '2rem' }}>
-              System // Critical fault
+              Something went wrong
             </p>
             <h1 style={{ color: '#fff', fontSize: 'clamp(40px, 8vw, 72px)', lineHeight: 1, margin: '0 0 1.5rem' }}>
               The archive went dark.

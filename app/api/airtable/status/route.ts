@@ -61,7 +61,7 @@ function buildEmail(status: Status, name: string, shootType: string, deliveryUrl
       return {
         subject: `Confirmed — your ${shootType || 'session'} with Stefan Peele`,
         html: emailShell({
-          preheader: 'Stefan Peele Photography // Booking confirmed',
+          preheader: 'Stefan Peele Photography · Booking confirmed',
           title: `We're on, ${fn}.`,
           body:
             paragraph(`Your <strong style="color:#fff;">${what}</strong> is confirmed. Date, location and the plan we talked through are locked in on my end.`) +
@@ -80,7 +80,7 @@ function buildEmail(status: Status, name: string, shootType: string, deliveryUrl
       return {
         subject: `In the darkroom — your ${shootType || 'session'} is being edited`,
         html: emailShell({
-          preheader: 'Stefan Peele Photography // Editing',
+          preheader: 'Stefan Peele Photography · Editing',
           title: `Your frames are on the bench, ${fn}.`,
           body:
             paragraph(`The shoot is done and the culling is finished. I'm now color-grading and retouching your <strong style="color:#fff;">${what}</strong>.`) +
@@ -98,7 +98,7 @@ function buildEmail(status: Status, name: string, shootType: string, deliveryUrl
       return {
         subject: `Delivered — your ${shootType || 'session'} gallery is ready`,
         html: emailShell({
-          preheader: 'Stefan Peele Photography // Delivered',
+          preheader: 'Stefan Peele Photography · Delivered',
           title: `It's ready, ${fn}.`,
           body:
             paragraph(`Your <strong style="color:#fff;">${what}</strong> gallery is live. Full-resolution JPEGs, your hero TIFFs and the social media pack are all inside.`) +
@@ -117,7 +117,7 @@ function buildEmail(status: Status, name: string, shootType: string, deliveryUrl
       return {
         subject: `Thank you — ${shootType || 'session'} complete`,
         html: emailShell({
-          preheader: 'Stefan Peele Photography // Complete',
+          preheader: 'Stefan Peele Photography · Complete',
           title: `That's a wrap, ${fn}.`,
           body:
             paragraph(`Your <strong style="color:#fff;">${what}</strong> is marked complete on my end — physical product included, if you chose one.`) +

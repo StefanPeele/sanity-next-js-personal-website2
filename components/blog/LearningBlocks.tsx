@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 import { downloadTextFile } from '@/lib/anki'
+import { Icon } from '@/lib/cms/icons'
 
 // ══════════════════════════════════════════════════════════════════
 // WHAT I GOT WRONG FIRST
@@ -93,7 +94,7 @@ export function WhatEngineersUse({ value }: WhatEngineersUseProps) {
     <div className="my-8 rounded-xl overflow-hidden border border-stone-600/30 bg-stone-950/30">
       <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-stone-600/20">
         <div className="flex items-center gap-2.5">
-          <span className="text-sm">🔧</span>
+          <Icon name="wrench" size={14} className="text-stone-400" />
           <span className="font-mono text-[10px] uppercase tracking-[0.35em] font-bold text-stone-400">
             What Engineers Actually Use This For
           </span>

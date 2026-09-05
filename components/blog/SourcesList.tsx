@@ -1,3 +1,4 @@
+import { Icon, type IconName } from '@/lib/cms/icons'
 // components/blog/SourcesList.tsx
 
 interface Source {
@@ -13,16 +14,16 @@ interface SourcesListProps {
   sources: Source[]
 }
 
-const TYPE_CONFIG: Record<string, { icon: string; label: string }> = {
-  article:       { icon: '📰', label: 'Article' },
-  rfc:           { icon: '📋', label: 'RFC / Standard' },
-  paper:         { icon: '📄', label: 'Research Paper' },
-  whitepaper:    { icon: '📑', label: 'White Paper' },
-  book:          { icon: '📚', label: 'Book' },
-  documentation: { icon: '📖', label: 'Documentation' },
-  video:         { icon: '🎥', label: 'Video' },
-  podcast:       { icon: '🎙', label: 'Podcast' },
-  other:         { icon: '🔗', label: 'Source' },
+const TYPE_CONFIG: Record<string, { icon: IconName; label: string }> = {
+  article:       { icon: 'newspaper', label: 'Article' },
+  rfc:           { icon: 'clipboard-list', label: 'RFC / Standard' },
+  paper:         { icon: 'file-text', label: 'Research paper' },
+  whitepaper:    { icon: 'file-text', label: 'White paper' },
+  book:          { icon: 'book', label: 'Book' },
+  documentation: { icon: 'book-open', label: 'Documentation' },
+  video:         { icon: 'video', label: 'Video' },
+  podcast:       { icon: 'mic', label: 'Podcast' },
+  other:         { icon: 'link', label: 'Source' },
 }
 
 export function SourcesList({ sources, heading = 'Sources' }: SourcesListProps & { heading?: string }) {
@@ -56,7 +57,7 @@ export function SourcesList({ sources, heading = 'Sources' }: SourcesListProps &
               {/* Source card */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start gap-3 flex-wrap">
-                  <span className="text-sm flex-shrink-0 mt-0.5">{config.icon}</span>
+                  <Icon name={config.icon} size={14} className="flex-shrink-0 mt-0.5 text-stone-500" />
 
                   <div className="flex-1 min-w-0">
                     {/* Title — link if URL provided */}

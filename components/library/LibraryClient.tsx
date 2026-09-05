@@ -3,7 +3,8 @@
 import { useMemo, useState } from 'react'
 import { MediaCard } from './MediaCard'
 import { yearOf } from '@/lib/dates'
-import { MEDIA_ICONS, MEDIA_LABELS, STATUS_LABELS, type LibraryItem, type LibraryStatus, type MediaType } from './types'
+import { MEDIA_ICON_FALLBACK, MEDIA_ICONS, MEDIA_LABELS, STATUS_LABELS, type LibraryItem, type LibraryStatus, type MediaType } from './types'
+import { Icon } from '@/lib/cms/icons'
 // components/library/LibraryClient.tsx
 // Filters (media type + status), then the shelves: reading now, reference shelf,
 // finished by year, on deck, abandoned.
@@ -77,7 +78,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
           <button type="button" onClick={() => setType(null)} aria-pressed={type === null} className={chip(type === null)}>All</button>
           {types.map(([t, n]) => (
             <button key={t} type="button" onClick={() => setType(type === t ? null : t)} aria-pressed={type === t} className={chip(type === t)}>
-              <span aria-hidden="true">{MEDIA_ICONS[t]} </span>{MEDIA_LABELS[t] ?? t} <span className="opacity-60 text-[8px]">{n}</span>
+              <Icon name={MEDIA_ICONS[t]} size={10} className="inline -mt-px mr-1" />{MEDIA_LABELS[t] ?? t} <span className="opacity-60 text-[8px]">{n}</span>
             </button>
           ))}
         </div>
@@ -140,7 +141,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
           <ul className="space-y-2">
             {wantToRead.map((item) => (
               <li key={item._id} id={item._id} className="flex items-center gap-3 py-2 border-b border-white/5 scroll-mt-28">
-                <span className="text-sm flex-shrink-0" aria-hidden="true">{MEDIA_ICONS[item.mediaType ?? ''] ?? '📖'}</span>
+                <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={14} className="flex-shrink-0 text-stone-500 mt-1" />
                 {item.url ? (
                   <a href={item.url} target="_blank" rel="noreferrer noopener" className={`font-serif text-stone-300 hover:text-white rounded-sm ${FOCUS}`}>{item.title}</a>
                 ) : (
@@ -159,7 +160,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
           <ul className="space-y-2">
             {abandoned.map((item) => (
               <li key={item._id} id={item._id} className="flex items-start gap-3 py-2 border-b border-white/5 scroll-mt-28">
-                <span className="text-sm flex-shrink-0" aria-hidden="true">{MEDIA_ICONS[item.mediaType ?? ''] ?? '📖'}</span>
+                <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={14} className="flex-shrink-0 text-stone-500 mt-1" />
                 <div>
                   <span className="font-serif text-stone-400 line-through decoration-stone-600">{item.title}</span>
                   {item.author && <span className="font-mono text-[9px] text-stone-500 ml-2">{item.author}</span>}

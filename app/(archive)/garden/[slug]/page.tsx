@@ -15,6 +15,7 @@ import { formatDate, daysSince } from '@/lib/dates'
 import { readingTime, portableTextToPlain } from '@/lib/reading'
 import { absoluteUrl, articleTypeMeta, SITE } from '@/lib/site'
 import type { GardenNote } from '@/components/garden/types'
+import { Icon } from '@/lib/cms/icons'
 // app/(archive)/garden/[slug]/page.tsx
 // A single garden note. Body rendered on the server with [[wiki links]] resolved.
 
@@ -101,7 +102,7 @@ export default async function NotePage({ params }: { params: Params }) {
         <header className="mb-8">
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <span className={`font-mono text-[8px] uppercase tracking-[0.3em] px-2 py-1 rounded-sm border ${status.badge}`}>
-              <span aria-hidden="true">{status.icon}</span> {status.label}
+              <Icon name={status.icon} size={10} className="inline -mt-px mr-1" /> {status.label}
             </span>
             {note.origin && (
               <span className="font-mono text-[9px] uppercase tracking-widest text-stone-500">

@@ -5,6 +5,7 @@ import {
   ArrowDown, ArrowLeftRight, ArrowRight, Award, Book, BookOpen, Camera, Check, ExternalLink,
   FileText, Gift, GitBranch, GraduationCap, Layers, Leaf, Library, Lightbulb, ListOrdered, Mail,
   Mic, Network, Newspaper, RotateCcw, Route, Rss, Search, Settings2, Sprout, TreePine, Type, Video,
+  AlertTriangle, ClipboardList, Diamond, Factory, Link2, Sparkles, Wrench, Zap,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -40,6 +41,14 @@ export const ICONS = {
   'arrow-down': ArrowDown,
   'arrow-left-right': ArrowLeftRight,
   'settings-2': Settings2,
+  'alert-triangle': AlertTriangle,
+  'clipboard-list': ClipboardList,
+  diamond: Diamond,
+  factory: Factory,
+  link: Link2,
+  sparkles: Sparkles,
+  wrench: Wrench,
+  zap: Zap,
 } as const satisfies Record<string, LucideIcon>
 
 export type IconName = keyof typeof ICONS

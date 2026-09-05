@@ -60,7 +60,7 @@ export async function contactAction(formData: FormData): Promise<ContactResult> 
       replyTo: input.email,
       subject: `Contact: ${input.name}${input.company ? ` (${input.company})` : ''}`,
       html: emailShell({
-        preheader: 'Contact form // stefanpeele.com',
+        preheader: 'Contact form · stefanpeele.com',
         title: e(input.name),
         body:
           kvTable([

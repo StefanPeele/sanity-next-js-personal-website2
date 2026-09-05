@@ -12,6 +12,7 @@ import {
   type PackageCategory, type PhysicalTier, type PricingPackage,
 } from '@/lib/pricing'
 import { DEFAULT_SERVICES_PAGE, type ServicesPageCopy } from '@/lib/cms/defaults/servicesPage'
+import { Icon } from '@/lib/cms/icons'
 
 interface ServicePackagesProps {
   copy?: ServicesPageCopy
@@ -28,14 +29,14 @@ function scrollToInquiry() {
   first?.focus({ preventScroll: true })
 }
 
-function PhysicalProductBadge({ tier }: { tier: PhysicalTier }) {
+function PhysicalProductBadge({ tier, labels }: { tier: PhysicalTier; labels: ServicesPageCopy['physicalProducts']['chooserLabels'] }) {
   const products = tier === 'core' ? CORE_PRODUCTS : PREMIUM_PRODUCTS
-  const label = tier === 'core' ? DEFAULT_SERVICES_PAGE.physicalProducts.chooserLabels.core : DEFAULT_SERVICES_PAGE.physicalProducts.chooserLabels.premium
+  const label = tier === 'core' ? labels.core : labels.premium
   const premium = tier === 'premium'
   return (
     <div className={`rounded-lg border p-4 mb-6 ${premium ? 'border-amber-500/30 bg-amber-950/10' : 'border-white/15 bg-white/[0.03]'}`}>
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-base" aria-hidden="true">{premium ? '✦' : '◈'}</span>
+        <Icon name={premium ? 'sparkles' : 'diamond'} size={14} className={premium ? 'text-amber-400' : 'text-stone-400'} />
         <span className={`font-sans text-xs font-bold ${premium ? 'text-amber-400' : 'text-stone-300'}`}>{label}</span>
       </div>
       <ul className="space-y-1.5">
@@ -47,7 +48,7 @@ function PhysicalProductBadge({ tier }: { tier: PhysicalTier }) {
         ))}
       </ul>
       <p className={`font-mono text-[8px] uppercase tracking-widest mt-3 ${premium ? 'text-amber-500/70' : 'text-stone-500'}`}>
-        {DEFAULT_SERVICES_PAGE.physicalProducts.chooserLabels.final}
+        {labels.final}
       </p>
     </div>
   )
@@ -85,9 +86,9 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
         <div role="tablist" aria-label="Service type" className="flex flex-wrap gap-1 p-1 rounded-lg border border-white/10 bg-[#141418]/80">
           {(
             [
-              { key: 'portrait', label: 'Portrait' },
-              { key: 'event', label: 'Event' },
-              { key: 'specialty', label: 'Specialty' },
+              { key: 'portrait', label: copy.tabLabels.portrait },
+              { key: 'event', label: copy.tabLabels.event },
+              { key: 'specialty', label: copy.tabLabels.specialty },
             ] as { key: PackageCategory; label: string }[]
           ).map(({ key, label }) => (
             <button
@@ -146,11 +147,9 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
         <div className="mb-8 p-5 rounded-xl border border-white/10 bg-white/[0.02]">
           <span className="section-label block mb-3">{copy.standardDelivery.heading}</span>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              ...copy.standardDelivery.items.map((i) => ({ icon: '', label: i.title, desc: i.description })),
-            ].map((item) => (
+            {copy.standardDelivery.items.map((i) => ({ label: i.title, desc: i.description })).map((item) => (
               <div key={item.label} className="flex items-start gap-3">
-                <span className="text-stone-500 text-sm flex-shrink-0 mt-0.5" aria-hidden="true">{item.icon}</span>
+                <Icon name="check" size={14} className="text-stone-500 flex-shrink-0 mt-0.5" />
                 <div>
                   <span className="font-sans text-xs text-stone-300 block mb-0.5">{item.label}</span>
                   <span className="font-mono text-[9px] text-stone-400 leading-snug block">{item.desc}</span>
@@ -244,7 +243,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                   </ul>
                 )}
 
-                {pkg.physicalProduct && <PhysicalProductBadge tier={pkg.physicalProduct} />}
+                {pkg.physicalProduct && <PhysicalProductBadge tier={pkg.physicalProduct} labels={copy.physicalProducts.chooserLabels} />}
 
                 {pkg.recommended && (
                   <div className="pt-4 border-t border-white/[0.08] mb-6">

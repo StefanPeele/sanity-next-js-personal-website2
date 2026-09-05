@@ -438,7 +438,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                       </span>
                     )}
                     {post.series?.title && (
-                      <span className="font-mono text-[8px] tracking-[0.2em] uppercase text-orange-300/80">≡ {post.series.title}</span>
+                      <span className="font-mono text-[8px] tracking-[0.2em] uppercase text-orange-300/80"><Icon name="layers" size={9} className="inline -mt-px mr-1" />{post.series.title}</span>
                     )}
                   </div>
                   <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest flex-shrink-0">{minutes} min</span>

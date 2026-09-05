@@ -1,5 +1,6 @@
 import type { LibraryQueryResult } from '@/sanity.types'
 // components/library/types.ts
+import type { IconName } from '@/lib/cms/icons'
 // Typegen collapses `[defined(slug)]` projections to Array<null>; retype those here.
 
 type Raw = LibraryQueryResult[number]
@@ -14,11 +15,13 @@ export type LibraryItem = Omit<Raw, 'influencedPosts' | 'influencedNotes'> & {
 export type LibraryStatus = NonNullable<Raw['status']>
 export type MediaType = NonNullable<Raw['mediaType']>
 
-export const MEDIA_ICONS: Record<string, string> = {
-  book: '📚', article: '📰', whitepaper: '📑', 'industry-paper': '🏭',
-  rfc: '📋', 'research-paper': '📄', podcast: '🎙', newsletter: '📧',
-  video: '🎥', documentation: '📖',
+/** lucide icon names (lib/cms/icons) per media type. */
+export const MEDIA_ICONS: Record<string, IconName> = {
+  book: 'book', article: 'newspaper', whitepaper: 'file-text', 'industry-paper': 'factory',
+  rfc: 'clipboard-list', 'research-paper': 'file-text', podcast: 'mic', newsletter: 'mail',
+  video: 'video', documentation: 'book-open',
 }
+export const MEDIA_ICON_FALLBACK: IconName = 'book-open'
 
 export const MEDIA_LABELS: Record<string, string> = {
   book: 'Book', article: 'Article', whitepaper: 'White paper', 'industry-paper': 'Industry paper',

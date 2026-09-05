@@ -1,4 +1,5 @@
 // components/garden/status.ts
+import type { IconName } from '@/lib/cms/icons'
 // Garden note status configuration shared by server and client components.
 // Colours: seedling stone, growing emerald, evergreen green (matches KnowledgeGraph.tsx).
 
@@ -7,7 +8,8 @@ export type NoteStatus = 'seedling' | 'growing' | 'evergreen'
 export const NOTE_STATUS: Record<
   NoteStatus,
   {
-    icon: string
+    /** lucide icon name (lib/cms/icons). */
+    icon: IconName
     label: string
     /** Text + border + background classes for badges. */
     badge: string
@@ -20,7 +22,7 @@ export const NOTE_STATUS: Record<
   }
 > = {
   seedling: {
-    icon: '🌱',
+    icon: 'sprout',
     label: 'Seedling',
     badge: 'text-stone-400 border-stone-600/40 bg-stone-900/40',
     dot: 'bg-stone-500',
@@ -29,7 +31,7 @@ export const NOTE_STATUS: Record<
     banner: 'This is an early-stage thought — treat it accordingly. It may be incomplete or wrong.',
   },
   growing: {
-    icon: '🌿',
+    icon: 'leaf',
     label: 'Growing',
     badge: 'text-emerald-400 border-emerald-600/40 bg-emerald-950/20',
     dot: 'bg-emerald-500',
@@ -38,7 +40,7 @@ export const NOTE_STATUS: Record<
     banner: 'This note is being actively developed. It has structure and is partially verified against real experience.',
   },
   evergreen: {
-    icon: '🌲',
+    icon: 'tree-pine',
     label: 'Evergreen',
     badge: 'text-green-400 border-green-600/40 bg-green-950/20',
     dot: 'bg-green-400',
