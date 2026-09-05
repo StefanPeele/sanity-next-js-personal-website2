@@ -88,3 +88,14 @@ Columns: heading · lede · labels · empty state · buttons · section on/off �
 - Route smoke against `next start -p 3111`: 25 routes 200, `/definitely-missing` 404 with "Page not found" copy, `/studio` 200.
 - Grep gates: no `Directory /`, `Intelligence //`, `Transmission`, `Curriculum vitae`, `Visual archive` in `app/` or `components/` (outside osi-model); no emoji glyphs in `app/`, `components/`, `lib/`.
 - Seed dry run: 8 to create, 2 to patch (`home` by its random id, `settings`), 0 failed.
+
+## 8. Follow-up pass (5 Sept, commits `1695816` … `c2da801`)
+
+- **Graph legend, OSI model page and offline page now read from Studio** (Knowledge pages → Graph / OSI model; Error pages → Offline). `/offline` is a real route precached by the service worker (cache v4); the inline HTML in `sw.js` is only the last resort.
+- **CSP is enforced.** `next.config.ts` sends `Content-Security-Policy`; `CSP_REPORT_ONLY=1` switches back to report-only while adding an origin. Verified on production: no violations on home, an article, services, or Studio.
+- **Contrast.** 215 `text-stone-500/600/700` classes on readable text lifted to `stone-400` (the CLAUDE.md rule); the footer h-card link is underlined; the coming-soon package card is greyscale instead of 70 % opacity. Axe (WCAG 2.1 AA, critical + serious) passes on home, writing index, services and the first post.
+- **Lint is clean** (0 warnings): unused imports, `any` types, exhaustive deps, "reset on navigation" effects rewritten as state adjusted during render, hydration reads annotated, read-aloud hook no longer reads a ref during render.
+- **Playwright suite** (`tests/smoke.spec.ts`, 35 tests, all green against the build): every reserved route 200 with one `h1` and `#content`, 404 copy, Studio loads, sitemap excludes reserved paths, feeds, health, security headers, article page keeps one TOC per breakpoint + one progress bar + reader menu (desktop and 390 px), reader menu Escape/focus return, no CSP violations, axe.
+- **Studio observation:** opening any Site entry creates a draft prefilled from the code defaults, so pressing Publish on each of the ten entries seeds the dataset without the write token.
+
+Still open: dataset not seeded (token), prices in code by decision, mobile captures, ". ." in Home → Overview.
