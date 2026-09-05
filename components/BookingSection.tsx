@@ -8,8 +8,10 @@ import { useId, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { submitBooking } from '@/app/actions/booking'
 import { ADD_ONS, NOT_SURE_ID, PACKAGES, packageLabel, type PricingAddOn } from '@/lib/pricing'
+import { DEFAULT_SERVICES_PAGE } from '@/lib/cms/defaults/servicesPage'
 
 interface BookingSectionProps {
+  copy?: typeof DEFAULT_SERVICES_PAGE.booking
   /** Package id from lib/pricing to preselect. */
   selectedPackage?: string
   triggerLabel?: string
@@ -51,7 +53,7 @@ function AddOnItem({ addon, checked, onToggle }: { addon: PricingAddOn; checked:
   )
 }
 
-export default function BookingSection({ selectedPackage, triggerLabel, inline = false, anchorId }: BookingSectionProps) {
+export default function BookingSection({ copy = DEFAULT_SERVICES_PAGE.booking, selectedPackage, triggerLabel, inline = false, anchorId }: BookingSectionProps) {
   const reduceMotion = useReducedMotion()
   const [isOpen, setIsOpen] = useState(inline)
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
@@ -77,7 +79,7 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
     e.preventDefault()
     if (!pkg) {
       setStatus('error')
-      setErrorMsg('Please choose a package (or "Not sure yet").')
+      setErrorMsg(copy.packageError)
       return
     }
     setStatus('submitting')
@@ -99,7 +101,7 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
       }
     } else {
       setStatus('error')
-      setErrorMsg(result.error ?? 'Something went wrong.')
+      setErrorMsg(result.error ?? copy.genericError)
     }
   }
 
@@ -112,16 +114,16 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 className="text-2xl font-serif text-white">Inquiry sent</h3>
+          <h3 className="text-2xl font-serif text-white">{copy.successTitle}</h3>
           <p className="text-stone-400 text-sm">
-            Check your email — I've sent a confirmation and next steps. I'll follow up within 24 hours.
+            {copy.successBody}
           </p>
         </div>
       ) : (
         <form ref={formRef} onSubmit={handleSubmit} aria-labelledby={headingId} noValidate={false}>
-          <h3 id={headingId} className="text-2xl font-serif text-white mb-2">Let's capture something worth keeping.</h3>
+          <h3 id={headingId} className="text-2xl font-serif text-white mb-2">{copy.heading}</h3>
           <p className="text-stone-400 text-sm mb-7 leading-relaxed">
-            I'll follow up within 24 hours to confirm availability and next steps.
+            {copy.intro}
           </p>
 
           {/* Honeypot: hidden from people, present for bots. Must stay empty. */}
@@ -133,18 +135,18 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             <div>
               <label htmlFor="booking-name" className="sr-only">Name</label>
-              <input id="booking-name" name="name" required maxLength={100} autoComplete="name" placeholder="Name" className={inputClass} />
+              <input id="booking-name" name="name" required maxLength={100} autoComplete="name" placeholder={copy.namePlaceholder} className={inputClass} />
             </div>
             <div>
               <label htmlFor="booking-email" className="sr-only">Email address</label>
-              <input id="booking-email" type="email" name="email" required maxLength={200} autoComplete="email" placeholder="Email address" className={inputClass} />
+              <input id="booking-email" type="email" name="email" required maxLength={200} autoComplete="email" placeholder={copy.emailPlaceholder} className={inputClass} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             <div>
               <label htmlFor="booking-phone" className="sr-only">Phone (optional)</label>
-              <input id="booking-phone" type="tel" name="phone" maxLength={40} autoComplete="tel" placeholder="Phone (optional)" className={inputClass} />
+              <input id="booking-phone" type="tel" name="phone" maxLength={40} autoComplete="tel" placeholder={copy.phonePlaceholder} className={inputClass} />
             </div>
             <div>
               <label htmlFor="booking-date" className="sr-only">Preferred date</label>
@@ -167,17 +169,17 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
                 backgroundPosition: 'right 16px center',
               }}
             >
-              <option value="" className="bg-stone-900">— Select a package —</option>
+              <option value="" className="bg-stone-900">{copy.packagePlaceholder}</option>
               {PACKAGES.map((p) => (
                 <option key={p.id} value={p.id} className="bg-stone-900">
-                  {packageLabel(p)}{p.comingSoon ? ' — expanding soon' : ''}
+                  {packageLabel(p)}{p.comingSoon ? ` · ${copy.expandingSoonSuffix}` : ''}
                 </option>
               ))}
-              <option value={NOT_SURE_ID} className="bg-stone-900">Not sure yet — I have questions</option>
+              <option value={NOT_SURE_ID} className="bg-stone-900">{copy.notSureLabel}</option>
             </select>
             {selectedPkg?.comingSoon && (
               <p className="mt-2 font-mono text-[10px] text-amber-400/90 uppercase tracking-widest">
-                This tier is expanding soon — send the inquiry and I'll tell you what's available.
+                {copy.expandingSoonNote}
               </p>
             )}
           </div>
@@ -196,7 +198,7 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
                   id="booking-zoom"
                   name="zoom_availability"
                   maxLength={300}
-                  placeholder="When works for a 20–30 min call? (e.g. weekday evenings, Saturday mornings)"
+                  placeholder={copy.availabilityPlaceholder}
                   className={inputClass}
                 />
               </motion.div>
@@ -206,7 +208,7 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
           <label className="flex items-center gap-3 mb-4 cursor-pointer group">
             <input type="checkbox" name="njit_affiliate" className={`h-4 w-4 rounded border-white/30 bg-transparent accent-white ${FOCUS}`} />
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-400 group-hover:text-stone-200 transition-colors">
-              I'm an NJIT student, faculty, or affiliate
+              {copy.njitCheckbox}
               <span className="text-stone-500 ml-2">(NJIT ID required at booking)</span>
             </span>
           </label>
@@ -228,7 +230,7 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-colors mb-2 ${FOCUS}`}
                 >
                   <span className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-300">Add-ons</span>
+                    <span className="font-sans text-sm text-stone-300">{copy.addOnsLabel}</span>
                     {addOns.size > 0 && (
                       <span className="font-mono text-[9px] text-white bg-white/15 px-2 py-0.5 rounded-sm">{addOns.size} selected</span>
                     )}
@@ -251,7 +253,7 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
             required
             rows={3}
             maxLength={2000}
-            placeholder="Tell me about the occasion — what do you want to walk away with?"
+            placeholder={copy.messagePlaceholder}
             className={`${inputClass} mb-5 resize-none`}
           />
 
@@ -270,9 +272,9 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                Sending…
+                {copy.sendingLabel}
               </>
-            ) : 'Send inquiry'}
+            ) : copy.submitLabel}
           </button>
         </form>
       )}
@@ -297,7 +299,7 @@ export default function BookingSection({ selectedPackage, triggerLabel, inline =
         className={`group flex items-center justify-center gap-3 px-6 py-3 border border-stone-700/50 hover:border-stone-400 bg-stone-900/50 backdrop-blur-md rounded-full text-stone-300 hover:text-white transition-all duration-500 ${FOCUS}`}
       >
         <span className="text-xs tracking-[0.2em] uppercase font-semibold whitespace-nowrap">
-          {isOpen ? 'Close' : (triggerLabel ?? 'Send inquiry')}
+          {isOpen ? copy.closeLabel : (triggerLabel ?? copy.triggerLabel)}
         </span>
         <svg
           className={`w-4 h-4 text-stone-500 group-hover:text-white transition-transform duration-500 ${isOpen ? 'rotate-180' : ''}`}

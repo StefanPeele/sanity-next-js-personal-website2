@@ -1,33 +1,35 @@
 // app/(personal)/photography/albums/page.tsx
 import { absoluteUrl } from '@/lib/site'
 import { sanityFetch } from '@/sanity/lib/live'
-import { galleriesQuery, settingsQuery } from '@/sanity/lib/queries'
+import { galleriesQuery } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getCopy } from '@/lib/cms/loaders'
+import { personalPagesQuery } from '@/sanity/lib/queries-services'
+import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 
-export const metadata: Metadata = {
-  title: 'Albums',
-  description: 'Every photography album by Stefan Peele — sports, portraits, graduations and events.',
-  alternates: { canonical: absoluteUrl('/photography/albums') },
+export async function generateMetadata(): Promise<Metadata> {
+  const a = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).photography.albums
+  return { title: a.title, description: a.metaDescription }
 }
 
 const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default async function ArchivesPage() {
-  const [{ data: galleries }, { data: settings }] = await Promise.all([
+  const [{ data: galleries }, copy] = await Promise.all([
     sanityFetch({ query: galleriesQuery }),
-    sanityFetch({ query: settingsQuery }),
+    getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES).then((c) => c.photography.albums),
   ])
 
-  const title = settings?.archiveTitle || 'The Archives'
-  const subtitle = settings?.archiveSubtitle || 'Structured volumes and editorial collections.'
+  const title = copy.title
+  const subtitle = copy.subtitle
 
   return (
     <div className="min-h-screen text-stone-50 pt-24 pb-20">
       <div className="text-center mb-24 px-6">
         <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-white mb-6">{title}</h1>
-        <p className="text-stone-400 font-mono text-[10px] tracking-[0.3em] uppercase">{subtitle}</p>
+        <p className="text-stone-400 font-sans text-base">{subtitle}</p>
       </div>
 
       {galleries.length > 0 ? (
@@ -54,7 +56,7 @@ export default async function ArchivesPage() {
                   )}
                   <div className="absolute inset-0 p-6 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent">
                     <span className="text-amber-400 font-mono text-[9px] tracking-widest uppercase mb-2 block">
-                      {gallery.category?.title || 'Volume'}{frames ? ` · ${frames} frames` : ''}
+                      {gallery.category?.title || copy.uncategorized}{frames ? ` · ${copy.framesLabel.replace('{n}', String(frames))}` : ''}
                     </span>
                     <h2 className="text-white text-xl font-serif">{gallery.title}</h2>
                     {gallery.location && (

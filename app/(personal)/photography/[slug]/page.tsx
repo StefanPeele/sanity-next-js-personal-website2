@@ -10,6 +10,9 @@ import type { Metadata, ResolvingMetadata } from 'next'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getCopy } from '@/lib/cms/loaders'
+import { personalPagesQuery } from '@/sanity/lib/queries-services'
+import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -40,6 +43,7 @@ export async function generateStaticParams() {
 const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default async function AlbumPage({ params }: Props) {
+  const copy = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).photography.gallery
   const { slug } = await params
   const { data: gallery } = await sanityFetch({ query: galleryBySlugQuery, params: { slug } })
 
@@ -52,11 +56,11 @@ export default async function AlbumPage({ params }: Props) {
 
   // Only fields with data are rendered — nothing is invented.
   const readout = [
-    { label: 'Location', value: gallery.location },
-    { label: 'Frames', value: `${photos.length} ${photos.length === 1 ? 'capture' : 'captures'}` },
-    { label: 'Camera', value: gallery.system },
-    { label: 'Primary lens', value: gallery.lens },
-    { label: 'ISO', value: gallery.iso },
+    { label: copy.readoutLabels.location, value: gallery.location },
+    { label: copy.readoutLabels.frames, value: copy.framesLabel.replace('{n}', String(photos.length)) },
+    { label: copy.readoutLabels.camera, value: gallery.system },
+    { label: copy.readoutLabels.lens, value: gallery.lens },
+    { label: copy.readoutLabels.iso, value: gallery.iso },
   ].filter((r) => !!r.value)
 
   const jsonLd = {
@@ -76,15 +80,15 @@ export default async function AlbumPage({ params }: Props) {
       <div className="max-w-7xl mx-auto px-6 mb-20 relative z-10">
         <Link
           href="/photography/albums"
-          className={`inline-flex items-center gap-2 text-stone-400 font-mono text-[10px] tracking-[0.3em] uppercase hover:text-white transition-colors mb-16 ${FOCUS}`}
+          className={`inline-flex items-center gap-2 text-stone-400 font-sans text-sm hover:text-white transition-colors mb-16 ${FOCUS}`}
         >
-          <span aria-hidden="true">←</span> All albums
+          <span aria-hidden="true">←</span> {copy.backLabel}
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end border-b border-white/10 pb-16">
           <div className="lg:col-span-8">
             {gallery.category?.title && (
-              <span className="text-amber-400 font-mono text-[10px] tracking-[0.4em] uppercase mb-4 block">{gallery.category.title}</span>
+              <span className="text-amber-300 font-sans text-sm mb-4 block">{gallery.category.title}</span>
             )}
             <h1 className="text-5xl md:text-7xl font-serif tracking-tight text-white mb-6">{gallery.title}</h1>
             {gallery.overview && (
@@ -96,8 +100,8 @@ export default async function AlbumPage({ params }: Props) {
             <dl className="lg:col-span-4 grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
               {readout.map((r) => (
                 <div key={r.label}>
-                  <dt className="block text-stone-400 font-mono text-[8px] uppercase tracking-widest mb-1">{r.label}</dt>
-                  <dd className="block text-stone-200 font-mono text-[10px] uppercase tracking-wider m-0">{r.value}</dd>
+                  <dt className="block text-stone-400 font-sans text-xs mb-1">{r.label}</dt>
+                  <dd className="block text-stone-200 font-sans text-sm m-0">{r.value}</dd>
                 </div>
               ))}
             </dl>
@@ -105,8 +109,8 @@ export default async function AlbumPage({ params }: Props) {
         </div>
 
         {gallery.notes && (
-          <p className="mt-8 max-w-2xl font-mono text-xs text-stone-400 leading-relaxed">
-            <span className="uppercase tracking-widest text-stone-400 mr-2">Conditions —</span>{gallery.notes}
+          <p className="mt-8 max-w-2xl font-sans text-sm text-stone-400 leading-relaxed">
+            <span className="text-stone-300 mr-2">{copy.notesLabel}:</span>{gallery.notes}
           </p>
         )}
       </div>

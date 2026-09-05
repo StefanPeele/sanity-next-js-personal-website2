@@ -41,15 +41,10 @@ export function resolveHref(documentType?: string, slug?: string | null): string
     case 'glossaryTerm':
       return slug ? `/glossary#${slug}` : '/glossary'
     case 'blogPage': return '/blog'
-    case 'gardenPage': return '/garden'
-    case 'libraryPage': return '/library'
-    case 'projectsPage': return '/projects'
-    case 'resumePage': return '/resume'
-    case 'contactPage': return '/contact'
-    case 'nowPage': return '/now'
-    case 'usesPage': return '/uses'
-    case 'photographyPage': return '/photography'
     case 'servicesPage': return '/services'
+    case 'personalPages': return '/projects'
+    case 'knowledgePages': return '/garden'
+    case 'articleUi': return '/blog'
     case 'errorPages': return '/this-page-does-not-exist'
     default:
       return undefined

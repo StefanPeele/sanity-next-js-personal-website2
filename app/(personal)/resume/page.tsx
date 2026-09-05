@@ -8,11 +8,14 @@ import { PortableText } from '@portabletext/react'
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
+import { getCopy } from '@/lib/cms/loaders'
+import { personalPagesQuery } from '@/sanity/lib/queries-services'
+import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
+import { getSettings } from '@/lib/cms/loaders'
 
-export const metadata: Metadata = {
-  title: 'Resume',
-  description: `${SITE.name} — B.S. Information Technology (Security) at NJIT, network engineer associate intern. Experience, skills, certifications and education.`,
-  alternates: { canonical: absoluteUrl('/resume') },
+export async function generateMetadata(): Promise<Metadata> {
+  const h = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).resume.header
+  return { title: h.metaTitle || h.title, description: h.metaDescription || h.lede }
 }
 
 type Skill = ResumeQueryResult['skills'][number]
@@ -83,18 +86,19 @@ function CertRow({ cert }: { cert: Cert }) {
 }
 
 export default async function ResumePage() {
+  const [copy, siteSettings] = await Promise.all([getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES).then((c) => c.resume), getSettings()])
   const [{ data }, draft] = await Promise.all([sanityFetch({ query: resumeQuery }), draftMode()])
   const experiences = data?.experiences ?? []
   const skills = data?.skills ?? []
   const certifications = data?.certifications ?? []
-  const education = data?.education?.length ? data.education : [{ _id: 'fallback', ...FALLBACK_EDUCATION, startDate: null, details: null }]
+  const education = data?.education?.length ? data.education : [{ _id: 'fallback', ...FALLBACK_EDUCATION, ...copy.fallbackEducation, startDate: null, details: null }]
   const page = data?.page
   // home.title is the site title; only use it as the person's name when it reads like one.
   const rawTitle = data?.home?.title?.trim()
   const name = rawTitle && !/[|—–:/]/.test(rawTitle) && rawTitle.split(/\s+/).length <= 4 ? rawTitle : SITE.legalName
   const lastUpdated = formatDate(page?._updatedAt, 'short', 'Recently')
 
-  const skillGroups = CATEGORY_ORDER
+  const skillGroups = (copy.skillCategoryOrder.length ? copy.skillCategoryOrder : CATEGORY_ORDER)
     .map((cat) => ({ cat, items: skills.filter((s) => (s.category ?? 'Other') === cat) }))
     .filter((g) => g.items.length > 0)
   const earned = certifications.filter((c) => c.status === 'earned')
@@ -112,34 +116,30 @@ export default async function ResumePage() {
         <div className="lg:col-span-8">
           <header className="mb-20 print:mb-8">
             <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-              <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 print:text-gray-600 block">
-                Curriculum vitae
-              </span>
-              <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400 print:text-gray-600">
-                Last updated {lastUpdated}
-              </span>
+              <span className="section-label print:text-gray-600">{copy.header.title}</span>
+              <span className="font-sans text-sm text-stone-400 print:text-gray-600">{copy.lastUpdatedLabel} {lastUpdated}</span>
             </div>
 
             <h1 className="text-6xl md:text-8xl font-serif font-bold tracking-tight text-white print:text-black leading-none">
               {nameParts[0]}{lastName && <><br />{lastName}</>}<span className="text-stone-500 print:text-gray-400">.</span>
             </h1>
             <p className="mt-6 max-w-xl text-stone-300 print:text-gray-800 text-sm md:text-base leading-relaxed">
-              {data?.home?.currently ?? 'Network engineer associate intern and B.S. IT (Security) student at NJIT.'}
+              {data?.home?.currently ?? copy.fallbackTagline}
               {data?.home?.location && <span className="text-stone-400 print:text-gray-600"> · {data.home.location}</span>}
             </p>
-            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[10px] uppercase tracking-widest text-stone-400 print:text-gray-700">
-              <a href={`mailto:${SITE.email}`} className={`hover:text-white ${FOCUS}`}>{SITE.email}</a>
-              <a href={SITE.handles.github} className={`hover:text-white ${FOCUS}`} target="_blank" rel="noopener noreferrer me">github.com/StefanPeele</a>
+            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-sans text-sm text-stone-400 print:text-gray-700">
+              {copy.showEmail && <a href={`mailto:${siteSettings.email || SITE.email}`} className={`hover:text-white ${FOCUS}`}>{siteSettings.email || SITE.email}</a>}
+              {copy.showGithub && (siteSettings.github || SITE.handles.github) && <a href={siteSettings.github || SITE.handles.github} className={`hover:text-white ${FOCUS}`} target="_blank" rel="noopener noreferrer me">{(siteSettings.github || SITE.handles.github).replace(/^https?:\/\//, '')}</a>}
               <span className="hidden print:inline">{SITE.url.replace(/^https?:\/\//, '')}</span>
             </div>
           </header>
 
           <section aria-labelledby="experience-heading">
-            <h2 id="experience-heading" className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 print:text-gray-600 mb-8 font-sans">
-              Experience
+            <h2 id="experience-heading" className="section-label print:text-gray-600 mb-8">
+              {copy.sectionLabels.experience}
             </h2>
             {experiences.length === 0 && (
-              <p className="text-stone-400 text-sm">No roles published yet.</p>
+              <p className="text-stone-400 text-sm">{copy.emptyExperience}</p>
             )}
             <ol className="space-y-14 border-l border-stone-800 print:border-gray-300 ml-1 list-none m-0 p-0">
               {experiences.map((job) => (
@@ -188,11 +188,11 @@ export default async function ResumePage() {
         <aside className="lg:col-span-4 space-y-10">
 
           <section aria-labelledby="skills-heading" className="bg-white/5 border border-white/5 p-8 rounded-lg print:border-gray-300 print:bg-transparent print:p-0">
-            <h2 id="skills-heading" className="font-mono text-[10px] tracking-[0.4em] uppercase text-white print:text-black mb-6 border-b border-white/10 print:border-gray-300 pb-4 font-sans">
+            <h2 id="skills-heading" className="section-label print:text-black mb-6 border-b border-white/10 print:border-gray-300 pb-4 font-sans">
               Skills
             </h2>
             {skillGroups.length === 0 ? (
-              <p className="text-xs text-stone-400">No skills published yet.</p>
+              <p className="text-xs text-stone-400">{copy.emptySkills}</p>
             ) : (
               <div className="space-y-6">
                 {skillGroups.map((group) => (
@@ -222,7 +222,7 @@ export default async function ResumePage() {
                   </div>
                 ))}
                 <p className="font-mono text-[8px] uppercase tracking-widest text-stone-400 print:hidden">
-                  Dots: learning · working · proficient · deep
+                  {copy.levelsLegend}
                 </p>
               </div>
             )}
@@ -230,24 +230,24 @@ export default async function ResumePage() {
 
           {certifications.length > 0 && (
             <section aria-labelledby="certs-heading" className="px-2">
-              <h2 id="certs-heading" className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 print:text-gray-600 mb-4 font-sans">
-                Certifications
+              <h2 id="certs-heading" className="section-label print:text-gray-600 mb-4">
+                {copy.sectionLabels.certifications}
               </h2>
               {earned.length > 0 && (
                 <>
-                  <h3 className="font-mono text-[9px] uppercase tracking-[0.3em] text-emerald-400 print:text-black mt-4 mb-1 font-sans">Earned</h3>
+                  <h3 className="font-mono text-[9px] uppercase tracking-[0.3em] text-emerald-400 print:text-black mt-4 mb-1 font-sans">{copy.certStatusLabels.earned}</h3>
                   <ul className="list-none m-0 p-0">{earned.map((c) => <CertRow key={c._id} cert={c} />)}</ul>
                 </>
               )}
               {inProgress.length > 0 && (
                 <>
-                  <h3 className="font-mono text-[9px] uppercase tracking-[0.3em] text-amber-400 print:text-black mt-4 mb-1 font-sans">In progress</h3>
+                  <h3 className="font-mono text-[9px] uppercase tracking-[0.3em] text-amber-400 print:text-black mt-4 mb-1 font-sans">{copy.certStatusLabels.inProgress}</h3>
                   <ul className="list-none m-0 p-0">{inProgress.map((c) => <CertRow key={c._id} cert={c} />)}</ul>
                 </>
               )}
               {planned.length > 0 && (
                 <>
-                  <h3 className="font-mono text-[9px] uppercase tracking-[0.3em] text-stone-400 print:text-black mt-4 mb-1 font-sans">Planned</h3>
+                  <h3 className="font-mono text-[9px] uppercase tracking-[0.3em] text-stone-400 print:text-black mt-4 mb-1 font-sans">{copy.certStatusLabels.planned}</h3>
                   <ul className="list-none m-0 p-0">{planned.map((c) => <CertRow key={c._id} cert={c} />)}</ul>
                 </>
               )}
@@ -258,14 +258,14 @@ export default async function ResumePage() {
             <section className="px-2" aria-labelledby="directive-heading">
               <h2 id="directive-heading" className="font-mono flex items-center gap-2 text-[9px] text-stone-400 print:text-gray-600 uppercase tracking-widest mb-3 font-sans">
                 <span className="w-1.5 h-1.5 bg-amber-400 rounded-full print:bg-black" aria-hidden="true" />
-                Currently learning
+                {copy.sectionLabels.currently}
               </h2>
               <p className="text-xs text-stone-300 print:text-black leading-relaxed">{page.activeDirective}</p>
             </section>
           )}
 
           <section className="px-2" aria-labelledby="education-heading">
-            <h2 id="education-heading" className="font-mono text-[9px] text-stone-400 print:text-gray-600 uppercase tracking-widest mb-3 font-sans">Education</h2>
+            <h2 id="education-heading" className="font-mono text-[9px] text-stone-400 print:text-gray-600 uppercase tracking-widest mb-3 font-sans">{copy.sectionLabels.education}</h2>
             <ul className="space-y-4 list-none m-0 p-0">
               {education.map((ed) => (
                 <li key={ed._id}>
@@ -273,7 +273,7 @@ export default async function ResumePage() {
                   <p className="text-xs text-stone-400 print:text-gray-700">{[ed.degree, ed.field].filter(Boolean).join(' ')}</p>
                   {ed.endDate && (
                     <p className="text-[10px] font-mono uppercase tracking-widest text-stone-400 print:text-gray-600 mt-1">
-                      {ed.expected ? 'Expected ' : ''}{formatDate(ed.endDate, 'month')}
+                      {ed.expected ? `${copy.expectedLabel} ` : ''}{formatDate(ed.endDate, 'month')}
                     </p>
                   )}
                   {ed.details && ed.details.length > 0 && (
@@ -290,22 +290,22 @@ export default async function ResumePage() {
 
           {page?.resumeUrl ? (
             <div className="p-8 border border-dashed border-stone-700 rounded-lg text-center hover:border-stone-400 transition-colors print:hidden">
-              <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest mb-4">Hard copy</p>
+              <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest mb-4">{copy.sectionLabels.hardCopy}</p>
               <a
                 href={`${page.resumeUrl}?dl=Stefan_Peele_Resume.pdf`}
                 className={`inline-block bg-white text-black font-mono text-[10px] tracking-[0.2em] uppercase px-8 py-4 rounded-sm hover:bg-stone-200 transition-colors ${FOCUS}`}
               >
-                Download PDF →
+                {copy.downloadLabel} →
               </a>
             </div>
           ) : draft.isEnabled ? (
             <p className="font-mono text-[9px] text-amber-400 uppercase tracking-widest px-2 print:hidden">
-              Draft mode: upload a PDF to the “resume” page document to enable Download.
+              {copy.draftHint}
             </p>
           ) : null}
 
           <p className="px-2 font-mono text-[9px] uppercase tracking-widest text-stone-400 print:hidden">
-            Want to talk? <Link href="/contact" className={`text-stone-200 hover:text-white underline underline-offset-4 ${FOCUS}`}>Contact</Link>
+            {copy.contactPrompt.label} <Link href="/contact" className={`text-stone-200 hover:text-white underline underline-offset-4 ${FOCUS}`}>{copy.contactPrompt.ctaLabel}</Link>
           </p>
         </aside>
       </div>

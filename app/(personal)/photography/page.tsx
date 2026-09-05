@@ -11,11 +11,13 @@ import { sanityFetch } from '@/sanity/lib/live'
 import { categoriesQuery, galleriesQuery } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { getCopy } from '@/lib/cms/loaders'
+import { personalPagesQuery } from '@/sanity/lib/queries-services'
+import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 
-export const metadata: Metadata = {
-  title: 'Photography',
-  description: 'Sports, portraits, graduation and event photography by Stefan Peele — recent frames from the archive, with albums and booking.',
-  alternates: { canonical: absoluteUrl('/photography') },
+export async function generateMetadata(): Promise<Metadata> {
+  const h = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).photography.index.header
+  return { title: h.metaTitle || h.title, description: h.metaDescription || h.lede }
 }
 
 const RECENT_LIMIT = 15
@@ -26,6 +28,7 @@ function categoryKey(slug?: string | null, title?: string | null): string {
 }
 
 export default async function PhotographyPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+  const copy = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).photography.index
   const { category } = await searchParams
   const active = category ? category.toLowerCase() : null
 
@@ -46,22 +49,18 @@ export default async function PhotographyPage({ searchParams }: { searchParams: 
   return (
     <div className="min-h-screen text-stone-50 pb-20 relative">
       <section className="relative z-20 flex flex-col items-center justify-center pt-24 pb-12 text-center px-6">
-        <span className="text-stone-400 font-mono text-[10px] tracking-[0.4em] uppercase mb-6 block">
-          Visual archive · {galleries.length} {galleries.length === 1 ? 'album' : 'albums'} · {totalFrames} frames
-        </span>
-        <h1 className="text-5xl md:text-6xl font-serif text-white mb-6 tracking-wide">The Gallery</h1>
-        <p className="text-stone-400 font-mono text-[10px] md:text-[11px] tracking-[0.25em] uppercase max-w-xl mx-auto leading-relaxed mb-8">
-          Sports, portraits, graduations and live events — shot in and around Newark, NJ.
-        </p>
+        <h1 className="text-5xl md:text-6xl font-serif text-white mb-4 tracking-wide">{copy.header.title}</h1>
+        <p className="text-stone-400 font-sans text-base max-w-xl mx-auto leading-relaxed mb-3">{copy.header.lede}</p>
+        <p className="text-stone-500 font-sans text-sm mb-8">{copy.countLine.replace('{albums}', String(galleries.length)).replace('{frames}', String(totalFrames))}</p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative">
           <Link
             href="/photography/albums"
-            className={`flex items-center justify-center px-6 py-3 border border-stone-700/50 hover:border-stone-400 bg-stone-900/50 backdrop-blur-md rounded-full text-stone-300 hover:text-white transition-all duration-500 text-xs tracking-[0.2em] uppercase font-semibold ${FOCUS}`}
+            className={`flex items-center justify-center px-6 py-3 border border-stone-700/50 hover:border-stone-400 bg-stone-900/50 backdrop-blur-md rounded-full text-stone-300 hover:text-white transition-all duration-500 text-sm font-sans ${FOCUS}`}
           >
-            See all albums
+            {copy.albumsCta}
           </Link>
-          <BookingSection triggerLabel="Book a session" />
+          <BookingSection triggerLabel={copy.bookCta} />
         </div>
       </section>
 
@@ -98,8 +97,8 @@ export default async function PhotographyPage({ searchParams }: { searchParams: 
 
       <section className="relative z-10 w-full min-h-[50vh] mb-24" aria-labelledby="recent-heading">
         <div className="max-w-7xl mx-auto px-6 mb-12 flex flex-col items-center text-center">
-          <h2 id="recent-heading" className="text-xs font-mono tracking-[0.4em] uppercase text-stone-400 mb-6 font-sans">
-            {activeCategory ? `Recent · ${activeCategory.title}` : 'Recent captures'}
+          <h2 id="recent-heading" className="section-label mb-6">
+            {activeCategory ? copy.recentWithCategory.replace('{category}', activeCategory.title ?? '') : copy.recentHeading}
           </h2>
           <div className="w-px h-16 bg-gradient-to-b from-stone-500/50 to-transparent" aria-hidden="true" />
         </div>
@@ -107,7 +106,7 @@ export default async function PhotographyPage({ searchParams }: { searchParams: 
         {filtered.length > 0 && (
           <div className="text-center mt-16">
             <Link href="/photography/albums" className={`font-mono text-[10px] uppercase tracking-[0.3em] text-stone-300 hover:text-white border-b border-stone-700 hover:border-white pb-1 transition-colors ${FOCUS}`}>
-              Browse every album →
+              {copy.browseAllLabel} →
             </Link>
           </div>
         )}

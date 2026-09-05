@@ -29,6 +29,320 @@ export type EmptyState = {
   hint?: string
 }
 
+export type ServicesPage = {
+  _id: string
+  _type: 'servicesPage'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  header?: {
+    title?: string
+    lede?: string
+    metaTitle?: string
+    metaDescription?: string
+  }
+  stats?: Array<
+    {
+      _key: string
+    } & LabelValue
+  >
+  packages?: SectionCopy
+  tabLabels?: {
+    portrait?: string
+    event?: string
+    specialty?: string
+  }
+  njitToggle?: {
+    label?: string
+    offText?: string
+    idNote?: string
+    savingsCopy?: {
+      portrait?: string
+      event?: string
+      specialty?: string
+    }
+  }
+  standardDelivery?: {
+    heading?: string
+    items?: Array<{
+      title?: string
+      description?: string
+      _type: 'deliveryItem'
+      _key: string
+    }>
+  }
+  packageCard?: {
+    startingAt?: string
+    njitRate?: string
+    publicLabel?: string
+    deliveryLabel?: string
+    idealFor?: string
+    includes?: string
+    includesNote?: string
+    expandingSoon?: string
+    expandingSoonNote?: string
+    recommended?: string
+    available?: string
+    wip?: string
+    consultLabel?: string
+    inquiryLabel?: string
+    addOnsHeading?: string
+    addOnsLede?: string
+    inquiryHeading?: string
+    inquiryLede?: string
+    inquiryEyebrow?: string
+  }
+  physicalProducts?: {
+    enabled?: boolean
+    heading?: string
+    lede?: string
+    tiers?: Array<{
+      tier?: string
+      label?: string
+      description?: string
+      _type: 'tier'
+      _key: string
+    }>
+    includedLabel?: string
+    note?: string
+    noteSub?: string
+    chooserLabels?: {
+      core?: string
+      premium?: string
+      final?: string
+    }
+  }
+  promise?: {
+    enabled?: boolean
+    heading?: string
+    pillars?: Array<{
+      label?: string
+      body?: string
+      _type: 'pillar'
+      _key: string
+    }>
+    guarantee?: {
+      label?: string
+      headline?: string
+      subline?: string
+    }
+  }
+  faq?: {
+    enabled?: boolean
+    heading?: string
+    items?: Array<
+      {
+        _key: string
+      } & FaqItem
+    >
+  }
+  testimonials?: SectionCopy
+  booking?: {
+    heading?: string
+    intro?: string
+    successTitle?: string
+    successBody?: string
+    namePlaceholder?: string
+    emailPlaceholder?: string
+    phonePlaceholder?: string
+    packagePlaceholder?: string
+    notSureLabel?: string
+    expandingSoonSuffix?: string
+    expandingSoonNote?: string
+    availabilityPlaceholder?: string
+    njitCheckbox?: string
+    njitNote?: string
+    addOnsLabel?: string
+    selectedLabel?: string
+    messagePlaceholder?: string
+    submitLabel?: string
+    sendingLabel?: string
+    closeLabel?: string
+    triggerLabel?: string
+    packageError?: string
+    genericError?: string
+  }
+}
+
+export type SectionCopy = {
+  _type: 'sectionCopy'
+  enabled?: boolean
+  heading?: string
+  lede?: string
+  ctaLabel?: string
+  ctaHref?: string
+  emptyState?: string
+}
+
+export type PersonalPages = {
+  _id: string
+  _type: 'personalPages'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  projects?: {
+    header?: PageHeader
+    emptyState?: string
+    card?: {
+      featuredBadge?: string
+      outcomeLabel?: string
+      presentLabel?: string
+      noCoverLabel?: string
+      techLabel?: string
+    }
+    detail?: {
+      eyebrow?: string
+      metaLabels?: {
+        timeline?: string
+        client?: string
+        role?: string
+        tags?: string
+      }
+      sectionLabels?: {
+        problem?: string
+        constraints?: string
+        approach?: string
+        outcome?: string
+        metrics?: string
+        retrospective?: string
+        stack?: string
+        architecture?: string
+        relatedWriting?: string
+        relatedNotes?: string
+      }
+      linkLabels?: {
+        code?: string
+        docs?: string
+        board?: string
+        live?: string
+      }
+      backLabel?: string
+    }
+  }
+  resume?: {
+    header?: PageHeader
+    fallbackTagline?: string
+    lastUpdatedLabel?: string
+    sectionLabels?: {
+      experience?: string
+      skills?: string
+      certifications?: string
+      education?: string
+      currently?: string
+      hardCopy?: string
+    }
+    emptyExperience?: string
+    emptySkills?: string
+    levelsLegend?: string
+    certStatusLabels?: {
+      earned?: string
+      inProgress?: string
+      planned?: string
+      target?: string
+    }
+    presentLabel?: string
+    expectedLabel?: string
+    downloadLabel?: string
+    draftHint?: string
+    contactPrompt?: {
+      label?: string
+      ctaLabel?: string
+    }
+    skillCategoryOrder?: Array<string>
+    fallbackEducation?: {
+      school?: string
+      degree?: string
+      field?: string
+      endDate?: string
+      expected?: boolean
+    }
+    showEmail?: boolean
+    showGithub?: boolean
+  }
+  contact?: {
+    header?: PageHeader
+    formHeading?: string
+    channelsHeading?: string
+    recruiterNote?: string
+    photoCta?: SectionCopy
+    basedInLine?: string
+    channelLabels?: {
+      email?: string
+      linkedin?: string
+      github?: string
+      instagram?: string
+      bluesky?: string
+    }
+    instagramHandle?: string
+  }
+  now?: {
+    header?: PageHeader
+    blockLabels?: {
+      projects?: string
+      certs?: string
+      reading?: string
+      notes?: string
+      posts?: string
+    }
+    updatedLabel?: string
+    targetLabel?: string
+    nowLinkLabel?: string
+    emptyState?: string
+  }
+  uses?: {
+    header?: PageHeader
+    sections?: Array<
+      {
+        _key: string
+      } & UsesSection
+    >
+    emptyState?: string
+  }
+  photography?: {
+    index?: {
+      header?: PageHeader
+      countLine?: string
+      albumsCta?: string
+      bookCta?: string
+      recentHeading?: string
+      recentWithCategory?: string
+      browseAllLabel?: string
+      filterAllLabel?: string
+    }
+    albums?: {
+      title?: string
+      subtitle?: string
+      metaDescription?: string
+      framesLabel?: string
+      uncategorized?: string
+    }
+    gallery?: {
+      backLabel?: string
+      readoutLabels?: {
+        location?: string
+        frames?: string
+        camera?: string
+        lens?: string
+        iso?: string
+      }
+      framesLabel?: string
+      notesLabel?: string
+    }
+    loader?: {
+      label?: string
+      skipLabel?: string
+    }
+  }
+}
+
+export type PageHeader = {
+  _type: 'pageHeader'
+  title?: string
+  lede?: string
+  metaTitle?: string
+  metaDescription?: string
+}
+
 export type KnowledgePages = {
   _id: string
   _type: 'knowledgePages'
@@ -153,14 +467,6 @@ export type KnowledgePages = {
   }
 }
 
-export type PageHeader = {
-  _type: 'pageHeader'
-  title?: string
-  lede?: string
-  metaTitle?: string
-  metaDescription?: string
-}
-
 export type BlogPage = {
   _id: string
   _type: 'blogPage'
@@ -216,16 +522,6 @@ export type BlogPage = {
     clearLabel?: string
     postCount?: string
   }
-}
-
-export type SectionCopy = {
-  _type: 'sectionCopy'
-  enabled?: boolean
-  heading?: string
-  lede?: string
-  ctaLabel?: string
-  ctaHref?: string
-  emptyState?: string
 }
 
 export type ArticleUi = {
@@ -1890,10 +2186,12 @@ export type Geopoint = {
 
 export type AllSanitySchemaTypes =
   | EmptyState
-  | KnowledgePages
-  | PageHeader
-  | BlogPage
+  | ServicesPage
   | SectionCopy
+  | PersonalPages
+  | PageHeader
+  | KnowledgePages
+  | BlogPage
   | ArticleUi
   | ErrorPages
   | PageReference
@@ -2734,6 +3032,352 @@ export type GardenHealthQueryResult = {
     title: string | null
   }>
 }
+
+// Source: sanity/lib/queries-services.ts
+// Variable: servicesPageQuery
+// Query: *[_type == "servicesPage"][0]{    header{ title, lede, metaTitle, metaDescription },    "stats": stats[]{ _key, label, value, valueSource },    packages{ enabled, heading, lede, ctaLabel, ctaHref, emptyState },    tabLabels{ portrait, event, specialty },    njitToggle{ label, offText, idNote, savingsCopy{ portrait, event, specialty } },    standardDelivery{ heading, "items": items[]{ _key, title, description } },    packageCard{ startingAt, njitRate, publicLabel, deliveryLabel, idealFor, includes, includesNote, expandingSoon, expandingSoonNote, recommended, available, wip, consultLabel, inquiryLabel, addOnsHeading, addOnsLede, inquiryHeading, inquiryLede, inquiryEyebrow },    physicalProducts{ enabled, heading, lede, "tiers": tiers[]{ _key, tier, label, description }, includedLabel, note, noteSub, chooserLabels{ core, premium, final } },    promise{ enabled, heading, "pillars": pillars[]{ _key, label, body }, guarantee{ label, headline, subline } },    faq{ enabled, heading, "items": items[]{ _key, question, answer } },    testimonials{ enabled, heading, lede, ctaLabel, ctaHref, emptyState },    booking{ heading, intro, successTitle, successBody, namePlaceholder, emailPlaceholder, phonePlaceholder, packagePlaceholder, notSureLabel, expandingSoonSuffix, expandingSoonNote, availabilityPlaceholder, njitCheckbox, njitNote, addOnsLabel, selectedLabel, messagePlaceholder, submitLabel, sendingLabel, closeLabel, triggerLabel, packageError, genericError }  }
+export type ServicesPageQueryResult = {
+  header: {
+    title: string | null
+    lede: string | null
+    metaTitle: string | null
+    metaDescription: string | null
+  } | null
+  stats: Array<{
+    _key: string
+    label: string | null
+    value: string | null
+    valueSource: 'lowestNjit' | 'portraitFrom' | 'static' | null
+  }> | null
+  packages: {
+    enabled: boolean | null
+    heading: string | null
+    lede: string | null
+    ctaLabel: string | null
+    ctaHref: string | null
+    emptyState: string | null
+  } | null
+  tabLabels: {
+    portrait: string | null
+    event: string | null
+    specialty: string | null
+  } | null
+  njitToggle: {
+    label: string | null
+    offText: string | null
+    idNote: string | null
+    savingsCopy: {
+      portrait: string | null
+      event: string | null
+      specialty: string | null
+    } | null
+  } | null
+  standardDelivery: {
+    heading: string | null
+    items: Array<{
+      _key: string
+      title: string | null
+      description: string | null
+    }> | null
+  } | null
+  packageCard: {
+    startingAt: string | null
+    njitRate: string | null
+    publicLabel: string | null
+    deliveryLabel: string | null
+    idealFor: string | null
+    includes: string | null
+    includesNote: string | null
+    expandingSoon: string | null
+    expandingSoonNote: string | null
+    recommended: string | null
+    available: string | null
+    wip: string | null
+    consultLabel: string | null
+    inquiryLabel: string | null
+    addOnsHeading: string | null
+    addOnsLede: string | null
+    inquiryHeading: string | null
+    inquiryLede: string | null
+    inquiryEyebrow: string | null
+  } | null
+  physicalProducts: {
+    enabled: boolean | null
+    heading: string | null
+    lede: string | null
+    tiers: Array<{
+      _key: string
+      tier: string | null
+      label: string | null
+      description: string | null
+    }> | null
+    includedLabel: string | null
+    note: string | null
+    noteSub: string | null
+    chooserLabels: {
+      core: string | null
+      premium: string | null
+      final: string | null
+    } | null
+  } | null
+  promise: {
+    enabled: boolean | null
+    heading: string | null
+    pillars: Array<{
+      _key: string
+      label: string | null
+      body: string | null
+    }> | null
+    guarantee: {
+      label: string | null
+      headline: string | null
+      subline: string | null
+    } | null
+  } | null
+  faq: {
+    enabled: boolean | null
+    heading: string | null
+    items: Array<{
+      _key: string
+      question: string | null
+      answer: string | null
+    }> | null
+  } | null
+  testimonials: {
+    enabled: boolean | null
+    heading: string | null
+    lede: string | null
+    ctaLabel: string | null
+    ctaHref: string | null
+    emptyState: string | null
+  } | null
+  booking: {
+    heading: string | null
+    intro: string | null
+    successTitle: string | null
+    successBody: string | null
+    namePlaceholder: string | null
+    emailPlaceholder: string | null
+    phonePlaceholder: string | null
+    packagePlaceholder: string | null
+    notSureLabel: string | null
+    expandingSoonSuffix: string | null
+    expandingSoonNote: string | null
+    availabilityPlaceholder: string | null
+    njitCheckbox: string | null
+    njitNote: string | null
+    addOnsLabel: string | null
+    selectedLabel: string | null
+    messagePlaceholder: string | null
+    submitLabel: string | null
+    sendingLabel: string | null
+    closeLabel: string | null
+    triggerLabel: string | null
+    packageError: string | null
+    genericError: string | null
+  } | null
+} | null
+
+// Source: sanity/lib/queries-services.ts
+// Variable: personalPagesQuery
+// Query: *[_type == "personalPages"][0]{    projects{ header{ title, lede, metaTitle, metaDescription }, emptyState,      card{ featuredBadge, outcomeLabel, presentLabel, noCoverLabel, techLabel },      detail{ eyebrow, metaLabels{ timeline, client, role, tags }, sectionLabels{ problem, constraints, approach, outcome, metrics, retrospective, stack, architecture, relatedWriting, relatedNotes }, linkLabels{ code, docs, board, live }, backLabel } },    resume{ header{ title, lede, metaTitle, metaDescription }, fallbackTagline, lastUpdatedLabel,      sectionLabels{ experience, skills, certifications, education, currently, hardCopy },      emptyExperience, emptySkills, levelsLegend, certStatusLabels{ earned, inProgress, planned, target },      presentLabel, expectedLabel, downloadLabel, draftHint, contactPrompt{ label, ctaLabel },      skillCategoryOrder, fallbackEducation{ school, degree, field, endDate, expected }, showEmail, showGithub },    contact{ header{ title, lede, metaTitle, metaDescription }, formHeading, channelsHeading, recruiterNote, photoCta{ enabled, heading, lede, ctaLabel, ctaHref, emptyState }, basedInLine,      channelLabels{ email, linkedin, github, instagram, bluesky }, instagramHandle },    now{ header{ title, lede, metaTitle, metaDescription }, blockLabels{ projects, certs, reading, notes, posts }, updatedLabel, targetLabel, nowLinkLabel, emptyState },    uses{ header{ title, lede, metaTitle, metaDescription }, "sections": sections[]{ _key, title, "items": items[]{ _key, name, note, url } }, emptyState },    photography{      index{ header{ title, lede, metaTitle, metaDescription }, countLine, albumsCta, bookCta, recentHeading, recentWithCategory, browseAllLabel, filterAllLabel },      albums{ title, subtitle, metaDescription, framesLabel, uncategorized },      gallery{ backLabel, readoutLabels{ location, frames, camera, lens, iso }, framesLabel, notesLabel },      loader{ label, skipLabel }    }  }
+export type PersonalPagesQueryResult = {
+  projects: {
+    header: {
+      title: string | null
+      lede: string | null
+      metaTitle: string | null
+      metaDescription: string | null
+    } | null
+    emptyState: string | null
+    card: {
+      featuredBadge: string | null
+      outcomeLabel: string | null
+      presentLabel: string | null
+      noCoverLabel: string | null
+      techLabel: string | null
+    } | null
+    detail: {
+      eyebrow: string | null
+      metaLabels: {
+        timeline: string | null
+        client: string | null
+        role: string | null
+        tags: string | null
+      } | null
+      sectionLabels: {
+        problem: string | null
+        constraints: string | null
+        approach: string | null
+        outcome: string | null
+        metrics: string | null
+        retrospective: string | null
+        stack: string | null
+        architecture: string | null
+        relatedWriting: string | null
+        relatedNotes: string | null
+      } | null
+      linkLabels: {
+        code: string | null
+        docs: string | null
+        board: string | null
+        live: string | null
+      } | null
+      backLabel: string | null
+    } | null
+  } | null
+  resume: {
+    header: {
+      title: string | null
+      lede: string | null
+      metaTitle: string | null
+      metaDescription: string | null
+    } | null
+    fallbackTagline: string | null
+    lastUpdatedLabel: string | null
+    sectionLabels: {
+      experience: string | null
+      skills: string | null
+      certifications: string | null
+      education: string | null
+      currently: string | null
+      hardCopy: string | null
+    } | null
+    emptyExperience: string | null
+    emptySkills: string | null
+    levelsLegend: string | null
+    certStatusLabels: {
+      earned: string | null
+      inProgress: string | null
+      planned: string | null
+      target: string | null
+    } | null
+    presentLabel: string | null
+    expectedLabel: string | null
+    downloadLabel: string | null
+    draftHint: string | null
+    contactPrompt: {
+      label: string | null
+      ctaLabel: string | null
+    } | null
+    skillCategoryOrder: Array<string> | null
+    fallbackEducation: {
+      school: string | null
+      degree: string | null
+      field: string | null
+      endDate: string | null
+      expected: boolean | null
+    } | null
+    showEmail: boolean | null
+    showGithub: boolean | null
+  } | null
+  contact: {
+    header: {
+      title: string | null
+      lede: string | null
+      metaTitle: string | null
+      metaDescription: string | null
+    } | null
+    formHeading: string | null
+    channelsHeading: string | null
+    recruiterNote: string | null
+    photoCta: {
+      enabled: boolean | null
+      heading: string | null
+      lede: string | null
+      ctaLabel: string | null
+      ctaHref: string | null
+      emptyState: string | null
+    } | null
+    basedInLine: string | null
+    channelLabels: {
+      email: string | null
+      linkedin: string | null
+      github: string | null
+      instagram: string | null
+      bluesky: string | null
+    } | null
+    instagramHandle: string | null
+  } | null
+  now: {
+    header: {
+      title: string | null
+      lede: string | null
+      metaTitle: string | null
+      metaDescription: string | null
+    } | null
+    blockLabels: {
+      projects: string | null
+      certs: string | null
+      reading: string | null
+      notes: string | null
+      posts: string | null
+    } | null
+    updatedLabel: string | null
+    targetLabel: string | null
+    nowLinkLabel: string | null
+    emptyState: string | null
+  } | null
+  uses: {
+    header: {
+      title: string | null
+      lede: string | null
+      metaTitle: string | null
+      metaDescription: string | null
+    } | null
+    sections: Array<{
+      _key: string
+      title: string | null
+      items: Array<{
+        _key: string
+        name: string | null
+        note: string | null
+        url: string | null
+      }> | null
+    }> | null
+    emptyState: string | null
+  } | null
+  photography: {
+    index: {
+      header: {
+        title: string | null
+        lede: string | null
+        metaTitle: string | null
+        metaDescription: string | null
+      } | null
+      countLine: string | null
+      albumsCta: string | null
+      bookCta: string | null
+      recentHeading: string | null
+      recentWithCategory: string | null
+      browseAllLabel: string | null
+      filterAllLabel: string | null
+    } | null
+    albums: {
+      title: string | null
+      subtitle: string | null
+      metaDescription: string | null
+      framesLabel: string | null
+      uncategorized: string | null
+    } | null
+    gallery: {
+      backLabel: string | null
+      readoutLabels: {
+        location: string | null
+        frames: string | null
+        camera: string | null
+        lens: string | null
+        iso: string | null
+      } | null
+      framesLabel: string | null
+      notesLabel: string | null
+    } | null
+    loader: {
+      label: string | null
+      skipLabel: string | null
+    } | null
+  } | null
+} | null
 
 // Source: sanity/lib/queries-site.ts
 // Variable: navigationQuery
@@ -4955,6 +5599,8 @@ declare module '@sanity/client' {
     '\n  *[_type == "note" && defined(slug.current)] | order(coalesce(lastTended, _updatedAt) desc) {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  }\n': NoteTitlesQueryResult
     '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    articleType,\n    conceptCards[]{ _key, front, back },\n    "quizzes": body[_type == "knowledgeQuiz"]{ _key, question, explanation, options[]{ _key, text, isCorrect } }\n  }\n': ReviewQueryResult
     '{\n  "seedlings": count(*[_type == "note" && status == "seedling"]),\n  "growing": count(*[_type == "note" && status == "growing"]),\n  "evergreen": count(*[_type == "note" && status == "evergreen"]),\n  "untended": *[_type == "note" && coalesce(lastTended, _updatedAt) < $cutoff] | order(coalesce(lastTended, _updatedAt) asc) {\n    _id, title, status, "lastTended": coalesce(lastTended, _updatedAt)\n  },\n  "postsWithoutTags": *[_type == "post" && count(tags) == 0] | order(publishedAt desc) { _id, title },\n  "orphanNotes": *[_type == "note" && count(relatedNotes) == 0 && count(relatedPosts) == 0 && count(*[_type in ["note","post"] && references(^._id)]) == 0] { _id, title, status },\n  "unusedTags": *[_type == "tag" && count(*[_type in ["note","post"] && references(^._id)]) == 0] { _id, title }\n}': GardenHealthQueryResult
+    '\n  *[_type == "servicesPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    "stats": stats[]{ _key, label, value, valueSource },\n    packages{ enabled, heading, lede, ctaLabel, ctaHref, emptyState },\n    tabLabels{ portrait, event, specialty },\n    njitToggle{ label, offText, idNote, savingsCopy{ portrait, event, specialty } },\n    standardDelivery{ heading, "items": items[]{ _key, title, description } },\n    packageCard{ startingAt, njitRate, publicLabel, deliveryLabel, idealFor, includes, includesNote, expandingSoon, expandingSoonNote, recommended, available, wip, consultLabel, inquiryLabel, addOnsHeading, addOnsLede, inquiryHeading, inquiryLede, inquiryEyebrow },\n    physicalProducts{ enabled, heading, lede, "tiers": tiers[]{ _key, tier, label, description }, includedLabel, note, noteSub, chooserLabels{ core, premium, final } },\n    promise{ enabled, heading, "pillars": pillars[]{ _key, label, body }, guarantee{ label, headline, subline } },\n    faq{ enabled, heading, "items": items[]{ _key, question, answer } },\n    testimonials{ enabled, heading, lede, ctaLabel, ctaHref, emptyState },\n    booking{ heading, intro, successTitle, successBody, namePlaceholder, emailPlaceholder, phonePlaceholder, packagePlaceholder, notSureLabel, expandingSoonSuffix, expandingSoonNote, availabilityPlaceholder, njitCheckbox, njitNote, addOnsLabel, selectedLabel, messagePlaceholder, submitLabel, sendingLabel, closeLabel, triggerLabel, packageError, genericError }\n  }\n': ServicesPageQueryResult
+    '\n  *[_type == "personalPages"][0]{\n    projects{ header{ title, lede, metaTitle, metaDescription }, emptyState,\n      card{ featuredBadge, outcomeLabel, presentLabel, noCoverLabel, techLabel },\n      detail{ eyebrow, metaLabels{ timeline, client, role, tags }, sectionLabels{ problem, constraints, approach, outcome, metrics, retrospective, stack, architecture, relatedWriting, relatedNotes }, linkLabels{ code, docs, board, live }, backLabel } },\n    resume{ header{ title, lede, metaTitle, metaDescription }, fallbackTagline, lastUpdatedLabel,\n      sectionLabels{ experience, skills, certifications, education, currently, hardCopy },\n      emptyExperience, emptySkills, levelsLegend, certStatusLabels{ earned, inProgress, planned, target },\n      presentLabel, expectedLabel, downloadLabel, draftHint, contactPrompt{ label, ctaLabel },\n      skillCategoryOrder, fallbackEducation{ school, degree, field, endDate, expected }, showEmail, showGithub },\n    contact{ header{ title, lede, metaTitle, metaDescription }, formHeading, channelsHeading, recruiterNote, photoCta{ enabled, heading, lede, ctaLabel, ctaHref, emptyState }, basedInLine,\n      channelLabels{ email, linkedin, github, instagram, bluesky }, instagramHandle },\n    now{ header{ title, lede, metaTitle, metaDescription }, blockLabels{ projects, certs, reading, notes, posts }, updatedLabel, targetLabel, nowLinkLabel, emptyState },\n    uses{ header{ title, lede, metaTitle, metaDescription }, "sections": sections[]{ _key, title, "items": items[]{ _key, name, note, url } }, emptyState },\n    photography{\n      index{ header{ title, lede, metaTitle, metaDescription }, countLine, albumsCta, bookCta, recentHeading, recentWithCategory, browseAllLabel, filterAllLabel },\n      albums{ title, subtitle, metaDescription, framesLabel, uncategorized },\n      gallery{ backLabel, readoutLabels{ location, frames, camera, lens, iso }, framesLabel, notesLabel },\n      loader{ label, skipLabel }\n    }\n  }\n': PersonalPagesQueryResult
     '\n  *[_type == "navigation"][0]{\n    logoText,\n    drawerFooterLine,\n    "primary": primary[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "learningPath" => "/paths/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n },\n    "secondary": secondary[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "learningPath" => "/paths/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n },\n    "searchQuickLinks": searchQuickLinks[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "learningPath" => "/paths/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n }\n  }\n': NavigationQueryResult
     '\n  *[_type == "settings"][0]{\n    siteName, legalName, tagline, description, keywords, jobTitle, knowsAbout,\n    location{ city, region }, school, bookingEmail, openTo,\n    email, github, linkedin, trello, instagram, bluesky, gitbook, calendlyUrl,\n    footer{ ctaLabel, directoryHeading, networkHeading, copyrightNote,\n      networkLabels{ email, github, linkedin, gitbook, instagram, bluesky, trello, rss } },\n    newsletter{ heading, blurb, placeholder, buttonLabel, successMessage, hint },\n    footerHeadlinePrefix, footerHeadlineHighlight, footerHeadlineSuffix,\n    ogImage{ ..., "url": asset->url }\n  }\n': SiteSettingsCopyQueryResult
     '\n  *[_type == "taxonomy"][0]{\n    "articleLanes": articleLanes[]{ _key, key, label, short, description, banner, color, dots },\n    "noteStatuses": noteStatuses[]{ _key, key, label, short, description, banner, color, dots },\n    "noteOrigins": noteOrigins[]{ _key, key, label, short, description, banner, color, dots },\n    "mediaTypes": mediaTypes[]{ _key, key, label, short, description, banner, color, dots },\n    "libraryStatuses": libraryStatuses[]{ _key, key, label, short, description, banner, color, dots },\n    "skillLevels": skillLevels[]{ _key, key, label, short, description, banner, color, dots },\n    "packageCategories": packageCategories[]{ _key, key, label, short, description, banner, color, dots }\n  }\n': TaxonomyQueryResult

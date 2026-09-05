@@ -9,16 +9,19 @@ import { projectsQuery } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { toPlainText } from 'next-sanity'
+import { getCopy } from '@/lib/cms/loaders'
+import { personalPagesQuery } from '@/sanity/lib/queries-services'
+import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 
-export const metadata: Metadata = {
-  title: 'Projects',
-  description: 'Network, storage, Active Directory and automation case studies by Stefan Peele — the problem, the constraints, the approach and the measured outcome.',
-  alternates: { canonical: absoluteUrl('/projects') },
+export async function generateMetadata(): Promise<Metadata> {
+  const h = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).projects.header
+  return { title: h.metaTitle || h.title, description: h.metaDescription || h.lede }
 }
 
 const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default async function ProjectsIndexRoute() {
+  const copy = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).projects
   const { data: projects } = await sanityFetch({ query: projectsQuery })
   const sorted = [...projects].sort((a, b) => Number(!!b.featured) - Number(!!a.featured))
   const repos = await getRepoMetaMap(sorted.map((p) => p.githubUrl))
@@ -27,22 +30,17 @@ export default async function ProjectsIndexRoute() {
     <div className="w-full min-h-screen text-stone-300 pb-24">
       <div className="max-w-6xl mx-auto pt-24 space-y-12">
         <div className="border-b border-white/5 pb-12">
-          <span className="text-stone-400 font-mono text-[10px] tracking-[0.4em] uppercase border-l border-stone-700 pl-4 mb-4 block">
-            Directory / Projects
-          </span>
-          <h1 className="text-4xl md:text-6xl font-serif font-bold text-white tracking-tight">Case studies</h1>
-          <p className="mt-4 text-stone-400 font-mono text-sm max-w-xl">
-            Infrastructure, storage, identity and automation work — each written up as problem, constraints, approach and outcome.
-          </p>
+          <h1 className="text-4xl md:text-6xl font-serif font-bold text-white tracking-tight">{copy.header.title}</h1>
+          <p className="mt-4 text-stone-400 font-sans text-base max-w-xl">{copy.header.lede}</p>
         </div>
 
         {sorted.length === 0 ? (
-          <p className="py-24 text-center font-mono text-stone-400 text-sm">No projects published yet.</p>
+          <p className="py-24 text-center font-sans text-stone-400 text-sm">{copy.emptyState}</p>
         ) : (
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-8 list-none m-0 p-0">
             {sorted.map((project) => {
               const startYear = yearOf(project.duration?.start)
-              const endYear = project.duration?.end ? yearOf(project.duration.end) : 'Present'
+              const endYear = project.duration?.end ? yearOf(project.duration.end) : copy.card.presentLabel
               const repo = project.githubUrl ? repos.get(project.githubUrl) : undefined
               const href = `/projects/${project.slug}`
               return (
@@ -58,11 +56,11 @@ export default async function ProjectsIndexRoute() {
                         imageClassName="opacity-80 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-700"
                       />
                     ) : (
-                      <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center font-mono text-stone-400 text-xs">No cover</div>
+                      <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center font-mono text-stone-400 text-xs">{copy.card.noCoverLabel}</div>
                     )}
                     <div className="absolute top-4 right-4 flex gap-2">
                       {project.featured && (
-                        <span className="bg-amber-500 text-black px-2 py-1 rounded-sm text-[9px] font-mono tracking-widest uppercase font-bold">Featured</span>
+                        <span className="bg-amber-500 text-black px-2 py-1 rounded-sm text-[9px] font-mono tracking-widest uppercase font-bold">{copy.card.featuredBadge}</span>
                       )}
                       {startYear && (
                         <span className="bg-black/60 backdrop-blur-md px-2 py-1 rounded-sm border border-white/10 text-[9px] font-mono tracking-widest text-white uppercase">
@@ -86,7 +84,7 @@ export default async function ProjectsIndexRoute() {
 
                     {project.outcome ? (
                       <p className="text-stone-300 text-sm leading-relaxed mb-4 line-clamp-3">
-                        <span className="font-mono text-[9px] uppercase tracking-widest text-amber-400 mr-2">Outcome</span>{project.outcome}
+                        <span className="font-mono text-[9px] uppercase tracking-widest text-amber-400 mr-2">{copy.card.outcomeLabel}</span>{project.outcome}
                       </p>
                     ) : project.overview ? (
                       <p className="text-stone-400 text-sm leading-relaxed mb-4 line-clamp-3">{toPlainText(project.overview)}</p>

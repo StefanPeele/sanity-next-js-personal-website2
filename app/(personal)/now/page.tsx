@@ -8,11 +8,13 @@ import { nowQuery } from '@/sanity/lib/queries'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { toPlainText } from 'next-sanity'
+import { getCopy } from '@/lib/cms/loaders'
+import { personalPagesQuery } from '@/sanity/lib/queries-services'
+import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 
-export const metadata: Metadata = {
-  title: 'Now',
-  description: `What ${SITE.name} is doing right now — current work, reading, notes in progress, active projects and certifications in flight.`,
-  alternates: { canonical: absoluteUrl('/now') },
+export async function generateMetadata(): Promise<Metadata> {
+  const h = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).now.header
+  return { title: h.metaTitle || h.title, description: h.metaDescription || h.lede }
 }
 
 const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
@@ -27,7 +29,7 @@ function Block({ id, label, children }: { id: string; label: string; children: R
 }
 
 export default async function NowPage() {
-  const { data } = await sanityFetch({ query: nowQuery })
+  const [{ data }, copy] = await Promise.all([sanityFetch({ query: nowQuery }), getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES).then((c) => c.now)])
   const home = data?.home
   const reading = data?.reading ?? []
   const notes = data?.recentNotes ?? []
@@ -40,20 +42,17 @@ export default async function NowPage() {
     <div className="w-full min-h-screen text-stone-300 pb-24">
       <div className="max-w-4xl mx-auto pt-24">
         <header className="pb-10">
-          <span className="text-stone-400 font-mono text-[10px] tracking-[0.4em] uppercase border-l border-stone-700 pl-4 mb-4 block">Directory / Now</span>
-          <h1 className="text-4xl md:text-6xl font-serif font-bold text-white tracking-tight">What I'm doing now</h1>
-          <p className="mt-6 text-stone-300 text-lg font-serif italic leading-relaxed max-w-2xl">
-            {home?.currently ?? 'Studying IT security at NJIT, interning in network engineering, and shooting on weekends.'}
-          </p>
-          <p className="mt-4 font-mono text-[10px] uppercase tracking-widest text-stone-400">
+          <h1 className="text-4xl md:text-6xl font-serif font-bold text-white tracking-tight">{copy.header.title}</h1>
+          <p className="mt-6 text-stone-300 text-lg font-serif italic leading-relaxed max-w-2xl">{home?.currently ?? copy.header.lede}</p>
+          <p className="mt-4 font-sans text-sm text-stone-400">
             {home?.location ?? `${SITE.location.city}, ${SITE.location.region}`}
-            {updated && <> · Updated {updated}</>}
-            {' · '}A <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer" className={`underline underline-offset-4 hover:text-white ${FOCUS} rounded-sm`}>now page</a>
+            {updated && <> · {copy.updatedLabel} {updated}</>}
+            {' · '}A <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer" className={`underline underline-offset-4 hover:text-white ${FOCUS} rounded-sm`}>{copy.nowLinkLabel}</a>
           </p>
         </header>
 
         {projects.length > 0 && (
-          <Block id="now-projects" label="Active projects">
+          <Block id="now-projects" label={copy.blockLabels.projects}>
             <ul className="space-y-4 list-none m-0 p-0">
               {projects.map((p) => (
                 <li key={p._id}>
@@ -66,7 +65,7 @@ export default async function NowPage() {
         )}
 
         {certs.length > 0 && (
-          <Block id="now-certs" label="Certifications in flight">
+          <Block id="now-certs" label={copy.blockLabels.certs}>
             <ul className="space-y-4 list-none m-0 p-0">
               {certs.map((c) => {
                 const pct = Math.max(0, Math.min(100, c.progressPercent ?? 0))
@@ -74,7 +73,7 @@ export default async function NowPage() {
                   <li key={c._id}>
                     <div className="flex items-baseline justify-between gap-4">
                       <span className="text-stone-200">{c.title}{c.issuer && <span className="text-stone-400 text-xs ml-2">{c.issuer}</span>}</span>
-                      <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400">{c.targetDate ? `Target ${formatDate(c.targetDate, 'month')}` : `${pct}%`}</span>
+                      <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400">{c.targetDate ? `${copy.targetLabel} ${formatDate(c.targetDate, 'month')}` : `${pct}%`}</span>
                     </div>
                     <div className="mt-2 h-1 w-full rounded-full bg-white/10 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${c.title} study progress`}>
                       <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
@@ -87,19 +86,19 @@ export default async function NowPage() {
         )}
 
         {reading.length > 0 && (
-          <Block id="now-reading" label="Reading">
+          <Block id="now-reading" label={copy.blockLabels.reading}>
             <CurrentlyReading items={reading} />
           </Block>
         )}
 
         {notes.length > 0 && (
-          <Block id="now-notes" label="Tending">
+          <Block id="now-notes" label={copy.blockLabels.notes}>
             <RecentlyTended notes={notes} />
           </Block>
         )}
 
         {posts.length > 0 && (
-          <Block id="now-posts" label="Latest writing">
+          <Block id="now-posts" label={copy.blockLabels.posts}>
             <ul className="space-y-3 list-none m-0 p-0">
               {posts.map((p) => (
                 <li key={p._id} className="flex items-baseline justify-between gap-4">
@@ -115,7 +114,7 @@ export default async function NowPage() {
         )}
 
         {projects.length === 0 && certs.length === 0 && reading.length === 0 && notes.length === 0 && posts.length === 0 && (
-          <p className="py-10 border-t border-white/5 text-stone-400 text-sm">Nothing published yet — check back soon.</p>
+          <p className="py-10 border-t border-white/5 text-stone-400 text-sm">{copy.emptyState}</p>
         )}
       </div>
     </div>

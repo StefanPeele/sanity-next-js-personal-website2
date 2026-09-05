@@ -28,15 +28,13 @@ export const singletonPlugin = definePlugin<string[]>((types) => ({
 // Desk structure. Singletons are grouped under "Site"; documents by area.
 const SITE_ORDER = [
   'settings', 'navigation', 'home',
-  'blogPage', 'gardenPage', 'libraryPage', 'knowledgePages',
-  'projectsPage', 'resumePage', 'contactPage', 'nowPage', 'usesPage', 'photographyPage', 'servicesPage',
+  'blogPage', 'knowledgePages', 'personalPages', 'servicesPage',
   'articleUi', 'taxonomy', 'errorPages',
 ]
 const SITE_TITLES: Record<string, string> = {
   settings: 'Identity & SEO', navigation: 'Navigation', home: 'Home',
-  blogPage: 'Writing index', gardenPage: 'Garden', libraryPage: 'Library', knowledgePages: 'Knowledge pages',
-  projectsPage: 'Projects', resumePage: 'Resume', contactPage: 'Contact', nowPage: 'Now', usesPage: 'Uses',
-  photographyPage: 'Photography', servicesPage: 'Services page', articleUi: 'Article UI', taxonomy: 'Taxonomy', errorPages: 'Error pages',
+  blogPage: 'Writing index', knowledgePages: 'Knowledge pages', personalPages: 'Pages', servicesPage: 'Services page',
+  articleUi: 'Article UI', taxonomy: 'Taxonomy', errorPages: 'Error pages',
 }
 
 export const pageStructure = (singletons: DocumentDefinition[]): StructureResolver => {

@@ -8,11 +8,13 @@
 import { useState } from 'react'
 import BookingSection from '@/components/BookingSection'
 import {
-  ADD_ONS, CORE_PRODUCTS, PREMIUM_PRODUCTS, formatPrice, njitSavings, packagesByCategory, startingPrice,
+  ADD_ONS, CORE_PRODUCTS, PREMIUM_PRODUCTS, formatPrice, packagesByCategory, startingPrice,
   type PackageCategory, type PhysicalTier, type PricingPackage,
 } from '@/lib/pricing'
+import { DEFAULT_SERVICES_PAGE, type ServicesPageCopy } from '@/lib/cms/defaults/servicesPage'
 
 interface ServicePackagesProps {
+  copy?: ServicesPageCopy
   calendlyUrl?: string | null
 }
 
@@ -28,13 +30,13 @@ function scrollToInquiry() {
 
 function PhysicalProductBadge({ tier }: { tier: PhysicalTier }) {
   const products = tier === 'core' ? CORE_PRODUCTS : PREMIUM_PRODUCTS
-  const label = tier === 'core' ? 'Choose your physical product' : 'Choose your premium keepsake'
+  const label = tier === 'core' ? DEFAULT_SERVICES_PAGE.physicalProducts.chooserLabels.core : DEFAULT_SERVICES_PAGE.physicalProducts.chooserLabels.premium
   const premium = tier === 'premium'
   return (
     <div className={`rounded-lg border p-4 mb-6 ${premium ? 'border-amber-500/30 bg-amber-950/10' : 'border-white/15 bg-white/[0.03]'}`}>
       <div className="flex items-center gap-2 mb-3">
         <span className="text-base" aria-hidden="true">{premium ? '✦' : '◈'}</span>
-        <span className={`font-mono text-[9px] uppercase tracking-[0.35em] font-bold ${premium ? 'text-amber-400' : 'text-stone-300'}`}>{label}</span>
+        <span className={`font-sans text-xs font-bold ${premium ? 'text-amber-400' : 'text-stone-300'}`}>{label}</span>
       </div>
       <ul className="space-y-1.5">
         {products.map((product) => (
@@ -45,14 +47,14 @@ function PhysicalProductBadge({ tier }: { tier: PhysicalTier }) {
         ))}
       </ul>
       <p className={`font-mono text-[8px] uppercase tracking-widest mt-3 ${premium ? 'text-amber-500/70' : 'text-stone-500'}`}>
-        Final selection confirmed during consultation
+        {DEFAULT_SERVICES_PAGE.physicalProducts.chooserLabels.final}
       </p>
     </div>
   )
 }
 
-function ConsultButton({ pkg, calendlyUrl, className }: { pkg: PricingPackage; calendlyUrl?: string | null; className: string }) {
-  const label = pkg.consultation ? 'Schedule a consultation' : 'Send inquiry'
+function ConsultButton({ pkg, calendlyUrl, className, labels }: { pkg: PricingPackage; calendlyUrl?: string | null; className: string; labels?: { consultLabel: string; inquiryLabel: string } }) {
+  const label = pkg.consultation ? (labels?.consultLabel ?? 'Schedule a consultation') : (labels?.inquiryLabel ?? 'Send inquiry')
   if (pkg.consultation && calendlyUrl) {
     return (
       <a href={calendlyUrl} target="_blank" rel="noopener noreferrer" className={`${className} ${FOCUS} block`}>
@@ -67,7 +69,8 @@ function ConsultButton({ pkg, calendlyUrl, className }: { pkg: PricingPackage; c
   )
 }
 
-export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
+export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: ServicePackagesProps) {
+  const C = copy.packageCard
   const [category, setCategory] = useState<PackageCategory>('portrait')
   const [isNJIT, setIsNJIT] = useState(false)
 
@@ -94,7 +97,7 @@ export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
               aria-selected={category === key}
               aria-controls={`packages-${key}`}
               onClick={() => setCategory(key)}
-              className={`font-mono text-[10px] uppercase tracking-[0.3em] px-5 py-2.5 rounded-md transition-all duration-200 flex-1 sm:flex-none ${FOCUS} ${
+              className={`font-sans text-xs px-5 py-2.5 rounded-md transition-all duration-200 flex-1 sm:flex-none ${FOCUS} ${
                 category === key ? 'bg-white text-black font-bold shadow-sm' : 'text-stone-400 hover:text-white'
               }`}
             >
@@ -120,11 +123,11 @@ export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
                     <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform duration-300 ${isNJIT ? 'translate-x-6' : 'translate-x-1'}`} />
                   </span>
                   <span className={`font-mono text-[11px] uppercase tracking-[0.3em] font-bold ${isNJIT ? 'text-emerald-300' : 'text-stone-200'}`}>
-                    NJIT student or affiliate?
+                    {copy.njitToggle.label}
                   </span>
                 </div>
                 <p className={`font-mono text-[10px] ${isNJIT ? 'text-emerald-300/90' : 'text-stone-400'}`}>
-                  {isNJIT ? `${njitSavings(category)} — NJIT ID required at booking` : 'Toggle on to see discounted rates for students, faculty & orgs'}
+                  {isNJIT ? `${copy.njitToggle.savingsCopy[category]} · ${copy.njitToggle.idNote}` : copy.njitToggle.offText}
                 </p>
               </div>
               {isNJIT && fromPublic !== null && fromNjit !== null && (
@@ -141,17 +144,15 @@ export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
       {/* ── Standard delivery banner ──────────────────────────────── */}
       {category !== 'specialty' && (
         <div className="mb-8 p-5 rounded-xl border border-white/10 bg-white/[0.02]">
-          <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 block mb-3">Every session includes — standard</span>
+          <span className="section-label block mb-3">{copy.standardDelivery.heading}</span>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              { icon: '▣', label: 'Edited JPEGs', desc: 'Full gallery, color-graded, high-res, print-ready via Pixieset' },
-              { icon: '◈', label: 'Print-ready TIFFs', desc: '5 hero shots at full native resolution — labeled for professional printing' },
-              { icon: '⊞', label: 'Social media pack', desc: '5–8 images in Instagram, Stories, and LinkedIn formats — ready to post' },
+              ...copy.standardDelivery.items.map((i) => ({ icon: '', label: i.title, desc: i.description })),
             ].map((item) => (
               <div key={item.label} className="flex items-start gap-3">
                 <span className="text-stone-500 text-sm flex-shrink-0 mt-0.5" aria-hidden="true">{item.icon}</span>
                 <div>
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-stone-300 block mb-0.5">{item.label}</span>
+                  <span className="font-sans text-xs text-stone-300 block mb-0.5">{item.label}</span>
                   <span className="font-mono text-[9px] text-stone-400 leading-snug block">{item.desc}</span>
                 </div>
               </div>
@@ -167,7 +168,7 @@ export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
           const isCore = pkg.name === 'Core'
           const accent = specialty ? !!pkg.highlight : isCore
           const price = isNJIT ? pkg.njitPrice : pkg.publicPrice
-          const badge = pkg.comingSoon ? 'Expanding soon' : pkg.badge ?? (isCore ? '✦ Recommended' : 'Available')
+          const badge = pkg.comingSoon ? C.expandingSoon : pkg.badge ?? (isCore ? C.recommended : C.available)
 
           return (
             <article
@@ -177,7 +178,7 @@ export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
                 pkg.comingSoon ? 'border-white/[0.08] bg-[#0e0e10]/95' : accent ? 'border-amber-500/40 shadow-lg shadow-amber-900/10 bg-[#18140c]/95' : 'border-white/10 bg-[#101014]/95'
               }`}
             >
-              <div className={`font-mono text-[8px] uppercase tracking-[0.3em] text-center py-1.5 font-bold ${
+              <div className={`font-sans text-xs text-center py-1.5 font-bold ${
                 pkg.comingSoon ? 'bg-white/10 text-stone-400' : accent ? 'bg-amber-500 text-black' : 'bg-white/10 text-stone-300'
               }`}>
                 {badge}
@@ -185,7 +186,7 @@ export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
 
               <div className={`p-7 flex flex-col flex-grow ${pkg.comingSoon ? 'opacity-70' : ''}`}>
                 <div className="mb-6">
-                  <h3 id={`pkg-${pkg.id}`} className={specialty ? 'font-serif text-2xl text-white mb-1' : `font-mono text-[9px] uppercase tracking-[0.35em] mb-2 ${accent ? 'text-amber-500/80' : 'text-stone-400'}`}>
+                  <h3 id={`pkg-${pkg.id}`} className={specialty ? 'font-serif text-2xl text-white mb-1' : `font-sans text-xs mb-2 ${accent ? 'text-amber-500/80' : 'text-stone-400'}`}>
                     {pkg.name}
                   </h3>
                   <p className="font-serif italic text-stone-300 text-lg leading-snug">{pkg.tagline}</p>
@@ -208,20 +209,20 @@ export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
                   ) : (
                     <>
                       {pkg.priceNote === 'starting at' && (
-                        <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest block mb-1">Starting at</span>
+                        <span className="font-sans text-xs text-stone-400 block mb-1">{C.startingAt}</span>
                       )}
                       <div className="flex items-baseline gap-2 flex-wrap">
                         <span className={`font-serif text-5xl font-bold ${isNJIT ? 'text-emerald-300' : accent ? 'text-amber-300' : 'text-white'}`}>{formatPrice(price)}</span>
-                        {isNJIT && <span className="font-mono text-[9px] text-emerald-400 uppercase tracking-widest">NJIT rate</span>}
+                        {isNJIT && <span className="font-sans text-xs text-emerald-400">{C.njitRate}</span>}
                       </div>
                       {isNJIT && (
-                        <span className="font-mono text-[10px] text-stone-400 line-through mt-0.5 block">Public: {formatPrice(pkg.publicPrice)}</span>
+                        <span className="font-sans text-xs text-stone-400 line-through mt-0.5 block">{C.publicLabel}: {formatPrice(pkg.publicPrice)}</span>
                       )}
                     </>
                   )}
                   <span className="font-mono text-[10px] text-stone-400 block mt-1.5">{pkg.duration}</span>
                   {pkg.turnaround && specialty && (
-                    <span className="font-mono text-[10px] text-stone-400 block mt-0.5">Delivery: {pkg.turnaround}</span>
+                    <span className="font-sans text-xs text-stone-400 block mt-0.5">{C.deliveryLabel}: {pkg.turnaround}</span>
                   )}
                 </div>
 
@@ -247,25 +248,26 @@ export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
 
                 {pkg.recommended && (
                   <div className="pt-4 border-t border-white/[0.08] mb-6">
-                    <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-stone-400 block mb-1">Ideal for</span>
+                    <span className="font-sans text-xs text-stone-400 block mb-1">{C.idealFor}</span>
                     <p className="font-mono text-[10px] text-stone-400 leading-relaxed">{pkg.recommended}</p>
                   </div>
                 )}
 
                 {specialty && pkg.highlight && (
                   <div className="mb-4 p-3 rounded-lg border border-amber-500/20 bg-amber-950/10">
-                    <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-amber-400/80 block mb-1">Includes</span>
+                    <span className="font-sans text-xs text-amber-300 block mb-1">{C.includes}</span>
                     <span className="font-mono text-[9px] text-stone-300">Full three-part delivery + physical product of your choice</span>
                   </div>
                 )}
 
                 {pkg.comingSoon ? (
-                  <button type="button" onClick={scrollToInquiry} className={`w-full text-center font-mono text-[10px] uppercase tracking-[0.25em] py-3.5 rounded-lg border border-white/15 text-stone-300 hover:border-white/40 hover:text-white transition-colors ${FOCUS}`}>
-                    Expanding soon — ask about it
+                  <button type="button" onClick={scrollToInquiry} className={`w-full text-center font-sans text-xs py-3.5 rounded-lg border border-white/15 text-stone-300 hover:border-white/40 hover:text-white transition-colors ${FOCUS}`}>
+                    {C.expandingSoonNote}
                   </button>
                 ) : (
                   <ConsultButton
                     pkg={pkg}
+                    labels={C}
                     calendlyUrl={calendlyUrl}
                     className={`w-full text-center font-mono text-[11px] uppercase tracking-[0.25em] py-3.5 rounded-lg transition-all duration-200 font-bold ${
                       accent ? 'bg-amber-500 text-black hover:bg-amber-400' : pkg.consultation ? 'bg-white text-black hover:bg-stone-200' : 'border border-white/20 text-stone-300 hover:border-white/50 hover:text-white hover:bg-white/5'
@@ -282,7 +284,7 @@ export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
       <div className="mb-16">
         <div className="mb-6 pb-4 border-b border-white/10">
           <h3 className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 border-l-2 border-stone-500 pl-4 font-sans">
-            Add-ons // Available for any package
+            {C.addOnsHeading} · {C.addOnsLede}
           </h3>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -301,10 +303,10 @@ export function ServicePackages({ calendlyUrl }: ServicePackagesProps) {
       {/* ── Inline inquiry form ───────────────────────────────────── */}
       <div className="py-16 border-t border-white/10">
         <div className="text-center mb-8">
-          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-400 block mb-3">Questions? Direct inquiry.</span>
-          <h3 className="font-serif text-3xl text-white mb-3">Not sure where to start?</h3>
+          <span className="section-label block mb-3">{C.inquiryEyebrow}</span>
+          <h3 className="font-serif text-3xl text-white mb-3">{C.inquiryHeading}</h3>
           <p className="font-mono text-[10px] text-stone-400 uppercase tracking-widest max-w-md mx-auto leading-relaxed">
-            Send me a message and I'll follow up within 24 hours. No commitment required.
+            {C.inquiryLede}
           </p>
         </div>
         <BookingSection inline anchorId="inquiry" />

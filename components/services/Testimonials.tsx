@@ -5,16 +5,14 @@ import Image from 'next/image'
 import { formatDate } from '@/lib/dates'
 import type { TestimonialsQueryResult } from '@/sanity.types'
 
-export function Testimonials({ items }: { items: TestimonialsQueryResult }) {
+export function Testimonials({ items, heading = 'What clients said' }: { items: TestimonialsQueryResult; heading?: string }) {
   const visible = items.filter((t) => t.quote && t.name)
   if (visible.length === 0) return null
 
   return (
     <section aria-labelledby="testimonials-heading" className="py-20 border-b border-white/5">
       <div className="mb-10">
-        <h2 id="testimonials-heading" className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 block border-l border-stone-700 pl-4 font-sans">
-          Clients // What they said
-        </h2>
+        <h2 id="testimonials-heading" className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 block border-l border-stone-700 pl-4 font-sans">{heading}</h2>
       </div>
       <ul className="grid grid-cols-1 md:grid-cols-3 gap-6 list-none m-0 p-0">
         {visible.map((t) => (

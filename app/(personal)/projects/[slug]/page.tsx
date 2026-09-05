@@ -18,6 +18,9 @@ import {draftMode} from 'next/headers'
 import Link from 'next/link'
 import {notFound} from 'next/navigation'
 import type {Image as SanityImage} from 'sanity'
+import { getCopy } from '@/lib/cms/loaders'
+import { personalPagesQuery } from '@/sanity/lib/queries-services'
+import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -60,6 +63,7 @@ function Section({label, children}: {label: string; children: React.ReactNode}) 
 }
 
 export default async function ProjectSlugRoute({params}: Props) {
+  const copy = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).projects.detail
   const {slug} = await params
   const {data} = await sanityFetch({query: projectBySlugQuery, params: {slug}})
 
@@ -80,7 +84,7 @@ export default async function ProjectSlugRoute({params}: Props) {
   const repo = await getRepoMeta(githubUrl)
 
   const startYear = yearOf(duration?.start)
-  const endYear = duration?.end ? yearOf(duration.end) : 'Present'
+  const endYear = duration?.end ? yearOf(duration.end) : copy.metaLabels.timeline && 'Present'
   const hasCaseStudy = !!(role || problem || (constraints && constraints.length) || approach || outcome || (metrics && metrics.length) || retrospective)
 
   const jsonLd = data?._id
@@ -110,7 +114,7 @@ export default async function ProjectSlugRoute({params}: Props) {
             id={data?._id || null}
             type={data?._type || null}
             path={['overview']}
-            eyebrow="Case study"
+            eyebrow={copy.eyebrow}
             title={title || (data?._id ? 'Untitled' : 'Project not found')}
             description={overview as PortableTextBlock[] | null | undefined}
           />
@@ -136,25 +140,25 @@ export default async function ProjectSlugRoute({params}: Props) {
           <dl className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5 border-t border-white/5 text-[10px] font-mono uppercase tracking-widest text-stone-400 bg-[#0f0f0f] m-0">
             {startYear && (
               <div className="p-4 flex flex-col justify-center">
-                <dt className="text-stone-400 mb-1">Timeline</dt>
+                <dt className="text-stone-400 mb-1">{copy.metaLabels.timeline}</dt>
                 <dd className="text-stone-200 m-0" data-sanity={dataAttribute?.('duration.start')}>{startYear} – {endYear}</dd>
               </div>
             )}
             {clientName && (
               <div className="p-4 flex flex-col justify-center">
-                <dt className="text-stone-400 mb-1">Client / org</dt>
+                <dt className="text-stone-400 mb-1">{copy.metaLabels.client}</dt>
                 <dd className="text-stone-200 truncate m-0">{clientName}</dd>
               </div>
             )}
             {role && (
               <div className="p-4 flex flex-col justify-center">
-                <dt className="text-stone-400 mb-1">My role</dt>
+                <dt className="text-stone-400 mb-1">{copy.metaLabels.role}</dt>
                 <dd className="text-stone-200 m-0">{role}</dd>
               </div>
             )}
             {tagList.length > 0 && (
               <div className="p-4 flex flex-col justify-center">
-                <dt className="text-stone-400 mb-1">Tags</dt>
+                <dt className="text-stone-400 mb-1">{copy.metaLabels.tags}</dt>
                 <dd className="flex gap-2 overflow-hidden whitespace-nowrap m-0">
                   {tagList.slice(0, 2).map((tag) => <span key={tag} className="text-stone-200">#{tag}</span>)}
                   {tagList.length > 2 && <span className="text-stone-400">+{tagList.length - 2}</span>}
@@ -167,9 +171,9 @@ export default async function ProjectSlugRoute({params}: Props) {
         {/* Structured case study */}
         {hasCaseStudy && (
           <div>
-            {problem && <Section label="Problem">{problem}</Section>}
+            {problem && <Section label={copy.sectionLabels.problem}>{problem}</Section>}
             {constraints && constraints.length > 0 && (
-              <Section label="Constraints">
+              <Section label={copy.sectionLabels.constraints}>
                 <ul className="space-y-2 list-none m-0 p-0">
                   {constraints.map((c) => (
                     <li key={c} className="flex items-start gap-3"><span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-stone-500" aria-hidden="true" />{c}</li>
@@ -177,9 +181,9 @@ export default async function ProjectSlugRoute({params}: Props) {
                 </ul>
               </Section>
             )}
-            {approach && <Section label="Approach">{approach}</Section>}
+            {approach && <Section label={copy.sectionLabels.approach}>{approach}</Section>}
             {outcome && (
-              <Section label="Outcome">
+              <Section label={copy.sectionLabels.outcome}>
                 <p className="text-white text-lg font-serif leading-relaxed m-0">{outcome}</p>
               </Section>
             )}
@@ -196,7 +200,7 @@ export default async function ProjectSlugRoute({params}: Props) {
                 </dl>
               </section>
             )}
-            {retrospective && <Section label="What I'd do differently">{retrospective}</Section>}
+            {retrospective && <Section label={copy.sectionLabels.retrospective}>{retrospective}</Section>}
           </div>
         )}
 
@@ -205,7 +209,7 @@ export default async function ProjectSlugRoute({params}: Props) {
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 py-8 border-y border-white/5">
             {techStack && techStack.length > 0 && (
               <div className="flex-1">
-                <h2 className="text-[10px] font-mono tracking-[0.3em] text-stone-400 uppercase mb-4 font-sans">Stack</h2>
+                <h2 className="section-label mb-4 font-sans">{copy.sectionLabels.stack}</h2>
                 <ul className="flex flex-wrap gap-2 list-none m-0 p-0">
                   {techStack.map((tech) => (
                     <li key={tech} className="px-3 py-1 text-[11px] font-mono tracking-wide bg-white/5 border border-white/10 text-stone-300 rounded-sm">{tech}</li>
@@ -216,22 +220,22 @@ export default async function ProjectSlugRoute({params}: Props) {
             <div className="flex flex-col gap-3 min-w-[220px]">
               {githubUrl && (
                 <a href={githubUrl} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-[#111] border border-white/10 hover:border-white/30 transition-colors rounded-sm text-stone-300 group ${FOCUS}`}>
-                  <span>Repository</span><span className="text-stone-400 group-hover:text-white" aria-hidden="true">↗</span>
+                  <span>{copy.linkLabels.code}</span><span className="text-stone-400 group-hover:text-white" aria-hidden="true">↗</span>
                 </a>
               )}
               {docsUrl && (
                 <a href={docsUrl} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-[#111] border border-white/10 hover:border-white/30 transition-colors rounded-sm text-stone-300 group ${FOCUS}`}>
-                  <span>Documentation</span><span className="text-stone-400 group-hover:text-white" aria-hidden="true">↗</span>
+                  <span>{copy.linkLabels.docs}</span><span className="text-stone-400 group-hover:text-white" aria-hidden="true">↗</span>
                 </a>
               )}
               {boardUrl && (
                 <a href={boardUrl} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-[#111] border border-white/10 hover:border-white/30 transition-colors rounded-sm text-stone-300 group ${FOCUS}`}>
-                  <span>Project board</span><span className="text-stone-400 group-hover:text-white" aria-hidden="true">↗</span>
+                  <span>{copy.linkLabels.board}</span><span className="text-stone-400 group-hover:text-white" aria-hidden="true">↗</span>
                 </a>
               )}
               {liveUrl && (
                 <a href={liveUrl} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-white text-black hover:bg-stone-200 transition-colors rounded-sm font-bold group ${FOCUS}`}>
-                  <span>Live</span><span aria-hidden="true">→</span>
+                  <span>{copy.linkLabels.live}</span><span aria-hidden="true">→</span>
                 </a>
               )}
             </div>
@@ -241,7 +245,7 @@ export default async function ProjectSlugRoute({params}: Props) {
         {/* Architecture */}
         {architecture && architecture.length > 0 && (
           <section className="space-y-6" aria-labelledby="arch-heading">
-            <h2 id="arch-heading" className="text-[10px] font-mono tracking-[0.3em] text-stone-400 uppercase font-sans">Architecture &amp; topologies</h2>
+            <h2 id="arch-heading" className="section-label font-sans">{copy.sectionLabels.architecture}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {architecture.map((image, idx) => (
                 <figure key={image._key} className="relative rounded-md overflow-hidden border border-white/5 bg-[#111] m-0">
@@ -279,7 +283,7 @@ export default async function ProjectSlugRoute({params}: Props) {
           <section className="pt-8 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-8" aria-label="Related reading">
             {relatedPosts.length > 0 && (
               <div>
-                <h2 className="text-[10px] font-mono tracking-[0.3em] text-stone-400 uppercase mb-4 font-sans">Related writing</h2>
+                <h2 className="section-label mb-4 font-sans">{copy.sectionLabels.relatedWriting}</h2>
                 <ul className="space-y-2 list-none m-0 p-0">
                   {relatedPosts.map((p) => (
                     <li key={p.slug}>
@@ -298,7 +302,7 @@ export default async function ProjectSlugRoute({params}: Props) {
             )}
             {relatedNotes.length > 0 && (
               <div>
-                <h2 className="text-[10px] font-mono tracking-[0.3em] text-stone-400 uppercase mb-4 font-sans">Garden notes</h2>
+                <h2 className="section-label mb-4 font-sans">{copy.sectionLabels.relatedNotes}</h2>
                 <ul className="space-y-2 list-none m-0 p-0">
                   {relatedNotes.map((n) => (
                     <li key={n.slug}>
