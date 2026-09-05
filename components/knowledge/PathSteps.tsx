@@ -71,7 +71,7 @@ export function PathSteps({ slug, steps }: { slug: string; steps: Step[] }) {
       {/* Progress */}
       <div className="mb-8 rounded-xl border border-white/[0.08] bg-white/[0.02] p-5">
         <div className="flex items-center justify-between gap-4 mb-3">
-          <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-stone-500">Progress</span>
+          <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-stone-400">Progress</span>
           <span className="font-mono text-[10px] text-stone-300" aria-live="polite">
             {mounted ? `${completed} / ${steps.length} · ${pct}%` : `0 / ${steps.length}`}
           </span>
@@ -80,7 +80,7 @@ export function PathSteps({ slug, steps }: { slug: string; steps: Step[] }) {
           <div className="h-full bg-emerald-500/80 rounded-full transition-[width] duration-500" style={{ width: `${pct}%` }} />
         </div>
         <div className="flex flex-wrap items-center gap-4 mt-4">
-          <span className="font-mono text-[9px] uppercase tracking-widest text-stone-500">~{totalMinutes} min of reading</span>
+          <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400">~{totalMinutes} min of reading</span>
           {nextStep && (nextStep.post?.slug || nextStep.gardenNote?.slug) && (
             <Link
               href={nextStep.post ? `/blog/${nextStep.post.slug}` : `/garden/${nextStep.gardenNote?.slug}`}
@@ -93,7 +93,7 @@ export function PathSteps({ slug, steps }: { slug: string; steps: Step[] }) {
             <span className="ml-auto font-mono text-[10px] uppercase tracking-widest text-emerald-400">Path complete</span>
           )}
           {completed > 0 && (
-            <button type="button" onClick={reset} className={`font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-white rounded-sm ${FOCUS}`}>
+            <button type="button" onClick={reset} className={`font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white rounded-sm ${FOCUS}`}>
               Reset
             </button>
           )}
@@ -120,7 +120,7 @@ export function PathSteps({ slug, steps }: { slug: string; steps: Step[] }) {
               }`}
             >
               <div className="flex flex-col items-center gap-2 pt-1">
-                <span className="font-mono text-[9px] text-stone-500 w-5 text-center">{String(i + 1).padStart(2, '0')}</span>
+                <span className="font-mono text-[9px] text-stone-400 w-5 text-center">{String(i + 1).padStart(2, '0')}</span>
                 <input
                   id={inputId}
                   type="checkbox"
@@ -137,14 +137,14 @@ export function PathSteps({ slug, steps }: { slug: string; steps: Step[] }) {
                   ) : status ? (
                     <span className={`border px-2 py-0.5 rounded-sm ${status.badge}`}>Note · {status.label}</span>
                   ) : null}
-                  <span className="text-stone-500">{stepMinutes(step)} min</span>
+                  <span className="text-stone-400">{stepMinutes(step)} min</span>
                   {isNext && <span className="text-amber-300">Up next</span>}
                 </div>
                 <Link href={href} className={`font-serif text-lg text-white hover:text-stone-200 leading-snug rounded-sm ${FOCUS} ${isDone ? 'line-through decoration-stone-600' : ''}`}>
                   {title}
                 </Link>
                 {step.note && <p className="text-stone-400 text-sm leading-relaxed mt-1">{step.note}</p>}
-                {post?.excerpt && !step.note && <p className="text-stone-500 text-sm leading-relaxed mt-1 line-clamp-2">{post.excerpt}</p>}
+                {post?.excerpt && !step.note && <p className="text-stone-400 text-sm leading-relaxed mt-1 line-clamp-2">{post.excerpt}</p>}
               </div>
             </li>
           )

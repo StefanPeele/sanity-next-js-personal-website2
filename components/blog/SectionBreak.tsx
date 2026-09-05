@@ -32,7 +32,7 @@ export function SectionBreak({ value, id, words }: SectionBreakProps) {
       <div className="my-16 flex items-center gap-6" role="separator" aria-label={`Next: ${title}`}>
         <div className="flex-1 h-px bg-white/[0.08]" />
         <div className="text-center">
-          <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-500 block mb-1">
+          <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 block mb-1">
             Next
           </span>
           <span className="font-serif text-stone-400 text-base">{title}</span>
@@ -68,7 +68,7 @@ export function SectionBreak({ value, id, words }: SectionBreakProps) {
           initial={reduced ? false : { opacity: 0, letterSpacing: '0.2em' }}
           animate={show ? { opacity: 1, letterSpacing: '0.5em' } : {}}
           transition={{ duration: dur(0.8), delay: dur(0.3) }}
-          className="font-mono text-[9px] uppercase text-stone-500 block mb-5"
+          className="font-mono text-[9px] uppercase text-stone-400 block mb-5"
         >
           Chapter
         </motion.span>

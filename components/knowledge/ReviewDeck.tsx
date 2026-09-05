@@ -181,7 +181,7 @@ export function ReviewDeck({ cards }: { cards: ReviewCard[] }) {
         ].map((s) => (
           <div key={s.label} className="rounded-lg border border-white/[0.08] bg-white/[0.02] p-4">
             <dd className="font-serif text-2xl text-white font-bold">{mounted ? s.value : '—'}</dd>
-            <dt className="font-mono text-[8px] uppercase tracking-widest text-stone-500 mt-0.5">{s.label}</dt>
+            <dt className="font-mono text-[8px] uppercase tracking-widest text-stone-400 mt-0.5">{s.label}</dt>
           </div>
         ))}
       </dl>
@@ -189,7 +189,7 @@ export function ReviewDeck({ cards }: { cards: ReviewCard[] }) {
       {/* Card */}
       {current ? (
         <section aria-live="polite" className="rounded-xl border border-white/15 bg-[#101012] p-6 md:p-8 mb-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400">
             <span className="border border-white/10 px-2 py-0.5 rounded-sm text-stone-300">{current.kind === 'quiz' ? 'Knowledge check' : 'Concept'}</span>
             <span>{sessionDone} done · {queue.length} left{mode === 'all' ? ' · full deck' : ''}</span>
           </div>
@@ -202,7 +202,7 @@ export function ReviewDeck({ cards }: { cards: ReviewCard[] }) {
                 const chosen = picked === i
                 const show = revealed
                 const cls = show
-                  ? o.isCorrect ? 'border-emerald-500/60 text-emerald-300 bg-emerald-950/20' : chosen ? 'border-red-500/50 text-red-300' : 'border-white/[0.08] text-stone-500'
+                  ? o.isCorrect ? 'border-emerald-500/60 text-emerald-300 bg-emerald-950/20' : chosen ? 'border-red-500/50 text-red-300' : 'border-white/[0.08] text-stone-400'
                   : chosen ? 'border-white/40 text-white bg-white/5' : 'border-white/10 text-stone-300 hover:border-white/30'
                 return (
                   <li key={i}>
@@ -213,7 +213,7 @@ export function ReviewDeck({ cards }: { cards: ReviewCard[] }) {
                       aria-pressed={chosen}
                       className={`w-full text-left px-4 py-3 rounded-lg border font-sans text-sm transition-colors disabled:cursor-default ${cls} ${FOCUS}`}
                     >
-                      <span className="font-mono text-[9px] text-stone-500 mr-3">{String.fromCharCode(65 + i)}</span>{o.text}
+                      <span className="font-mono text-[9px] text-stone-400 mr-3">{String.fromCharCode(65 + i)}</span>{o.text}
                     </button>
                   </li>
                 )
@@ -223,9 +223,9 @@ export function ReviewDeck({ cards }: { cards: ReviewCard[] }) {
 
           {revealed ? (
             <div className="border-t border-white/[0.08] pt-5">
-              <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 mb-2">{current.kind === 'quiz' ? 'Explanation' : 'Answer'}</p>
+              <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 mb-2">{current.kind === 'quiz' ? 'Explanation' : 'Answer'}</p>
               <p className="text-stone-200 text-base leading-relaxed mb-5">{current.back}</p>
-              <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 mb-2">How well did you know it?</p>
+              <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 mb-2">How well did you know it?</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2" role="group" aria-label="Grade this card">
                 {([
                   ['again', 'Again', '< 10 min', 'text-red-300 border-red-500/40'],
@@ -235,20 +235,20 @@ export function ReviewDeck({ cards }: { cards: ReviewCard[] }) {
                 ] as [Grade, string, string, string][]).map(([g, label, hint, cls], i) => (
                   <button key={g} type="button" onClick={() => grade(g)} className={`rounded-lg border px-3 py-3 text-left hover:bg-white/5 transition-colors ${cls} ${FOCUS}`}>
                     <span className="font-mono text-[10px] uppercase tracking-widest block">{i + 1} · {label}</span>
-                    <span className="font-mono text-[8px] text-stone-500 uppercase tracking-widest">{hint}</span>
+                    <span className="font-mono text-[8px] text-stone-400 uppercase tracking-widest">{hint}</span>
                   </button>
                 ))}
               </div>
             </div>
           ) : current.kind === 'concept' ? (
             <button type="button" onClick={() => setRevealed(true)} className={`font-mono text-[10px] uppercase tracking-widest bg-white text-black px-5 py-2.5 rounded-sm hover:bg-stone-200 transition-colors ${FOCUS}`}>
-              Reveal answer <span className="text-stone-500 ml-2">space</span>
+              Reveal answer <span className="text-stone-400 ml-2">space</span>
             </button>
           ) : (
-            <p className="font-mono text-[9px] uppercase tracking-widest text-stone-500">Pick an answer to reveal the explanation.</p>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-stone-400">Pick an answer to reveal the explanation.</p>
           )}
 
-          <p className="mt-6 pt-4 border-t border-white/5 font-mono text-[9px] uppercase tracking-widest text-stone-500">
+          <p className="mt-6 pt-4 border-t border-white/5 font-mono text-[9px] uppercase tracking-widest text-stone-400">
             From{' '}
             <Link href={`/blog/${current.post.slug}`} className={`text-stone-300 hover:text-white underline underline-offset-4 rounded-sm ${FOCUS}`}>{current.post.title}</Link>
           </p>
@@ -258,12 +258,12 @@ export function ReviewDeck({ cards }: { cards: ReviewCard[] }) {
           {cards.length === 0 ? (
             <>
               <p className="font-serif italic text-stone-300 text-lg mb-2">Nothing to review yet.</p>
-              <p className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">Concept cards and knowledge checks on posts feed this deck automatically.</p>
+              <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Concept cards and knowledge checks on posts feed this deck automatically.</p>
             </>
           ) : (
             <>
               <p className="font-serif italic text-stone-300 text-lg mb-2">{sessionDone > 0 ? 'Session complete.' : 'Nothing due right now.'}</p>
-              <p className="font-mono text-[9px] text-stone-500 uppercase tracking-widest mb-5">
+              <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest mb-5">
                 {nextDue ? `Next card due ${formatDate(nextDue, 'relative')}` : 'Every card has been graded at least once.'}
               </p>
               <button type="button" onClick={() => startSession(true)} className={`font-mono text-[10px] uppercase tracking-widest border border-white/20 text-stone-200 hover:text-white hover:border-white/40 px-5 py-2.5 rounded-sm transition-colors ${FOCUS}`}>
@@ -274,7 +274,7 @@ export function ReviewDeck({ cards }: { cards: ReviewCard[] }) {
         </section>
       )}
 
-      <div className="flex flex-wrap items-center gap-4 font-mono text-[9px] uppercase tracking-widest text-stone-500">
+      <div className="flex flex-wrap items-center gap-4 font-mono text-[9px] uppercase tracking-widest text-stone-400">
         <span>Space reveals · 1–4 grades</span>
         {mounted && Object.keys(store.cards).length > 0 && (
           <button type="button" onClick={resetAll} className={`ml-auto hover:text-white rounded-sm ${FOCUS}`}>Reset progress</button>

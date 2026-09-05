@@ -26,7 +26,7 @@ export function ServiceFAQ({ items }: { items: FaqItem[] }) {
             <span className="font-serif text-base text-stone-200 group-hover:text-white transition-colors pr-8 leading-snug">
               {faq.question}
             </span>
-            <span className={`font-mono text-stone-500 text-lg flex-shrink-0 transition-transform duration-300 ${
+            <span className={`font-mono text-stone-400 text-lg flex-shrink-0 transition-transform duration-300 ${
               open === i ? 'rotate-45 text-white' : 'group-hover:text-stone-300'
             }`}>
               +

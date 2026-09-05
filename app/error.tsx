@@ -16,7 +16,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
       <div className="max-w-lg w-full text-center">
         <h1 className="font-serif font-bold text-white leading-tight mb-4 text-4xl md:text-6xl">{copy.title}</h1>
         <p className="font-sans text-stone-400 text-base mb-2">{copy.body}</p>
-        {error.digest && <p className="font-sans text-stone-500 text-sm mb-10">{copy.referenceLabel} {error.digest}</p>}
+        {error.digest && <p className="font-sans text-stone-400 text-sm mb-10">{copy.referenceLabel} {error.digest}</p>}
         <div className="flex items-center justify-center gap-3 flex-wrap mt-6">
           <button type="button" onClick={reset} className={`font-sans text-sm px-5 py-3 rounded-full bg-white text-black hover:bg-stone-200 transition-colors ${FOCUS}`}>{copy.retryLabel}</button>
           <Link href="/" className={`font-sans text-sm px-5 py-3 rounded-full border border-white/10 text-stone-300 hover:border-white/30 hover:text-white transition-colors ${FOCUS}`}>{copy.homeLabel}</Link>

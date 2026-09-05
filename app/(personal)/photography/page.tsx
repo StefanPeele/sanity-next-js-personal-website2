@@ -50,7 +50,7 @@ export default async function PhotographyPage({ searchParams }: { searchParams: 
       <section className="relative z-20 flex flex-col items-center justify-center pt-24 pb-12 text-center px-6">
         <h1 className="text-5xl md:text-6xl font-serif text-white mb-4 tracking-wide">{copy.header.title}</h1>
         <p className="text-stone-400 font-sans text-base max-w-xl mx-auto leading-relaxed mb-3">{copy.header.lede}</p>
-        <p className="text-stone-500 font-sans text-sm mb-8">{copy.countLine.replace('{albums}', String(galleries.length)).replace('{frames}', String(totalFrames))}</p>
+        <p className="text-stone-400 font-sans text-sm mb-8">{copy.countLine.replace('{albums}', String(galleries.length)).replace('{frames}', String(totalFrames))}</p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative">
           <Link

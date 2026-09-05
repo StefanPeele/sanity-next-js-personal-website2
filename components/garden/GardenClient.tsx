@@ -61,7 +61,7 @@ function NoteCard({
             aria-expanded={expanded}
             aria-controls={bodyId}
             aria-label={expanded ? `Collapse preview of ${note.title ?? 'note'}` : `Preview ${note.title ?? 'note'} in place`}
-            className={`rounded-sm px-2 -mr-2 -mt-1 text-stone-500 hover:text-white transition-colors text-lg leading-none ${FOCUS}`}
+            className={`rounded-sm px-2 -mr-2 -mt-1 text-stone-400 hover:text-white transition-colors text-lg leading-none ${FOCUS}`}
           >
             <motion.span animate={{ rotate: expanded ? 45 : 0 }} transition={{ duration: 0.2 }} className="inline-block" aria-hidden="true">
               +
@@ -76,7 +76,7 @@ function NoteCard({
         </h3>
 
         {!expanded && preview && (
-          <p className="font-mono text-[10px] text-stone-500 leading-relaxed line-clamp-2">
+          <p className="font-mono text-[10px] text-stone-400 leading-relaxed line-clamp-2">
             {preview}
             {note.plain.length > 140 ? '…' : ''}
           </p>
@@ -93,7 +93,7 @@ function NoteCard({
                   className={`font-mono text-[8px] uppercase tracking-widest border px-2 py-0.5 rounded-sm transition-colors ${FOCUS} ${
                     activeTag === tag.slug
                       ? 'text-white border-white/40 bg-white/10'
-                      : 'text-stone-500 border-stone-800 hover:text-stone-300 hover:border-stone-600'
+                      : 'text-stone-400 border-stone-800 hover:text-stone-300 hover:border-stone-600'
                   }`}
                 >
                   #{tag.title}
@@ -104,7 +104,7 @@ function NoteCard({
         )}
 
         {note.status === 'seedling' && !expanded && (
-          <p className="font-mono text-[8px] text-stone-500 uppercase tracking-widest mt-2 italic">
+          <p className="font-mono text-[8px] text-stone-400 uppercase tracking-widest mt-2 italic">
             Early-stage thought — treat accordingly
           </p>
         )}
@@ -132,16 +132,16 @@ function NoteCard({
               {note.rendered ? (
                 <div className="text-sm leading-relaxed text-stone-300">{note.rendered}</div>
               ) : (
-                <p className="font-mono text-[10px] text-stone-500 italic">No content yet — this note is a placeholder.</p>
+                <p className="font-mono text-[10px] text-stone-400 italic">No content yet — this note is a placeholder.</p>
               )}
 
               <div className="flex flex-wrap items-center gap-4 mt-5 pt-4 border-t border-white/5">
                 {note.origin && (
-                  <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
+                  <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">
                     {ORIGIN_LABELS[note.origin] ?? note.origin}
                   </span>
                 )}
-                <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
+                <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">
                   Tended <time dateTime={formatDate(note.lastTended, 'iso')}>{formatDate(note.lastTended, 'short')}</time>
                 </span>
                 <Link href={href} className={`ml-auto font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>
@@ -151,7 +151,7 @@ function NoteCard({
 
               {(note.relatedNotes ?? []).length > 0 && (
                 <div className="mt-4">
-                  <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 block mb-2">Related notes</span>
+                  <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 block mb-2">Related notes</span>
                   <ul className="flex flex-wrap gap-2">
                     {(note.relatedNotes ?? []).map((related) => {
                       const rc = noteStatus(related.status)
@@ -173,7 +173,7 @@ function NoteCard({
 
               {(note.relatedPosts ?? []).length > 0 && (
                 <div className="mt-3">
-                  <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 block mb-2">Related posts</span>
+                  <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 block mb-2">Related posts</span>
                   <ul className="flex flex-wrap gap-2">
                     {(note.relatedPosts ?? []).map((post) => (
                       <li key={post._id}>
@@ -191,7 +191,7 @@ function NoteCard({
 
               {(note.backlinks ?? []).length > 0 && (
                 <div className="mt-3">
-                  <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 block mb-2">Notes that link here</span>
+                  <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 block mb-2">Notes that link here</span>
                   <ul className="flex flex-wrap gap-2">
                     {note.backlinks.map((b) => (
                       <li key={b._id}>
@@ -323,7 +323,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
                 <span className="font-mono text-[9px] text-stone-400">{counts[key]}</span>
               </span>
               <span className="font-mono text-[9px] uppercase tracking-[0.25em] block mb-1">{config.label}</span>
-              <span className="font-mono text-[8px] text-stone-500 leading-snug block">{config.short}</span>
+              <span className="font-mono text-[8px] text-stone-400 leading-snug block">{config.short}</span>
             </button>
           )
         })}
@@ -337,7 +337,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
       {/* ── Recently tended ─────────────────────────────────────── */}
       {recentlyTended.length > 0 && (
         <div className="mb-10 pb-8 border-b border-white/[0.08]">
-          <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-500 block mb-4 border-l-2 border-stone-700 pl-3">
+          <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 block mb-4 border-l-2 border-stone-700 pl-3">
             Recently tended
           </span>
           <ul className="flex flex-wrap gap-2">
@@ -352,7 +352,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
                   >
                     <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${config.dot}`} aria-hidden="true" />
                     {note.title}
-                    <span className="text-stone-500">· {formatDate(note.lastTended, 'short')}</span>
+                    <span className="text-stone-400">· {formatDate(note.lastTended, 'short')}</span>
                   </button>
                 </li>
               )
@@ -405,10 +405,10 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
 
       {/* ── Archive header ──────────────────────────────────────── */}
       <div className="mb-5 pb-4 border-b border-white/[0.08] flex items-center justify-between">
-        <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-600 pl-3">
+        <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-600 pl-3">
           Notes // {[activeTagTitle && `#${activeTagTitle}`, statusFilter && NOTE_STATUS[statusFilter].label].filter(Boolean).join(' · ') || 'All'}
         </span>
-        <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest" aria-live="polite">
+        <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest" aria-live="polite">
           {filtered.length} note{filtered.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -430,7 +430,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
         </div>
       ) : (
         <div className="py-20 text-center border border-white/5 rounded-xl">
-          <p className="font-mono text-[10px] text-stone-500 uppercase tracking-widest mb-3">
+          <p className="font-mono text-[10px] text-stone-400 uppercase tracking-widest mb-3">
             {search ? `No notes matching "${search}"` : activeTagTitle ? `No notes tagged #${activeTagTitle}` : 'No notes here yet.'}
           </p>
           {(search || activeTag || statusFilter) && (

@@ -49,7 +49,7 @@
 - Windows checkout: files may be CRLF. Do not reformat whole files just to change line endings.
 - Turbopack + React Compiler: components created inside render and `setState` inside effects are flagged by `eslint-plugin-react-hooks` (currently warnings).
 - `next/font` self-hosts Lora/Inter/Plex/Lexend (`--font-lexend` powers `.a11y-dyslexia`); nothing is fetched from Google Fonts at runtime.
-- The CSP is Report-Only; a violation logs but does not block. Enforce by renaming the header in `next.config.ts` once the console is clean.
+- The CSP is enforced. To add a third-party origin, set `CSP_REPORT_ONLY=1` (header becomes report-only), extend the allowlist in `next.config.ts`, confirm the console is clean, then unset it. The Playwright suite fails on CSP violations.
 - `SANITY_API_READ_TOKEN` is required at build time (`sanity/lib/token.ts` throws without it).
 - `app/global-error.tsx` cannot use `next/link` or `next/font` — the root layout is gone when it renders.
 - `public/sw.js` caches the last eight `/blog/` articles for offline reading; bump `CACHE_NAME` when article markup changes.

@@ -104,10 +104,10 @@ export function LayerExplorer({ value }: LayerExplorerProps) {
     <div className="article-light-invert my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]" data-no-toc>
       {/* Header */}
       <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500">
+        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400">
           {value?.title || 'OSI Model Explorer'}
         </span>
-        <span className="font-mono text-[10px] text-stone-500">Click a layer to inspect</span>
+        <span className="font-mono text-[10px] text-stone-400">Click a layer to inspect</span>
       </div>
 
       <div className="grid md:grid-cols-2 md:divide-x divide-white/5">
@@ -132,7 +132,7 @@ export function LayerExplorer({ value }: LayerExplorerProps) {
               <span className="flex-1 font-serif text-base text-white group-hover:text-stone-200 transition-colors">
                 {layer.name}
               </span>
-              <span className="font-mono text-[9px] text-stone-500 hidden sm:block">
+              <span className="font-mono text-[9px] text-stone-400 hidden sm:block">
                 {layer.protocols.split(',')[0].trim()}
               </span>
             </button>
@@ -187,7 +187,7 @@ export function LayerExplorer({ value }: LayerExplorerProps) {
                   <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-stone-600 mb-2">
                     Real World
                   </p>
-                  <p className="text-stone-500 text-sm italic font-serif leading-relaxed">
+                  <p className="text-stone-400 text-sm italic font-serif leading-relaxed">
                     {active.realWorld}
                   </p>
                 </div>
@@ -198,7 +198,7 @@ export function LayerExplorer({ value }: LayerExplorerProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="font-mono text-[10px] text-stone-500 uppercase tracking-widest text-center"
+                className="font-mono text-[10px] text-stone-400 uppercase tracking-widest text-center"
               >
                 Select a layer to inspect
               </motion.p>

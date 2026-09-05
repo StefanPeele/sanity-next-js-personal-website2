@@ -147,7 +147,7 @@ export default async function OSIModelPage() {
                     key={row.n}
                     className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
                   >
-                    <td className="py-3 pr-6 text-stone-500">{row.n}</td>
+                    <td className="py-3 pr-6 text-stone-400">{row.n}</td>
                     <td className="py-3 pr-6 text-stone-300">{row.name}</td>
                     <td className="py-3 pr-6">{row.pdu}</td>
                     <td className="py-3 pr-6">{row.addr}</td>

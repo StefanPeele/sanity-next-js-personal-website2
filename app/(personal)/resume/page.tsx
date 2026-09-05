@@ -121,7 +121,7 @@ export default async function ResumePage() {
             </div>
 
             <h1 className="text-6xl md:text-8xl font-serif font-bold tracking-tight text-white print:text-black leading-none">
-              {nameParts[0]}{lastName && <><br />{lastName}</>}<span className="text-stone-500 print:text-gray-400">.</span>
+              {nameParts[0]}{lastName && <><br />{lastName}</>}<span className="text-stone-400 print:text-gray-400">.</span>
             </h1>
             <p className="mt-6 max-w-xl text-stone-300 print:text-gray-800 text-sm md:text-base leading-relaxed">
               {data?.home?.currently ?? copy.fallbackTagline}
@@ -147,7 +147,7 @@ export default async function ResumePage() {
                   <span className="absolute -left-[5px] top-2 w-[9px] h-[9px] rounded-full bg-stone-900 border border-stone-600 group-hover:bg-white transition-colors print:bg-white print:border-black" aria-hidden="true" />
                   <p className="font-mono text-[10px] text-stone-400 print:text-gray-600 uppercase tracking-widest mb-2">
                     {dateRange(job.startDate, job.endDate, job.current, job.duration)}
-                    {job.location && <span className="ml-3 text-stone-500 print:text-gray-500">{job.location}</span>}
+                    {job.location && <span className="ml-3 text-stone-400 print:text-gray-500">{job.location}</span>}
                   </p>
                   <h3 className="text-2xl font-serif text-white print:text-black">{job.role}</h3>
                   <p className="text-stone-400 print:text-gray-700 text-sm italic mb-5">{job.company}</p>

@@ -66,7 +66,7 @@ export function Reactions({ slug, heading = DEFAULT_ARTICLE_UI.reactionsHeading,
           )
         })}
       </div>
-      <p className="mt-3 font-sans text-xs text-stone-500">Saved on this device only.</p>
+      <p className="mt-3 font-sans text-xs text-stone-400">Saved on this device only.</p>
     </section>
   )
 }

@@ -42,12 +42,12 @@ function PhysicalProductBadge({ tier, labels }: { tier: PhysicalTier; labels: Se
       <ul className="space-y-1.5">
         {products.map((product) => (
           <li key={product} className="flex items-start gap-2">
-            <span className={`text-[10px] mt-0.5 flex-shrink-0 ${premium ? 'text-amber-500' : 'text-stone-500'}`} aria-hidden="true">—</span>
+            <span className={`text-[10px] mt-0.5 flex-shrink-0 ${premium ? 'text-amber-500' : 'text-stone-400'}`} aria-hidden="true">—</span>
             <span className={`font-mono text-[9px] leading-snug ${premium ? 'text-stone-300' : 'text-stone-400'}`}>{product}</span>
           </li>
         ))}
       </ul>
-      <p className={`font-mono text-[8px] uppercase tracking-widest mt-3 ${premium ? 'text-amber-500/70' : 'text-stone-500'}`}>
+      <p className={`font-mono text-[8px] uppercase tracking-widest mt-3 ${premium ? 'text-amber-400' : 'text-stone-400'}`}>
         {labels.final}
       </p>
     </div>
@@ -133,7 +133,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
               </div>
               {isNJIT && fromPublic !== null && fromNjit !== null && (
                 <div className="hidden sm:block text-right flex-shrink-0">
-                  <span className="font-mono text-[8px] text-stone-500 uppercase tracking-widest block line-through">From {formatPrice(fromPublic)}</span>
+                  <span className="font-mono text-[8px] text-stone-400 uppercase tracking-widest block line-through">From {formatPrice(fromPublic)}</span>
                   <span className="font-serif text-xl font-bold text-emerald-300">From {formatPrice(fromNjit)}</span>
                 </div>
               )}
@@ -149,7 +149,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {copy.standardDelivery.items.map((i) => ({ label: i.title, desc: i.description })).map((item) => (
               <div key={item.label} className="flex items-start gap-3">
-                <Icon name="check" size={14} className="text-stone-500 flex-shrink-0 mt-0.5" />
+                <Icon name="check" size={14} className="text-stone-400 flex-shrink-0 mt-0.5" />
                 <div>
                   <span className="font-sans text-xs text-stone-300 block mb-0.5">{item.label}</span>
                   <span className="font-mono text-[9px] text-stone-400 leading-snug block">{item.desc}</span>
@@ -183,7 +183,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                 {badge}
               </div>
 
-              <div className={`p-7 flex flex-col flex-grow ${pkg.comingSoon ? 'opacity-70' : ''}`}>
+              <div className={`p-7 flex flex-col flex-grow ${pkg.comingSoon ? 'grayscale' : ''}`}>
                 <div className="mb-6">
                   <h3 id={`pkg-${pkg.id}`} className={specialty ? 'font-serif text-2xl text-white mb-1' : `font-sans text-xs mb-2 ${accent ? 'text-amber-500/80' : 'text-stone-400'}`}>
                     {pkg.name}
@@ -231,7 +231,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                   <ul className="space-y-2.5 mb-6 flex-grow">
                     {pkg.includes.map((item) => (
                       <li key={item} className="flex items-start gap-2.5 text-stone-200 text-sm leading-snug">
-                        <span className={`mt-0.5 flex-shrink-0 text-xs ${accent ? 'text-amber-500' : 'text-stone-500'}`} aria-hidden="true">✓</span>
+                        <span className={`mt-0.5 flex-shrink-0 text-xs ${accent ? 'text-amber-500' : 'text-stone-400'}`} aria-hidden="true">✓</span>
                         <span>
                           {item}
                           {item.includes('in development') && (

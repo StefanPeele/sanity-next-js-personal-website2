@@ -130,7 +130,7 @@ export function CredibilitySection({
             </span>
           )}
           {load && (
-            <span className="font-mono text-[9px] uppercase tracking-[0.3em] px-3 py-1.5 rounded-sm border border-white/10 text-stone-500">
+            <span className="font-mono text-[9px] uppercase tracking-[0.3em] px-3 py-1.5 rounded-sm border border-white/10 text-stone-400">
               {lbl(labels.load, cognitiveLoad, load.label)}
             </span>
           )}
@@ -168,12 +168,12 @@ export function CredibilitySection({
                         <span className="font-serif text-white font-semibold">{reviewer.name}</span>
                       )}
                       {reviewer.role && (
-                        <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
+                        <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">
                           {reviewer.role}{reviewer.organization ? ` · ${reviewer.organization}` : ''}
                         </span>
                       )}
                       {reviewer.date && (
-                        <span className="font-mono text-[9px] text-stone-500 ml-auto">
+                        <span className="font-mono text-[9px] text-stone-400 ml-auto">
                           {formatDate(reviewer.date, 'month')}
                         </span>
                       )}
@@ -216,12 +216,12 @@ export function CredibilitySection({
                     )}
                   </div>
                   {response.summary && (
-                    <p className="font-mono text-[10px] text-stone-600 leading-relaxed">
+                    <p className="font-mono text-[10px] text-stone-400 leading-relaxed">
                       {response.summary}
                     </p>
                   )}
                   {response.author && (
-                    <p className="font-mono text-[9px] text-stone-500 mt-1">— {response.author}</p>
+                    <p className="font-mono text-[9px] text-stone-400 mt-1">— {response.author}</p>
                   )}
                 </div>
                 <span className="text-stone-600 group-hover:text-stone-400 transition-colors flex-shrink-0 mt-0.5">↗</span>
@@ -243,7 +243,7 @@ export function CredibilitySection({
             <span className="section-label group-hover:text-white transition-colors">
               {labels.changelogHeading}
             </span>
-            <span className="font-mono text-[9px] text-stone-500 group-hover:text-stone-300 transition-colors">
+            <span className="font-mono text-[9px] text-stone-400 group-hover:text-stone-300 transition-colors">
               {changelog.length} update{changelog.length !== 1 ? 's' : ''} {changelogOpen ? '↑' : '↓'}
             </span>
           </button>

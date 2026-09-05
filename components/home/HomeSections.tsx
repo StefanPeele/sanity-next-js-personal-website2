@@ -82,10 +82,10 @@ export function HeroSection({ s, ctx }: { s: S<'homeHero'>; ctx: HomeContext }) 
       </div>
       <div className="relative z-10 w-full max-w-6xl mx-auto mt-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 font-sans text-sm text-stone-400 border-t border-white/5 pt-6">
         <div className="flex flex-col md:flex-row gap-2 md:gap-8">
-          {data.currently && <p><span className="text-stone-500 mr-2">{s.currentlyLabel}:</span>{data.currently}</p>}
-          <p><span className="text-stone-500 mr-2">{s.locationLabel}:</span>{data.location || `${settings.location.city}, ${settings.location.region}`}</p>
+          {data.currently && <p><span className="text-stone-400 mr-2">{s.currentlyLabel}:</span>{data.currently}</p>}
+          <p><span className="text-stone-400 mr-2">{s.locationLabel}:</span>{data.location || `${settings.location.city}, ${settings.location.region}`}</p>
         </div>
-        {s.footnote && <span className="text-stone-500">{s.footnote}</span>}
+        {s.footnote && <span className="text-stone-400">{s.footnote}</span>}
       </div>
     </section>
   )

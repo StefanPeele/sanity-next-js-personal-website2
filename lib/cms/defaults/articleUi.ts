@@ -12,6 +12,7 @@ export const DEFAULT_ARTICLE_UI = {
   toc: { title: 'Contents', mobileTitle: 'In this article', minutesSuffix: 'min' },
   readerMenu: {
     buttonLabel: 'Reading options',
+    closeLabel: 'Close',
     groupLabels: { theme: 'Theme', textSize: 'Text size', width: 'Width', accessibility: 'Accessibility', share: 'Share and export', listen: 'Read aloud', position: 'Your place' },
     themeLabels: { archive: 'Dark', terminal: 'Green', paper: 'Paper', broadcast: 'Light' },
     widthLabels: { narrow: 'Narrow', standard: 'Standard', wide: 'Wide' },

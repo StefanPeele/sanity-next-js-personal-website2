@@ -1,4 +1,3 @@
-import type { PortableTextBlock } from 'next-sanity'
 import type { Image } from 'sanity'
 
 // ... existing MilestoneItem and ShowcaseProject interfaces ...

@@ -8,7 +8,7 @@ export const articleUiQuery = defineQuery(`
     header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },
     toc{ title, mobileTitle, minutesSuffix },
     readerMenu{
-      buttonLabel,
+      buttonLabel, closeLabel,
       groupLabels{ theme, textSize, width, accessibility, share, listen, position },
       themeLabels{ archive, terminal, paper, broadcast },
       widthLabels{ narrow, standard, wide },

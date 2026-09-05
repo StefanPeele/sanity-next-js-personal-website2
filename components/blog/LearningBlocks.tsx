@@ -55,7 +55,7 @@ export function WhatIGotWrong({ value }: WhatIGotWrongProps) {
               <span className="font-mono text-[9px] uppercase tracking-widest text-indigo-500/70 flex-shrink-0 mt-1 w-20">
                 Why it matters
               </span>
-              <p className="font-mono text-xs text-stone-500 leading-relaxed italic">
+              <p className="font-mono text-xs text-stone-400 leading-relaxed italic">
                 {value.whyItMatters}
               </p>
             </div>
@@ -114,7 +114,7 @@ export function WhatEngineersUse({ value }: WhatEngineersUseProps) {
             <span className="font-mono text-[9px] uppercase tracking-widest text-stone-600">
               Tools:
             </span>
-            <span className="font-mono text-[10px] text-stone-500">
+            <span className="font-mono text-[10px] text-stone-400">
               {value.toolsInvolved}
             </span>
           </div>
@@ -189,14 +189,14 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
     <div className="my-10 border border-white/10 rounded-xl overflow-hidden bg-[#0f0f12]">
       <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500">
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400">
             Stress Test
           </span>
           <span className="font-mono text-[9px] uppercase tracking-widest px-2 py-0.5 border border-stone-700 text-stone-600 rounded-sm">
             Before moving on
           </span>
         </div>
-        <span className="font-mono text-[10px] text-stone-500">Active recall</span>
+        <span className="font-mono text-[10px] text-stone-400">Active recall</span>
       </div>
 
       <div className="p-6">
@@ -239,7 +239,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
             className="mt-4 pt-4 border-t border-white/5"
           >
             <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-600 mb-2">Hint</p>
-            <p className="text-stone-500 text-sm italic leading-relaxed">{value.hint}</p>
+            <p className="text-stone-400 text-sm italic leading-relaxed">{value.hint}</p>
           </motion.div>
         )}
 
@@ -252,7 +252,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
               transition={{ duration: 0.4, ease: 'easeOut' }}
               className="mt-6 pt-6 border-t border-white/[0.08] overflow-hidden"
             >
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-3">Answer</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 mb-3">Answer</p>
               <p className="text-stone-300 text-sm leading-relaxed whitespace-pre-wrap">
                 {value.answer}
               </p>
@@ -354,7 +354,7 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
                   <p className="font-serif text-lg text-white leading-snug">
                     {card.front}
                   </p>
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 group-hover:text-stone-300 transition-colors">
+                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400 group-hover:text-stone-300 transition-colors">
                     Click to define →
                   </span>
                 </div>
@@ -370,7 +370,7 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
                   <p className="font-mono text-xs text-stone-300 leading-relaxed">
                     {card.back}
                   </p>
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500">
+                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400">
                     ← Click to flip back
                   </span>
                 </div>

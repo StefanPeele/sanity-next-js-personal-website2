@@ -1,8 +1,8 @@
 import { NextConfig } from 'next'
 
-// Content-Security-Policy in REPORT-ONLY mode: violations are logged to the browser
-// console (and to CSP_REPORT_URI if set) but nothing is blocked. To enforce, rename the
-// header key to 'Content-Security-Policy' once the console is clean. See README.md.
+// Content-Security-Policy is ENFORCED. Set CSP_REPORT_ONLY=1 to fall back to report-only
+// (violations logged, nothing blocked) while adding a new third-party origin. Violations are
+// also sent to CSP_REPORT_URI when set. See README.md.
 const CSP = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -13,7 +13,7 @@ const CSP = [
   // Next.js inline runtime + Vercel analytics/insights + giscus comments. Sanity Studio
   // (/studio) needs eval; keep 'unsafe-eval' until the studio moves to its own origin.
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://vercel.live https://giscus.app https://core.sanity-cdn.com",
-  // Tailwind/inline style attributes + Google Fonts (Lexend is loaded at runtime for dyslexia mode).
+  // Tailwind/inline style attributes. Fonts are self-hosted by next/font; the Google Fonts hosts stay for giscus themes.
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://giscus.app",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://cdn.sanity.io https://*.sanity.io https://avatars.githubusercontent.com https://images.unsplash.com https://vercel.com https://vercel.live",
@@ -57,7 +57,7 @@ const config: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
           { key: 'X-DNS-Prefetch-Control', value: 'on' },
-          { key: 'Content-Security-Policy-Report-Only', value: CSP },
+          { key: process.env.CSP_REPORT_ONLY ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy', value: CSP },
         ],
       },
       {

@@ -159,7 +159,7 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
         >
           <div className="flex items-center justify-between mb-1">
             <span className="section-label">{L.buttonLabel}</span>
-            <button type="button" onClick={() => { setOpen(false); buttonRef.current?.focus() }} aria-label="Close" className={`w-9 h-9 flex items-center justify-center rounded-lg text-stone-400 hover:text-white ${FOCUS}`}><X size={16} /></button>
+            <button type="button" onClick={() => { setOpen(false); buttonRef.current?.focus() }} aria-label={L.closeLabel} className={`w-9 h-9 flex items-center justify-center rounded-lg text-stone-400 hover:text-white ${FOCUS}`}><X size={16} /></button>
           </div>
 
           <Group label={L.groupLabels.theme}>
@@ -212,7 +212,7 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
                 {reader.status !== 'idle' && <Chip role="button" active={false} onClick={reader.stop}><Square size={12} className="inline mr-1" aria-hidden />{L.listenLabels.stop}</Chip>}
               </div>
             ) : (
-              <p className="text-sm text-stone-500">{L.listenLabels.unsupported}</p>
+              <p className="text-sm text-stone-400">{L.listenLabels.unsupported}</p>
             )}
           </Group>
 

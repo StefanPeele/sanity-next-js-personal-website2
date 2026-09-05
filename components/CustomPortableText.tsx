@@ -153,7 +153,7 @@ export function CustomPortableText({
       ),
       number: ({ children, index }) => (
         <li className={`flex items-start gap-4 text-stone-300 leading-relaxed ${bodyText}`}>
-          <span className="shrink-0 font-mono text-[11px] text-stone-500 mt-1 w-5 text-right" aria-hidden="true">
+          <span className="shrink-0 font-mono text-[11px] text-stone-400 mt-1 w-5 text-right" aria-hidden="true">
             {(index ?? 0) + 1}.
           </span>
           <span>{children}</span>
@@ -209,7 +209,7 @@ export function CustomPortableText({
             classesWrapper="relative aspect-[16/9] w-full h-auto"
           />
           {v?.caption && (
-            <figcaption className="px-4 py-3 font-mono text-[10px] text-stone-500 uppercase tracking-widest text-center border-t border-white/5">
+            <figcaption className="px-4 py-3 font-mono text-[10px] text-stone-400 uppercase tracking-widest text-center border-t border-white/5">
               {v.caption}
             </figcaption>
           )}

@@ -3407,6 +3407,13 @@
               },
               "optional": true
             },
+            "closeLabel": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
             "groupLabels": {
               "type": "objectAttribute",
               "value": {

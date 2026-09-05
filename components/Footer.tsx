@@ -100,7 +100,7 @@ export default function Footer({ settings, nav = DEFAULT_NAVIGATION }: { setting
 
         <p className="pt-8 text-stone-400 font-sans text-sm">
           © {year}{' '}
-          <a href={SITE.url} className="p-name u-url text-stone-300 hover:text-white" rel="me">{settings.siteName}</a>.{' '}
+          <a href={SITE.url} className="p-name u-url text-stone-200 underline underline-offset-4 decoration-stone-600 hover:text-white hover:decoration-white" rel="me">{settings.siteName}</a>.{' '}
           <span className="p-note">{settings.footer.copyrightNote}</span>
           <span className="p-locality sr-only">{settings.location.city}, {settings.location.region}</span>
         </p>

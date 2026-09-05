@@ -70,7 +70,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
       </nav>
 
       {groups.length === 0 && (
-        <p className="font-mono text-[11px] uppercase tracking-widest text-stone-500">No terms in this category yet.</p>
+        <p className="font-mono text-[11px] uppercase tracking-widest text-stone-400">No terms in this category yet.</p>
       )}
 
       {groups.map(([letter, items]) => (
@@ -84,10 +84,10 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
                     {e.term}
                   </a>
                   {e.aliases.length > 0 && (
-                    <span className="font-mono text-[10px] text-stone-500">also: {e.aliases.join(', ')}</span>
+                    <span className="font-mono text-[10px] text-stone-400">also: {e.aliases.join(', ')}</span>
                   )}
                   {e.category && (
-                    <span className="ml-auto font-mono text-[9px] uppercase tracking-widest text-stone-500 border border-white/10 px-2 py-0.5 rounded-sm">{e.category}</span>
+                    <span className="ml-auto font-mono text-[9px] uppercase tracking-widest text-stone-400 border border-white/10 px-2 py-0.5 rounded-sm">{e.category}</span>
                   )}
                 </dt>
                 <dd className="mt-2">

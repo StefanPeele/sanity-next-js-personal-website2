@@ -209,7 +209,7 @@ export default function BookingSection({ copy = DEFAULT_SERVICES_PAGE.booking, s
             <input type="checkbox" name="njit_affiliate" className={`h-4 w-4 rounded border-white/30 bg-transparent accent-white ${FOCUS}`} />
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-400 group-hover:text-stone-200 transition-colors">
               {copy.njitCheckbox}
-              <span className="text-stone-500 ml-2">(NJIT ID required at booking)</span>
+              <span className="text-stone-400 ml-2">{copy.njitNote}</span>
             </span>
           </label>
 
@@ -302,7 +302,7 @@ export default function BookingSection({ copy = DEFAULT_SERVICES_PAGE.booking, s
           {isOpen ? copy.closeLabel : (triggerLabel ?? copy.triggerLabel)}
         </span>
         <svg
-          className={`w-4 h-4 text-stone-500 group-hover:text-white transition-transform duration-500 ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-stone-400 group-hover:text-white transition-transform duration-500 ${isOpen ? 'rotate-180' : ''}`}
           fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 9l-7 7-7-7" />

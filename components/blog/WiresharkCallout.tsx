@@ -29,7 +29,7 @@ export function WiresharkCallout({ value }: WiresharkCalloutProps) {
     <div className="my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]">
       {/* Header */}
       <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500">
+        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400">
           Wireshark Capture
         </span>
         <span className="font-mono text-[10px] text-stone-700">
@@ -79,14 +79,14 @@ export function WiresharkCallout({ value }: WiresharkCalloutProps) {
               {active.number}
             </span>
             <div>
-              <p className="font-mono text-[10px] text-stone-500 mb-1">
+              <p className="font-mono text-[10px] text-stone-400 mb-1">
                 {active.rowDescription}
               </p>
               <p className="text-stone-400 text-sm leading-relaxed">{active.explanation}</p>
             </div>
           </div>
         ) : (
-          <p className="font-mono text-[10px] text-stone-700 uppercase tracking-widest">
+          <p className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">
             {value.caption || 'Hover a callout number to inspect the capture'}
           </p>
         )}

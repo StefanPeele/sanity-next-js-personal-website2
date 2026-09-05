@@ -64,11 +64,11 @@ function tokenizeLine(line: string, language: string): Token[] {
 }
 
 const KIND_CLASS: Record<TokenKind, string> = {
-  comment: 'text-stone-500 italic',
+  comment: 'text-stone-400 italic',
   string: 'text-emerald-300',
   keyword: 'text-sky-300',
   number: 'text-amber-300',
-  prompt: 'text-stone-500 select-none',
+  prompt: 'text-stone-400 select-none',
   plain: '',
 }
 
@@ -101,7 +101,7 @@ export function CodeBlock({ value }: { value: CodeValue }) {
               {value.filename}
             </span>
           ) : null}
-          <span className="font-mono text-[10px] text-stone-500 uppercase tracking-widest">
+          <span className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">
             {value?.language || 'terminal'}
           </span>
         </div>

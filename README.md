@@ -78,7 +78,8 @@ See `.env.local.example` for comments. Summary:
 | `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `AIRTABLE_CLIENTS_TABLE_ID`, `AIRTABLE_SHOOTS_TABLE_ID`, `AIRTABLE_WEBHOOK_SECRET` | server | Photography booking CRM |
 | `GITHUB_TOKEN` | server, optional | Higher GitHub API rate limit |
 | `NEXT_PUBLIC_WEBMENTION_ENABLED` | public, optional | `true` adds the webmention.io `<link>` tags — only after registering at webmention.io |
-| `CSP_REPORT_URI` | server, optional | Where CSP Report-Only violations are sent |
+| `CSP_REPORT_URI` | server, optional | Where CSP violation reports are sent |
+| `CSP_REPORT_ONLY` | server, optional | `1` switches the CSP header to report-only while adding a new origin |
 | `PLAYWRIGHT_BASE_URL` | test, optional | Run e2e against a deployed URL |
 
 `VERCEL_GIT_COMMIT_SHA` and `VERCEL_DEPLOYMENT_ID` are injected by Vercel and reported by `/api/health`.
@@ -162,7 +163,7 @@ No comment system is wired up yet. The CSP already allows `giscus.app` so a gisc
 
 ## Security headers
 
-`next.config.ts` sets `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `poweredByHeader: false`, and a **Content-Security-Policy-Report-Only** allowing self, `cdn.sanity.io` / `*.sanity.io`, Vercel analytics and insights, Google Fonts (Lexend is loaded at runtime for dyslexia mode), `giscus.app`, `data:` images and inline styles. Watch the browser console (or set `CSP_REPORT_URI`) for a release or two; when it stays clean, rename the header key to `Content-Security-Policy` to enforce it.
+`next.config.ts` sets `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `poweredByHeader: false`, and an **enforced Content-Security-Policy** allowing self, `cdn.sanity.io` / `*.sanity.io`, Vercel analytics and insights, `giscus.app`, Calendly frames, `data:` images and inline styles. When adding a third-party origin, set `CSP_REPORT_ONLY=1` in Vercel to switch the header to report-only, watch the console (or `CSP_REPORT_URI`), then remove the variable. The Playwright suite fails on any CSP violation logged on the main routes.
 
 ## SEO / IndieWeb
 

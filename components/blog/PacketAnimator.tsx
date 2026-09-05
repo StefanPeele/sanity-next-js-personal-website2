@@ -42,10 +42,10 @@ export function PacketAnimator({ value }: PacketAnimatorProps) {
     <div className="article-light-invert my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]" data-no-toc>
       {/* Header */}
       <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500">
+        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400">
           Packet Journey
         </span>
-        <span className="font-mono text-[10px] text-stone-500">
+        <span className="font-mono text-[10px] text-stone-400">
           {value?.scenario || 'Interactive Walkthrough'}
         </span>
       </div>
@@ -67,7 +67,7 @@ export function PacketAnimator({ value }: PacketAnimatorProps) {
           ))}
         </div>
         <div className="flex justify-between mt-2">
-          <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
+          <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">
             Step {currentStep + 1} of {total}
           </span>
           {step && (
@@ -99,7 +99,7 @@ export function PacketAnimator({ value }: PacketAnimatorProps) {
                 >
                   Layer {step.layer}
                 </span>
-                <span className="font-mono text-[9px] text-stone-600 uppercase tracking-widest">
+                <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">
                   {step.layerName}
                 </span>
               </div>
@@ -115,14 +115,14 @@ export function PacketAnimator({ value }: PacketAnimatorProps) {
         <button
           onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
           disabled={currentStep === 0}
-          className="font-mono text-[10px] uppercase tracking-widest px-4 py-2 border border-white/10 text-stone-500 hover:border-white/30 hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+          className="font-mono text-[10px] uppercase tracking-widest px-4 py-2 border border-white/10 text-stone-400 hover:border-white/30 hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
         >
           ← Back
         </button>
         <button
           onClick={() => setCurrentStep((s) => Math.min(total - 1, s + 1))}
           disabled={currentStep === total - 1}
-          className="font-mono text-[10px] uppercase tracking-widest px-4 py-2 border border-white/10 text-stone-500 hover:border-white/30 hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+          className="font-mono text-[10px] uppercase tracking-widest px-4 py-2 border border-white/10 text-stone-400 hover:border-white/30 hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
         >
           Next →
         </button>

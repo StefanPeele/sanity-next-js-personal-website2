@@ -37,21 +37,21 @@ export function CurrentlyReading({ items, title = 'Currently reading' }: { items
                     {item.coverUrl ? (
                       <Image src={item.coverUrl} alt="" width={36} height={48} className="w-full h-full object-cover" />
                     ) : (
-                      <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={16} className="text-stone-500" />
+                      <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={16} className="text-stone-400" />
                     )}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="flex items-baseline justify-between gap-3">
                       <span className="font-serif text-sm text-white group-hover:text-stone-200 leading-snug truncate">{item.title}</span>
-                      <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 flex-shrink-0">{MEDIA_LABELS[item.mediaType ?? ''] ?? item.mediaType}</span>
+                      <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400 flex-shrink-0">{MEDIA_LABELS[item.mediaType ?? ''] ?? item.mediaType}</span>
                     </span>
-                    {item.author && <span className="font-mono text-[9px] text-stone-500 block truncate">{item.author}</span>}
+                    {item.author && <span className="font-mono text-[9px] text-stone-400 block truncate">{item.author}</span>}
                     {typeof item.progressPercent === 'number' && (
                       <span className="flex items-center gap-2 mt-1.5">
                         <span className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${item.title} progress`}>
                           <span className="block h-full bg-emerald-500/70 rounded-full" style={{ width: `${Math.max(0, Math.min(100, item.progressPercent))}%` }} />
                         </span>
-                        <span className="font-mono text-[8px] text-stone-500">{item.progressPercent}%</span>
+                        <span className="font-mono text-[8px] text-stone-400">{item.progressPercent}%</span>
                       </span>
                     )}
                   </span>
@@ -61,7 +61,7 @@ export function CurrentlyReading({ items, title = 'Currently reading' }: { items
           })}
         </ul>
       ) : (
-        <p className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">Nothing on the nightstand right now.</p>
+        <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Nothing on the nightstand right now.</p>
       )}
     </section>
   )

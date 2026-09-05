@@ -34,19 +34,19 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
             className="w-full h-full object-cover"
           />
         ) : (
-          <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={large ? 28 : 20} className="text-stone-500" />
+          <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={large ? 28 : 20} className="text-stone-400" />
         )}
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 flex-wrap mb-1">
-          <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500">
+          <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400">
             <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={10} className="inline -mt-px mr-1" />{MEDIA_LABELS[item.mediaType ?? ''] ?? item.mediaType}
           </span>
-          {item.category && <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500">· {item.category}</span>}
+          {item.category && <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400">· {item.category}</span>}
           {item.finishedAt && item.status === 'finished' && (
-            <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500">· Finished {formatDate(item.finishedAt, 'month')}</span>
+            <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400">· Finished {formatDate(item.finishedAt, 'month')}</span>
           )}
         </div>
 
@@ -60,7 +60,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
           )}
         </h3>
 
-        {item.author && <p className="font-mono text-[10px] text-stone-500 mb-2">{item.author}</p>}
+        {item.author && <p className="font-mono text-[10px] text-stone-400 mb-2">{item.author}</p>}
 
         {item.status === 'current' && typeof item.progressPercent === 'number' && (
           <div className="mb-3">
@@ -68,10 +68,10 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
               <div className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label="Reading progress">
                 <div className="h-full bg-emerald-500/70 rounded-full" style={{ width: `${item.progressPercent}%` }} />
               </div>
-              <span className="font-mono text-[9px] text-stone-500">{item.progressPercent}%</span>
+              <span className="font-mono text-[9px] text-stone-400">{item.progressPercent}%</span>
             </div>
             {item.startedAt && (
-              <span className="font-mono text-[8px] text-stone-500 uppercase tracking-widest">Started {formatDate(item.startedAt, 'month')}</span>
+              <span className="font-mono text-[8px] text-stone-400 uppercase tracking-widest">Started {formatDate(item.startedAt, 'month')}</span>
             )}
           </div>
         )}
@@ -82,7 +82,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
 
         {item.keyIdea && (
           <p className="text-stone-400 text-sm leading-relaxed mb-2">
-            <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 mr-2">Key idea</span>
+            <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400 mr-2">Key idea</span>
             {item.keyIdea}
           </p>
         )}
@@ -90,7 +90,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
         {item.quote && (
           <blockquote className="my-3 pl-4 border-l-2 border-stone-600 font-serif text-stone-300 text-base leading-relaxed">
             <p>“{item.quote}”</p>
-            {item.author && <footer className="font-mono text-[9px] text-stone-500 uppercase tracking-widest mt-1">— {item.author}</footer>}
+            {item.author && <footer className="font-mono text-[9px] text-stone-400 uppercase tracking-widest mt-1">— {item.author}</footer>}
           </blockquote>
         )}
 
@@ -99,7 +99,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
             <span className={`font-mono text-[9px] uppercase tracking-widest ${ratingConfig.color}`}>{ratingConfig.label}</span>
           )}
           {item.status === 'abandoned' && item.abandonedReason && (
-            <span className="font-mono text-[9px] text-stone-500">{item.abandonedReason}</span>
+            <span className="font-mono text-[9px] text-stone-400">{item.abandonedReason}</span>
           )}
         </div>
 
@@ -119,7 +119,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
 
         {(posts.length > 0 || notes.length > 0) && (
           <div className="mt-3 pt-3 border-t border-white/5">
-            <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500 block mb-1.5">Influenced</span>
+            <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400 block mb-1.5">Influenced</span>
             <ul className="flex flex-wrap gap-x-3 gap-y-1">
               {posts.map((post) => (
                 <li key={`p-${post.slug}`}>

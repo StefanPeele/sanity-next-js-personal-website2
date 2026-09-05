@@ -157,13 +157,13 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                     <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 transition-all ${active === cat ? 'bg-white scale-125' : 'bg-stone-500 group-hover:bg-stone-300'}`} aria-hidden="true" />
                     {cat}
                   </span>
-                  <span className={`text-[10px] font-mono transition-colors ${active === cat ? 'text-stone-300' : 'text-stone-500 group-hover:text-stone-300'}`}>
+                  <span className={`text-[10px] font-mono transition-colors ${active === cat ? 'text-stone-300' : 'text-stone-400 group-hover:text-stone-300'}`}>
                     {posts.filter((p) => p.categories?.includes(cat)).length}
                   </span>
                 </button>
               </li>
             )) : (
-              <li className="font-mono text-[10px] text-stone-500 px-3 py-2">No categories yet</li>
+              <li className="font-mono text-[10px] text-stone-400 px-3 py-2">No categories yet</li>
             )}
             {anyFilter && (
               <li className="pt-3 mt-2 border-t border-white/10">
@@ -186,10 +186,10 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                   className={`group font-sans text-sm text-stone-300 hover:text-white transition-all duration-200 flex items-center justify-between px-3 py-2 rounded-md border border-transparent hover:border-white/15 hover:bg-white/[0.08] ${FOCUS}`}
                 >
                   <span className="flex items-center gap-2.5">
-                    <span className="w-4 text-stone-500 group-hover:text-white" aria-hidden="true"><Icon name={item.icon} /></span>
+                    <span className="w-4 text-stone-400 group-hover:text-white" aria-hidden="true"><Icon name={item.icon} /></span>
                     {item.label}
                   </span>
-                  <span className="text-stone-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" aria-hidden="true">→</span>
+                  <span className="text-stone-400 group-hover:text-white group-hover:translate-x-0.5 transition-all" aria-hidden="true">→</span>
                 </Link>
               </li>
             ))}
@@ -236,7 +236,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                   href={`/blog/series/${s.slug}`}
                   className={`block h-full rounded-lg border border-white/10 hover:border-white/30 bg-white/[0.02] p-4 transition-colors ${FOCUS}`}
                 >
-                  <span className="font-sans text-xs text-stone-500 block mb-2">{s.count} part{s.count === 1 ? '' : 's'}</span>
+                  <span className="font-sans text-xs text-stone-400 block mb-2">{s.count} part{s.count === 1 ? '' : 's'}</span>
                   <span className="font-serif text-white text-base leading-snug block mb-1">{s.title}</span>
                   {s.description && <span className="text-stone-400 text-xs line-clamp-2 block">{s.description}</span>}
                 </Link>
@@ -261,15 +261,15 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                     <Link href={`/library#${item._id}`} className={`block rounded-sm ${FOCUS}`}>
                       <span className="flex items-baseline justify-between gap-3">
                         <span className="font-serif text-sm text-white leading-snug">{item.title}</span>
-                        <span className="font-sans text-xs text-stone-500 flex-shrink-0">{mediaLabel(item.mediaType)}</span>
+                        <span className="font-sans text-xs text-stone-400 flex-shrink-0">{mediaLabel(item.mediaType)}</span>
                       </span>
-                      {item.author && <span className="font-mono text-[9px] text-stone-500 block">{item.author}</span>}
+                      {item.author && <span className="font-mono text-[9px] text-stone-400 block">{item.author}</span>}
                       {typeof item.progressPercent === 'number' && (
                         <span className="flex items-center gap-2 mt-1.5">
                           <span className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${item.title} progress`}>
                             <span className="block h-full bg-emerald-500/70 rounded-full" style={{ width: `${item.progressPercent}%` }} />
                           </span>
-                          <span className="font-mono text-[8px] text-stone-500">{item.progressPercent}%</span>
+                          <span className="font-mono text-[8px] text-stone-400">{item.progressPercent}%</span>
                         </span>
                       )}
                     </Link>
@@ -292,7 +292,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                       <Link href={`/garden/${n.slug}`} className={`group flex items-center gap-2.5 rounded-sm ${FOCUS}`}>
                         <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${s.dot}`} aria-hidden="true" />
                         <span className="font-serif text-sm text-stone-200 group-hover:text-white transition-colors">{n.title}</span>
-                        <span className="ml-auto font-sans text-xs text-stone-500 flex-shrink-0">{s.label}</span>
+                        <span className="ml-auto font-sans text-xs text-stone-400 flex-shrink-0">{s.label}</span>
                       </Link>
                     </li>
                   )
@@ -442,7 +442,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                       <span className="font-mono text-[8px] tracking-[0.2em] uppercase text-orange-300/80"><Icon name="layers" size={9} className="inline -mt-px mr-1" />{post.series.title}</span>
                     )}
                   </div>
-                  <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest flex-shrink-0">{minutes} min</span>
+                  <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest flex-shrink-0">{minutes} min</span>
                 </div>
 
                 <h3 className="text-xl font-serif text-white group-hover:text-stone-100 transition-colors mb-2 leading-snug">{post.title}</h3>

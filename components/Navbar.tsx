@@ -128,7 +128,7 @@ export function Navbar({ nav = DEFAULT_NAVIGATION }: { nav?: NavigationData }) {
               ))}
             </nav>
           )}
-          {nav.drawerFooterLine && <p className="mt-auto font-sans text-sm text-stone-500">{nav.drawerFooterLine}</p>}
+          {nav.drawerFooterLine && <p className="mt-auto font-sans text-sm text-stone-400">{nav.drawerFooterLine}</p>}
         </div>
       )}
     </>

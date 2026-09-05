@@ -80,18 +80,18 @@ export default async function SeriesPage({ params }: Props) {
             ← All series
           </Link>
           <div className="mt-6 mb-4 flex flex-wrap items-center gap-3">
-            <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-500 border-l border-stone-700 pl-4">Series</span>
+            <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 border-l border-stone-700 pl-4">Series</span>
             <span className={`font-mono text-[9px] uppercase tracking-[0.3em] px-2.5 py-1 rounded-sm border ${status.className}`}>{status.label}</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none">{series.title}</h1>
           {series.description && <p className="mt-5 max-w-2xl font-serif text-lg text-stone-300 leading-relaxed">{series.description}</p>}
-          <p className="mt-4 font-mono text-[10px] uppercase tracking-widest text-stone-500">
+          <p className="mt-4 font-mono text-[10px] uppercase tracking-widest text-stone-400">
             {parts.length} part{parts.length !== 1 ? 's' : ''} · ~{totalMinutes} min total · {status.note}
           </p>
         </header>
 
         {parts.length === 0 ? (
-          <p className="font-mono text-[11px] uppercase tracking-widest text-stone-500">No parts published yet.</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-stone-400">No parts published yet.</p>
         ) : (
           <ol className="space-y-4">
             {parts.map((p, i) => {
@@ -102,12 +102,12 @@ export default async function SeriesPage({ params }: Props) {
                     href={`/blog/${p.slug}`}
                     className="group flex gap-5 rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 hover:border-white/20 hover:bg-white/[0.04] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
                   >
-                    <span className="font-serif text-3xl text-stone-500 group-hover:text-stone-300 leading-none w-10 flex-shrink-0 tabular-nums" aria-hidden="true">
+                    <span className="font-serif text-3xl text-stone-400 group-hover:text-stone-300 leading-none w-10 flex-shrink-0 tabular-nums" aria-hidden="true">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="sr-only">Part {i + 1}: </span>
-                      <span className="flex flex-wrap items-center gap-2 mb-1.5 font-mono text-[9px] uppercase tracking-widest text-stone-500">
+                      <span className="flex flex-wrap items-center gap-2 mb-1.5 font-mono text-[9px] uppercase tracking-widest text-stone-400">
                         {lane && <span style={{ color: lane.color }}>{lane.label}</span>}
                         {p.publishedAt && <span>{formatDate(p.publishedAt, 'short')}</span>}
                         <span>{readingTime(p.wordCount ?? 0)} min</span>

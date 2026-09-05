@@ -31,7 +31,7 @@ export default defineType({
     ], { group: 'header' }),
     obj('toc', 'Contents', [str('title', 'Sidebar title'), str('mobileTitle', 'Mobile title'), str('minutesSuffix', 'Minutes suffix')], { group: 'header' }),
     obj('readerMenu', 'Reading options menu', [
-      str('buttonLabel', 'Button label'),
+      str('buttonLabel', 'Button label'), str('closeLabel', 'Close button label'),
       obj('groupLabels', 'Group labels', ['theme', 'textSize', 'width', 'accessibility', 'share', 'listen', 'position'].map((n) => str(n))),
       obj('themeLabels', 'Theme names', ['archive', 'terminal', 'paper', 'broadcast'].map((n) => str(n))),
       obj('widthLabels', 'Width names', ['narrow', 'standard', 'wide'].map((n) => str(n))),

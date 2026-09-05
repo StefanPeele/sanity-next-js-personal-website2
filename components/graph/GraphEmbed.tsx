@@ -24,8 +24,8 @@ export async function GraphEmbed({ focusId, title = 'In the knowledge graph' }: 
   return (
     <section aria-label={title}>
       <div className="mb-3 flex items-center justify-between">
-        <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-700 pl-3">{title}</span>
-        <Link href="/graph" className="font-mono text-[8px] uppercase tracking-widest text-stone-500 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
+        <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-700 pl-3">{title}</span>
+        <Link href="/graph" className="font-mono text-[8px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
           Full graph →
         </Link>
       </div>

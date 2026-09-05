@@ -89,7 +89,7 @@ export default async function NotePage({ params }: { params: Params }) {
       <main id="content" className="relative max-w-3xl mx-auto px-6 pt-32 pb-24">
         {/* Breadcrumbs */}
         <nav aria-label="Breadcrumb" className="mb-8">
-          <ol className="flex flex-wrap items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-stone-500">
+          <ol className="flex flex-wrap items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-stone-400">
             <li><Link href="/blog" className={`hover:text-white transition-colors rounded-sm ${FOCUS}`}>Editorial</Link></li>
             <li aria-hidden="true" className="text-stone-700">/</li>
             <li><Link href="/garden" className={`hover:text-white transition-colors rounded-sm ${FOCUS}`}>Garden</Link></li>
@@ -105,11 +105,11 @@ export default async function NotePage({ params }: { params: Params }) {
               <Icon name={status.icon} size={10} className="inline -mt-px mr-1" /> {status.label}
             </span>
             {note.origin && (
-              <span className="font-mono text-[9px] uppercase tracking-widest text-stone-500">
+              <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400">
                 {ORIGIN_LABELS[note.origin] ?? note.origin}
               </span>
             )}
-            <span className="font-mono text-[9px] uppercase tracking-widest text-stone-500">{minutes} min read</span>
+            <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400">{minutes} min read</span>
           </div>
           <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
             {note.title}
@@ -134,7 +134,7 @@ export default async function NotePage({ params }: { params: Params }) {
             ].map((step) => (
               <li key={step.label} className="relative flex flex-col items-center text-center">
                 <span className={`w-3.5 h-3.5 rounded-full ring-4 ring-[#0a0a0a] ${step.dot}`} aria-hidden="true" />
-                <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 mt-3">{step.label}</span>
+                <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 mt-3">{step.label}</span>
                 {step.iso ? (
                   <time dateTime={step.iso} className="font-mono text-[10px] text-stone-300 mt-1">{step.value}</time>
                 ) : (
@@ -144,7 +144,7 @@ export default async function NotePage({ params }: { params: Params }) {
             ))}
           </ol>
           {tendedDays !== null && tendedDays > 60 && (
-            <p className="mt-4 font-mono text-[9px] uppercase tracking-widest text-stone-500 text-center">
+            <p className="mt-4 font-mono text-[9px] uppercase tracking-widest text-stone-400 text-center">
               Not tended in {tendedDays} days — details may be stale.
             </p>
           )}
@@ -210,25 +210,25 @@ export default async function NotePage({ params }: { params: Params }) {
         <nav aria-label="Neighbouring notes" className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-white/5 pt-8">
           {older ? (
             <Link href={`/garden/${older.slug}`} className={`group rounded-lg border border-white/[0.08] hover:border-white/25 p-4 transition-colors ${FOCUS}`}>
-              <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 block mb-1">← Tended earlier</span>
+              <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 block mb-1">← Tended earlier</span>
               <span className="font-serif text-white group-hover:text-stone-200">{older.title}</span>
-              <span className="block font-mono text-[9px] text-stone-500 mt-1">{formatDate(older.lastTended, 'short')}</span>
+              <span className="block font-mono text-[9px] text-stone-400 mt-1">{formatDate(older.lastTended, 'short')}</span>
             </Link>
           ) : <span />}
           {newer ? (
             <Link href={`/garden/${newer.slug}`} className={`group rounded-lg border border-white/[0.08] hover:border-white/25 p-4 text-right transition-colors ${FOCUS}`}>
-              <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 block mb-1">Tended later →</span>
+              <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 block mb-1">Tended later →</span>
               <span className="font-serif text-white group-hover:text-stone-200">{newer.title}</span>
-              <span className="block font-mono text-[9px] text-stone-500 mt-1">{formatDate(newer.lastTended, 'short')}</span>
+              <span className="block font-mono text-[9px] text-stone-400 mt-1">{formatDate(newer.lastTended, 'short')}</span>
             </Link>
           ) : <span />}
         </nav>
 
         <div className="mt-10 flex flex-wrap gap-6">
-          <Link href={`/garden?note=${slug}`} className={`font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 hover:text-white transition-colors rounded-sm ${FOCUS}`}>
+          <Link href={`/garden?note=${slug}`} className={`font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>
             ← Back to the Garden
           </Link>
-          <Link href={`/graph`} className={`font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 hover:text-white transition-colors rounded-sm ${FOCUS}`}>
+          <Link href={`/graph`} className={`font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>
             Open full graph →
           </Link>
         </div>
@@ -248,7 +248,7 @@ function ConnectionList({
 }) {
   return (
     <section className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
-      <h2 className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-500 mb-3 border-l-2 border-stone-700 pl-3">{title}</h2>
+      <h2 className="font-mono text-[9px] uppercase tracking-[0.35em] text-stone-400 mb-3 border-l-2 border-stone-700 pl-3">{title}</h2>
       {items.length > 0 ? (
         <ul className="space-y-2">
           {items.map((i) => (
@@ -256,13 +256,13 @@ function ConnectionList({
               <Link href={i.href} className={`group flex items-center gap-2 rounded-sm ${FOCUS}`}>
                 {i.dot && <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${i.dot}`} aria-hidden="true" />}
                 <span className="font-serif text-sm text-stone-200 group-hover:text-white transition-colors">{i.label}</span>
-                {i.meta && <span className="ml-auto font-mono text-[8px] uppercase tracking-widest text-stone-500 flex-shrink-0">{i.meta}</span>}
+                {i.meta && <span className="ml-auto font-mono text-[8px] uppercase tracking-widest text-stone-400 flex-shrink-0">{i.meta}</span>}
               </Link>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="font-mono text-[9px] text-stone-500 italic">{empty}</p>
+        <p className="font-mono text-[9px] text-stone-400 italic">{empty}</p>
       )}
     </section>
   )

@@ -26,7 +26,7 @@ function TocList({ copy }: { copy: ArticleUiCopy }) {
               className={`w-full text-left flex items-baseline gap-2 py-1 text-sm font-sans rounded-sm transition-colors ${FOCUS} ${active ? 'text-white' : 'text-stone-400 hover:text-stone-100'}`}
             >
               <span className="flex-1 leading-snug">{h.text}</span>
-              {h.minutes > 0 && <span className="text-xs text-stone-500 shrink-0">{h.minutes} {copy.toc.minutesSuffix}</span>}
+              {h.minutes > 0 && <span className="text-xs text-stone-400 shrink-0">{h.minutes} {copy.toc.minutesSuffix}</span>}
             </button>
           </li>
         )
@@ -40,7 +40,7 @@ export function ArticleToc({ copy, menu, variant }: Props) {
 
   if (variant === 'sidebar') {
     return (
-      <aside className="hidden lg:block" aria-label={copy.toc.title} data-print-hide>
+      <aside className="hidden lg:block" aria-label={copy.toc.title} data-toc="sidebar" data-print-hide>
         <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-2">
           <div className="flex items-center justify-between gap-2 mb-4">
             <h2 className="section-label">{copy.toc.title}</h2>
@@ -55,10 +55,10 @@ export function ArticleToc({ copy, menu, variant }: Props) {
   return (
     <div className="lg:hidden mb-8 flex items-start gap-3" data-print-hide>
       {headings.length > 0 ? (
-        <details className="flex-1 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3" open={headings.length <= 8}>
+        <details className="flex-1 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3" open={headings.length <= 8} data-toc="mobile">
           <summary className={`cursor-pointer section-label list-none flex items-center justify-between ${FOCUS} rounded-sm`}>
             {copy.toc.mobileTitle}
-            <span aria-hidden="true" className="text-stone-500 text-sm">▾</span>
+            <span aria-hidden="true" className="text-stone-400 text-sm">▾</span>
           </summary>
           <div className="mt-3"><TocList copy={copy} /></div>
         </details>

@@ -163,13 +163,13 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
         aria-label="Search the site (Ctrl+K)"
         aria-haspopup="dialog"
         aria-expanded={open}
-        className={`flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 hover:text-stone-200 transition-colors group rounded-sm ${FOCUS}`}
+        className={`flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 hover:text-stone-200 transition-colors group rounded-sm ${FOCUS}`}
       >
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
         </svg>
         <span className="hidden lg:inline">Search</span>
-        <kbd className="hidden lg:inline font-mono text-[8px] text-stone-500 border border-white/10 px-1.5 py-0.5 rounded group-hover:border-white/20 transition-colors">⌘K</kbd>
+        <kbd className="hidden lg:inline font-mono text-[8px] text-stone-400 border border-white/10 px-1.5 py-0.5 rounded group-hover:border-white/20 transition-colors">⌘K</kbd>
       </button>
 
       <AnimatePresence>
@@ -197,7 +197,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                 <h2 id={titleId} className="sr-only">Search the site</h2>
 
                 <div className="flex items-center gap-3 px-4 py-4 border-b border-white/5">
-                  <svg className="w-4 h-4 text-stone-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                  <svg className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                   </svg>
                   <input
@@ -216,7 +216,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                     className="flex-1 bg-transparent font-mono text-sm text-white placeholder:text-stone-500 outline-none"
                   />
                   {isPending && <div className="w-3 h-3 border border-stone-600 border-t-stone-300 rounded-full animate-spin flex-shrink-0" aria-label="Searching" role="status" />}
-                  <button type="button" onClick={close} className={`font-mono text-[9px] text-stone-500 hover:text-white transition-colors uppercase tracking-widest flex-shrink-0 rounded-sm ${FOCUS}`}>
+                  <button type="button" onClick={close} className={`font-mono text-[9px] text-stone-400 hover:text-white transition-colors uppercase tracking-widest flex-shrink-0 rounded-sm ${FOCUS}`}>
                     Esc
                   </button>
                 </div>
@@ -228,7 +228,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
 
                   {!showEmpty && !isPending && !error && flat.length === 0 && (
                     <div className="px-4 py-8 text-center">
-                      <p className="font-mono text-[10px] text-stone-500 uppercase tracking-widest">No results for “{query}”</p>
+                      <p className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">No results for “{query}”</p>
                     </div>
                   )}
 
@@ -236,7 +236,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                     const offset = flat.findIndex((r) => r.type === group.type)
                     return (
                       <div key={group.type} role="group" aria-label={group.label}>
-                        <div className="px-4 pt-3 pb-1 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-500 flex items-center justify-between">
+                        <div className="px-4 pt-3 pb-1 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 flex items-center justify-between">
                           <span>{group.label}</span>
                           <span>{group.results.length}</span>
                         </div>
@@ -261,10 +261,10 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                                   <span className={`font-mono text-[7px] uppercase tracking-widest border px-1.5 py-0.5 rounded-sm flex-shrink-0 ${chip.className}`}>{chip.label}</span>
                                   <span className="font-serif text-base text-white leading-snug truncate">{result.title}</span>
                                 </span>
-                                {isActive && <span className="font-mono text-[8px] text-stone-500 uppercase tracking-widest flex-shrink-0">↵ Open</span>}
+                                {isActive && <span className="font-mono text-[8px] text-stone-400 uppercase tracking-widest flex-shrink-0">↵ Open</span>}
                               </span>
                               {result.excerpt && <span className="font-sans text-xs text-stone-400 line-clamp-1">{result.excerpt}</span>}
-                              {result.meta && <span className="font-mono text-[8px] uppercase tracking-widest text-stone-500">{result.meta}</span>}
+                              {result.meta && <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400">{result.meta}</span>}
                             </button>
                           )
                         })}
@@ -273,7 +273,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                   })}
 
                   {total > flat.length && (
-                    <p className="px-4 py-3 font-mono text-[8px] uppercase tracking-widest text-stone-500 border-t border-white/5">
+                    <p className="px-4 py-3 font-mono text-[8px] uppercase tracking-widest text-stone-400 border-t border-white/5">
                       Showing the top {flat.length} of {total} matches — refine your query to narrow down.
                     </p>
                   )}
@@ -283,11 +283,11 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                       {recent.length > 0 && (
                         <div className="mb-5">
                           <div className="flex items-center justify-between mb-2">
-                            <p className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">Recent</p>
+                            <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Recent</p>
                             <button
                               type="button"
                               onClick={() => { try { localStorage.removeItem(RECENT_KEY) } catch {} setRecent([]) }}
-                              className={`font-mono text-[8px] uppercase tracking-widest text-stone-500 hover:text-white rounded-sm ${FOCUS}`}
+                              className={`font-mono text-[8px] uppercase tracking-widest text-stone-400 hover:text-white rounded-sm ${FOCUS}`}
                             >
                               Clear
                             </button>
@@ -303,7 +303,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                           </ul>
                         </div>
                       )}
-                      <p className="font-mono text-[9px] text-stone-500 uppercase tracking-widest mb-2">Quick access</p>
+                      <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest mb-2">Quick access</p>
                       <ul className="space-y-0.5">
                         {QUICK_LINKS.map((link) => (
                           <li key={link.href}>
@@ -314,7 +314,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                             >
                               <span className="text-stone-600" aria-hidden="true">→</span>
                               {link.label}
-                              <span className="ml-auto normal-case tracking-normal text-[9px] text-stone-500">{link.hint}</span>
+                              <span className="ml-auto normal-case tracking-normal text-[9px] text-stone-400">{link.hint}</span>
                             </button>
                           </li>
                         ))}
@@ -324,9 +324,9 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                 </div>
 
                 <div className="px-4 py-3 border-t border-white/5 flex items-center gap-4">
-                  <span className="font-mono text-[8px] text-stone-500 uppercase tracking-widest">↑↓ navigate</span>
-                  <span className="font-mono text-[8px] text-stone-500 uppercase tracking-widest">↵ open</span>
-                  <span className="font-mono text-[8px] text-stone-500 uppercase tracking-widest">esc close</span>
+                  <span className="font-mono text-[8px] text-stone-400 uppercase tracking-widest">↑↓ navigate</span>
+                  <span className="font-mono text-[8px] text-stone-400 uppercase tracking-widest">↵ open</span>
+                  <span className="font-mono text-[8px] text-stone-400 uppercase tracking-widest">esc close</span>
                 </div>
               </div>
             </motion.div>

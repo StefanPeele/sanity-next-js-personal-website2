@@ -51,7 +51,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
       <div className="my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]">
         <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500">
+            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400">
               Knowledge Check
             </span>
             {isGated && !unlocked && (
@@ -65,7 +65,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
               </span>
             )}
           </div>
-          <span className="font-mono text-[10px] text-stone-500">Active Recall</span>
+          <span className="font-mono text-[10px] text-stone-400">Active Recall</span>
         </div>
 
         <div className="p-6">
@@ -144,7 +144,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
                 transition={{ duration: 0.4 }}
                 className="mt-6 pt-6 border-t border-white/5 overflow-hidden"
               >
-                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 mb-2">
                   Explanation
                 </p>
                 <p className="text-stone-400 text-sm leading-relaxed">
@@ -178,7 +178,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
               <div className="w-10 h-10 rounded-full border border-white/10 bg-[#111] flex items-center justify-center">
                 <svg
-                  className="w-4 h-4 text-stone-500"
+                  className="w-4 h-4 text-stone-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

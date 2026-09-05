@@ -58,7 +58,7 @@ export function EmptyThumbnail({ title, category }: EmptyThumbnailProps) {
             {category}
           </span>
         )}
-        <p className="font-serif text-stone-600 text-center text-sm leading-snug line-clamp-3 max-w-[80%]">
+        <p className="font-serif text-stone-400 text-center text-sm leading-snug line-clamp-3 max-w-[80%]">
           {title}
         </p>
       </div>

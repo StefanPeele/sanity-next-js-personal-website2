@@ -49,6 +49,7 @@ export default async function GraphPage() {
 
       {/* Navbar is fixed; pad the graph below it. */}
       <main id="content" className="flex-1 relative overflow-hidden pt-20">
+        <h1 className="sr-only">{copy.header.title}</h1>
         {totalNodes > 0 ? (
           <KnowledgeGraph data={graph} copy={copy} lanes={taxonomy.articleLanes} />
         ) : (
