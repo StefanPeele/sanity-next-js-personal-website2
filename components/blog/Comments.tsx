@@ -15,7 +15,7 @@ const CATEGORY_ID = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID
 
 export const commentsEnabled = !!(REPO && REPO_ID && CATEGORY_ID)
 
-export function Comments({ term }: { term: string }) {
+export function Comments({ term, heading = 'Comments' }: { term: string; heading?: string }) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -43,10 +43,8 @@ export function Comments({ term }: { term: string }) {
 
   return (
     <section className="mt-16 pt-10 border-t border-white/[0.08]" aria-labelledby="comments-heading" data-print-hide>
-      <h2 id="comments-heading" className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-600 pl-4 mb-6">
-        Discussion
-      </h2>
-      <p className="font-mono text-[10px] text-stone-500 mb-4">Comments are GitHub Discussions — sign in with GitHub to post.</p>
+      <h2 id="comments-heading" className="section-label mb-6">{heading}</h2>
+      <p className="font-sans text-sm text-stone-400 mb-4">Comments are GitHub Discussions — sign in with GitHub to post.</p>
       <div ref={ref} className="giscus" />
     </section>
   )

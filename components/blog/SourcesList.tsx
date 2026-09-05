@@ -25,17 +25,15 @@ const TYPE_CONFIG: Record<string, { icon: string; label: string }> = {
   other:         { icon: '🔗', label: 'Source' },
 }
 
-export function SourcesList({ sources }: SourcesListProps) {
+export function SourcesList({ sources, heading = 'Sources' }: SourcesListProps & { heading?: string }) {
   if (!sources || sources.length === 0) return null
 
   return (
     <section className="mt-20 pt-10 border-t border-white/[0.08]">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-600 pl-4">
-          Sources & References
-        </span>
-        <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
+        <h2 className="section-label">{heading}</h2>
+        <span className="font-sans text-xs text-stone-400">
           {sources.length} cited
         </span>
       </div>

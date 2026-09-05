@@ -5,6 +5,9 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { articleTypeMeta } from '@/lib/site'
+import { ArrowLeft } from 'lucide-react'
+import { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
+import type { VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 import { heroImageUrl } from '@/components/article/heroImage'
 // components/blog/BlogArticleHeader.tsx
@@ -25,13 +28,8 @@ interface BlogArticleHeaderProps {
   sourceCount?: number
   conceptCardCount?: number
   reviewStatus?: string | null
-}
-
-const TYPE_ICON: Record<string, string> = {
-  'perspective': '🔭',
-  'concept-deep-dive': '⚡',
-  'field-notes': '🔧',
-  'transmission': '📡',
+  labels?: ArticleUiCopy['header']
+  lanes?: VocabEntry[]
 }
 
 /** Average colour of the LQIP — tiny base64 image, no CORS involved. */
@@ -69,6 +67,8 @@ export function BlogArticleHeader({
   sourceCount = 0,
   conceptCardCount = 0,
   reviewStatus,
+  labels = DEFAULT_ARTICLE_UI.header,
+  lanes,
 }: BlogArticleHeaderProps) {
   const reduced = useArticleReducedMotion()
   const [atmosphere, setAtmosphere] = useState<[number, number, number]>([10, 10, 10])
@@ -85,20 +85,21 @@ export function BlogArticleHeader({
     return () => { cancelled = true }
   }, [lqip])
 
-  const typeMeta = articleTypeMeta(articleType)
+  const typeMeta = articleTypeMeta(articleType, lanes)
+  const n = (t: string, v: number) => t.replace('{n}', String(v))
   const [r, g, b] = atmosphere
 
   const reviewBadge = reviewStatus === 'seeking-review'
-    ? { label: 'Seeking Review', className: 'text-amber-400 border-amber-500/30' }
+    ? { label: labels.reviewBadges.seekingReview, className: 'text-amber-400 border-amber-500/30' }
     : reviewStatus === 'expert-verified'
-    ? { label: 'Expert Verified', className: 'text-emerald-400 border-emerald-500/30' }
+    ? { label: labels.reviewBadges.expertVerified, className: 'text-emerald-400 border-emerald-500/30' }
     : null
 
   const metaItems = [
     publishDate,
-    `${readTime} min read`,
-    ...(sourceCount > 0 ? [`${sourceCount} source${sourceCount !== 1 ? 's' : ''}`] : []),
-    ...(conceptCardCount > 0 ? [`${conceptCardCount} cards`] : []),
+    n(labels.readTimeLabel, readTime),
+    ...(sourceCount > 0 ? [n(labels.sourcesLabel, sourceCount)] : []),
+    ...(conceptCardCount > 0 ? [n(labels.cardsLabel, conceptCardCount)] : []),
   ]
 
   const reveal = (delay: number) => reduced
@@ -145,22 +146,22 @@ export function BlogArticleHeader({
       <motion.div className="relative z-20 w-full max-w-3xl px-6 mx-auto text-center pt-32" style={{ y: contentY }}>
         <Link
           href="/blog"
-          className="text-stone-400 hover:text-white font-mono text-[10px] uppercase tracking-[0.3em] transition-colors mb-8 inline-block focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm"
+          className="inline-flex items-center gap-2 text-stone-300 hover:text-white font-sans text-sm transition-colors mb-8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm"
         >
-          ← Return to Archive
+          <ArrowLeft size={14} aria-hidden /> {labels.backLabel}
         </Link>
 
         <motion.div {...reveal(0.05)} className="flex flex-wrap gap-2 justify-center mb-5">
           {typeMeta && (
             <span
-              className="font-mono text-[9px] uppercase tracking-[0.3em] px-3 py-1.5 rounded-sm border backdrop-blur-md bg-black/20"
+              className="font-sans text-xs px-3 py-1.5 rounded-full border backdrop-blur-md bg-black/20"
               style={{ color: typeMeta.color, borderColor: typeMeta.bg.replace('0.12', '0.4') }}
             >
-              {TYPE_ICON[articleType ?? ''] ?? ''} {typeMeta.label}
+              {typeMeta.label}
             </span>
           )}
           {reviewBadge && (
-            <span className={`font-mono text-[9px] uppercase tracking-[0.3em] px-3 py-1.5 rounded-sm border backdrop-blur-md bg-black/20 ${reviewBadge.className}`}>
+            <span className={`font-sans text-xs px-3 py-1.5 rounded-full border backdrop-blur-md bg-black/20 ${reviewBadge.className}`}>
               {reviewBadge.label}
             </span>
           )}

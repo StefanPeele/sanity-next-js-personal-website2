@@ -113,12 +113,6 @@ main#content[data-width='wide']     { max-width: 64rem; }
 }
 
 /* Focus mode — dims the chrome around the article */
-html.focus-mode header.fixed,
-html.focus-mode footer {
-  opacity: 0.06 !important;
-  pointer-events: none !important;
-  transition: opacity 0.6s ease !important;
-}
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -152,13 +146,7 @@ html.focus-mode footer {
 [data-article].theme-terminal li { color: rgba(0, 255, 65, 0.8); }
 [data-article].theme-terminal ::selection { background-color: rgba(0, 255, 65, 0.25); color: #0d1117; }
 
-@keyframes sp-flicker {
-  0%, 97%, 100% { opacity: 1; }
-  98% { opacity: 0.97; }
-  99% { opacity: 1; }
-}
 @media (prefers-reduced-motion: no-preference) {
-  html:not(.sp-reduced-motion) [data-article].theme-terminal { animation: sp-flicker 12s ease-in-out infinite; }
 }
 [data-article].theme-terminal [data-desaturate] img { filter: grayscale(60%) brightness(0.7) sepia(20%) hue-rotate(80deg); }
 [data-article].theme-terminal [data-desaturate]:hover img { filter: grayscale(40%) brightness(0.85) sepia(10%) hue-rotate(80deg); }
@@ -256,7 +244,7 @@ html.focus-mode footer {
 [data-article].a11y-dyslexia p,
 [data-article].a11y-dyslexia li,
 [data-article].a11y-dyslexia span {
-  font-family: 'Lexend', 'OpenDyslexic', system-ui, sans-serif !important;
+  font-family: var(--font-lexend, var(--font-sans)), system-ui, sans-serif !important;
   letter-spacing: 0.06em !important;
   word-spacing: 0.18em !important;
   line-height: 2.1 !important;
@@ -265,7 +253,7 @@ html.focus-mode footer {
 [data-article].a11y-dyslexia h1,
 [data-article].a11y-dyslexia h2,
 [data-article].a11y-dyslexia h3,
-[data-article].a11y-dyslexia h4 { font-family: 'Lexend', system-ui, sans-serif !important; letter-spacing: 0.02em !important; line-height: 1.3 !important; }
+[data-article].a11y-dyslexia h4 { font-family: var(--font-lexend, var(--font-sans)), system-ui, sans-serif !important; letter-spacing: 0.02em !important; line-height: 1.3 !important; }
 [data-article].a11y-dyslexia { text-align: left !important; }
 
 [data-article].a11y-high-contrast { background-color: #000000 !important; color: #ffffff !important; box-shadow: none !important; }
@@ -298,44 +286,7 @@ html.sp-reduced-motion *::after {
    CRT OVERLAY + CURSOR — desktop effects
    ═══════════════════════════════════════════════════════════════ */
 
-.sp-crt-overlay {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9998;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-.sp-crt-overlay.crt-active {
-  opacity: 1;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.04) 2px, rgba(0, 0, 0, 0.04) 4px);
-}
-.sp-crt-overlay.crt-active::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.3) 100%);
-  pointer-events: none;
-}
 
-.sp-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 12px;
-  height: 12px;
-  background: white;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: difference;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s ease, height 0.2s ease, opacity 0.3s ease;
-  opacity: 0;
-}
-.sp-cursor.cursor-visible { opacity: 1; }
-.sp-cursor.cursor-hover { width: 32px; height: 32px; }
-.sp-cursor-active [data-article] * { cursor: none !important; }
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -345,9 +296,7 @@ html.sp-reduced-motion *::after {
 @media print {
   [data-print-hide],
   nav, footer, header nav,
-  .sp-cursor, .sp-crt-overlay { display: none !important; }
-  html, body { background: #ffffff !important; color: #111111 !important; }
-  [data-article], [data-article] p, [data-article] li, [data-article] h1, [data-article] h2, [data-article] h3, [data-article] h4 {
+    [data-article], [data-article] p, [data-article] li, [data-article] h1, [data-article] h2, [data-article] h3, [data-article] h4 {
     color: #111111 !important;
     background: transparent !important;
     box-shadow: none !important;

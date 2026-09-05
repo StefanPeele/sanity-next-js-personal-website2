@@ -5,8 +5,8 @@
 //   - Everything else (RSC payloads, prefetches, API, images): untouched.
 // Registered only in production by components/blog/ArticleEffects.tsx.
 
-const PAGE_CACHE = 'sp-pages-v2'
-const STATIC_CACHE = 'sp-static-v2'
+const PAGE_CACHE = 'sp-pages-v3'
+const STATIC_CACHE = 'sp-static-v3'
 const MAX_PAGES = 12
 
 self.addEventListener('install', () => {
@@ -39,7 +39,7 @@ async function trimPages() {
 
 function offlinePage() {
   return new Response(
-    `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline · Stefan Peele</title>
+    `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>You are offline · Stefan Peele</title>
 <style>
   html,body{margin:0;background:#0a0a0a;color:#d6d3d1;font-family:Georgia,serif;-webkit-font-smoothing:antialiased}
   main{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem;text-align:center}
@@ -52,12 +52,10 @@ function offlinePage() {
   .rule{margin-top:4rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.06);font-family:"IBM Plex Mono","Courier New",monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#57534e}
 </style></head>
 <body><main>
-  <span class="label">Archive // Offline</span>
-  <h1>Signal lost.</h1>
-  <p>This article isn&rsquo;t saved on this device yet.</p>
-  <p class="meta">The last 12 articles you opened are kept for offline reading</p>
-  <a href="/blog">Back to the archive</a>
-  <div class="rule">STATUS: OFFLINE · STEFANPEELE.COM</div>
+  <h1>You are offline</h1>
+  <p>This article is not saved on this device yet.</p>
+  <p class="meta">The last articles you opened are kept for offline reading.</p>
+  <a href="/blog">Back to writing</a>
 </main></body></html>`,
     { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } },
   )

@@ -3,7 +3,7 @@
 
 import { articleTypeMeta } from '@/lib/site'
 
-export function TldrBlock({ items, articleType }: { items: string[]; articleType?: string | null }) {
+export function TldrBlock({ items, articleType, heading = 'TL;DR', sub = 'If you read nothing else' }: { items: string[]; articleType?: string | null; heading?: string; sub?: string }) {
   const clean = items.filter((t) => typeof t === 'string' && t.trim().length > 0)
   if (!clean.length) return null
   const lane = articleTypeMeta(articleType)
@@ -16,15 +16,13 @@ export function TldrBlock({ items, articleType }: { items: string[]; articleType
       style={{ borderLeft: `3px solid ${accent}` }}
     >
       <div className="flex items-baseline justify-between gap-4 mb-4">
-        <h2 id="tldr-heading" className="font-mono text-[10px] uppercase tracking-[0.35em]" style={{ color: accent }}>
-          TL;DR
-        </h2>
-        <span className="font-mono text-[9px] uppercase tracking-widest text-stone-500">If you read nothing else</span>
+        <h2 id="tldr-heading" className="font-serif text-lg font-semibold" style={{ color: accent }}>{heading}</h2>
+        <span className="font-sans text-xs text-stone-400">{sub}</span>
       </div>
       <ul className="space-y-2.5">
         {clean.map((t, i) => (
           <li key={i} className="flex items-start gap-3">
-            <span className="font-mono text-[10px] mt-1.5 flex-shrink-0" style={{ color: accent }} aria-hidden="true">→</span>
+            <span className="mt-2.5 h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: accent }} aria-hidden="true" />
             <span className="font-serif text-base md:text-[17px] text-stone-200 leading-relaxed">{t}</span>
           </li>
         ))}

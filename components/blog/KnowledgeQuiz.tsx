@@ -2,7 +2,6 @@
 
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FloatingQuizTrigger } from '@/components/blog/FloatingQuizTrigger'
 // components/blog/KnowledgeQuiz.tsx
 
 interface QuizOption {
@@ -26,18 +25,6 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
   const [revealed, setRevealed] = useState(false)
   const [unlocked, setUnlocked] = useState(false)
   const quizRef = useRef<HTMLDivElement>(null)
-
-  // ── MODE 1: Floating trigger ─────────────────────────────────────
-  if (value.triggerAfterSection) {
-    return (
-      <FloatingQuizTrigger
-        triggerAfterSection={value.triggerAfterSection}
-        question={value.question}
-        options={value.options}
-        explanation={value.explanation}
-      />
-    )
-  }
 
   // ── SHARED INLINE LOGIC (modes 2 & 3) ───────────────────────────
   const correctOption = value.options?.find((o) => o.isCorrect)

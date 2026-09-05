@@ -9,7 +9,7 @@ interface Backlinks {
   projects: Array<{ _id: string; title: string | null; slug: string | null }>
 }
 
-export function BacklinksSection({ backlinks }: { backlinks: Backlinks | null | undefined }) {
+export function BacklinksSection({ backlinks, heading = 'Referenced by' }: { backlinks: Backlinks | null | undefined; heading?: string }) {
   if (!backlinks) return null
   const notes = backlinks.notes.filter((n) => n.slug)
   const posts = backlinks.posts.filter((p) => p.slug)
@@ -19,15 +19,13 @@ export function BacklinksSection({ backlinks }: { backlinks: Backlinks | null | 
   if (!total) return null
 
   const linkClass = 'font-serif text-sm text-stone-300 hover:text-white transition-colors underline decoration-stone-700 underline-offset-4 hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm'
-  const label = 'font-mono text-[9px] uppercase tracking-widest text-stone-500 w-16 flex-shrink-0 pt-1'
+  const label = 'font-sans text-xs text-stone-400 w-16 flex-shrink-0 pt-1'
 
   return (
     <section className="mt-16 pt-10 border-t border-white/[0.08]" aria-labelledby="backlinks-heading">
       <div className="flex items-center gap-4 mb-6">
-        <h2 id="backlinks-heading" className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-600 pl-4">
-          Referenced by
-        </h2>
-        <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">{total} link{total !== 1 ? 's' : ''}</span>
+        <h2 id="backlinks-heading" className="section-label">{heading}</h2>
+        <span className="font-sans text-xs text-stone-400">{total} link{total !== 1 ? 's' : ''}</span>
       </div>
       <ul className="space-y-3">
         {notes.map((n) => (

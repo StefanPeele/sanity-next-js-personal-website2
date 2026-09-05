@@ -7,11 +7,13 @@ export { DEFAULT_TAXONOMY, TAXONOMY_KEYS, vocab, type VocabEntry, type TaxonomyD
 export { DEFAULT_SETTINGS, type SettingsCopy } from './settings'
 export { DEFAULT_ERROR_PAGES, type ErrorPagesCopy } from './errorPages'
 export { DEFAULT_HOME, DEFAULT_HOME_SECTIONS, type HomeSection, type HomeCopy } from './home'
+export { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from './articleUi'
 
 import { DEFAULT_NAVIGATION } from './navigation'
 import { DEFAULT_TAXONOMY } from './taxonomy'
 import { DEFAULT_ERROR_PAGES } from './errorPages'
 import { DEFAULT_HOME } from './home'
+import { DEFAULT_ARTICLE_UI } from './articleUi'
 
 /**
  * Singletons the seed script creates verbatim (id === type).
@@ -23,6 +25,7 @@ export const SINGLETON_DEFAULTS: Record<string, Record<string, unknown>> = {
   errorPages: DEFAULT_ERROR_PAGES,
   // `home` and `settings` already exist; the seed script patches these fields with setIfMissing.
   home: DEFAULT_HOME,
+  articleUi: DEFAULT_ARTICLE_UI,
 }
 
 export function registerDefault(name: string, value: Record<string, unknown>) {

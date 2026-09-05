@@ -13,6 +13,7 @@ import { urlForOpenGraphImage } from '@/sanity/lib/utils'
 import { toPlainText } from 'next-sanity'
 import { Inter, Lora, IBM_Plex_Mono, Lexend } from 'next/font/google'
 import { ErrorCopyProvider } from '@/components/ErrorCopyProvider'
+import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister'
 import { getErrorPages, getSettings } from '@/lib/cms/loaders'
 import { Analytics } from '@/components/Analytics'
 import { JsonLd } from '@/components/JsonLd'
@@ -214,6 +215,7 @@ export default async function RootLayout({
             <VisualEditing />
           </>
         )}
+        <ServiceWorkerRegister />
         <SpeedInsights />
         <Analytics />
       </body>

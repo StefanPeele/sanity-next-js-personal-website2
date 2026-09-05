@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatDate } from '@/lib/dates'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
+import { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 // components/blog/CredibilitySection.tsx
 
 interface Reviewer {
@@ -40,6 +41,8 @@ interface CredibilitySectionProps {
   confidenceLevel?: string
   maturityIndicator?: string
   cognitiveLoad?: string
+  heading?: string
+  labels?: ArticleUiCopy['credibility']
 }
 
 const CONFIDENCE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
@@ -50,17 +53,17 @@ const CONFIDENCE_CONFIG: Record<string, { label: string; color: string; bg: stri
   'peer-reviewed':  { label: 'Peer Reviewed',    color: 'text-blue-400',   bg: 'border-blue-500/30 bg-blue-950/10' },
 }
 
-const MATURITY_CONFIG: Record<string, { label: string; icon: string }> = {
-  'fresh':              { label: 'Fresh',              icon: '🌱' },
-  'tested':             { label: 'Lab Tested',         icon: '🧪' },
-  'production-proven':  { label: 'Production-proven',  icon: '🏭' },
+const MATURITY_CONFIG: Record<string, { label: string }> = {
+  'fresh': { label: 'Fresh' },
+  'tested': { label: 'Lab tested' },
+  'production-proven': { label: 'Production proven' },
 }
 
-const LOAD_CONFIG: Record<string, { label: string; icon: string }> = {
-  'light':     { label: 'Light read',    icon: '☕' },
-  'technical': { label: 'Technical',     icon: '🖥' },
-  'dense':     { label: 'Dense',         icon: '🧠' },
-  'reference': { label: 'Reference',     icon: '📚' },
+const LOAD_CONFIG: Record<string, { label: string }> = {
+  'light': { label: 'Light read' },
+  'technical': { label: 'Technical' },
+  'dense': { label: 'Dense' },
+  'reference': { label: 'Reference' },
 }
 
 const REVIEW_STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
@@ -77,7 +80,10 @@ export function CredibilitySection({
   confidenceLevel,
   maturityIndicator,
   cognitiveLoad,
+  heading = DEFAULT_ARTICLE_UI.blocks.credibilityHeading,
+  labels = DEFAULT_ARTICLE_UI.credibility,
 }: CredibilitySectionProps) {
+  const lbl = (list: { key: string; label: string }[], key: string | undefined, fallback: string) => list.find((e) => e.key === key)?.label ?? fallback
 
   // Sanity returns null for unset array fields — coerce to empty array
   const reviewers          = reviewersProp ?? []
@@ -119,12 +125,12 @@ export function CredibilitySection({
           )}
           {maturity && (
             <span className="font-mono text-[9px] uppercase tracking-[0.3em] px-3 py-1.5 rounded-sm border border-white/10 text-stone-400">
-              {maturity.icon} {maturity.label}
+              {lbl(labels.maturity, maturityIndicator, maturity.label)}
             </span>
           )}
           {load && (
             <span className="font-mono text-[9px] uppercase tracking-[0.3em] px-3 py-1.5 rounded-sm border border-white/10 text-stone-500">
-              {load.icon} {load.label}
+              {lbl(labels.load, cognitiveLoad, load.label)}
             </span>
           )}
         </div>
@@ -133,9 +139,7 @@ export function CredibilitySection({
       {/* ── Expert reviewers ───────────────────────────────────────── */}
       {reviewers.length > 0 && (
         <div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-600 pl-4 block mb-6">
-            Reviewed By
-          </span>
+          <h3 className="section-label mb-6">{labels.reviewersHeading}</h3>
           <div className="space-y-6">
             {reviewers.map((reviewer) => (
               <div
@@ -189,9 +193,7 @@ export function CredibilitySection({
       {/* ── Responses from the field ───────────────────────────────── */}
       {responsesFromField.length > 0 && (
         <div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 border-l-2 border-stone-600 pl-4 block mb-4">
-            Responses from the Field
-          </span>
+          <h3 className="section-label mb-4">{labels.responsesHeading}</h3>
           <div className="space-y-2">
             {responsesFromField.map((response) => (
               <a
@@ -237,8 +239,8 @@ export function CredibilitySection({
             type="button"
             className="flex items-center gap-3 group"
           >
-            <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-500 group-hover:text-stone-300 transition-colors">
-              Revision History
+            <span className="section-label group-hover:text-white transition-colors">
+              {labels.changelogHeading}
             </span>
             <span className="font-mono text-[9px] text-stone-500 group-hover:text-stone-300 transition-colors">
               {changelog.length} update{changelog.length !== 1 ? 's' : ''} {changelogOpen ? '↑' : '↓'}
@@ -277,12 +279,12 @@ export function CredibilitySection({
       {/* ── Correction link ───────────────────────────────────────── */}
       <div className="pt-4 border-t border-white/5">
         <a
-          href="https://github.com/StefanPeele/sanity-next-js-personal-website2/issues/new?title=Correction+request&body=Post+URL%3A+%0A%0AError+found%3A+%0A%0ASuggested+correction%3A+"
+          href={labels.correctionsUrl}
           target="_blank"
           rel="noreferrer noopener"
-          className="font-mono text-[9px] uppercase tracking-widest text-stone-500 hover:text-stone-300 transition-colors"
+          className="font-sans text-sm text-stone-400 hover:text-white transition-colors"
         >
-          Found an error? Submit a correction →
+          {labels.correctionsLabel} →
         </a>
       </div>
     </section>

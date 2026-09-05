@@ -12,7 +12,7 @@ interface Quiz {
   explanation?: string
 }
 
-export function Checkpoint({ quiz }: { quiz: Quiz }) {
+export function Checkpoint({ quiz, heading = 'Check what you already know' }: { quiz: Quiz; heading?: string }) {
   const [open, setOpen] = useState(false)
   if (!quiz?.question || !quiz.options?.length) return null
 
@@ -27,10 +27,9 @@ export function Checkpoint({ quiz }: { quiz: Quiz }) {
           className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-amber-500/5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
         >
           <span>
-            <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-amber-400 block mb-1">Before you start</span>
-            <span className="font-serif text-base text-stone-100">Check what you already know</span>
+            <span className="font-serif text-base text-stone-100">{heading}</span>
           </span>
-          <span className="font-mono text-[10px] text-stone-400 flex-shrink-0" aria-hidden="true">{open ? '−' : '+'}</span>
+          <span className="font-sans text-sm text-stone-400 flex-shrink-0" aria-hidden="true">{open ? '−' : '+'}</span>
         </button>
       </h2>
       {open && (

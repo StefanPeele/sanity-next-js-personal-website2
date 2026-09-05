@@ -13,7 +13,7 @@ import {
 //   - the heading list (collected ONCE from [data-article], ids already assigned server-side)
 //   - the active heading + overall / per-section progress from ONE rAF-throttled scroll handler
 //   - reader settings (theme, font size, width, accessibility) persisted to localStorage
-// ArticleFloatingToolbar, MobileTOC, ArticleProgressRail and ReadingRuler all consume this.
+// ArticleToc, ReaderMenu and ReadingProgressBar consume this.
 
 export interface ArticleHeading {
   id: string
@@ -63,8 +63,6 @@ interface ArticleContextValue {
   activeId: string
   /** 0–1 through the whole document. */
   progress: number
-  /** 0–1 per h2 id. */
-  sectionProgress: Record<string, number>
   settings: ArticleSettings
   setSetting: <K extends keyof ArticleSettings>(key: K, value: ArticleSettings[K]) => void
   resetA11y: () => void
@@ -93,9 +91,10 @@ export function useArticleReducedMotion(): boolean {
   return !!os || !!ctx?.settings.reducedMotion
 }
 
-function readStoredSettings(): ArticleSettings {
+function readStoredSettings(fallbackTheme?: string | null): ArticleSettings {
   try {
-    const theme = localStorage.getItem(STORAGE.theme)
+    const stored = localStorage.getItem(STORAGE.theme)
+    const theme = stored ?? (isArticleTheme(fallbackTheme) ? fallbackTheme : null)
     const fs = Number(localStorage.getItem(STORAGE.fontSize))
     const width = localStorage.getItem(STORAGE.width)
     return {
@@ -146,17 +145,18 @@ function collectHeadings(root: HTMLElement): { headings: ArticleHeading[]; els: 
 }
 
 export function ArticleProvider({
-  slug, title, totalWords, children,
+  slug, title, totalWords, initialTheme, children,
 }: {
   slug: string
   title: string
   totalWords: number
+  /** From post.recommendedTheme; used only when the reader has no saved theme. */
+  initialTheme?: string | null
   children: ReactNode
 }) {
   const [headings, setHeadings] = useState<ArticleHeading[]>([])
   const [activeId, setActiveId] = useState('')
   const [progress, setProgress] = useState(0)
-  const [sectionProgress, setSectionProgress] = useState<Record<string, number>>({})
   const [settings, setSettings] = useState<ArticleSettings>(DEFAULT_SETTINGS)
   const [hydrated, setHydrated] = useState(false)
   const osReducedMotion = useReducedMotion()
@@ -164,13 +164,13 @@ export function ArticleProvider({
   const elsRef = useRef<HTMLElement[]>([])
   const offsetsRef = useRef<number[]>([])
   const rafRef = useRef(0)
-  const lastRef = useRef({ activeId: '', progress: -1, sections: {} as Record<string, number> })
+  const lastRef = useRef({ activeId: '', progress: -1 })
 
   // ── Load persisted settings once on the client ─────────────────
   useEffect(() => {
-    setSettings(readStoredSettings())
+    setSettings(readStoredSettings(initialTheme))
     setHydrated(true)
-  }, [])
+  }, [initialTheme])
 
   // ── Collect headings + cache offsets; recompute on resize / content changes ──
   useEffect(() => {
@@ -234,25 +234,6 @@ export function ArticleProvider({
           setActiveId(nextActive)
         }
 
-        // Per-h2 section progress: read position relative to the span until the next h2.
-        const els = elsRef.current
-        const next: Record<string, number> = {}
-        let changed = false
-        const h2Idx = els.map((el, i) => (el.tagName === 'H2' ? i : -1)).filter((i) => i >= 0)
-        for (let k = 0; k < h2Idx.length; k++) {
-          const i = h2Idx[k]
-          const top = offsets[i]
-          const bottom = k + 1 < h2Idx.length ? offsets[h2Idx[k + 1]] : document.documentElement.scrollHeight
-          const height = Math.max(1, bottom - top)
-          const pos = scrollY + vh * 0.5 - top
-          const v = Math.round(Math.max(0, Math.min(1, pos / height)) * 100) / 100
-          next[els[i].id] = v
-          if (lastRef.current.sections[els[i].id] !== v) changed = true
-        }
-        if (changed) {
-          lastRef.current.sections = next
-          setSectionProgress(next)
-        }
       }
     }
 
@@ -319,9 +300,9 @@ export function ArticleProvider({
   const minutesLeft = Math.ceil((totalWords * (1 - progress)) / 220)
 
   const value = useMemo<ArticleContextValue>(() => ({
-    slug, title, totalWords, headings, activeId, progress, sectionProgress,
+    slug, title, totalWords, headings, activeId, progress,
     settings, setSetting, resetA11y, reducedMotion, scrollTo, minutesLeft,
-  }), [slug, title, totalWords, headings, activeId, progress, sectionProgress, settings, setSetting, resetA11y, reducedMotion, scrollTo, minutesLeft])
+  }), [slug, title, totalWords, headings, activeId, progress, settings, setSetting, resetA11y, reducedMotion, scrollTo, minutesLeft])
 
   return <ArticleContext.Provider value={value}>{children}</ArticleContext.Provider>
 }

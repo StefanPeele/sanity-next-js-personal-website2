@@ -24,6 +24,143 @@ type ArrayOf<T> = Array<
 >
 
 // Source: schema.json
+export type ArticleUi = {
+  _id: string
+  _type: 'articleUi'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  header?: {
+    backLabel?: string
+    readTimeLabel?: string
+    sourcesLabel?: string
+    cardsLabel?: string
+    reviewBadges?: {
+      seekingReview?: string
+      expertVerified?: string
+    }
+  }
+  toc?: {
+    title?: string
+    mobileTitle?: string
+    minutesSuffix?: string
+  }
+  readerMenu?: {
+    buttonLabel?: string
+    groupLabels?: {
+      theme?: string
+      textSize?: string
+      width?: string
+      accessibility?: string
+      share?: string
+      listen?: string
+      position?: string
+    }
+    themeLabels?: {
+      archive?: string
+      terminal?: string
+      paper?: string
+      broadcast?: string
+    }
+    widthLabels?: {
+      narrow?: string
+      standard?: string
+      wide?: string
+    }
+    a11yLabels?: {
+      dyslexia?: string
+      highContrast?: string
+      reducedMotion?: string
+      ruler?: string
+      reset?: string
+    }
+    shareLabels?: {
+      copyLink?: string
+      copyMarkdown?: string
+      print?: string
+      studyDeck?: string
+      share?: string
+      copied?: string
+    }
+    listenLabels?: {
+      play?: string
+      pause?: string
+      resume?: string
+      stop?: string
+      unsupported?: string
+    }
+    bookmarkLabels?: {
+      save?: string
+      saved?: string
+      resume?: string
+      clear?: string
+    }
+  }
+  blocks?: {
+    tldrHeading?: string
+    tldrSub?: string
+    prerequisitesHeading?: string
+    objectivesHeading?: string
+    checkpointHeading?: string
+    conceptCardsHeading?: string
+    sourcesHeading?: string
+    credibilityHeading?: string
+    backlinksHeading?: string
+    citeHeading?: string
+    citeTemplate?: string
+    readNextHeading?: string
+    readNextLabels?: {
+      deeper?: string
+      broader?: string
+      apply?: string
+    }
+    askHeading?: string
+    askPlaceholder?: string
+    askButton?: string
+    commentsHeading?: string
+    noContent?: string
+  }
+  reactionsHeading?: string
+  reactions?: Array<
+    {
+      _key: string
+    } & VocabEntry
+  >
+  credibility?: {
+    confidence?: Array<
+      {
+        _key: string
+      } & VocabEntry
+    >
+    maturity?: Array<
+      {
+        _key: string
+      } & VocabEntry
+    >
+    load?: Array<
+      {
+        _key: string
+      } & VocabEntry
+    >
+    reviewStatus?: Array<
+      {
+        _key: string
+      } & VocabEntry
+    >
+    reviewersHeading?: string
+    responsesHeading?: string
+    changelogHeading?: string
+    correctionsLabel?: string
+    correctionsUrl?: string
+  }
+  seriesBanner?: {
+    partLabel?: string
+    allPartsLabel?: string
+    prevLabel?: string
+    nextLabel?: string
+  }
+}
+
 export type ErrorPages = {
   _id: string
   _type: 'errorPages'
@@ -1566,6 +1703,7 @@ export type Geopoint = {
 }
 
 export type AllSanitySchemaTypes =
+  | ArticleUi
   | ErrorPages
   | PageReference
   | PostReference
@@ -1642,6 +1780,166 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
   | Geopoint
+
+// Source: sanity/lib/queries-article-ui.ts
+// Variable: articleUiQuery
+// Query: *[_type == "articleUi"][0]{    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },    toc{ title, mobileTitle, minutesSuffix },    readerMenu{      buttonLabel,      groupLabels{ theme, textSize, width, accessibility, share, listen, position },      themeLabels{ archive, terminal, paper, broadcast },      widthLabels{ narrow, standard, wide },      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },      listenLabels{ play, pause, resume, stop, unsupported },      bookmarkLabels{ save, saved, resume, clear }    },    blocks{      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,      sourcesHeading, credibilityHeading, backlinksHeading, citeHeading, citeTemplate, readNextHeading,      readNextLabels{ deeper, broader, apply }, askHeading, askPlaceholder, askButton, commentsHeading, noContent    },    reactionsHeading,    "reactions": reactions[]{ _key, key, label, short, description, banner, color, dots },    credibility{      "confidence": confidence[]{ _key, key, label, short, description, banner, color, dots }, "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots }, "reviewStatus": reviewStatus[]{ _key, key, label, short, description, banner, color, dots },      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl    },    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }  }
+export type ArticleUiQueryResult = {
+  header: {
+    backLabel: string | null
+    readTimeLabel: string | null
+    sourcesLabel: string | null
+    cardsLabel: string | null
+    reviewBadges: {
+      seekingReview: string | null
+      expertVerified: string | null
+    } | null
+  } | null
+  toc: {
+    title: string | null
+    mobileTitle: string | null
+    minutesSuffix: string | null
+  } | null
+  readerMenu: {
+    buttonLabel: string | null
+    groupLabels: {
+      theme: string | null
+      textSize: string | null
+      width: string | null
+      accessibility: string | null
+      share: string | null
+      listen: string | null
+      position: string | null
+    } | null
+    themeLabels: {
+      archive: string | null
+      terminal: string | null
+      paper: string | null
+      broadcast: string | null
+    } | null
+    widthLabels: {
+      narrow: string | null
+      standard: string | null
+      wide: string | null
+    } | null
+    a11yLabels: {
+      dyslexia: string | null
+      highContrast: string | null
+      reducedMotion: string | null
+      ruler: string | null
+      reset: string | null
+    } | null
+    shareLabels: {
+      copyLink: string | null
+      copyMarkdown: string | null
+      print: string | null
+      studyDeck: string | null
+      share: string | null
+      copied: string | null
+    } | null
+    listenLabels: {
+      play: string | null
+      pause: string | null
+      resume: string | null
+      stop: string | null
+      unsupported: string | null
+    } | null
+    bookmarkLabels: {
+      save: string | null
+      saved: string | null
+      resume: string | null
+      clear: string | null
+    } | null
+  } | null
+  blocks: {
+    tldrHeading: string | null
+    tldrSub: string | null
+    prerequisitesHeading: string | null
+    objectivesHeading: string | null
+    checkpointHeading: string | null
+    conceptCardsHeading: string | null
+    sourcesHeading: string | null
+    credibilityHeading: string | null
+    backlinksHeading: string | null
+    citeHeading: string | null
+    citeTemplate: string | null
+    readNextHeading: string | null
+    readNextLabels: {
+      deeper: string | null
+      broader: string | null
+      apply: string | null
+    } | null
+    askHeading: string | null
+    askPlaceholder: string | null
+    askButton: string | null
+    commentsHeading: string | null
+    noContent: string | null
+  } | null
+  reactionsHeading: string | null
+  reactions: Array<{
+    _key: string
+    key: string | null
+    label: string | null
+    short: string | null
+    description: string | null
+    banner: string | null
+    color: string | null
+    dots: number | null
+  }> | null
+  credibility: {
+    confidence: Array<{
+      _key: string
+      key: string | null
+      label: string | null
+      short: string | null
+      description: string | null
+      banner: string | null
+      color: string | null
+      dots: number | null
+    }> | null
+    maturity: Array<{
+      _key: string
+      key: string | null
+      label: string | null
+      short: string | null
+      description: string | null
+      banner: string | null
+      color: string | null
+      dots: number | null
+    }> | null
+    load: Array<{
+      _key: string
+      key: string | null
+      label: string | null
+      short: string | null
+      description: string | null
+      banner: string | null
+      color: string | null
+      dots: number | null
+    }> | null
+    reviewStatus: Array<{
+      _key: string
+      key: string | null
+      label: string | null
+      short: string | null
+      description: string | null
+      banner: string | null
+      color: string | null
+      dots: number | null
+    }> | null
+    reviewersHeading: string | null
+    responsesHeading: string | null
+    changelogHeading: string | null
+    correctionsLabel: string | null
+    correctionsUrl: string | null
+  } | null
+  seriesBanner: {
+    partLabel: string | null
+    allPartsLabel: string | null
+    prevLabel: string | null
+    nextLabel: string | null
+  } | null
+} | null
 
 // Source: sanity/lib/queries-article.ts
 // Variable: articleTextQuery
@@ -4016,6 +4314,7 @@ export type NowQueryResult = {
 
 declare module '@sanity/client' {
   interface SanityQueries {
+    '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },\n    toc{ title, mobileTitle, minutesSuffix },\n    readerMenu{\n      buttonLabel,\n      groupLabels{ theme, textSize, width, accessibility, share, listen, position },\n      themeLabels{ archive, terminal, paper, broadcast },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported },\n      bookmarkLabels{ save, saved, resume, clear }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, credibilityHeading, backlinksHeading, citeHeading, citeTemplate, readNextHeading,\n      readNextLabels{ deeper, broader, apply }, askHeading, askPlaceholder, askButton, commentsHeading, noContent\n    },\n    reactionsHeading,\n    "reactions": reactions[]{ _key, key, label, short, description, banner, color, dots },\n    credibility{\n      "confidence": confidence[]{ _key, key, label, short, description, banner, color, dots }, "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots }, "reviewStatus": reviewStatus[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, body, tldr, excerpt\n  }\n': ArticleTextQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, excerpt, articleType, publishedAt,\n    "categories": categories[]->title,\n    "mainImageUrl": mainImage.asset->url,\n    "wordCount": length(pt::text(body)),\n    "series": series->{ title },\n    seriesOrder\n  }\n': ArticleOgQueryResult
     '\n  *[_type == "note" && defined(slug.current)] | order(coalesce(lastTended, _updatedAt) desc) {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  }\n': NoteTitlesQueryResult

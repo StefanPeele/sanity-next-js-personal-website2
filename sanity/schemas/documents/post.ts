@@ -8,11 +8,11 @@ export default defineType({
 
   // ── Studio tabs — keeps the writing interface clean ───────────
   groups: [
-    { name: 'content',      title: '✍ Content',      default: true },
-    { name: 'presentation', title: '🎨 Presentation' },
-    { name: 'learning',     title: '🧠 Learning' },
-    { name: 'credibility',  title: '✅ Credibility' },
-    { name: 'community',    title: '💬 Community' },
+    { name: 'content',      title: 'Content',      default: true },
+    { name: 'presentation', title: 'Presentation' },
+    { name: 'learning',     title: 'Learning' },
+    { name: 'credibility',  title: 'Credibility' },
+    { name: 'community',    title: 'Community' },
   ],
 
   // New posts start with the archive defaults and an empty TL;DR so the writer
@@ -253,10 +253,10 @@ export default defineType({
       `,
       options: {
         list: [
-          { title: '🔭 Perspective', value: 'perspective' },
-          { title: '⚡ Concept Deep Dive', value: 'concept-deep-dive' },
-          { title: '🔧 Field Notes', value: 'field-notes' },
-          { title: '📡 Transmission', value: 'transmission' },
+          { title: 'Perspective', value: 'perspective' },
+          { title: 'Deep dive', value: 'concept-deep-dive' },
+          { title: 'Field notes', value: 'field-notes' },
+          { title: 'Update', value: 'transmission' },
         ],
         layout: 'radio',
       },

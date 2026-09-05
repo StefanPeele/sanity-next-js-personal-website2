@@ -5,7 +5,10 @@ import Link from 'next/link'
 interface SeriesPost { _id: string; title: string | null; slug: string | null; seriesOrder: number | null }
 interface Series { title: string | null; slug: string | null; description: string | null; posts: SeriesPost[] }
 
-export function SeriesBanner({ series, currentSlug, seriesOrder }: { series: Series; currentSlug: string; seriesOrder?: number | null }) {
+type Labels = { partLabel: string; allPartsLabel: string; prevLabel: string; nextLabel: string }
+const DEFAULT_LABELS: Labels = { partLabel: 'Part {n} of {m}', allPartsLabel: 'All parts', prevLabel: 'Previous', nextLabel: 'Next' }
+
+export function SeriesBanner({ series, currentSlug, seriesOrder, labels = DEFAULT_LABELS }: { series: Series; currentSlug: string; seriesOrder?: number | null; labels?: Labels }) {
   const parts = series.posts.filter((p) => p.slug)
   if (!parts.length) return null
   let idx = parts.findIndex((p) => p.slug === currentSlug)
@@ -17,8 +20,8 @@ export function SeriesBanner({ series, currentSlug, seriesOrder }: { series: Ser
   return (
     <nav aria-label="Series navigation" className="mb-10 rounded-xl border border-white/[0.08] bg-white/[0.02] overflow-hidden">
       <div className="px-5 py-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-        <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-amber-400">
-          {position ? `Part ${position} of ${parts.length}` : `${parts.length} parts`}
+        <span className="font-sans text-sm text-amber-300">
+          {position ? labels.partLabel.replace('{n}', String(position)).replace('{m}', String(parts.length)) : `${parts.length} parts`}
         </span>
         <span className="text-stone-600" aria-hidden="true">·</span>
         {series.slug ? (
@@ -33,21 +36,21 @@ export function SeriesBanner({ series, currentSlug, seriesOrder }: { series: Ser
         )}
         <div className="ml-auto flex items-center gap-2">
           {prev?.slug ? (
-            <Link href={`/blog/${prev.slug}`} rel="prev" className="font-mono text-[10px] uppercase tracking-widest text-stone-300 hover:text-white px-3 py-2 border border-white/10 rounded-lg hover:border-white/30 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400" title={prev.title ?? undefined}>
-              ← Prev
+            <Link href={`/blog/${prev.slug}`} rel="prev" className="font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-white/10 rounded-lg hover:border-white/30 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400" title={prev.title ?? undefined}>
+              ← {labels.prevLabel}
             </Link>
           ) : null}
           {next?.slug ? (
-            <Link href={`/blog/${next.slug}`} rel="next" className="font-mono text-[10px] uppercase tracking-widest text-stone-300 hover:text-white px-3 py-2 border border-white/10 rounded-lg hover:border-white/30 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400" title={next.title ?? undefined}>
-              Next →
+            <Link href={`/blog/${next.slug}`} rel="next" className="font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-white/10 rounded-lg hover:border-white/30 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400" title={next.title ?? undefined}>
+              {labels.nextLabel} →
             </Link>
           ) : null}
         </div>
       </div>
       <details className="group border-t border-white/5">
-        <summary className="cursor-pointer list-none px-5 py-3 font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
+        <summary className="cursor-pointer list-none px-5 py-3 font-sans text-sm text-stone-400 hover:text-white transition-colors flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
           <span className="transition-transform group-open:rotate-90" aria-hidden="true">▸</span>
-          All parts
+          {labels.allPartsLabel}
         </summary>
         <ol className="px-5 pb-4 space-y-1.5">
           {parts.map((p, i) => {

@@ -281,7 +281,7 @@ interface ConceptCardsProps {
   deckFilename?: string
 }
 
-export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study-deck.txt' }: ConceptCardsProps) {
+export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study-deck.txt', heading = 'Key terms' }: ConceptCardsProps & { heading?: string }) {
   const [flipped, setFlipped] = useState<Set<string>>(new Set())
   const [downloaded, setDownloaded] = useState(false)
   const reduced = useArticleReducedMotion()
@@ -306,10 +306,8 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
   return (
     <section className="mt-16 pt-12 border-t border-white/[0.08]" aria-labelledby="concept-cards-heading" data-no-toc>
       <div className="flex items-center gap-4 mb-6 flex-wrap">
-        <h2 id="concept-cards-heading" className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-600 pl-4">
-          Concept Cards
-        </h2>
-        <span className="font-mono text-[9px] text-stone-500 uppercase tracking-widest">
+        <h2 id="concept-cards-heading" className="section-label">{heading}</h2>
+        <span className="font-sans text-xs text-stone-400">
           {cards.length} terms — click to flip
         </span>
         {deck && deckCount > 0 && (
