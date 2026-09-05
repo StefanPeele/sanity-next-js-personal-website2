@@ -14,6 +14,7 @@ export { DEFAULT_PERSONAL_PAGES, type PersonalPagesCopy } from './personalPages'
 export { DEFAULT_SERVICES_PAGE, type ServicesPageCopy } from './servicesPage'
 
 import { DEFAULT_NAVIGATION } from './navigation'
+import { DEFAULT_SETTINGS } from './settings'
 import { DEFAULT_TAXONOMY } from './taxonomy'
 import { DEFAULT_ERROR_PAGES } from './errorPages'
 import { DEFAULT_HOME } from './home'
@@ -33,6 +34,7 @@ export const SINGLETON_DEFAULTS: Record<string, Record<string, unknown>> = {
   errorPages: DEFAULT_ERROR_PAGES,
   // `home` and `settings` already exist; the seed script patches these fields with setIfMissing.
   home: DEFAULT_HOME,
+  settings: DEFAULT_SETTINGS,
   articleUi: DEFAULT_ARTICLE_UI,
   blogPage: DEFAULT_BLOG_PAGE,
   knowledgePages: DEFAULT_KNOWLEDGE_PAGES,

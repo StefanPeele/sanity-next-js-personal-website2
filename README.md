@@ -47,9 +47,19 @@ Route groups: `app/(personal)` (portfolio shell with `<main id="content">`), `ap
 
 ## Content model (Sanity)
 
-Singletons: `home`, `settings` (social links, footer headline, OG image). Documents: `post`, `series`, `category`, `tag`, `note` (garden), `glossaryTerm`, `learningPath`, `mediaItem` (library), `project`, `gallery`, `page`, `experience`, `certification`, `education`, `testimonial`, `subscriber` (newsletter). Objects: interactive article blocks (`knowledgeQuiz`, `layerExplorer`, `packetAnimator`, `wiresharkCallout`), editorial blocks (`sectionBreak`, `failureNote`, `whatIGotWrong`, `whatEngineersUse`, `theProblemSolved`, `conceptStressTest`), `skill`, `timeline`, `milestone`, `duration`.
+Singletons (all under **Site** in the Studio desk): `settings` (identity, SEO, social links, footer + newsletter copy), `navigation` (primary/secondary nav, search quick links), `home` (copy + `sections[]` toggle/reorder), `blogPage`, `knowledgePages` (garden, library, glossary, paths, review, series, graph), `personalPages` (projects, resume, contact, now, uses, photography), `servicesPage` (services copy, FAQ, booking-form labels), `articleUi` (every article-page label), `taxonomy` (article lanes, note statuses, media types, skill levels — fixed keys, editable labels), `errorPages` (404 / error copy). Every singleton has code defaults in `lib/cms/defaults/*.ts` that double as the schema `initialValue` and the runtime fallback, so an empty or deleted singleton never breaks a page. Documents: `post`, `series`, `category`, `tag`, `note` (garden), `glossaryTerm`, `learningPath`, `mediaItem` (library), `project`, `gallery`, `page`, `experience`, `certification`, `education`, `testimonial`, `subscriber` (newsletter). Objects: interactive article blocks (`knowledgeQuiz`, `layerExplorer`, `packetAnimator`, `wiresharkCallout`), editorial blocks (`sectionBreak`, `failureNote`, `whatIGotWrong`, `whatEngineersUse`, `theProblemSolved`, `conceptStressTest`), `skill`, `timeline`, `milestone`, `duration`.
 
-All GROQ lives in `sanity/lib/queries.ts` and is wrapped in `defineQuery`; `npm run typegen` regenerates `sanity.types.ts` and `schema.json`.
+All GROQ lives in `sanity/lib/queries*.ts` and is wrapped in `defineQuery`; `npm run typegen` regenerates `sanity.types.ts` and `schema.json`. Pages read singletons through the loaders in `lib/cms/loaders.ts` (`getSiteChrome`, `getCopy(query, defaults)`, `getTaxonomy`, `getErrorPages`), which deep-merge the Studio document over the defaults with `withDefaults`.
+
+### Seeding Studio with the defaults
+
+```
+npx tsx scripts/seed-content.ts --dry-run   # list what would be created or patched
+npx tsx scripts/seed-content.ts             # create missing singletons; fill missing fields on home/settings
+npx tsx scripts/seed-content.ts --force     # overwrite every singleton with the code defaults (loses edits)
+```
+
+Needs `SANITY_API_WRITE_TOKEN` (an Editor token) in `.env.local`; the dry run works with the read token. The script is idempotent: a second run reports `0 created`. Prices and package names are not seeded — they live in `lib/pricing.ts` because they must match the Airtable option names.
 
 ## Environment variables
 
@@ -62,7 +72,7 @@ See `.env.local.example` for comments. Summary:
 | `NEXT_PUBLIC_SANITY_API_VERSION` | public, optional | Defaults to `2025-02-27` |
 | `NEXT_PUBLIC_SANITY_PROJECT_TITLE` | public, optional | Studio title |
 | `SANITY_API_READ_TOKEN` | server, required | Draft mode + live preview |
-| `SANITY_API_WRITE_TOKEN` | server | Newsletter writes `subscriber` documents. Missing → form shows a friendly "offline" error |
+| `SANITY_API_WRITE_TOKEN` | server | Newsletter writes `subscriber` documents (missing → form shows a friendly "offline" error). Also used by `scripts/seed-content.ts` |
 | `SANITY_REVALIDATE_SECRET` | server | Verifies the Sanity webhook |
 | `RESEND_API_KEY` | server | Booking + newsletter emails (`bookings@stefanpeele.com` must be a verified sender) |
 | `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `AIRTABLE_CLIENTS_TABLE_ID`, `AIRTABLE_SHOOTS_TABLE_ID`, `AIRTABLE_WEBHOOK_SECRET` | server | Photography booking CRM |
@@ -71,7 +81,7 @@ See `.env.local.example` for comments. Summary:
 | `CSP_REPORT_URI` | server, optional | Where CSP Report-Only violations are sent |
 | `PLAYWRIGHT_BASE_URL` | test, optional | Run e2e against a deployed URL |
 
-`VERCEL_GIT_COMMIT_SHA`, `VERCEL_GIT_COMMIT_REF`, `VERCEL_DEPLOYMENT_ID` and `VERCEL_REGION` are injected by Vercel and shown in the footer telemetry block.
+`VERCEL_GIT_COMMIT_SHA` and `VERCEL_DEPLOYMENT_ID` are injected by Vercel and reported by `/api/health`.
 
 ## Local development
 
@@ -123,7 +133,7 @@ Sanity → API → Webhooks → Add:
 - Dataset: `production`; trigger on create, update, delete; no filter
 - Secret: the value of `SANITY_REVALIDATE_SECRET`
 
-The handler revalidates only the affected paths (post → `/blog`, `/blog/[slug]`, `/graph`, sitemap and feeds; settings → whole layout; etc.).
+The handler is table-driven (`RULES` in `app/api/draft-mode/enable/revalidate/route.ts`): each document type maps to the paths it renders on (post → `/blog`, `/blog/[slug]`, `/graph`, sitemap and feeds; `settings`/`navigation`/`taxonomy`/`articleUi`/`errorPages` → whole layout; `blogPage` → `/blog`; `personalPages` → the six personal routes; and so on). Unknown types revalidate the whole layout.
 
 ## Feeds
 
