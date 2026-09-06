@@ -186,7 +186,7 @@ requires new design. Effort is in sessions.
 | C2 | **Physical-product lists out of the package cards** | `ServicePackages.tsx:246`, `:32-55` | 0.5 | ~2 screens of mobile height; kills 2 of 3 duplicate copies |
 | C3 | **`comingSoon` package cards** | `lib/pricing.ts:113`, `:167` | 0.25 | 2 greyscale unbuyable cards |
 | C4 | **Photography mobile density** — cap the recent grid and lazy-load below the fold | `app/(personal)/photography/page.tsx`, `CinematicGallery.tsx` | 1 | 9509px → target under 5000px; the largest single mobile win |
-| C5 | **The sub-10px type tier** — raise 7/8/9px to a 3-step scale with a 11px floor | site-wide; `styles/index.css` `.section-label` | 1.5 | 157 elements become readable; see §4 |
+| C5 | **The sub-10px type tier** — raise 7/8/9px to a named scale with an 11px floor | ad-hoc inline classes site-wide (`font-mono text-[8px] uppercase tracking-[...]`), *not* `.section-label`, which is already correct serif 16.8px | 1.5 | 157 elements become readable; see §4 |
 | C6 | **framer-motion from `ServiceFAQ` and the two booking disclosures** | `ServiceFAQ.tsx:36-50`, `BookingSection.tsx:187-206`, `:216-247` | 0.5 | 3 animations, one library dependency closer to removable |
 | C7 | **The 7 fields with no rendering site** (§3b) — delete field, query line and schema entry | `defaults/*`, `queries-*.ts`, `schemas/singletons/*` | 0.5 | Studio stops offering controls that do nothing |
 | C8 | **`njitSavings()`** — dead since `njitToggle.savingsCopy` landed | `lib/pricing.ts:309-313` | 0.1 | Dead code |
