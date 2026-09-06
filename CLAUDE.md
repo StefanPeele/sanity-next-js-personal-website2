@@ -52,4 +52,4 @@
 - The CSP is enforced. To add a third-party origin, set `CSP_REPORT_ONLY=1` (header becomes report-only), extend the allowlist in `next.config.ts`, confirm the console is clean, then unset it. The Playwright suite fails on CSP violations.
 - `SANITY_API_READ_TOKEN` is required at build time (`sanity/lib/token.ts` throws without it).
 - `app/global-error.tsx` cannot use `next/link` or `next/font` — the root layout is gone when it renders.
-- `public/sw.js` caches the last eight `/blog/` articles for offline reading; bump `CACHE_NAME` when article markup changes.
+- `public/sw.js` caches the last twelve `/blog/` articles for offline reading; bump `PAGE_CACHE` and `STATIC_CACHE` (both `sp-*-v4`) when article markup changes.
