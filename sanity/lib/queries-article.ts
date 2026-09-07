@@ -15,7 +15,8 @@ export const articleOgQuery = defineQuery(`
     title, excerpt, articleType, publishedAt,
     "categories": categories[]->title,
     "mainImageUrl": mainImage.asset->url,
-    "wordCount": length(pt::text(body)),
+    // Words, not characters — see the note in queries.ts. length() on a string counts characters.
+    "wordCount": length(string::split(pt::text(body), " ")),
     "series": series->{ title },
     seriesOrder
   }

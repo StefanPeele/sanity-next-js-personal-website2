@@ -22,7 +22,9 @@ const postCardFields = `
   "categories": categories[]->title,
   "tags": tags[]->{ _id, title, "slug": slug.current },
   articleType,
-  "wordCount": length(pt::text(body)),
+  // length() on a string counts characters, not words — dividing that by 220 wpm
+  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.
+  "wordCount": length(string::split(pt::text(body), " ")),
   "series": series->{ title, "slug": slug.current }
 `
 
