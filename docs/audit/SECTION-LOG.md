@@ -19,6 +19,7 @@ and what they left open, so you inherit their reasoning instead of re-litigating
 | 2026-09-06 | *(groundwork — not a section)* | Screenshot harness (`tests/screenshots.spec.ts`, 81 baseline captures at 3 breakpoints); full site inventory; Services audit; experience plan; this workflow | — | Dataset unseeded (`plan 1.4`) — **resolved 2026-09-07** |
 | 2026-09-07 | *(groundwork — not a section)* | **Dataset seeded** (`plan 1.4` done); Airtable typecast fix + live end-to-end test; empty route dispositions (inventory §8) | — | `'Portrait · Core'` vs Airtable's `'Portrait · Starter'` needs a naming decision |
 | 2026-09-07 | Cleanup | Baselines PNG→JPEG (32.5MB→11.3MB); **`/paths` and `/review` deleted**; homepage overview `". . ."` fixed in Sanity | `/paths`, `/review`, PathSteps, ReviewDeck, `learningPath` schema, 2 queries, 21.2MB of PNG | Naming decision above; `/glossary` and `/library` still to fill |
+| 2026-09-07 | **Blog** | Reading time (chars→words), reader-menu clipping, measure 91→68 chars, paragraph rhythm 14→24px, parallax hero→text header, 4 unrendered sections cut, Paper+Broadcast themes cut | read-next, Reactions, citation box, 2 light themes, THEME_OPTIONS label/desc, parallax + canvas colour sample | Filter back button (`router.replace`); B18/B19 consolidation deferred; 6 newly-dead articleUi fields |
 
 ---
 
@@ -133,3 +134,41 @@ before concluding a content change has not landed.
 
 **Next session should do first:** the `'Portrait · Core'` / `'Portrait · Starter'` naming decision,
 then the blog section — `/glossary` is the best-ratio content work on the site (~3 h).
+
+### 2026-09-07 — Blog section
+
+Diagnosis in `sections/blog.md`; this is what was executed. Six commits, all verified against a
+production build rather than assumed.
+
+**Measured before → after:** measure 91 → **68** characters per line at 1440 (optimal 60–75);
+paragraph gap 14 → **24px** against a 27.75px line box; header height ~612 → **60px**; reader-menu
+controls reachable 3/24 → **20/22**; index reading times 22 and 110 min → **3 and 17**.
+
+**Four root causes worth remembering, none of which were what the audit guessed:**
+
+1. **Reading time was counting characters.** `length()` on a string in GROQ returns characters, so `"wordCount": length(pt::text(body))` fed a character count into a 220-wpm divide. Inflated everything ~4.5×.
+2. **The reader menu was clipped, not stacked.** The sidebar TOC used `sticky … overflow-y-auto`; when one axis is not `visible`, CSS computes the other to `auto`, so the absolutely positioned panel was clipped by its scroll container. `z-index: 1002` was set and irrelevant. The audit's stacking-context theory was wrong.
+3. **`mb-6` on paragraphs has never worked, site-wide.** `styles/index.css` carries `p:not(:last-child){margin-bottom:.875rem}` at specificity (0,1,1), outranking Tailwind's `mb-6` (0,1,0). Any `mb-*` on a `<p>` anywhere in this codebase is silently overridden.
+4. **`.meta-label` already existed with zero callers** (`styles/index.css:121`). Written in the September refactor as the answer to the 43-permutation label problem and never adopted. A utility landing with no adoption pass is a process defect, not a design one.
+
+**Theme decision: cut Paper and Broadcast, keep Archive and Terminal.** Theme classes only reach
+`<article data-article>` and the CSS only selects prose inside it, so on cream or white every framed
+component and all page chrome stayed near-black. Repairing that needs light variants for 15 card
+treatments and 37 border colours — i.e. the B18/B19 consolidation that was deferred — so fixing it
+now would mean writing light variants twice. Evidence kept in
+`docs/audit/screenshots/themes/` even though two of those themes no longer exist.
+
+**Part 5 completed after the menu fix** (it had aborted on the bug). All 8 reader-menu controls
+change the DOM and persist across reload. Keyboard: 30 tab stops, **0** without a visible focus
+ring, 0 zero-size. TOC scroll lands headings consistently at 208px and the active highlight is
+**accurate, not lagging** — the suspicion was unfounded.
+
+**Still open:** the blog index filter uses `router.replace` (`BlogDirectory.tsx:95`), so the back
+button leaves the page rather than restoring the previous filter. Deep links and the active chip
+work. Left alone — it is a UX judgment call, not a defect. Six `articleUi` fields became dead with
+the deletions (reactionsHeading, reactions[], citeHeading, citeTemplate, readNextHeading,
+readNextLabels); field removal was deferred as B8.
+
+**Next session should do first:** write the WinRM post. The audit's own conclusion, reached a third
+independent time — twelve of the article page's twenty sections did not render, so the consolidation
+work targets components no reader has seen.
