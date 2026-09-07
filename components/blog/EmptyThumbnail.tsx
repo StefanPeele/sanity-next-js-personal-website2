@@ -51,16 +51,16 @@ export function EmptyThumbnail({ title, category }: EmptyThumbnailProps) {
         }}
       />
 
-      {/* Center content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6">
+      {/* Center content. The post title used to be repeated here, directly above the same title
+          printed below the card — so the card said everything twice. Only the category remains,
+          raised from 9px/0.4em/stone-600 (below the 12px floor and barely legible on this
+          gradient) to 11px/0.15em/stone-400. */}
+      <div className="absolute inset-0 flex items-center justify-center p-6">
         {category && (
-          <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-600">
+          <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-stone-400">
             {category}
           </span>
         )}
-        <p className="font-serif text-stone-400 text-center text-sm leading-snug line-clamp-3 max-w-[80%]">
-          {title}
-        </p>
       </div>
 
       {/* Corner accent */}
