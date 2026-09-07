@@ -61,7 +61,7 @@ where a bug costs a lead rather than a reader.
 
 | Breakpoint | Files | Looking for |
 | --- | --- | --- |
-| 1440 | `services-njit-off.png`, `services-njit-on.png`, `services-booking-open.png` | Card grid at 2 columns; the physical-product list repeated in every card |
+| 1440 | `services-njit-off.jpg`, `services-njit-on.jpg`, `services-booking-open.jpg` | Card grid at 2 columns; the physical-product list repeated in every card |
 | 768 | same three | `md:grid-cols-2` puts 2 cards in ~360px each while still printing 11 product names |
 | 390 | same three | Total height; 9px product names; truncated add-on labels; 13×16 checkbox |
 
@@ -111,7 +111,7 @@ From `2026-09-experience-plan.md` Part 4 (items 1.2, 1.5, 1.6) plus the Services
 
 - [ ] `npm run check` exits 0 — zero warnings
 - [ ] `npm run build && npm run test:e2e` passes — includes CSP and axe on `/services`
-- [ ] `npm run screenshot`, diff `390/services-*.png` against baseline. **Record height 9,923 → `<N>`**
+- [ ] `npm run screenshot`, diff `390/services-*.jpg` against baseline. **Record height 9,923 → `<N>`**
 - [ ] Studio round-trip for `includesNote`, `wip`, `selectedLabel` — **waived while the dataset is unseeded** (§1). Instead: edit the value in `lib/cms/defaults/servicesPage.ts`, rebuild, confirm the page changes. Re-do properly after `plan 1.4`
 - [ ] Every interaction at 390px: three category tabs, NJIT switch on/off, FAQ open/close, package select, date picker, add-ons disclosure, every add-on checkbox, submit with an invalid field, submit valid
 - [ ] Nothing below 12px introduced

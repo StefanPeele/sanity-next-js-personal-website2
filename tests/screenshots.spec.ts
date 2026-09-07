@@ -5,8 +5,13 @@ import { firstPostSlug } from './helpers'
 // tests/screenshots.spec.ts
 // Visual baseline for the whole site: every route at 1440 / 768 / 390, in each state that
 // changes what a visitor actually sees.
-//   Output: docs/audit/screenshots/baseline/<breakpoint>/<route>-<state>.png
+//   Output: docs/audit/screenshots/baseline/<breakpoint>/<route>-<state>.jpg
 //   Run:    npm run build && npm run screenshot   (the config starts `npm start` on :3000)
+//
+// JPEG at quality 82, matching docs/audit/screenshots/{before,after}. PNG was tried first and
+// cost 32.5MB, which exceeds the ~14MB payload this repo's remote accepts in one push. JPEG is
+// 11MB for the same 81 captures and stays legible down to the 8px mono labels, because the site
+// is light text on a dark ground and chroma subsampling only touches colour, not luminance.
 //
 // fullPage vs viewport: page-level states are full-page. States defined by a scroll position
 // (hero / mid / footer) or by a fixed overlay (lightbox, reader menu, graph hover card) are
@@ -101,9 +106,9 @@ async function scrollTo(page: Page, where: 'top' | 'middle' | 'bottom') {
 }
 
 async function shoot(page: Page, bp: string, name: string, fullPage = true) {
-  const file = path.join(OUT, bp, `${name}.png`)
+  const file = path.join(OUT, bp, `${name}.jpg`)
   fs.mkdirSync(path.dirname(file), { recursive: true })
-  await page.screenshot({ path: file, fullPage, animations: 'disabled', caret: 'hide' })
+  await page.screenshot({ path: file, fullPage, type: 'jpeg', quality: 82, animations: 'disabled', caret: 'hide' })
 }
 
 // -- captures ---------------------------------------------------------------

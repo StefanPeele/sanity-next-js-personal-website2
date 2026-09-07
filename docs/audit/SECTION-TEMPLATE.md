@@ -72,9 +72,9 @@ Screenshots to review before changing anything, from `docs/audit/screenshots/bas
 
 | Breakpoint | Files | Looking for |
 | --- | --- | --- |
-| 1440 | `<route>-*.png` | Layout, hierarchy, density |
-| 768 | `<route>-*.png` | Where the grid changes and what it does to height |
-| 390 | `<route>-*.png` | Truncation, tap targets, sub-12px type, total height |
+| 1440 | `<route>-*.jpg` | Layout, hierarchy, density |
+| 768 | `<route>-*.jpg` | Where the grid changes and what it does to height |
+| 390 | `<route>-*.jpg` | Truncation, tap targets, sub-12px type, total height |
 
 - Height at 390px now: `<N>px` (`<N/844>` screens) — from inventory §1
 - Target after this session: `<N>px`

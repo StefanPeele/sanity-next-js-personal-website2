@@ -6,7 +6,7 @@ Scope: `/services` and the booking pipeline behind it. No code changed.
 `components/BookingSection.tsx`, `app/actions/booking.ts`, `lib/pricing.ts`,
 `lib/cms/defaults/servicesPage.ts`, `sanity/schemas/singletons/servicesPage.ts`,
 `sanity/lib/queries-services.ts`. Reviewed the new baseline captures at
-`docs/audit/screenshots/baseline/{1440,768,390}/services-{njit-off,njit-on,booking-open}.png`.
+`docs/audit/screenshots/baseline/{1440,768,390}/services-{njit-off,njit-on,booking-open}.jpg`.
 Mobile numbers are measured, not eyeballed: a Playwright pass at 390×844 against the production
 build recorded page height, every rendered font size, every tap-target box, and every element
 crossing the viewport edge.
