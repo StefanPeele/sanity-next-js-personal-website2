@@ -17,7 +17,17 @@ export default defineConfig({
     baseURL,
     trace: 'retain-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    // Default suite. The visual baseline is excluded so `npm run test:e2e` (and CI) stay fast.
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: '**/screenshots.spec.ts' },
+    // Visual baseline: `npm run screenshot`. Viewport is set per breakpoint inside the spec.
+    {
+      name: 'screenshots',
+      testMatch: '**/screenshots.spec.ts',
+      use: { ...devices['Desktop Chrome'] },
+      timeout: 180_000,
+    },
+  ],
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {

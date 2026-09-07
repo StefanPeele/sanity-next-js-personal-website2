@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type APIRequestContext } from '@playwright/test'
+import { expect, test } from '@playwright/test'
+import { firstPostSlug } from './helpers'
 // tests/smoke.spec.ts
 // Every reserved route returns 200 with exactly one <h1> and a #content landmark; unknown slugs 404
 // with the Studio-editable copy; feeds/sitemap/robots parse; the article page has one TOC, one progress
@@ -82,12 +83,6 @@ test('security headers are present', async ({ request }) => {
   expect(h['referrer-policy']).toBe('strict-origin-when-cross-origin')
   expect(h['content-security-policy'] ?? h['content-security-policy-report-only']).toContain("default-src 'self'")
 })
-
-async function firstPostSlug(request: APIRequestContext) {
-  const xml = await (await request.get('/sitemap.xml')).text()
-  const match = xml.match(/<loc>[^<]*\/blog\/(?!series(?:\/|<)|osi-model|feed)([^<\/]+)<\/loc>/)
-  return match?.[1] ?? null
-}
 
 test.describe('article page', () => {
   test('keeps one TOC per breakpoint, one progress bar and the reader menu', async ({ page, request }) => {
