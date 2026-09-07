@@ -71,7 +71,7 @@ export function BlogArticleHeader({
         <div className="w-full max-w-[36rem] mx-auto">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-stone-300 hover:text-white font-sans text-sm transition-colors mb-8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm"
+          className="inline-flex items-center gap-2 min-h-[24px] py-1 text-stone-300 hover:text-white font-sans text-sm transition-colors mb-7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm"
         >
           <ArrowLeft size={14} aria-hidden /> {labels.backLabel}
         </Link>

@@ -67,7 +67,7 @@ export default function Footer({ settings, nav = DEFAULT_NAVIGATION }: { setting
             <ul className="grid grid-cols-2 gap-x-6 gap-y-3 lg:grid-cols-1">
               {directory.map((link) => (
                 <li key={navHref(link) + link.label}>
-                  <Link href={navHref(link)} className={`text-stone-300 hover:text-white font-sans text-base transition-colors rounded-sm ${FOCUS}`}>
+                  <Link href={navHref(link)} className={`inline-block py-1 text-stone-300 hover:text-white font-sans text-base transition-colors rounded-sm ${FOCUS}`}>
                     {link.label}
                   </Link>
                 </li>
@@ -100,7 +100,7 @@ export default function Footer({ settings, nav = DEFAULT_NAVIGATION }: { setting
 
         <p className="pt-8 text-stone-400 font-sans text-sm">
           © {year}{' '}
-          <a href={SITE.url} className="p-name u-url text-stone-200 underline underline-offset-4 decoration-stone-600 hover:text-white hover:decoration-white" rel="me">{settings.siteName}</a>.{' '}
+          <a href={SITE.url} className="p-name u-url inline-block py-1 text-stone-200 underline underline-offset-4 decoration-stone-600 hover:text-white hover:decoration-white" rel="me">{settings.siteName}</a>.{' '}
           <span className="p-note">{settings.footer.copyrightNote}</span>
           <span className="p-locality sr-only">{settings.location.city}, {settings.location.region}</span>
         </p>

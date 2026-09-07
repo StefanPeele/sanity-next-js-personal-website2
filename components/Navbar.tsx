@@ -77,7 +77,7 @@ export function Navbar({ nav = DEFAULT_NAVIGATION }: { nav?: NavigationData }) {
                     target={item.newTab ? '_blank' : undefined}
                     rel={item.newTab ? 'noopener noreferrer' : undefined}
                     aria-current={active ? 'page' : undefined}
-                    className={`font-sans text-sm transition-colors rounded-sm ${FOCUS} ${active ? 'text-white' : 'text-stone-400 hover:text-stone-100'}`}
+                    className={`inline-flex items-center min-h-[24px] py-1 font-sans text-sm transition-colors rounded-sm ${FOCUS} ${active ? 'text-white' : 'text-stone-400 hover:text-stone-100'}`}
                   >
                     {item.label}
                   </Link>
