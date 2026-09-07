@@ -199,3 +199,117 @@ requires new design. Effort is in sessions.
 **Explicitly not recommended for cutting:** the article learning blocks. They are the only part of
 the site doing something no template does, they are content-bearing, and `/blog` is your first
 goal. The problem with the article page is that there are 2 articles, not that it does too much.
+
+---
+
+## 8. Empty route dispositions
+
+Added 2026-09-07, after the dataset was seeded. Recommendations, not descriptions. Writing time is
+**your** hours at a keyboard, not engineering sessions; engineering is called out separately.
+
+The premise: four good pages beat nine empty ones. Two of these five are worth filling, one is worth
+waiting on, and two should be deleted despite the effort already spent on them.
+
+| Route | Goal served | Content to stop being embarrassing | Your writing time | Disposition |
+| --- | --- | --- | --- | --- |
+| `/glossary` | **G1, directly** | 25–30 networking terms, 1–3 sentences each | **2.5–3 h** | **FILL** |
+| `/library` | **G2 — a stated goal** | See below: change the implementation, not the effort | **~1 h** + 1.5 sessions code | **FILL, reimplemented** |
+| `/garden` | G1, indirectly | 15–20 interlinked notes | 6–8 h | **DEFER** |
+| `/paths` | G1, downstream | Needs 15+ posts before a path exists to draw | n/a | **DELETE** |
+| `/review` | None honestly | Needs returning readers a 2-post site does not have | n/a | **DELETE** |
+
+### `/glossary` — FILL
+
+**The best ratio on the site.** It is the cheapest content here and the only one that improves pages
+that already exist: `GlossaryTerm` hover cards fire inside articles, so 25 definitions make both
+current posts better the day they land, and every future post better for free.
+
+Terms you already have standing: the OSI layers, VLAN, subnet, DHCP, DNS, NAT, BGP, OSPF, trunk,
+LACP, SAN, iSCSI, VLAN tagging, MTU, ARP, TLS handshake, WinRM, Kerberos. That is most of 25 without
+inventing anything.
+
+Definitions must be **1–3 sentences and in your own words** — a glossary of copied vendor
+definitions is worse than no glossary. Budget 6 minutes a term.
+
+### `/library` — FILL, but reimplement
+
+You cannot delete a stated goal, so the question is what implementation actually serves it.
+
+**Why the current one will fail.** It is a manually maintained reading log. That format needs
+continuous input to look alive, decays visibly the moment you stop, and competes for exactly the
+scarce writing hours G1 needs. A reading log last updated four months ago is a worse signal than no
+reading log.
+
+**Reimplement it as a derived page, not a maintained one.** Two sources, both of which already
+exist:
+
+1. **Article sources.** `post.sources` is already in the schema (`sanity/schemas/documents/post.ts:194`) and already rendered by `CredibilitySection`. Aggregate every source cited across every post into the library, grouped by media type, each linking back to the post that cited it. The library then fills itself as G1 grows and **can never be stale**, because it is a view over your own writing.
+2. **A short "currently reading" shelf.** 8–10 hand-entered `mediaItem` documents. `components/knowledge/CurrentlyReading.tsx` already takes pre-fetched items, and the `mediaItem` schema already has `status`, `progressPercent`, `coverImage`, `startedAt`. That is ~1 hour of entry and it is the only part you maintain.
+
+**Engineering: ~1.5 sessions** — a GROQ query aggregating `post.sources`, a grouping by media type,
+and a merge with hand-entered `mediaItem`s. Nothing new to design; `LibraryClient` and `MediaCard`
+already render this shape.
+
+The goal survives; the maintenance burden does not. This is the item to do straight after the
+glossary.
+
+### `/garden` — DEFER
+
+The only empty route with a real long-term job: it feeds backlinks, wiki-links and the knowledge
+graph, all of which are built and all of which need note density to mean anything.
+
+But it is a **second content stream competing with the blog for the same hours**, and G1 is the
+first goal with eight posts already planned. A garden with three notes looks worse than no garden —
+it reads as an abandoned experiment rather than a working notebook.
+
+**Unpublish from nav and sitemap now** (plan item 1.1), keep every line of code, and revisit only
+once G1 has its eight posts. At that point the garden has raw material — the offcuts of those posts
+are exactly what a garden is for — and 15–20 notes is 6–8 hours rather than a cold start.
+
+Cost of deferring: zero. Cost of filling it now: the blog does not get written.
+
+### `/paths` — DELETE
+
+A learning path is a **curation layer over content that does not exist.** With 2 posts there is
+nothing to sequence, and even at 10 posts you would get one thin path. The feature only becomes
+honest somewhere north of 15 posts with genuine prerequisite structure — which may never happen, and
+should not be a debt you carry until it does.
+
+**Delete:** the `/paths` and `/paths/[slug]` routes, `components/knowledge/PathSteps.tsx`, the
+`learningPath` schema, its queries and its `knowledgePages.paths` copy block.
+
+This is the "willing to delete things that took effort" case. The rebuild cost later is roughly what
+the original build cost, and paying it later — with real posts to sequence — produces a better
+feature than preserving a guess made with no content.
+
+### `/review` — DELETE
+
+The most elaborate machinery on the site with the least plausible payoff: a spaced-repetition deck
+assembled from article checkpoints, with Anki export.
+
+It requires a reader to **return to your site repeatedly, on a schedule, to revise someone else's
+material.** That is a behaviour that essentially does not occur on a personal site, at any post
+count. It is not blocked on content; it is blocked on an assumption about readers that will not come
+true. Filling it would not fix it.
+
+**Delete:** the `/review` route, `components/knowledge/ReviewDeck.tsx`, the review query and the
+`knowledgePages.review` copy block.
+
+**Keep `lib/anki.ts`** and keep the per-article checkpoint export. A button on an article that says
+"export these terms to Anki" is genuinely useful and costs nothing — the reader takes the cards into
+a tool they already use, which is where revision actually happens. It is the site-wide deck that has
+no audience, not the export.
+
+### What this adds up to
+
+Nine routes become six. Of your scarce writing hours, **~4 buy both a working glossary and a library
+shelf** — the two that serve a goal directly. The garden waits for the blog to feed it. Two features
+go away entirely, and the site stops advertising four rooms with nothing in them.
+
+Sequenced against the plan: this is item **1.1**, and the deletions should land in the same session
+as the unpublishing, before any of the Milestone 2 typography work — deleting four routes removes
+their sub-12px elements from the retype pass entirely.
+
+**One adjacent note:** `sanity/schemas/documents/mediaItem.ts:11-13` uses emoji in its field-group
+titles (📖 💭 🔗). The September sweep removed emoji from the site but not from Studio. Cosmetic, and
+worth folding into whichever session touches the library.
