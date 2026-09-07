@@ -260,6 +260,10 @@ export const ADD_ONS: PricingAddOn[] = [
     label: 'Physical product upgrade',
     price: 'Discussed in consultation',
     description: 'Add a second product or upgrade your included product. We cover this during your consultation.',
+    // Deliberately narrower than the label: "Framed print set" is the existing option in the
+    // Airtable "Add-ons" field and there are records using it. Renaming it here would create a
+    // second option and orphan those records, so the divergence stays until the Airtable option
+    // is renamed first. Verified present in the live base on 2026-09-07.
     airtableName: 'Framed print set',
   },
 ]

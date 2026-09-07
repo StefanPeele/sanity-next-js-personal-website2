@@ -134,9 +134,17 @@ function airtableSelect(base: Base, tableId: string, formula: string): Promise<A
   })
 }
 
+/**
+ * `typecast` lets Airtable create a select option it does not already have instead of
+ * rejecting the whole record with INVALID_MULTIPLE_CHOICE_OPTIONS. Six select values are
+ * written per inquiry (Package, Add-ons, both Status fields, Rate Type) and a rejection
+ * loses the entire inquiry — see the catch below, which returns before any email is sent.
+ * The trade is that a typo in `airtableName` silently creates a junk option rather than
+ * failing loudly, so those values stay code-owned in lib/pricing.ts and are reviewed there.
+ */
 function airtableCreate(base: Base, tableId: string, fields: Airtable.FieldSet): Promise<Airtable.Record<Airtable.FieldSet>> {
   return new Promise((resolve, reject) => {
-    base(tableId).create([{ fields }], (err, records) => {
+    base(tableId).create([{ fields }], { typecast: true }, (err, records) => {
       if (err || !records?.[0]) reject(err ?? new Error('Airtable returned no record'))
       else resolve(records[0])
     })
