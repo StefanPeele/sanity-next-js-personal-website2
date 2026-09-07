@@ -47,12 +47,17 @@ const ibmPlexMono = IBM_Plex_Mono({
   weight: ['400', '500', '600'],
 })
 
-// Lexend — dyslexia-friendly reading option (self-hosted, no runtime Google Fonts request)
+// Lexend — dyslexia-friendly reading option (self-hosted, no runtime Google Fonts request).
+// preload: false because only `.a11y-dyslexia` in styles/article.css references --font-lexend.
+// next/font still emits the @font-face and the CSS variable, so the browser fetches the file
+// the moment a reader turns dyslexia mode on — and never for anyone who does not. Preloaded it
+// was ~40KB of a 295KB article for an opt-in setting nobody had enabled.
 const lexend = Lexend({
   subsets: ['latin'],
   variable: '--font-lexend',
   display: 'swap',
   weight: ['400', '500'],
+  preload: false,
 })
 
 const WEBMENTION_ENABLED = process.env.NEXT_PUBLIC_WEBMENTION_ENABLED === 'true'
