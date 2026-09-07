@@ -56,7 +56,7 @@ export const navLink = defineType({
       name: 'reference',
       title: 'Document',
       type: 'reference',
-      to: [{ type: 'page' }, { type: 'post' }, { type: 'project' }, { type: 'series' }, { type: 'learningPath' }, { type: 'gallery' }],
+      to: [{ type: 'page' }, { type: 'post' }, { type: 'project' }, { type: 'series' }, { type: 'gallery' }],
       hidden: ({ parent }) => parent?.kind !== 'reference',
     }),
     defineField({ name: 'description', title: 'Short description', type: 'string' }),

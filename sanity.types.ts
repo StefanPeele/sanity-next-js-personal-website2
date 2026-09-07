@@ -406,33 +406,6 @@ export type KnowledgePages = {
     backLabel?: string
     termsCount?: string
   }
-  paths?: {
-    header?: PageHeader
-    emptyState?: EmptyState
-    hoursLabel?: string
-    stepsLabel?: string
-    startLabel?: string
-    levelLabels?: {
-      foundations?: string
-      intermediate?: string
-      advanced?: string
-    }
-    relatedNav?: Array<
-      {
-        _key: string
-      } & NavLink
-    >
-  }
-  review?: {
-    header?: PageHeader
-    countLine?: string
-    emptyState?: EmptyState
-    relatedNav?: Array<
-      {
-        _key: string
-      } & NavLink
-    >
-  }
   series?: {
     header?: PageHeader
     emptyState?: EmptyState
@@ -757,13 +730,6 @@ export type SeriesReference = {
   [internalGroqTypeReferenceTo]?: 'series'
 }
 
-export type LearningPathReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'learningPath'
-}
-
 export type GalleryReference = {
   _ref: string
   _type: 'reference'
@@ -777,13 +743,7 @@ export type NavLink = {
   kind?: 'internal' | 'external' | 'reference'
   path?: string
   url?: string
-  reference?:
-    | PageReference
-    | PostReference
-    | ProjectReference
-    | SeriesReference
-    | LearningPathReference
-    | GalleryReference
+  reference?: PageReference | PostReference | ProjectReference | SeriesReference | GalleryReference
   description?: string
   icon?:
     | 'book-open'
@@ -1245,32 +1205,6 @@ export type NoteReference = {
   [internalGroqTypeReferenceTo]?: 'note'
 }
 
-export type LearningPath = {
-  _id: string
-  _type: 'learningPath'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title?: string
-  slug?: Slug
-  description?: string
-  level?: 'foundations' | 'intermediate' | 'advanced'
-  estimatedHours?: number
-  steps?: Array<{
-    post?: PostReference
-    gardenNote?: NoteReference
-    note?: string
-    _type: 'step'
-    _key: string
-  }>
-}
-
-export type Slug = {
-  _type: 'slug'
-  current?: string
-  source?: string
-}
-
 export type GlossaryTerm = {
   _id: string
   _type: 'glossaryTerm'
@@ -1327,6 +1261,12 @@ export type GlossaryTerm = {
       _key: string
     } & NoteReference
   >
+}
+
+export type Slug = {
+  _type: 'slug'
+  current?: string
+  source?: string
 }
 
 export type Tag = {
@@ -2244,7 +2184,6 @@ export type AllSanitySchemaTypes =
   | PostReference
   | ProjectReference
   | SeriesReference
-  | LearningPathReference
   | GalleryReference
   | NavLink
   | Taxonomy
@@ -2282,9 +2221,8 @@ export type AllSanitySchemaTypes =
   | Education
   | Certification
   | NoteReference
-  | LearningPath
-  | Slug
   | GlossaryTerm
+  | Slug
   | Tag
   | TagReference
   | Note
@@ -2603,7 +2541,7 @@ export type BlogPageQueryResult = {
 
 // Source: sanity/lib/queries-article-ui.ts
 // Variable: knowledgePagesQuery
-// Query: *[_type == "knowledgePages"][0]{    garden{ header{ title, lede, metaTitle, metaDescription }, stats{ notes, evergreen, tags }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },      note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },    library{ header{ title, lede, metaTitle, metaDescription }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) }, filterLabels{ type, status, all, clear } },    glossary{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, termsCount },    paths{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, hoursLabel, stepsLabel, startLabel, levelLabels{ foundations, intermediate, advanced }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) } },    review{ header{ title, lede, metaTitle, metaDescription }, countLine, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) } },    series{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },    graph{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },      linesNote, nodeListLabel, openHint, ariaSummary },    osi{ header{ title, lede, metaTitle, metaDescription }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }  }
+// Query: *[_type == "knowledgePages"][0]{    garden{ header{ title, lede, metaTitle, metaDescription }, stats{ notes, evergreen, tags }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },      note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },    library{ header{ title, lede, metaTitle, metaDescription }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) }, filterLabels{ type, status, all, clear } },    glossary{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, termsCount },    series{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },    graph{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },      linesNote, nodeListLabel, openHint, ariaSummary },    osi{ header{ title, lede, metaTitle, metaDescription }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }  }
 export type KnowledgePagesQueryResult = {
   garden: {
     header: {
@@ -2775,139 +2713,6 @@ export type KnowledgePagesQueryResult = {
     } | null
     backLabel: string | null
     termsCount: string | null
-  } | null
-  paths: {
-    header: {
-      title: string | null
-      lede: string | null
-      metaTitle: string | null
-      metaDescription: string | null
-    } | null
-    emptyState: {
-      title: string | null
-      hint: string | null
-    } | null
-    hoursLabel: string | null
-    stepsLabel: string | null
-    startLabel: string | null
-    levelLabels: {
-      foundations: string | null
-      intermediate: string | null
-      advanced: string | null
-    } | null
-    relatedNav: Array<{
-      _key: string
-      label: string | null
-      kind: 'external' | 'internal' | 'reference' | null
-      url: string | null
-      description: string | null
-      icon:
-        | 'alert-triangle'
-        | 'arrow-down'
-        | 'arrow-left-right'
-        | 'arrow-right'
-        | 'award'
-        | 'book-open'
-        | 'book'
-        | 'camera'
-        | 'check'
-        | 'clipboard-list'
-        | 'diamond'
-        | 'external-link'
-        | 'factory'
-        | 'file-text'
-        | 'gift'
-        | 'git-branch'
-        | 'graduation-cap'
-        | 'layers'
-        | 'leaf'
-        | 'library'
-        | 'lightbulb'
-        | 'link'
-        | 'list-ordered'
-        | 'mail'
-        | 'mic'
-        | 'network'
-        | 'newspaper'
-        | 'rotate-ccw'
-        | 'route'
-        | 'rss'
-        | 'search'
-        | 'settings-2'
-        | 'sparkles'
-        | 'sprout'
-        | 'tree-pine'
-        | 'type'
-        | 'video'
-        | 'wrench'
-        | 'zap'
-        | null
-      newTab: boolean | null
-      path: string | null
-    }> | null
-  } | null
-  review: {
-    header: {
-      title: string | null
-      lede: string | null
-      metaTitle: string | null
-      metaDescription: string | null
-    } | null
-    countLine: string | null
-    emptyState: {
-      title: string | null
-      hint: string | null
-    } | null
-    relatedNav: Array<{
-      _key: string
-      label: string | null
-      kind: 'external' | 'internal' | 'reference' | null
-      url: string | null
-      description: string | null
-      icon:
-        | 'alert-triangle'
-        | 'arrow-down'
-        | 'arrow-left-right'
-        | 'arrow-right'
-        | 'award'
-        | 'book-open'
-        | 'book'
-        | 'camera'
-        | 'check'
-        | 'clipboard-list'
-        | 'diamond'
-        | 'external-link'
-        | 'factory'
-        | 'file-text'
-        | 'gift'
-        | 'git-branch'
-        | 'graduation-cap'
-        | 'layers'
-        | 'leaf'
-        | 'library'
-        | 'lightbulb'
-        | 'link'
-        | 'list-ordered'
-        | 'mail'
-        | 'mic'
-        | 'network'
-        | 'newspaper'
-        | 'rotate-ccw'
-        | 'route'
-        | 'rss'
-        | 'search'
-        | 'settings-2'
-        | 'sparkles'
-        | 'sprout'
-        | 'tree-pine'
-        | 'type'
-        | 'video'
-        | 'wrench'
-        | 'zap'
-        | null
-      newTab: boolean | null
-      path: string | null
-    }> | null
   } | null
   series: {
     header: {
@@ -3105,31 +2910,6 @@ export type NoteTitlesQueryResult = Array<{
   slug: string | null
   status: 'evergreen' | 'growing' | 'seedling' | null
   lastTended: string
-}>
-
-// Source: sanity/lib/queries-knowledge.ts
-// Variable: reviewQuery
-// Query: *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {    _id,    title,    "slug": slug.current,    articleType,    conceptCards[]{ _key, front, back },    "quizzes": body[_type == "knowledgeQuiz"]{ _key, question, explanation, options[]{ _key, text, isCorrect } }  }
-export type ReviewQueryResult = Array<{
-  _id: string
-  title: string | null
-  slug: string | null
-  articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
-  conceptCards: Array<{
-    _key: string
-    front: string | null
-    back: string | null
-  }> | null
-  quizzes: Array<{
-    _key: string
-    question: string | null
-    explanation: string | null
-    options: Array<{
-      _key: string
-      text: string | null
-      isCorrect: boolean | null
-    }> | null
-  }> | null
 }>
 
 // Source: sanity/lib/queries-knowledge.ts
@@ -3508,7 +3288,7 @@ export type PersonalPagesQueryResult = {
 
 // Source: sanity/lib/queries-site.ts
 // Variable: navigationQuery
-// Query: *[_type == "navigation"][0]{    logoText,    drawerFooterLine,    "primary": primary[]{   _key, label, kind, url, description, icon, newTab,  "path": select(    kind == "reference" => select(      reference->_type == "post" => "/blog/" + reference->slug.current,      reference->_type == "project" => "/projects/" + reference->slug.current,      reference->_type == "series" => "/blog/series/" + reference->slug.current,      reference->_type == "learningPath" => "/paths/" + reference->slug.current,      reference->_type == "gallery" => "/photography/" + reference->slug.current,      "/" + reference->slug.current    ),    path  ) },    "secondary": secondary[]{   _key, label, kind, url, description, icon, newTab,  "path": select(    kind == "reference" => select(      reference->_type == "post" => "/blog/" + reference->slug.current,      reference->_type == "project" => "/projects/" + reference->slug.current,      reference->_type == "series" => "/blog/series/" + reference->slug.current,      reference->_type == "learningPath" => "/paths/" + reference->slug.current,      reference->_type == "gallery" => "/photography/" + reference->slug.current,      "/" + reference->slug.current    ),    path  ) },    "searchQuickLinks": searchQuickLinks[]{   _key, label, kind, url, description, icon, newTab,  "path": select(    kind == "reference" => select(      reference->_type == "post" => "/blog/" + reference->slug.current,      reference->_type == "project" => "/projects/" + reference->slug.current,      reference->_type == "series" => "/blog/series/" + reference->slug.current,      reference->_type == "learningPath" => "/paths/" + reference->slug.current,      reference->_type == "gallery" => "/photography/" + reference->slug.current,      "/" + reference->slug.current    ),    path  ) }  }
+// Query: *[_type == "navigation"][0]{    logoText,    drawerFooterLine,    "primary": primary[]{   _key, label, kind, url, description, icon, newTab,  "path": select(    kind == "reference" => select(      reference->_type == "post" => "/blog/" + reference->slug.current,      reference->_type == "project" => "/projects/" + reference->slug.current,      reference->_type == "series" => "/blog/series/" + reference->slug.current,      reference->_type == "gallery" => "/photography/" + reference->slug.current,      "/" + reference->slug.current    ),    path  ) },    "secondary": secondary[]{   _key, label, kind, url, description, icon, newTab,  "path": select(    kind == "reference" => select(      reference->_type == "post" => "/blog/" + reference->slug.current,      reference->_type == "project" => "/projects/" + reference->slug.current,      reference->_type == "series" => "/blog/series/" + reference->slug.current,      reference->_type == "gallery" => "/photography/" + reference->slug.current,      "/" + reference->slug.current    ),    path  ) },    "searchQuickLinks": searchQuickLinks[]{   _key, label, kind, url, description, icon, newTab,  "path": select(    kind == "reference" => select(      reference->_type == "post" => "/blog/" + reference->slug.current,      reference->_type == "project" => "/projects/" + reference->slug.current,      reference->_type == "series" => "/blog/series/" + reference->slug.current,      reference->_type == "gallery" => "/photography/" + reference->slug.current,      "/" + reference->slug.current    ),    path  ) }  }
 export type NavigationQueryResult = {
   logoText: string | null
   drawerFooterLine: string | null
@@ -3805,7 +3585,7 @@ export type TaxonomyQueryResult = {
 
 // Source: sanity/lib/queries-site.ts
 // Variable: errorPagesQuery
-// Query: *[_type == "errorPages"][0]{    notFound{ title, body, hint, primaryCta{   _key, label, kind, url, description, icon, newTab,  "path": select(    kind == "reference" => select(      reference->_type == "post" => "/blog/" + reference->slug.current,      reference->_type == "project" => "/projects/" + reference->slug.current,      reference->_type == "series" => "/blog/series/" + reference->slug.current,      reference->_type == "learningPath" => "/paths/" + reference->slug.current,      reference->_type == "gallery" => "/photography/" + reference->slug.current,      "/" + reference->slug.current    ),    path  ) }, "links": links[]{   _key, label, kind, url, description, icon, newTab,  "path": select(    kind == "reference" => select(      reference->_type == "post" => "/blog/" + reference->slug.current,      reference->_type == "project" => "/projects/" + reference->slug.current,      reference->_type == "series" => "/blog/series/" + reference->slug.current,      reference->_type == "learningPath" => "/paths/" + reference->slug.current,      reference->_type == "gallery" => "/photography/" + reference->slug.current,      "/" + reference->slug.current    ),    path  ) } },    error{ title, body, retryLabel, homeLabel, referenceLabel },    offline{ title, body, ctaLabel, ctaHref }  }
+// Query: *[_type == "errorPages"][0]{    notFound{ title, body, hint, primaryCta{   _key, label, kind, url, description, icon, newTab,  "path": select(    kind == "reference" => select(      reference->_type == "post" => "/blog/" + reference->slug.current,      reference->_type == "project" => "/projects/" + reference->slug.current,      reference->_type == "series" => "/blog/series/" + reference->slug.current,      reference->_type == "gallery" => "/photography/" + reference->slug.current,      "/" + reference->slug.current    ),    path  ) }, "links": links[]{   _key, label, kind, url, description, icon, newTab,  "path": select(    kind == "reference" => select(      reference->_type == "post" => "/blog/" + reference->slug.current,      reference->_type == "project" => "/projects/" + reference->slug.current,      reference->_type == "series" => "/blog/series/" + reference->slug.current,      reference->_type == "gallery" => "/photography/" + reference->slug.current,      "/" + reference->slug.current    ),    path  ) } },    error{ title, body, retryLabel, homeLabel, referenceLabel },    offline{ title, body, ctaLabel, ctaHref }  }
 export type ErrorPagesQueryResult = {
   notFound: {
     title: string | null
@@ -5615,65 +5395,6 @@ export type GraphQueryResult = {
 }
 
 // Source: sanity/lib/queries.ts
-// Variable: learningPathsQuery
-// Query: *[_type == "learningPath"] | order(title asc) {    _id, title, "slug": slug.current, description, level, estimatedHours,    "steps": steps[]{      _key, note,      "post": post->{ _id, title, "slug": slug.current, articleType, excerpt },      "gardenNote": gardenNote->{ _id, title, "slug": slug.current, status }    }  }
-export type LearningPathsQueryResult = Array<{
-  _id: string
-  title: string | null
-  slug: string | null
-  description: string | null
-  level: 'advanced' | 'foundations' | 'intermediate' | null
-  estimatedHours: number | null
-  steps: Array<{
-    _key: string
-    note: string | null
-    post: {
-      _id: string
-      title: string | null
-      slug: string | null
-      articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
-      excerpt: string | null
-    } | null
-    gardenNote: {
-      _id: string
-      title: string | null
-      slug: string | null
-      status: 'evergreen' | 'growing' | 'seedling' | null
-    } | null
-  }> | null
-}>
-
-// Source: sanity/lib/queries.ts
-// Variable: learningPathBySlugQuery
-// Query: *[_type == "learningPath" && slug.current == $slug][0] {    _id, title, "slug": slug.current, description, level, estimatedHours,    "steps": steps[]{      _key, note,      "post": post->{ _id, title, "slug": slug.current, articleType, excerpt, "wordCount": length(pt::text(body)) },      "gardenNote": gardenNote->{ _id, title, "slug": slug.current, status }    }  }
-export type LearningPathBySlugQueryResult = {
-  _id: string
-  title: string | null
-  slug: string | null
-  description: string | null
-  level: 'advanced' | 'foundations' | 'intermediate' | null
-  estimatedHours: number | null
-  steps: Array<{
-    _key: string
-    note: string | null
-    post: {
-      _id: string
-      title: string | null
-      slug: string | null
-      articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
-      excerpt: string | null
-      wordCount: number
-    } | null
-    gardenNote: {
-      _id: string
-      title: string | null
-      slug: string | null
-      status: 'evergreen' | 'growing' | 'seedling' | null
-    } | null
-  }> | null
-} | null
-
-// Source: sanity/lib/queries.ts
 // Variable: nowQuery
 // Query: {  "home": *[_type == "home"][0]{ currently, location, _updatedAt },  "reading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc) {    _id, title, author, mediaType, progressPercent, url, "coverUrl": coverImage.asset->url  },  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...5] {    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)  },  "recentPosts": *[_type == "post" && defined(publishedAt)] | order(publishedAt desc)[0...3] {   _id,  title,  "slug": slug.current,  publishedAt,  excerpt,  "imageUrl": mainImage.asset->url,  "lqip": mainImage.asset->metadata.lqip,  "categories": categories[]->title,  "tags": tags[]->{ _id, title, "slug": slug.current },  articleType,  "wordCount": length(pt::text(body)),  "series": series->{ title, "slug": slug.current } },  "activeProjects": *[_type == "project" && !defined(duration.end)] | order(_updatedAt desc)[0...4] {    _id, title, "slug": slug.current, overview  },  "certifications": *[_type == "certification" && status == "in-progress"] { _id, title, issuer, progressPercent, targetDate }}
 export type NowQueryResult = {
@@ -5762,18 +5483,17 @@ declare module '@sanity/client' {
   interface SanityQueries {
     '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },\n    toc{ title, mobileTitle, minutesSuffix },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, share, listen, position },\n      themeLabels{ archive, terminal, paper, broadcast },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported },\n      bookmarkLabels{ save, saved, resume, clear }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, credibilityHeading, backlinksHeading, citeHeading, citeTemplate, readNextHeading,\n      readNextLabels{ deeper, broader, apply }, askHeading, askPlaceholder, askButton, commentsHeading, noContent\n    },\n    reactionsHeading,\n    "reactions": reactions[]{ _key, key, label, short, description, banner, color, dots },\n    credibility{\n      "confidence": confidence[]{ _key, key, label, short, description, banner, color, dots }, "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots }, "reviewStatus": reviewStatus[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
     '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    directory{ enabled, topicsHeading, toolsHeading, statsHeading, totalLabel, latestLabel, seriesLabel, readLabel, noTopics },\n    "referenceLinks": referenceLinks[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n    seriesRail{ enabled, heading, lede, ctaLabel, ctaHref, emptyState }, readingStrip{ enabled, heading, lede, ctaLabel, ctaHref, emptyState }, notesStrip{ enabled, heading, lede, ctaLabel, ctaHref, emptyState },\n    list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }\n  }\n': BlogPageQueryResult
-    '\n  *[_type == "knowledgePages"][0]{\n    garden{ header{ title, lede, metaTitle, metaDescription }, stats{ notes, evergreen, tags }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n      note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },\n    library{ header{ title, lede, metaTitle, metaDescription }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) }, filterLabels{ type, status, all, clear } },\n    glossary{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, termsCount },\n    paths{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, hoursLabel, stepsLabel, startLabel, levelLabels{ foundations, intermediate, advanced }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) } },\n    review{ header{ title, lede, metaTitle, metaDescription }, countLine, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) } },\n    series{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },\n    graph{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },\n      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },\n      linesNote, nodeListLabel, openHint, ariaSummary },\n    osi{ header{ title, lede, metaTitle, metaDescription }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }\n  }\n': KnowledgePagesQueryResult
+    '\n  *[_type == "knowledgePages"][0]{\n    garden{ header{ title, lede, metaTitle, metaDescription }, stats{ notes, evergreen, tags }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n      note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },\n    library{ header{ title, lede, metaTitle, metaDescription }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) }, filterLabels{ type, status, all, clear } },\n    glossary{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, termsCount },\n    series{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },\n    graph{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },\n      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },\n      linesNote, nodeListLabel, openHint, ariaSummary },\n    osi{ header{ title, lede, metaTitle, metaDescription }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }\n  }\n': KnowledgePagesQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, body, tldr, excerpt\n  }\n': ArticleTextQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, excerpt, articleType, publishedAt,\n    "categories": categories[]->title,\n    "mainImageUrl": mainImage.asset->url,\n    "wordCount": length(pt::text(body)),\n    "series": series->{ title },\n    seriesOrder\n  }\n': ArticleOgQueryResult
     '\n  *[_type == "note" && defined(slug.current)] | order(coalesce(lastTended, _updatedAt) desc) {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  }\n': NoteTitlesQueryResult
-    '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    articleType,\n    conceptCards[]{ _key, front, back },\n    "quizzes": body[_type == "knowledgeQuiz"]{ _key, question, explanation, options[]{ _key, text, isCorrect } }\n  }\n': ReviewQueryResult
     '{\n  "seedlings": count(*[_type == "note" && status == "seedling"]),\n  "growing": count(*[_type == "note" && status == "growing"]),\n  "evergreen": count(*[_type == "note" && status == "evergreen"]),\n  "untended": *[_type == "note" && coalesce(lastTended, _updatedAt) < $cutoff] | order(coalesce(lastTended, _updatedAt) asc) {\n    _id, title, status, "lastTended": coalesce(lastTended, _updatedAt)\n  },\n  "postsWithoutTags": *[_type == "post" && count(tags) == 0] | order(publishedAt desc) { _id, title },\n  "orphanNotes": *[_type == "note" && count(relatedNotes) == 0 && count(relatedPosts) == 0 && count(*[_type in ["note","post"] && references(^._id)]) == 0] { _id, title, status },\n  "unusedTags": *[_type == "tag" && count(*[_type in ["note","post"] && references(^._id)]) == 0] { _id, title }\n}': GardenHealthQueryResult
     '\n  *[_type == "servicesPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    "stats": stats[]{ _key, label, value, valueSource },\n    packages{ enabled, heading, lede, ctaLabel, ctaHref, emptyState },\n    tabLabels{ portrait, event, specialty },\n    njitToggle{ label, offText, idNote, savingsCopy{ portrait, event, specialty } },\n    standardDelivery{ heading, "items": items[]{ _key, title, description } },\n    packageCard{ startingAt, njitRate, publicLabel, deliveryLabel, idealFor, includes, includesNote, expandingSoon, expandingSoonNote, recommended, available, wip, consultLabel, inquiryLabel, addOnsHeading, addOnsLede, inquiryHeading, inquiryLede, inquiryEyebrow },\n    physicalProducts{ enabled, heading, lede, "tiers": tiers[]{ _key, tier, label, description }, includedLabel, note, noteSub, chooserLabels{ core, premium, final } },\n    promise{ enabled, heading, "pillars": pillars[]{ _key, label, body }, guarantee{ label, headline, subline } },\n    faq{ enabled, heading, "items": items[]{ _key, question, answer } },\n    testimonials{ enabled, heading, lede, ctaLabel, ctaHref, emptyState },\n    booking{ heading, intro, successTitle, successBody, namePlaceholder, emailPlaceholder, phonePlaceholder, packagePlaceholder, notSureLabel, expandingSoonSuffix, expandingSoonNote, availabilityPlaceholder, njitCheckbox, njitNote, addOnsLabel, selectedLabel, messagePlaceholder, submitLabel, sendingLabel, closeLabel, triggerLabel, packageError, genericError }\n  }\n': ServicesPageQueryResult
     '\n  *[_type == "personalPages"][0]{\n    projects{ header{ title, lede, metaTitle, metaDescription }, emptyState,\n      card{ featuredBadge, outcomeLabel, presentLabel, noCoverLabel, techLabel },\n      detail{ eyebrow, metaLabels{ timeline, client, role, tags }, sectionLabels{ problem, constraints, approach, outcome, metrics, retrospective, stack, architecture, relatedWriting, relatedNotes }, linkLabels{ code, docs, board, live }, backLabel } },\n    resume{ header{ title, lede, metaTitle, metaDescription }, fallbackTagline, lastUpdatedLabel,\n      sectionLabels{ experience, skills, certifications, education, currently, hardCopy },\n      emptyExperience, emptySkills, levelsLegend, certStatusLabels{ earned, inProgress, planned, target },\n      presentLabel, expectedLabel, downloadLabel, draftHint, contactPrompt{ label, ctaLabel },\n      skillCategoryOrder, fallbackEducation{ school, degree, field, endDate, expected }, showEmail, showGithub },\n    contact{ header{ title, lede, metaTitle, metaDescription }, formHeading, channelsHeading, recruiterNote, photoCta{ enabled, heading, lede, ctaLabel, ctaHref, emptyState }, basedInLine,\n      channelLabels{ email, linkedin, github, instagram, bluesky }, instagramHandle },\n    now{ header{ title, lede, metaTitle, metaDescription }, blockLabels{ projects, certs, reading, notes, posts }, updatedLabel, targetLabel, nowLinkLabel, emptyState },\n    uses{ header{ title, lede, metaTitle, metaDescription }, "sections": sections[]{ _key, title, "items": items[]{ _key, name, note, url } }, emptyState },\n    photography{\n      index{ header{ title, lede, metaTitle, metaDescription }, countLine, albumsCta, bookCta, recentHeading, recentWithCategory, browseAllLabel, filterAllLabel },\n      albums{ title, subtitle, metaDescription, framesLabel, uncategorized },\n      gallery{ backLabel, readoutLabels{ location, frames, camera, lens, iso }, framesLabel, notesLabel },\n      loader{ label, skipLabel }\n    }\n  }\n': PersonalPagesQueryResult
-    '\n  *[_type == "navigation"][0]{\n    logoText,\n    drawerFooterLine,\n    "primary": primary[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "learningPath" => "/paths/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n },\n    "secondary": secondary[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "learningPath" => "/paths/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n },\n    "searchQuickLinks": searchQuickLinks[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "learningPath" => "/paths/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n }\n  }\n': NavigationQueryResult
+    '\n  *[_type == "navigation"][0]{\n    logoText,\n    drawerFooterLine,\n    "primary": primary[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n },\n    "secondary": secondary[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n },\n    "searchQuickLinks": searchQuickLinks[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n }\n  }\n': NavigationQueryResult
     '\n  *[_type == "settings"][0]{\n    siteName, legalName, tagline, description, keywords, jobTitle, knowsAbout,\n    location{ city, region }, school, bookingEmail, openTo,\n    email, github, linkedin, trello, instagram, bluesky, gitbook, calendlyUrl,\n    footer{ ctaLabel, directoryHeading, networkHeading, copyrightNote,\n      networkLabels{ email, github, linkedin, gitbook, instagram, bluesky, trello, rss } },\n    newsletter{ heading, blurb, placeholder, buttonLabel, successMessage, hint },\n    footerHeadlinePrefix, footerHeadlineHighlight, footerHeadlineSuffix,\n    ogImage{ ..., "url": asset->url }\n  }\n': SiteSettingsCopyQueryResult
     '\n  *[_type == "taxonomy"][0]{\n    "articleLanes": articleLanes[]{ _key, key, label, short, description, banner, color, dots },\n    "noteStatuses": noteStatuses[]{ _key, key, label, short, description, banner, color, dots },\n    "noteOrigins": noteOrigins[]{ _key, key, label, short, description, banner, color, dots },\n    "mediaTypes": mediaTypes[]{ _key, key, label, short, description, banner, color, dots },\n    "libraryStatuses": libraryStatuses[]{ _key, key, label, short, description, banner, color, dots },\n    "skillLevels": skillLevels[]{ _key, key, label, short, description, banner, color, dots },\n    "packageCategories": packageCategories[]{ _key, key, label, short, description, banner, color, dots }\n  }\n': TaxonomyQueryResult
-    '\n  *[_type == "errorPages"][0]{\n    notFound{ title, body, hint, primaryCta{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "learningPath" => "/paths/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n }, "links": links[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "learningPath" => "/paths/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n } },\n    error{ title, body, retryLabel, homeLabel, referenceLabel },\n    offline{ title, body, ctaLabel, ctaHref }\n  }\n': ErrorPagesQueryResult
+    '\n  *[_type == "errorPages"][0]{\n    notFound{ title, body, hint, primaryCta{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n }, "links": links[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n } },\n    error{ title, body, retryLabel, homeLabel, referenceLabel },\n    offline{ title, body, ctaLabel, ctaHref }\n  }\n': ErrorPagesQueryResult
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    instagram,\n    bluesky,\n    gitbook,\n    calendlyUrl,\n    openTo,\n    footerHeadlinePrefix,\n    footerHeadlineHighlight,\n    footerHeadlineSuffix,\n    archiveTitle,\n    archiveSubtitle,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": coalesce(slug.current, ""),\n        title\n      }\n    },\n    ogImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n  }\n': SettingsQueryResult
     '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n        overview,\n        "slug": coalesce(slug.current, ""),\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl,\n        outcome,\n        role\n      }\n    },\n    "sections": sections[]{\n      _key, _type, enabled, showNav, currentlyLabel, locationLabel, footnote, ctaLabel, heading,\n      fallbackManifesto, fallbackBio, imagePlaceholder, limit, featuredBadge, recentHeading, readLabel\n    }\n  }\n': HomePageQueryResult
     '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  "wordCount": length(pt::text(body)),\n  "series": series->{ title, "slug": slug.current }\n },\n  "recentPosts": *[_type == "post" && isFeatured != true] | order(publishedAt desc)[0...3] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  "wordCount": length(pt::text(body)),\n  "series": series->{ title, "slug": slug.current }\n },\n  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {\n    _id, title, author, mediaType, progressPercent, "coverUrl": coverImage.asset->url\n  },\n  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...3] {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  }\n}': HomeIntelQueryResult
@@ -5800,8 +5520,6 @@ declare module '@sanity/client' {
     '\n  *[_type == "note" && defined(slug.current)]{ "slug": slug.current }\n': NoteSlugsQueryResult
     '\n  *[_type == "mediaItem"] | order(coalesce(finishedAt, startedAt, _createdAt) desc) {\n    _id, title, author, mediaType, status, url,\n    "coverUrl": coverImage.asset->url,\n    startedAt, finishedAt, progressPercent, category,\n    oneSentenceTake, rating, keyIdea, quote, abandonedReason,\n    highlights,\n    "influencedPosts": influencedPosts[]->{ title, "slug": slug.current }[defined(slug)],\n    "influencedNotes": influencedNotes[]->{ title, "slug": slug.current }[defined(slug)]\n  }\n': LibraryQueryResult
     '{\n  "posts": *[_type == "post" && defined(slug.current)] {\n    _id, title, "slug": slug.current, articleType, excerpt,\n    "prerequisiteIds": prerequisites[].post->_id,\n    "readDeeperId":    readNextGoDeeper->_id,\n    "readBroaderId":   readNextGoBroader->_id,\n    "readApplyId":     readNextApplyThis->_id,\n    "tagIds":          tags[]->_id,\n    "seriesId":        series->_id\n  },\n  "notes": *[_type == "note" && defined(slug.current)] {\n    _id, title, "slug": slug.current, status,\n    "relatedNoteIds": relatedNotes[]->_id,\n    "relatedPostIds": relatedPosts[]->_id,\n    "tagIds":         tags[]->_id\n  },\n  "tags": *[_type == "tag"] {\n    _id, title, "slug": slug.current, category\n  },\n  "library": *[_type == "mediaItem" && status in ["finished", "current", "reference"]] {\n    _id, title, mediaType, status,\n    "influencedPostIds": influencedPosts[]->_id,\n    "influencedNoteIds": influencedNotes[]->_id\n  },\n  "projects": *[_type == "project" && defined(slug.current)] {\n    _id, title, "slug": slug.current,\n    "relatedPostIds": relatedPosts[]->_id,\n    "relatedNoteIds": relatedNotes[]->_id\n  },\n  "series": *[_type == "series"] { _id, title, "slug": slug.current }\n}': GraphQueryResult
-    '\n  *[_type == "learningPath"] | order(title asc) {\n    _id, title, "slug": slug.current, description, level, estimatedHours,\n    "steps": steps[]{\n      _key, note,\n      "post": post->{ _id, title, "slug": slug.current, articleType, excerpt },\n      "gardenNote": gardenNote->{ _id, title, "slug": slug.current, status }\n    }\n  }\n': LearningPathsQueryResult
-    '\n  *[_type == "learningPath" && slug.current == $slug][0] {\n    _id, title, "slug": slug.current, description, level, estimatedHours,\n    "steps": steps[]{\n      _key, note,\n      "post": post->{ _id, title, "slug": slug.current, articleType, excerpt, "wordCount": length(pt::text(body)) },\n      "gardenNote": gardenNote->{ _id, title, "slug": slug.current, status }\n    }\n  }\n': LearningPathBySlugQueryResult
     '{\n  "home": *[_type == "home"][0]{ currently, location, _updatedAt },\n  "reading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc) {\n    _id, title, author, mediaType, progressPercent, url, "coverUrl": coverImage.asset->url\n  },\n  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...5] {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  },\n  "recentPosts": *[_type == "post" && defined(publishedAt)] | order(publishedAt desc)[0...3] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  "wordCount": length(pt::text(body)),\n  "series": series->{ title, "slug": slug.current }\n },\n  "activeProjects": *[_type == "project" && !defined(duration.end)] | order(_updatedAt desc)[0...4] {\n    _id, title, "slug": slug.current, overview\n  },\n  "certifications": *[_type == "certification" && status == "in-progress"] { _id, title, issuer, progressPercent, targetDate }\n}': NowQueryResult
   }
 }

@@ -4,7 +4,7 @@ import { BlogBackground } from '@/components/blog/BlogBackground'
 import { TaxonomyProvider } from '@/components/TaxonomyProvider'
 import { getSiteChrome, getTaxonomy } from '@/lib/cms/loaders'
 // app/(archive)/layout.tsx
-// Shared shell for /blog, /garden, /library, /glossary, /paths, /review.
+// Shared shell for /blog, /garden, /library, /glossary.
 // Pages control their own <main> and top padding so full-bleed article heroes still work.
 
 export default async function ArchiveLayout({ children }: { children: React.ReactNode }) {

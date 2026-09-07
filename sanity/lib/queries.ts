@@ -499,30 +499,6 @@ export const graphQuery = defineQuery(`{
   "series": *[_type == "series"] { _id, title, "slug": slug.current }
 }`)
 
-// ── Learning paths ───────────────────────────────────────────────────
-
-export const learningPathsQuery = defineQuery(`
-  *[_type == "learningPath"] | order(title asc) {
-    _id, title, "slug": slug.current, description, level, estimatedHours,
-    "steps": steps[]{
-      _key, note,
-      "post": post->{ _id, title, "slug": slug.current, articleType, excerpt },
-      "gardenNote": gardenNote->{ _id, title, "slug": slug.current, status }
-    }
-  }
-`)
-
-export const learningPathBySlugQuery = defineQuery(`
-  *[_type == "learningPath" && slug.current == $slug][0] {
-    _id, title, "slug": slug.current, description, level, estimatedHours,
-    "steps": steps[]{
-      _key, note,
-      "post": post->{ _id, title, "slug": slug.current, articleType, excerpt, "wordCount": length(pt::text(body)) },
-      "gardenNote": gardenNote->{ _id, title, "slug": slug.current, status }
-    }
-  }
-`)
-
 // ── Now page ─────────────────────────────────────────────────────────
 
 export const nowQuery = defineQuery(`{

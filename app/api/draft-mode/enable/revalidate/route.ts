@@ -22,7 +22,7 @@ type Rule = {
 }
 
 const FEEDS = ['/sitemap.xml', '/blog/feed.xml', '/blog/feed.json']
-const KNOWLEDGE = ['/garden', '/library', '/glossary', '/paths', '/review', '/blog/series', '/graph']
+const KNOWLEDGE = ['/garden', '/library', '/glossary', '/blog/series', '/graph']
 const PERSONAL = ['/projects', '/resume', '/contact', '/now', '/uses', '/photography', '/photography/albums']
 
 /** Document type → paths. Types missing here fall back to a full layout revalidation. */
@@ -46,7 +46,6 @@ const RULES: Record<string, Rule> = {
   project: { paths: ['/projects', '/sitemap.xml'], withSlug: '/projects/:slug' },
   page: { paths: ['/sitemap.xml'], withSlug: '/:slug' },
   series: { paths: ['/blog', '/blog/series', '/graph', '/sitemap.xml'], withSlug: '/blog/series/:slug' },
-  learningPath: { paths: ['/paths', '/graph', '/sitemap.xml'], withSlug: '/paths/:slug' },
   tag: { paths: ['/blog', '/garden', '/graph', '/glossary'] },
   glossaryTerm: { paths: ['/glossary', '/graph', '/blog'] },
   category: { paths: ['/blog', '/photography', '/photography/albums'] },

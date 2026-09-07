@@ -2,7 +2,7 @@ import { BulbOutlineIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
 import { navLinksField } from '@/sanity/schemas/objects/site'
-// sanity/schemas/singletons/knowledgePages.ts — garden, library, glossary, paths, review, series, graph.
+// sanity/schemas/singletons/knowledgePages.ts — garden, library, glossary, series, graph.
 
 const str = (name: string, title = name) => defineField({ name, title, type: 'string' })
 const obj = (name: string, title: string, fields: ReturnType<typeof defineField>[], extra: Record<string, unknown> = {}) =>
@@ -20,8 +20,6 @@ export default defineType({
     { name: 'garden', title: 'Garden', default: true },
     { name: 'library', title: 'Library' },
     { name: 'glossary', title: 'Glossary' },
-    { name: 'paths', title: 'Paths' },
-    { name: 'review', title: 'Review' },
     { name: 'series', title: 'Series' },
     { name: 'graph', title: 'Graph' },
     { name: 'osi', title: 'OSI model' },
@@ -42,12 +40,6 @@ export default defineType({
       obj('filterLabels', 'Filter labels', [str('type'), str('status'), str('all'), str('clear')]),
     ], { group: 'library' }),
     obj('glossary', 'Glossary', [header, empty, str('backLabel', 'Back link'), str('termsCount', 'Terms count ({n})')], { group: 'glossary' }),
-    obj('paths', 'Learning paths', [
-      header, empty, str('hoursLabel', 'Hours ({n})'), str('stepsLabel', 'Steps ({n})'), str('startLabel', 'Start button'),
-      obj('levelLabels', 'Level names', [str('foundations'), str('intermediate'), str('advanced')]),
-      navLinksField('relatedNav', 'Related links'),
-    ], { group: 'paths' }),
-    obj('review', 'Review deck', [header, str('countLine', 'Count line ({concepts} {questions} {posts})'), empty, navLinksField('relatedNav', 'Related links')], { group: 'review' }),
     obj('series', 'Series', [
       header, empty, str('backLabel', 'Back link'), str('partsLabel', 'Parts ({n})'), str('publishedLabel', 'Published ({published} {total})'), str('updatedLabel', 'Updated'),
       obj('statusLabels', 'Status names', [str('inProgress'), str('complete'), str('paused')]),

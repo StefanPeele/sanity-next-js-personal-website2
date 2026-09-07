@@ -35,7 +35,6 @@ export const DEFAULT_NAVIGATION = {
     { label: 'Knowledge graph', kind: 'internal', path: '/graph', description: 'How everything connects', icon: 'network' },
     { label: 'Library', kind: 'internal', path: '/library', description: 'What I read', icon: 'library' },
     { label: 'Glossary', kind: 'internal', path: '/glossary', description: 'Terms, defined', icon: 'type' },
-    { label: 'Learning paths', kind: 'internal', path: '/paths', description: 'Ordered reading routes', icon: 'route' },
     { label: 'OSI model reference', kind: 'internal', path: '/blog/osi-model', description: 'Interactive reference', icon: 'layers' },
   ] as NavLink[],
 }

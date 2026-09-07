@@ -1,4 +1,4 @@
-// lib/cms/defaults/knowledgePages.ts — copy for garden, library, glossary, paths, review, series, graph.
+// lib/cms/defaults/knowledgePages.ts — copy for garden, library, glossary, series, graph.
 import type { NavLink } from './navigation'
 
 const header = (title: string, lede: string, metaDescription = lede) => ({ title, lede, metaTitle: title, metaDescription })
@@ -9,7 +9,7 @@ export const DEFAULT_KNOWLEDGE_PAGES = {
     header: header('Garden', 'Notes are unfinished by design. A seedling is an idea worth capturing. A growing note is being developed. An evergreen note is worth returning to. This is where thinking happens before it becomes a post.', 'A digital garden: notes, ideas, and developing thoughts on networking, infrastructure, and photography.'),
     stats: { notes: 'Notes', evergreen: 'Evergreen', tags: 'Tags in use' },
     emptyState: { title: 'No notes yet.', hint: 'Add the first note in the Studio under Knowledge → Notes.' },
-    relatedNav: [link('Writing', '/blog'), link('Knowledge graph', '/graph'), link('Learning paths', '/paths')],
+    relatedNav: [link('Writing', '/blog'), link('Knowledge graph', '/graph')],
     note: {
       plantedLabel: 'Planted', tendedLabel: 'Last tended', statusLabel: 'Status',
       staleWarning: 'Not tended in {n} days. Details may be stale.',
@@ -29,19 +29,6 @@ export const DEFAULT_KNOWLEDGE_PAGES = {
     emptyState: { title: 'No terms defined yet.', hint: '' },
     backLabel: 'Writing',
     termsCount: '{n} terms',
-  },
-  paths: {
-    header: header('Learning paths', 'A path is an ordered route through the posts and notes on this site. Read it in sequence to build a topic from the ground up. Progress is saved in your browser.', 'Ordered routes through posts and garden notes. Read them in sequence to build a topic from the ground up.'),
-    emptyState: { title: 'No paths yet.', hint: 'Paths group posts and notes into a reading order, for example a CCNA route or Windows Server from zero.' },
-    hoursLabel: '~{n} h', stepsLabel: '{n} steps', startLabel: 'Start here',
-    levelLabels: { foundations: 'Foundations', intermediate: 'Intermediate', advanced: 'Advanced' },
-    relatedNav: [link('Writing', '/blog'), link('Review deck', '/review')],
-  },
-  review: {
-    header: header('Review', 'Every post ends with key terms and knowledge checks. This deck pulls them together and schedules them with spaced repetition. Grade a card and it comes back right before you would forget it.', 'Spaced-repetition review of the key terms and knowledge checks from every post. Progress stays in your browser.'),
-    countLine: 'Right now: {concepts} concepts and {questions} questions from {posts} posts.',
-    emptyState: { title: 'Nothing to review yet.', hint: '' },
-    relatedNav: [link('Writing', '/blog'), link('Learning paths', '/paths'), link('Glossary', '/glossary')],
   },
   series: {
     header: header('Series', 'Longer arguments broken into parts. Each series is meant to be read in order. Start at part one.', 'Multi-part writing: home lab builds, protocol deep dives and PowerShell, in reading order.'),

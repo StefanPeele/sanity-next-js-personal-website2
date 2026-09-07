@@ -1,24 +1,12 @@
 import { defineQuery } from 'next-sanity'
 // sanity/lib/queries-knowledge.ts
-// Extra queries for the knowledge system (garden, review, studio garden tool).
+// Extra queries for the knowledge system (garden, studio garden tool).
 // Everything else lives in sanity/lib/queries.ts.
 
 /** Every note title + slug, newest-tended first — resolves [[wiki links]] and prev/next. */
 export const noteTitlesQuery = defineQuery(`
   *[_type == "note" && defined(slug.current)] | order(coalesce(lastTended, _updatedAt) desc) {
     _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)
-  }
-`)
-
-/** Concept cards and knowledge-check questions from every post, for /review. */
-export const reviewQuery = defineQuery(`
-  *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
-    _id,
-    title,
-    "slug": slug.current,
-    articleType,
-    conceptCards[]{ _key, front, back },
-    "quizzes": body[_type == "knowledgeQuiz"]{ _key, question, explanation, options[]{ _key, text, isCorrect } }
   }
 `)
 

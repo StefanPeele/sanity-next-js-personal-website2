@@ -7,8 +7,8 @@ import { firstPostSlug } from './helpers'
 // bar and the reader menu; no CSP violations are reported; axe finds no critical/serious issues.
 
 const PAGES = [
-  '/', '/blog', '/blog/series', '/blog/osi-model', '/garden', '/graph', '/library', '/glossary', '/paths',
-  '/review', '/projects', '/resume', '/photography', '/photography/albums', '/services', '/contact',
+  '/', '/blog', '/blog/series', '/blog/osi-model', '/garden', '/graph', '/library', '/glossary',
+  '/projects', '/resume', '/photography', '/photography/albums', '/services', '/contact',
   '/now', '/uses', '/offline',
 ]
 

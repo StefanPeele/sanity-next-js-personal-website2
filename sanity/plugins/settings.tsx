@@ -59,7 +59,7 @@ export const pageStructure = (singletons: DocumentDefinition[]): StructureResolv
 
     const groups: [string, string[]][] = [
       ['Writing', ['post', 'series', 'glossaryTerm']],
-      ['Knowledge', ['note', 'tag', 'mediaItem', 'learningPath']],
+      ['Knowledge', ['note', 'tag', 'mediaItem']],
       ['Work', ['project', 'experience', 'skill', 'certification', 'education', 'page']],
       ['Photography', ['gallery', 'category', 'testimonial']],
       ['Services', ['servicePackage', 'serviceAddOn']],

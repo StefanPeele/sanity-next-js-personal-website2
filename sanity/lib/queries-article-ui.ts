@@ -54,8 +54,6 @@ export const knowledgePagesQuery = defineQuery(`
       note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },
     library{ header{ ${header} }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ ${navLink} }, filterLabels{ type, status, all, clear } },
     glossary{ header{ ${header} }, emptyState{ title, hint }, backLabel, termsCount },
-    paths{ header{ ${header} }, emptyState{ title, hint }, hoursLabel, stepsLabel, startLabel, levelLabels{ foundations, intermediate, advanced }, "relatedNav": relatedNav[]{ ${navLink} } },
-    review{ header{ ${header} }, countLine, emptyState{ title, hint }, "relatedNav": relatedNav[]{ ${navLink} } },
     series{ header{ ${header} }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },
     graph{ header{ ${header} }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },
       legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },

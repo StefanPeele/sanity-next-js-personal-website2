@@ -11,7 +11,6 @@ export const mainDocuments = defineDocuments([
   { route: '/garden/:slug', filter: `_type == "note" && slug.current == $slug` },
   { route: '/photography/:slug', filter: `_type == "gallery" && slug.current == $slug` },
   { route: '/blog/series/:slug', filter: `_type == "series" && slug.current == $slug` },
-  { route: '/paths/:slug', filter: `_type == "learningPath" && slug.current == $slug` },
   {
     route: '/projects/:slug',
     filter: `_type == "project" && slug.current == $slug`,
@@ -38,10 +37,6 @@ export const locations = {
   series: defineLocations({
     select: {title: 'title', slug: 'slug.current'},
     resolve: (doc) => ({ locations: [{ title: doc?.title || 'Untitled', href: resolveHref('series', doc?.slug)! }] }),
-  }),
-  learningPath: defineLocations({
-    select: {title: 'title', slug: 'slug.current'},
-    resolve: (doc) => ({ locations: [{ title: doc?.title || 'Untitled', href: resolveHref('learningPath', doc?.slug)! }] }),
   }),
   blogPage: defineLocations({ message: 'Edits here change the Writing page', tone: 'positive', locations: [{ title: 'Writing', href: resolveHref('blogPage')! }] }),
   servicesPage: defineLocations({ message: 'Edits here change the Services page', tone: 'positive', locations: [{ title: 'Services', href: resolveHref('servicesPage')! }] }),

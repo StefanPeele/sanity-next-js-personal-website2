@@ -21,8 +21,6 @@ const STATIC_ROUTES: Array<[path: string, priority: number, freq: Entry['changeF
   ['/graph',               0.5, 'weekly'],
   ['/library',             0.6, 'weekly'],
   ['/glossary',            0.5, 'monthly'],
-  ['/paths',               0.5, 'monthly'],
-  ['/review',              0.3, 'monthly'],
   ['/projects',            0.9, 'weekly'],
   ['/resume',              0.8, 'monthly'],
   ['/photography',         0.8, 'weekly'],

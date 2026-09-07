@@ -36,8 +36,6 @@ export function resolveHref(documentType?: string, slug?: string | null): string
       return slug ? `/photography/${slug}` : undefined
     case 'series':
       return slug ? `/blog/series/${slug}` : undefined
-    case 'learningPath':
-      return slug ? `/paths/${slug}` : undefined
     case 'glossaryTerm':
       return slug ? `/glossary#${slug}` : '/glossary'
     case 'blogPage': return '/blog'

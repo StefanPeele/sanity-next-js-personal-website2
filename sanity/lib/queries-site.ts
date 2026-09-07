@@ -8,7 +8,6 @@ const navLinkFields = `
       reference->_type == "post" => "/blog/" + reference->slug.current,
       reference->_type == "project" => "/projects/" + reference->slug.current,
       reference->_type == "series" => "/blog/series/" + reference->slug.current,
-      reference->_type == "learningPath" => "/paths/" + reference->slug.current,
       reference->_type == "gallery" => "/photography/" + reference->slug.current,
       "/" + reference->slug.current
     ),
