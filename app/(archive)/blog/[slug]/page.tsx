@@ -21,7 +21,6 @@ import { Checkpoint } from '@/components/blog/Checkpoint'
 import { BacklinksSection } from '@/components/blog/Backlinks'
 import { AskArticle } from '@/components/blog/AskArticle'
 import { Comments } from '@/components/blog/Comments'
-import { Reactions } from '@/components/blog/Reactions'
 import { getCopy, getSettings, getTaxonomy } from '@/lib/cms/loaders'
 import { DEFAULT_ARTICLE_UI } from '@/lib/cms/defaults/articleUi'
 import { SITE, absoluteUrl, articleTypeMeta } from '@/lib/site'
@@ -29,13 +28,12 @@ import { formatDate } from '@/lib/dates'
 import { countWords, portableTextToPlain, readingTime } from '@/lib/reading'
 import { applyGlossaryMarks } from '@/lib/glossary'
 import { articleToMarkdown, buildStudyDeck, collectQuizzes, countStudyCards } from '@/lib/anki'
-import { ArrowDown, ArrowLeftRight, ArrowRight } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { PortableTextBlock } from 'next-sanity'
 // app/(archive)/blog/[slug]/page.tsx
-// Layout: progress bar → hero → [reading column | sticky TOC]. One TOC, one settings menu.
+// Layout: progress bar → text header → [reading column | sticky TOC]. One TOC, one settings menu.
 
 type Props = { params: Promise<{ slug: string }> }
 type Post = NonNullable<PostBySlugQueryResult>
@@ -65,10 +63,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: { title, description, type: 'article', url, publishedTime: post.publishedAt ?? undefined, modifiedTime: post._updatedAt ?? undefined, authors: [SITE.url], tags },
     twitter: { card: 'summary_large_image', title, description },
   }
-}
-
-function fill(template: string, vars: Record<string, string | number>) {
-  return template.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ''))
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -102,17 +96,9 @@ export default async function BlogPostPage({ params }: Props) {
   const markdown = articleToMarkdown({ title, url, excerpt: post.excerpt, tldr: post.tldr, body: post.body })
 
   const B = ui.blocks
-  const readNext = [
-    { post: post.readNextGoDeeper, label: B.readNextLabels.deeper, Icon: ArrowDown },
-    { post: post.readNextGoBroader, label: B.readNextLabels.broader, Icon: ArrowLeftRight },
-    { post: post.readNextApplyThis, label: B.readNextLabels.apply, Icon: ArrowRight },
-  ].filter((r) => r.post?.slug)
-
   const askEnabled = !!process.env.ANTHROPIC_API_KEY
   const showCheckpoint = post.articleType === 'concept-deep-dive' && !!post.checkpoint?.question && (post.checkpoint.options?.length ?? 0) > 1
   const hasCredibility = (post.reviewers?.length ?? 0) > 0 || (post.changelog?.length ?? 0) > 0 || (post.responsesFromField?.length ?? 0) > 0 || !!post.confidenceLevel || !!post.maturityIndicator
-
-  const citation = fill(B.citeTemplate, { title, site: settings.siteName, date: publishDate, url: url.replace(/^https?:\/\//, '') })
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -173,7 +159,7 @@ export default async function BlogPostPage({ params }: Props) {
         />
 
         <div className="relative max-w-6xl mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12 mt-12 md:mt-16">
-          <main id="content" className="max-w-3xl mx-auto w-full transition-[max-width] duration-300" data-width="standard">
+          <main id="content" className="max-w-[36rem] mx-auto w-full transition-[max-width] duration-300" data-width="standard">
             <ArticleToc copy={ui} menu={menu} variant="mobile" />
 
             {post.series && <SeriesBanner series={post.series} currentSlug={slug} seriesOrder={post.seriesOrder} labels={ui.seriesBanner} />}
@@ -241,32 +227,11 @@ export default async function BlogPostPage({ params }: Props) {
 
             {askEnabled && <AskArticle slug={slug} heading={B.askHeading} placeholder={B.askPlaceholder} buttonLabel={B.askButton} />}
 
-            <Reactions slug={slug} heading={ui.reactionsHeading} options={ui.reactions} />
-
-            <div className="mt-16 p-6 md:p-8 bg-[#111] border border-white/[0.08] rounded-xl">
-              <h2 className="section-label mb-3">{B.citeHeading}</h2>
-              <p className="font-sans text-sm text-stone-300 leading-relaxed">{citation}</p>
-            </div>
-
             <Comments term={slug} heading={B.commentsHeading} />
 
             <div className="mt-16" data-print-hide>
               <NewsletterForm source={`article:${slug}`} copy={settings.newsletter} />
             </div>
-
-            {readNext.length > 0 && (
-              <section className="mt-20 border-t border-white/5 pt-10" aria-labelledby="read-next-heading">
-                <h2 id="read-next-heading" className="section-label mb-6">{B.readNextHeading}</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {readNext.map(({ post: p, label, Icon }) => (
-                    <Link key={label} href={`/blog/${p!.slug}`} className={`group flex flex-col gap-3 p-5 border border-white/[0.08] rounded-xl hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-colors ${FOCUS}`}>
-                      <span className="inline-flex items-center gap-2 text-xs font-sans text-stone-400"><Icon size={12} aria-hidden />{label}</span>
-                      <span className="font-serif text-base text-stone-200 group-hover:text-white transition-colors leading-snug">{p!.title}</span>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
           </main>
 
           <ArticleToc copy={ui} menu={menu} variant="sidebar" />
