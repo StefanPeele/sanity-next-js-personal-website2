@@ -41,12 +41,19 @@ export function ArticleToc({ copy, menu, variant }: Props) {
   if (variant === 'sidebar') {
     return (
       <aside className="hidden lg:block" aria-label={copy.toc.title} data-toc="sidebar" data-print-hide>
-        <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-2">
-          <div className="flex items-center justify-between gap-2 mb-4">
+        {/* The heading row must stay OUTSIDE the scrolling element. `overflow-y: auto` makes
+            overflow-x compute to `auto` as well, which clipped the ReaderMenu's absolutely
+            positioned panel — it rendered but 18 of its 24 controls were not hit-testable. */}
+        <div className="sticky top-24 max-h-[calc(100vh-7rem)] flex flex-col">
+          <div className="flex items-center justify-between gap-2 mb-4 shrink-0">
             <h2 className="section-label">{copy.toc.title}</h2>
             <ReaderMenu {...menu} />
           </div>
-          {headings.length > 0 ? <TocList copy={copy} /> : null}
+          {headings.length > 0 ? (
+            <div className="overflow-y-auto min-h-0 pr-2">
+              <TocList copy={copy} />
+            </div>
+          ) : null}
         </div>
       </aside>
     )

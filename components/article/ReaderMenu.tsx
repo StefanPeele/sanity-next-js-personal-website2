@@ -155,7 +155,9 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
           role="dialog"
           aria-modal="false"
           aria-label={L.buttonLabel}
-          className="absolute right-0 top-full mt-2 w-80 max-h-[70vh] overflow-y-auto z-[1002] rounded-xl border border-white/10 bg-[#111] shadow-2xl p-4 text-stone-200"
+          // Below lg the panel is a bottom sheet: anchored as a dropdown it opened ~240px past
+          // the fold at 390 and half its controls were unreachable. At lg it is a dropdown again.
+          className="fixed inset-x-4 bottom-4 max-h-[75vh] lg:absolute lg:inset-x-auto lg:bottom-auto lg:right-0 lg:top-full lg:mt-2 lg:w-80 lg:max-h-[70vh] overflow-y-auto z-[1002] rounded-xl border border-white/10 bg-[#111] shadow-2xl p-4 text-stone-200"
         >
           <div className="flex items-center justify-between mb-1">
             <span className="section-label">{L.buttonLabel}</span>
