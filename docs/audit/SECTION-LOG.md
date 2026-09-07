@@ -16,7 +16,8 @@ and what they left open, so you inherit their reasoning instead of re-litigating
 
 | Date | Section | What changed | What was cut | Still open |
 | --- | --- | --- | --- | --- |
-| 2026-09-06 | *(groundwork — not a section)* | Screenshot harness (`tests/screenshots.spec.ts`, 81 baseline captures at 3 breakpoints); full site inventory; Services audit; experience plan; this workflow | — | Dataset unseeded (`plan 1.4`) — blocked on a valid `SANITY_API_WRITE_TOKEN` |
+| 2026-09-06 | *(groundwork — not a section)* | Screenshot harness (`tests/screenshots.spec.ts`, 81 baseline captures at 3 breakpoints); full site inventory; Services audit; experience plan; this workflow | — | Dataset unseeded (`plan 1.4`) — **resolved 2026-09-07** |
+| 2026-09-07 | *(groundwork — not a section)* | **Dataset seeded** (`plan 1.4` done); Airtable typecast fix + live end-to-end test; empty route dispositions (inventory §8) | — | `'Portrait · Core'` vs Airtable's `'Portrait · Starter'` needs a naming decision |
 
 ---
 
@@ -58,5 +59,47 @@ Commits `08d0ae4`, `645091a`, `b74b21b`, `7016190`.
   cause of the Airtable failures. Packages resolve by enum-validated id, so no label format can
   reach Airtable. The real cause is six select values written without `typecast`.
 
-**Next session should do first:** `plan 1.4` — generate a fresh Editor token at sanity.io/manage and
-run `npx tsx scripts/seed-content.ts`. It is 0.25 sessions and it unblocks every editorial task.
+**Next session should do first:** ~~`plan 1.4` — generate a fresh Editor token and seed.~~
+**Done 2026-09-07, see the entry below.** Also superseded: the note above that
+`scripts/seed-content.ts --dry-run` cannot validate the write token is still true and still worth
+knowing, but the token itself is now valid.
+
+### 2026-09-07 — Dataset seeded, booking pipeline fixed
+
+**Dataset.** `plan 1.4` is done. All 10 Site documents exist as **published** documents, zero
+drafts: `navigation`, `taxonomy`, `errorPages`, `articleUi`, `blogPage`, `knowledgePages`,
+`personalPages`, `servicesPage` created; `home` and `settings` patched. `home` keeps its random id
+(`b2025ada-…`), which is why the seed script looks it up by `_type`. A second run reports
+`0 created, 0 patched, 10 skipped` — the script is idempotent, safe to re-run.
+
+**Editing is proven end to end.** Patched `home.overview` via the API, production picked it up in
+**~72 seconds**, then reverted it exactly. So the revalidation webhook works and Studio edits do
+reach the rendered page. Budget ~90s before concluding a Studio change has not landed.
+
+**Airtable.** `typecast: true` on both `airtableCreate` calls. Verified with a real submission on
+the `'Not sure yet'` path — shoot `rec2cH7B76zoosELn`, linked to the existing client matched by
+email rather than duplicated.
+
+**Learned, and not obvious:**
+
+- **The Airtable token cannot read the schema** (`INVALID_PERMISSIONS_OR_MODEL_NOT_FOUND` on the
+  meta API — it lacks `schema.bases:read`). To find out which select options exist, read records
+  and collect distinct values. That is how the `'Portrait · Starter'` mismatch surfaced.
+- **`'Portrait · Core'` (`lib/pricing.ts:92`) does not match Airtable's `'Portrait · Starter'`.**
+  Before the typecast fix this would have failed every portrait-core booking; after it, it silently
+  creates a *second* option and fragments the data. **Needs a naming decision before the next
+  portrait booking** — rename the Airtable option, or change `airtableName`.
+- **`'Framed print set'` was a false alarm** in the Services audit. The option exists in the live
+  base and has records using it. Renaming it in code would orphan them; it now carries a comment
+  saying so.
+- **Two Airtable formula fields error**, unrelated to our code: `Delivery Deadline` returns
+  `#ERROR` on a shoot with no Shoot Date (an inquiry without a preferred date), and the client
+  record's `Discount Available` says "Unable to generate formula".
+- **Careful with `[role="status"]` in tests.** The newsletter form has one, so a page-wide selector
+  reports booking success that did not happen. Scope it to the booking form, or verify in Airtable.
+
+**Test data left in place, not deleted:** shoot `rec2cH7B76zoosELn` ("Booking Pipeline Test — Not
+sure yet") and the linked client `recTdiGjp45DmLHY4`. Two real emails were sent to `swp9@njit.edu`.
+
+**Next session should do first:** the naming decision above, then inventory §8 — fill `/glossary`
+(~3 h, best ratio on the site) and delete `/paths` and `/review`.
