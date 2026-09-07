@@ -20,6 +20,7 @@ and what they left open, so you inherit their reasoning instead of re-litigating
 | 2026-09-07 | *(groundwork — not a section)* | **Dataset seeded** (`plan 1.4` done); Airtable typecast fix + live end-to-end test; empty route dispositions (inventory §8) | — | `'Portrait · Core'` vs Airtable's `'Portrait · Starter'` needs a naming decision |
 | 2026-09-07 | Cleanup | Baselines PNG→JPEG (32.5MB→11.3MB); **`/paths` and `/review` deleted**; homepage overview `". . ."` fixed in Sanity | `/paths`, `/review`, PathSteps, ReviewDeck, `learningPath` schema, 2 queries, 21.2MB of PNG | Naming decision above; `/glossary` and `/library` still to fill |
 | 2026-09-07 | **Blog** | Reading time (chars→words), reader-menu clipping, measure 91→68 chars, paragraph rhythm 14→24px, parallax hero→text header, 4 unrendered sections cut, Paper+Broadcast themes cut | read-next, Reactions, citation box, 2 light themes, THEME_OPTIONS label/desc, parallax + canvas colour sample | Filter back button (`router.replace`); B18/B19 consolidation deferred; 6 newly-dead articleUi fields |
+| 2026-09-07 | **Blog (closeout)** | 16 dead Studio fields deleted; Giscus + GitBook link removed; Lexend unpreloaded; tap targets to a 24px floor; reader-menu chip unclipped; hidden post restored; filter Back fixed; placeholder tidied | Comments.tsx, 3 giscus env vars, giscus + fonts.googleapis from CSP, GitBook footer link, 16 fields | **IN REVIEW** — awaiting your firsthand review. Studio checklist below (B20, B21) not done. |
 
 ---
 
@@ -172,3 +173,92 @@ readNextLabels); field removal was deferred as B8.
 **Next session should do first:** write the WinRM post. The audit's own conclusion, reached a third
 independent time — twelve of the article page's twenty sections did not render, so the consolidation
 work targets components no reader has seen.
+
+### 2026-09-07 — Blog closeout — **STATUS: IN REVIEW**
+
+Not complete. Stefan has not used the page yet; the section stays open until he says so.
+
+**Executed (6 commits).** Cuts: 16 dead Studio fields; Giscus + the GitBook footer link; Lexend
+unpreloaded. Fixes: tap-target floor + reader-menu chip; the hidden post + filter Back; placeholder
+tidy.
+
+**Measured.** Tap targets on the article at 390: 31 under 44×44 and several under 24 → **28 under
+44, zero under 24**. Page weight 295KB/59 req → **256KB/57 req**, load 5031 → 4788ms. `/blog` now
+reports **3 posts**. Filter Back restores `/blog`. `npm run check` 0, **33 smoke tests**, 6 captures.
+
+**Premises that failed this session — all three surfaced rather than worked around:**
+
+1. **A designed placeholder already existed.** `EmptyThumbnail.tsx` generates a deterministic gradient, texture and category label from the title hash. The question was never "build one" — it never renders because all three posts have a cover image.
+2. **The dead-field count was 16, not 8.** Verified by dereference including bracket access (there is none on these objects). Three of the seven `blogPage` fields sat on the shared `sectionCopy` type whose `lede` *is* read by `servicesPage`, so those three strips got a narrow inline type instead of stripping the shared one.
+3. **A published post was invisible.** Two posts flagged `isFeatured`; the query selected one and excluded all of them from the grid. `homeIntelQuery` had the same bug. This is why four audit documents said "2 posts" when there are 3.
+
+**Partial, stated plainly:** unpreloading Lexend removed it from `/blog` and `/services` (6 fonts /
+154KB) but **not from the article page** (7 fonts / 171KB), because `article.css` references
+`--font-lexend`. And it is 17KB, not the ~40KB the audit claimed. Fully removing it means moving the
+dyslexia font-family out of `article.css` and applying it on activation.
+
+---
+
+## OPEN — Studio work for Stefan
+
+### B21 — Link Week 2 to Week 1 · **BLOCKED, premise fails**
+
+**There is no Week 1, and no series document exists.** Queried the dataset directly:
+
+- Published posts: "The Field, The Moment…" (2026-05-15), "Building My Physical Home Lab — Week 2" (2026-04-06), "The Creation of my Personal Portfolio Site!" (2026-03-31).
+- `*[_type == "series"]` returns **nothing**. No series has ever been created.
+- No post matches "Week 1".
+
+So the task as written cannot be done. Three ways forward:
+
+1. **Write Week 1.** The title promises it and its absence is the actual problem.
+2. **Retitle** the post so it stops implying a missing prequel.
+3. **Create the series anyway** — but with one member it renders "Part 1 of 1" on a post called Week 2, which reads worse than no banner.
+
+**When you do have two parts**, the exact steps are: Studio → Knowledge → Series → Create. Set
+**Title** ("Physical Home Lab"), **Slug** (generate), **Description**, **Status**. Then on each post:
+Presentation group → **Series** → select it, and **Position in series** → `1` for Week 1, `2` for
+Week 2 (the field description says "1 for the first part. Required when a series is set."). Verify
+by loading `/blog/<slug>` — a "Part 2 of 2" banner with prev/next appears above the TL;DR slot — and
+`/blog/series` lists it.
+
+### B20 — Set confidenceLevel and reviewStatus · **OPEN**
+
+Both are `null` on all three posts, so `CredibilitySection` does not render at all today.
+
+**Studio → Writing → the post → Presentation group → Confidence Level.** Pick honestly; the point of
+the field is that it is not flattering:
+
+| Value | What it actually claims |
+| --- | --- |
+| Speculative | Thinking out loud, may be wrong, worth writing anyway |
+| Working theory | Has logic behind it, you have not fully tested it |
+| Confident | You understand it well enough to teach it |
+| Verified | You confirmed it in a lab or real environment |
+| Peer reviewed | An industry professional confirmed the accuracy |
+
+For "Home Lab — Week 2", **Verified** is the honest pick if you actually ran the GNS3 lab and the
+documentation package; **Confident** if you are describing what you set up without having tested the
+claims. Do not use Peer reviewed — nobody has reviewed it.
+
+**Credibility group → Review Status:**
+
+| Value | What it claims |
+| --- | --- |
+| Self-reviewed | Default. You wrote and edited it |
+| Seeking review | Published, want expert eyes. Shows an amber "Seeking peer review" tag |
+| Community reviewed | One or more people read and responded — add them in Reviewers |
+| Expert verified | A professional confirmed technical accuracy |
+
+**Self-reviewed** is the truthful setting for all three today. **Seeking review** is defensible on the
+home-lab post and is an invitation rather than a claim.
+
+**Verify it took:** publish, wait up to **5 minutes** (`X-Nextjs-Stale-Time: 300`), reload the post.
+A badge appears in the header row and a "How this was checked" section renders above Backlinks. If
+nothing changes after 5 minutes the field did not save.
+
+### Also open
+
+- **B16 needs your Studio action to take effect** — unset **mainImage** on "Building My Physical Home Lab — Week 2" and the tidied placeholder renders. The code is in; the card still shows the clipped documentation screenshot until you do.
+- Lexend still loads on the article page (above).
+- `articleUi.blocks.credibilityHeading` and the `maturity`/`load` vocabularies are still live and used — not deleted.
