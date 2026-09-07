@@ -33,7 +33,7 @@ export default defineType({
     obj('readerMenu', 'Reading options menu', [
       str('buttonLabel', 'Button label'), str('closeLabel', 'Close button label'),
       obj('groupLabels', 'Group labels', ['theme', 'textSize', 'width', 'accessibility', 'share', 'listen', 'position'].map((n) => str(n))),
-      obj('themeLabels', 'Theme names', ['archive', 'terminal', 'paper', 'broadcast'].map((n) => str(n))),
+      obj('themeLabels', 'Theme names', ['archive', 'terminal'].map((n) => str(n))),
       obj('widthLabels', 'Width names', ['narrow', 'standard', 'wide'].map((n) => str(n))),
       obj('a11yLabels', 'Accessibility toggles', ['dyslexia', 'highContrast', 'reducedMotion', 'ruler', 'reset'].map((n) => str(n))),
       obj('shareLabels', 'Share and export', ['copyLink', 'copyMarkdown', 'print', 'studyDeck', 'share', 'copied'].map((n) => str(n))),

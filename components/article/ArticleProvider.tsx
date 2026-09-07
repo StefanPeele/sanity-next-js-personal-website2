@@ -6,7 +6,7 @@ import {
 import { useReducedMotion } from 'framer-motion'
 import { slugify } from '@/lib/reading'
 import {
-  FONT_SIZES, isArticleTheme, isArticleWidth, type ArticleTheme, type ArticleWidth,
+  ARTICLE_THEMES, FONT_SIZES, isArticleTheme, isArticleWidth, type ArticleTheme, type ArticleWidth,
 } from '@/lib/articleThemeStyles'
 // components/article/ArticleProvider.tsx
 // Single source of truth for everything the article navigators share:
@@ -258,7 +258,7 @@ export function ArticleProvider({
     const main = document.getElementById('content')
     const html = document.documentElement
     if (article) {
-      article.classList.remove('theme-archive', 'theme-terminal', 'theme-paper', 'theme-broadcast')
+      article.classList.remove(...ARTICLE_THEMES.map((t) => `theme-${t}`))
       article.classList.add(`theme-${settings.theme}`)
       article.style.setProperty('--article-fs', FONT_SIZES[settings.fontSize]?.value ?? FONT_SIZES[1].value)
       article.classList.toggle('a11y-dyslexia', settings.dyslexia)

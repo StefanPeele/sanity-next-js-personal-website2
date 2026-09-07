@@ -294,13 +294,11 @@ export default defineType({
       title: 'Recommended Reading Theme',
       type: 'string',
       group: 'presentation',
-      description: 'The theme this post was written and optimized for. Readers will see a prompt to switch. Archive = dark default. Terminal = phosphor green for lab content. Paper = warm cream for long reads. Broadcast = high contrast white for industry commentary.',
+      description: 'The theme this post was written and optimized for. Archive = dark default. Terminal = phosphor green for lab content.',
       options: {
         list: [
-          { title: '🌑 Archive (default dark)', value: 'archive' },
-          { title: '💚 Terminal (phosphor green)', value: 'terminal' },
-          { title: '📄 Paper (warm cream)', value: 'paper' },
-          { title: '📰 Broadcast (high contrast white)', value: 'broadcast' },
+          { title: 'Archive (default dark)', value: 'archive' },
+          { title: 'Terminal (phosphor green)', value: 'terminal' },
         ],
         layout: 'radio',
       },

@@ -3,17 +3,22 @@
 // styles/article.css (imported by the [slug] page) so it is served as a real
 // stylesheet instead of riding along in the RSC payload.
 
-export const ARTICLE_THEMES = ['archive', 'terminal', 'paper', 'broadcast'] as const
+// Paper and Broadcast were removed. Theme classes only ever reach <article data-article>, and
+// styles/article.css only selects prose inside it — so on a cream or white ground every framed
+// component and all page chrome stayed near-black. Fixing that properly needs the card/border
+// consolidation first; revisit when a light theme is a token swap rather than 20 rewrites.
+// A reader with a stale `sp_theme` falls back to archive via isArticleTheme() in ArticleProvider.
+export const ARTICLE_THEMES = ['archive', 'terminal'] as const
 export type ArticleTheme = (typeof ARTICLE_THEMES)[number]
 
 export const ARTICLE_WIDTHS = ['narrow', 'standard', 'wide'] as const
 export type ArticleWidth = (typeof ARTICLE_WIDTHS)[number]
 
-export const THEME_OPTIONS: { id: ArticleTheme; label: string; desc: string; preview: string }[] = [
-  { id: 'archive',   label: 'Archive',   desc: 'Dark default',        preview: 'bg-[#0a0a0a] border-stone-600' },
-  { id: 'terminal',  label: 'Terminal',  desc: 'Phosphor green',      preview: 'bg-[#0d1117] border-green-600' },
-  { id: 'paper',     label: 'Paper',     desc: 'Warm cream',          preview: 'bg-[#f8f4ef] border-stone-400' },
-  { id: 'broadcast', label: 'Broadcast', desc: 'High contrast white', preview: 'bg-white border-stone-300' },
+// `label` and `desc` were never rendered: ReaderMenu.tsx reads its labels from Studio
+// (articleUi.readerMenu.themeLabels — "Dark"/"Green") and uses only `preview` from here.
+export const THEME_OPTIONS: { id: ArticleTheme; preview: string }[] = [
+  { id: 'archive',  preview: 'bg-[#0a0a0a] border-stone-600' },
+  { id: 'terminal', preview: 'bg-[#0d1117] border-green-600' },
 ]
 
 export const WIDTH_OPTIONS: { id: ArticleWidth; label: string; desc: string }[] = [

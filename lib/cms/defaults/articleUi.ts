@@ -14,7 +14,7 @@ export const DEFAULT_ARTICLE_UI = {
     buttonLabel: 'Reading options',
     closeLabel: 'Close',
     groupLabels: { theme: 'Theme', textSize: 'Text size', width: 'Width', accessibility: 'Accessibility', share: 'Share and export', listen: 'Read aloud', position: 'Your place' },
-    themeLabels: { archive: 'Dark', terminal: 'Green', paper: 'Paper', broadcast: 'Light' },
+    themeLabels: { archive: 'Dark', terminal: 'Green' },
     widthLabels: { narrow: 'Narrow', standard: 'Standard', wide: 'Wide' },
     a11yLabels: { dyslexia: 'Dyslexia-friendly font', highContrast: 'High contrast', reducedMotion: 'Reduce motion', ruler: 'Reading ruler', reset: 'Reset' },
     shareLabels: { copyLink: 'Copy link', copyMarkdown: 'Copy as Markdown', print: 'Print', studyDeck: 'Download study deck', share: 'Share', copied: 'Copied' },

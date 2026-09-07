@@ -10,7 +10,7 @@ export const articleUiQuery = defineQuery(`
     readerMenu{
       buttonLabel, closeLabel,
       groupLabels{ theme, textSize, width, accessibility, share, listen, position },
-      themeLabels{ archive, terminal, paper, broadcast },
+      themeLabels{ archive, terminal },
       widthLabels{ narrow, standard, wide },
       a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },
       shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },

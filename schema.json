@@ -3338,20 +3338,6 @@
                       "type": "string"
                     },
                     "optional": true
-                  },
-                  "paper": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "string"
-                    },
-                    "optional": true
-                  },
-                  "broadcast": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "string"
-                    },
-                    "optional": true
                   }
                 }
               },
@@ -9195,14 +9181,6 @@
             {
               "type": "string",
               "value": "terminal"
-            },
-            {
-              "type": "string",
-              "value": "paper"
-            },
-            {
-              "type": "string",
-              "value": "broadcast"
             }
           ]
         },

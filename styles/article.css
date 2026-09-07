@@ -22,10 +22,20 @@
   letter-spacing: 0.01em;
 }
 
-/* Reading width — set on <main id="content"> by the toolbar */
-main#content[data-width='narrow']   { max-width: 36rem; }
-main#content[data-width='standard'] { max-width: 48rem; }
-main#content[data-width='wide']     { max-width: 64rem; }
+/* Paragraph rhythm. styles/index.css has a global `p:not(:last-child){margin-bottom:.875rem}`
+   at specificity (0,1,1), which outranks Tailwind's `mb-6` (0,1,0) — so the mb-6 that
+   CustomPortableText puts on every paragraph has never applied. 14px against a 27.75px line
+   box meant paragraphs did not visually separate. (0,2,1) here wins it back. */
+[data-article] p:not(:last-child) {
+  margin-bottom: 1.6em;
+}
+
+/* Reading width — set on <main id="content"> by the toolbar.
+   Standard was 48rem, which measured 91 characters per line at 15px prose (optimal is 60–75).
+   These land at roughly 61 / 68 / 83 characters. */
+main#content[data-width='narrow']   { max-width: 32rem; }
+main#content[data-width='standard'] { max-width: 36rem; }
+main#content[data-width='wide']     { max-width: 44rem; }
 
 /* Dropcap — first paragraph of the body only, inherits the theme colour */
 [data-article] > p:first-of-type::first-letter {
@@ -112,9 +122,6 @@ main#content[data-width='wide']     { max-width: 64rem; }
   border-radius: 4px;
 }
 
-/* Focus mode — dims the chrome around the article */
-
-
 /* ═══════════════════════════════════════════════════════════════
    TERMINAL THEME — phosphor green on near-black, monospace
    ═══════════════════════════════════════════════════════════════ */
@@ -146,94 +153,9 @@ main#content[data-width='wide']     { max-width: 64rem; }
 [data-article].theme-terminal li { color: rgba(0, 255, 65, 0.8); }
 [data-article].theme-terminal ::selection { background-color: rgba(0, 255, 65, 0.25); color: #0d1117; }
 
-@media (prefers-reduced-motion: no-preference) {
-}
 [data-article].theme-terminal [data-desaturate] img { filter: grayscale(60%) brightness(0.7) sepia(20%) hue-rotate(80deg); }
 [data-article].theme-terminal [data-desaturate]:hover img { filter: grayscale(40%) brightness(0.85) sepia(10%) hue-rotate(80deg); }
 
-
-/* ═══════════════════════════════════════════════════════════════
-   PAPER THEME — warm cream, book-like
-   ═══════════════════════════════════════════════════════════════ */
-
-[data-article].theme-paper {
-  background-color: #f8f4ef;
-  color: #3d2b1f;
-  padding: 2.5rem 3rem 3.5rem;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(61, 43, 31, 0.08), 0 8px 32px rgba(61, 43, 31, 0.06), inset 0 0 0 1px rgba(61, 43, 31, 0.06);
-}
-@media (max-width: 640px) { [data-article].theme-paper { padding: 1.5rem 1.25rem 2rem; } }
-[data-article].theme-paper p { color: #3d2b1f; line-height: 1.92; letter-spacing: 0.005em; }
-[data-article].theme-paper h1,
-[data-article].theme-paper h2,
-[data-article].theme-paper h3,
-[data-article].theme-paper h4 { color: #1a0f08; letter-spacing: -0.015em; }
-[data-article].theme-paper h2 { border-bottom-color: rgba(61, 43, 31, 0.1); }
-[data-article].theme-paper strong { color: #1a0f08; }
-[data-article].theme-paper em { color: #5a3a28; }
-[data-article].theme-paper .article-link { color: #7b3f1e; background-image: linear-gradient(#7b3f1e, #7b3f1e); }
-[data-article].theme-paper .article-link:hover { color: #5a2d12; background-image: linear-gradient(#5a2d12, #5a2d12); }
-[data-article].theme-paper code {
-  background-color: rgba(61, 43, 31, 0.07) !important;
-  border-color: rgba(61, 43, 31, 0.15) !important;
-  color: #5a2d12 !important;
-}
-[data-article].theme-paper blockquote { border-left-color: rgba(123, 63, 30, 0.4); color: #6b4c3b; font-style: italic; }
-[data-article].theme-paper li { color: #3d2b1f; }
-[data-article].theme-paper ::selection { background-color: rgba(123, 63, 30, 0.2); color: #1a0f08; }
-[data-article].theme-paper [data-desaturate] img { filter: sepia(12%) brightness(0.97) contrast(1.02); }
-[data-article].theme-paper [data-desaturate]:hover img { filter: none; }
-[data-article].theme-paper::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 2px;
-  opacity: 0.018;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  pointer-events: none;
-  z-index: 0;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
-   BROADCAST THEME — high contrast white, news editorial
-   ═══════════════════════════════════════════════════════════════ */
-
-[data-article].theme-broadcast {
-  background-color: #ffffff;
-  color: #141414;
-  padding: 2.5rem 3rem 3.5rem;
-  border: 1px solid #e8e8e8;
-  border-radius: 2px;
-}
-@media (max-width: 640px) { [data-article].theme-broadcast { padding: 1.5rem 1.25rem 2rem; } }
-[data-article].theme-broadcast p { color: #1a1a1a; line-height: 1.72; letter-spacing: -0.002em; }
-[data-article].theme-broadcast h1,
-[data-article].theme-broadcast h2,
-[data-article].theme-broadcast h3,
-[data-article].theme-broadcast h4 { color: #000000; font-weight: 900; letter-spacing: -0.04em; line-height: 1.05; }
-[data-article].theme-broadcast h2 { border-bottom-color: #e8e8e8; }
-[data-article].theme-broadcast h3 { font-weight: 800; letter-spacing: -0.025em; }
-[data-article].theme-broadcast strong { color: #000000; font-weight: 800; }
-[data-article].theme-broadcast em { color: #333333; }
-[data-article].theme-broadcast .article-link { color: #cc0000; background-image: linear-gradient(#cc0000, #cc0000); }
-[data-article].theme-broadcast .article-link:hover { color: #990000; background-image: linear-gradient(#990000, #990000); }
-[data-article].theme-broadcast code {
-  background-color: #f4f4f4 !important;
-  border-color: #e0e0e0 !important;
-  color: #cc0000 !important;
-}
-[data-article].theme-broadcast blockquote { border-left-color: #cc0000; border-left-width: 3px; color: #444444; font-style: normal; font-weight: 600; }
-[data-article].theme-broadcast li { color: #1a1a1a; }
-[data-article].theme-broadcast ::selection { background-color: rgba(204, 0, 0, 0.1); color: #000000; }
-[data-article].theme-broadcast img { filter: none; border: 1px solid #e8e8e8; }
-[data-article].theme-broadcast [data-desaturate] img { filter: none; }
-
-/* Light themes: the framed blocks were designed for a dark ground, keep them readable */
-[data-article].theme-paper .article-light-invert,
-[data-article].theme-broadcast .article-light-invert { color-scheme: light; }
 
 
 /* ═══════════════════════════════════════════════════════════════
