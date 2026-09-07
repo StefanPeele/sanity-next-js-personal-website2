@@ -64,7 +64,11 @@ export function BlogArticleHeader({
 
   return (
     <header className="w-full border-b border-white/5 pt-10 pb-10 md:pt-14 md:pb-12">
-      <div className="w-full max-w-[36rem] px-6 mx-auto">
+      {/* Mirrors the reading grid in [slug]/page.tsx so the header lines up with the prose
+          column. Centring on the viewport instead leaves it ~130px right of the body text,
+          because the grid reserves a 220px column for the table of contents. */}
+      <div className="relative max-w-6xl mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12">
+        <div className="w-full max-w-[36rem] mx-auto">
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-stone-300 hover:text-white font-sans text-sm transition-colors mb-8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm"
@@ -124,6 +128,7 @@ export function BlogArticleHeader({
             />
           </figure>
         )}
+        </div>
       </div>
     </header>
   )
