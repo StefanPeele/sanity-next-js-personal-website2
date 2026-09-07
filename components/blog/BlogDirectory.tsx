@@ -92,7 +92,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
       if (value) params.set(key, value)
       else params.delete(key)
       const qs = params.toString()
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
     },
     [pathname, router, searchParams],
   )

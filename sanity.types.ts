@@ -500,16 +500,30 @@ export type BlogPage = {
     latestLabel?: string
     seriesLabel?: string
     readLabel?: string
-    noTopics?: string
   }
   referenceLinks?: Array<
     {
       _key: string
     } & NavLink
   >
-  seriesRail?: SectionCopy
-  readingStrip?: SectionCopy
-  notesStrip?: SectionCopy
+  seriesRail?: {
+    heading?: string
+    enabled?: boolean
+    ctaLabel?: string
+    ctaHref?: string
+  }
+  readingStrip?: {
+    heading?: string
+    enabled?: boolean
+    ctaLabel?: string
+    ctaHref?: string
+  }
+  notesStrip?: {
+    heading?: string
+    enabled?: boolean
+    ctaLabel?: string
+    ctaHref?: string
+  }
   list?: {
     heading?: string
     filterLabels?: {
@@ -613,43 +627,18 @@ export type ArticleUi = {
     sourcesHeading?: string
     credibilityHeading?: string
     backlinksHeading?: string
-    citeHeading?: string
-    citeTemplate?: string
-    readNextHeading?: string
-    readNextLabels?: {
-      deeper?: string
-      broader?: string
-      apply?: string
-    }
     askHeading?: string
     askPlaceholder?: string
     askButton?: string
-    commentsHeading?: string
     noContent?: string
   }
-  reactionsHeading?: string
-  reactions?: Array<
-    {
-      _key: string
-    } & VocabEntry
-  >
   credibility?: {
-    confidence?: Array<
-      {
-        _key: string
-      } & VocabEntry
-    >
     maturity?: Array<
       {
         _key: string
       } & VocabEntry
     >
     load?: Array<
-      {
-        _key: string
-      } & VocabEntry
-    >
-    reviewStatus?: Array<
       {
         _key: string
       } & VocabEntry
@@ -2252,7 +2241,7 @@ export type AllSanitySchemaTypes =
 
 // Source: sanity/lib/queries-article-ui.ts
 // Variable: articleUiQuery
-// Query: *[_type == "articleUi"][0]{    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },    toc{ title, mobileTitle, minutesSuffix },    readerMenu{      buttonLabel, closeLabel,      groupLabels{ theme, textSize, width, accessibility, share, listen, position },      themeLabels{ archive, terminal },      widthLabels{ narrow, standard, wide },      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },      listenLabels{ play, pause, resume, stop, unsupported },      bookmarkLabels{ save, saved, resume, clear }    },    blocks{      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,      sourcesHeading, credibilityHeading, backlinksHeading, citeHeading, citeTemplate, readNextHeading,      readNextLabels{ deeper, broader, apply }, askHeading, askPlaceholder, askButton, commentsHeading, noContent    },    reactionsHeading,    "reactions": reactions[]{ _key, key, label, short, description, banner, color, dots },    credibility{      "confidence": confidence[]{ _key, key, label, short, description, banner, color, dots }, "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots }, "reviewStatus": reviewStatus[]{ _key, key, label, short, description, banner, color, dots },      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl    },    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }  }
+// Query: *[_type == "articleUi"][0]{    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },    toc{ title, mobileTitle, minutesSuffix },    readerMenu{      buttonLabel, closeLabel,      groupLabels{ theme, textSize, width, accessibility, share, listen, position },      themeLabels{ archive, terminal },      widthLabels{ narrow, standard, wide },      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },      listenLabels{ play, pause, resume, stop, unsupported },      bookmarkLabels{ save, saved, resume, clear }    },    blocks{      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,      sourcesHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent    },    credibility{      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl    },    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }  }
 export type ArticleUiQueryResult = {
   header: {
     backLabel: string | null
@@ -2329,42 +2318,12 @@ export type ArticleUiQueryResult = {
     sourcesHeading: string | null
     credibilityHeading: string | null
     backlinksHeading: string | null
-    citeHeading: string | null
-    citeTemplate: string | null
-    readNextHeading: string | null
-    readNextLabels: {
-      deeper: string | null
-      broader: string | null
-      apply: string | null
-    } | null
     askHeading: string | null
     askPlaceholder: string | null
     askButton: string | null
-    commentsHeading: string | null
     noContent: string | null
   } | null
-  reactionsHeading: string | null
-  reactions: Array<{
-    _key: string
-    key: string | null
-    label: string | null
-    short: string | null
-    description: string | null
-    banner: string | null
-    color: string | null
-    dots: number | null
-  }> | null
   credibility: {
-    confidence: Array<{
-      _key: string
-      key: string | null
-      label: string | null
-      short: string | null
-      description: string | null
-      banner: string | null
-      color: string | null
-      dots: number | null
-    }> | null
     maturity: Array<{
       _key: string
       key: string | null
@@ -2376,16 +2335,6 @@ export type ArticleUiQueryResult = {
       dots: number | null
     }> | null
     load: Array<{
-      _key: string
-      key: string | null
-      label: string | null
-      short: string | null
-      description: string | null
-      banner: string | null
-      color: string | null
-      dots: number | null
-    }> | null
-    reviewStatus: Array<{
       _key: string
       key: string | null
       label: string | null
@@ -2411,7 +2360,7 @@ export type ArticleUiQueryResult = {
 
 // Source: sanity/lib/queries-article-ui.ts
 // Variable: blogPageQuery
-// Query: *[_type == "blogPage"][0]{    header{ title, lede, metaTitle, metaDescription },    statsLabels{ posts, series, latest },    featured{ heading, readLabel },    directory{ enabled, topicsHeading, toolsHeading, statsHeading, totalLabel, latestLabel, seriesLabel, readLabel, noTopics },    "referenceLinks": referenceLinks[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },    seriesRail{ enabled, heading, lede, ctaLabel, ctaHref, emptyState }, readingStrip{ enabled, heading, lede, ctaLabel, ctaHref, emptyState }, notesStrip{ enabled, heading, lede, ctaLabel, ctaHref, emptyState },    list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }  }
+// Query: *[_type == "blogPage"][0]{    header{ title, lede, metaTitle, metaDescription },    statsLabels{ posts, series, latest },    featured{ heading, readLabel },    directory{ enabled, topicsHeading, toolsHeading, statsHeading, totalLabel, latestLabel, seriesLabel, readLabel },    "referenceLinks": referenceLinks[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },    list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }  }
 export type BlogPageQueryResult = {
   header: {
     title: string | null
@@ -2437,7 +2386,6 @@ export type BlogPageQueryResult = {
     latestLabel: string | null
     seriesLabel: string | null
     readLabel: string | null
-    noTopics: string | null
   } | null
   referenceLinks: Array<{
     _key: string
@@ -2492,26 +2440,20 @@ export type BlogPageQueryResult = {
   seriesRail: {
     enabled: boolean | null
     heading: string | null
-    lede: string | null
     ctaLabel: string | null
     ctaHref: string | null
-    emptyState: string | null
   } | null
   readingStrip: {
     enabled: boolean | null
     heading: string | null
-    lede: string | null
     ctaLabel: string | null
     ctaHref: string | null
-    emptyState: string | null
   } | null
   notesStrip: {
     enabled: boolean | null
     heading: string | null
-    lede: string | null
     ctaLabel: string | null
     ctaHref: string | null
-    emptyState: string | null
   } | null
   list: {
     heading: string | null
@@ -3992,7 +3934,7 @@ export type HomePageQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: homeIntelQuery
-// Query: {  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] {   _id,  title,  "slug": slug.current,  publishedAt,  excerpt,  "imageUrl": mainImage.asset->url,  "lqip": mainImage.asset->metadata.lqip,  "categories": categories[]->title,  "tags": tags[]->{ _id, title, "slug": slug.current },  articleType,  // length() on a string counts characters, not words — dividing that by 220 wpm  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.  "wordCount": length(string::split(pt::text(body), " ")),  "series": series->{ title, "slug": slug.current } },  "recentPosts": *[_type == "post" && isFeatured != true] | order(publishedAt desc)[0...3] {   _id,  title,  "slug": slug.current,  publishedAt,  excerpt,  "imageUrl": mainImage.asset->url,  "lqip": mainImage.asset->metadata.lqip,  "categories": categories[]->title,  "tags": tags[]->{ _id, title, "slug": slug.current },  articleType,  // length() on a string counts characters, not words — dividing that by 220 wpm  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.  "wordCount": length(string::split(pt::text(body), " ")),  "series": series->{ title, "slug": slug.current } },  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {    _id, title, author, mediaType, progressPercent, "coverUrl": coverImage.asset->url  },  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...3] {    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)  }}
+// Query: {  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] {   _id,  title,  "slug": slug.current,  publishedAt,  excerpt,  "imageUrl": mainImage.asset->url,  "lqip": mainImage.asset->metadata.lqip,  "categories": categories[]->title,  "tags": tags[]->{ _id, title, "slug": slug.current },  articleType,  // length() on a string counts characters, not words — dividing that by 220 wpm  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.  "wordCount": length(string::split(pt::text(body), " ")),  "series": series->{ title, "slug": slug.current } },  // Same fix as blogIndexQuery: fetch one extra and drop the featured one in the component.  "recentPosts": *[_type == "post"] | order(publishedAt desc)[0...4] {   _id,  title,  "slug": slug.current,  publishedAt,  excerpt,  "imageUrl": mainImage.asset->url,  "lqip": mainImage.asset->metadata.lqip,  "categories": categories[]->title,  "tags": tags[]->{ _id, title, "slug": slug.current },  articleType,  // length() on a string counts characters, not words — dividing that by 220 wpm  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.  "wordCount": length(string::split(pt::text(body), " ")),  "series": series->{ title, "slug": slug.current } },  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {    _id, title, author, mediaType, progressPercent, "coverUrl": coverImage.asset->url  },  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...3] {    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)  }}
 export type HomeIntelQueryResult = {
   featuredPost: {
     _id: string
@@ -4553,7 +4495,7 @@ export type TestimonialsQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: blogIndexQuery
-// Query: {  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] {   _id,  title,  "slug": slug.current,  publishedAt,  excerpt,  "imageUrl": mainImage.asset->url,  "lqip": mainImage.asset->metadata.lqip,  "categories": categories[]->title,  "tags": tags[]->{ _id, title, "slug": slug.current },  articleType,  // length() on a string counts characters, not words — dividing that by 220 wpm  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.  "wordCount": length(string::split(pt::text(body), " ")),  "series": series->{ title, "slug": slug.current } },  "posts": *[_type == "post" && (isFeatured != true || !defined(isFeatured))] | order(publishedAt desc) {   _id,  title,  "slug": slug.current,  publishedAt,  excerpt,  "imageUrl": mainImage.asset->url,  "lqip": mainImage.asset->metadata.lqip,  "categories": categories[]->title,  "tags": tags[]->{ _id, title, "slug": slug.current },  articleType,  // length() on a string counts characters, not words — dividing that by 220 wpm  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.  "wordCount": length(string::split(pt::text(body), " ")),  "series": series->{ title, "slug": slug.current } },  "series": *[_type == "series"] | order(title asc) {    _id, title, "slug": slug.current, description, "count": count(*[_type == "post" && references(^._id)])  },  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {    _id, title, author, mediaType, progressPercent, url  },  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...4] {    _id, title, "slug": slug.current, status  }}
+// Query: {  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] {   _id,  title,  "slug": slug.current,  publishedAt,  excerpt,  "imageUrl": mainImage.asset->url,  "lqip": mainImage.asset->metadata.lqip,  "categories": categories[]->title,  "tags": tags[]->{ _id, title, "slug": slug.current },  articleType,  // length() on a string counts characters, not words — dividing that by 220 wpm  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.  "wordCount": length(string::split(pt::text(body), " ")),  "series": series->{ title, "slug": slug.current } },  // Every post, ordered. The page removes whichever one it actually featured. Filtering  // isFeatured != true here hid any post flagged featured but not selected as THE featured one.  "posts": *[_type == "post"] | order(publishedAt desc) {   _id,  title,  "slug": slug.current,  publishedAt,  excerpt,  "imageUrl": mainImage.asset->url,  "lqip": mainImage.asset->metadata.lqip,  "categories": categories[]->title,  "tags": tags[]->{ _id, title, "slug": slug.current },  articleType,  // length() on a string counts characters, not words — dividing that by 220 wpm  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.  "wordCount": length(string::split(pt::text(body), " ")),  "series": series->{ title, "slug": slug.current } },  "series": *[_type == "series"] | order(title asc) {    _id, title, "slug": slug.current, description, "count": count(*[_type == "post" && references(^._id)])  },  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {    _id, title, author, mediaType, progressPercent, url  },  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...4] {    _id, title, "slug": slug.current, status  }}
 export type BlogIndexQueryResult = {
   featuredPost: {
     _id: string
@@ -5477,8 +5419,8 @@ export type NowQueryResult = {
 
 declare module '@sanity/client' {
   interface SanityQueries {
-    '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },\n    toc{ title, mobileTitle, minutesSuffix },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, share, listen, position },\n      themeLabels{ archive, terminal },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported },\n      bookmarkLabels{ save, saved, resume, clear }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, credibilityHeading, backlinksHeading, citeHeading, citeTemplate, readNextHeading,\n      readNextLabels{ deeper, broader, apply }, askHeading, askPlaceholder, askButton, commentsHeading, noContent\n    },\n    reactionsHeading,\n    "reactions": reactions[]{ _key, key, label, short, description, banner, color, dots },\n    credibility{\n      "confidence": confidence[]{ _key, key, label, short, description, banner, color, dots }, "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots }, "reviewStatus": reviewStatus[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
-    '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    directory{ enabled, topicsHeading, toolsHeading, statsHeading, totalLabel, latestLabel, seriesLabel, readLabel, noTopics },\n    "referenceLinks": referenceLinks[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n    seriesRail{ enabled, heading, lede, ctaLabel, ctaHref, emptyState }, readingStrip{ enabled, heading, lede, ctaLabel, ctaHref, emptyState }, notesStrip{ enabled, heading, lede, ctaLabel, ctaHref, emptyState },\n    list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }\n  }\n': BlogPageQueryResult
+    '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },\n    toc{ title, mobileTitle, minutesSuffix },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, share, listen, position },\n      themeLabels{ archive, terminal },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported },\n      bookmarkLabels{ save, saved, resume, clear }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent\n    },\n    credibility{\n      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
+    '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    directory{ enabled, topicsHeading, toolsHeading, statsHeading, totalLabel, latestLabel, seriesLabel, readLabel },\n    "referenceLinks": referenceLinks[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },\n    list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }\n  }\n': BlogPageQueryResult
     '\n  *[_type == "knowledgePages"][0]{\n    garden{ header{ title, lede, metaTitle, metaDescription }, stats{ notes, evergreen, tags }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n      note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },\n    library{ header{ title, lede, metaTitle, metaDescription }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) }, filterLabels{ type, status, all, clear } },\n    glossary{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, termsCount },\n    series{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },\n    graph{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },\n      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },\n      linesNote, nodeListLabel, openHint, ariaSummary },\n    osi{ header{ title, lede, metaTitle, metaDescription }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }\n  }\n': KnowledgePagesQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, body, tldr, excerpt\n  }\n': ArticleTextQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, excerpt, articleType, publishedAt,\n    "categories": categories[]->title,\n    "mainImageUrl": mainImage.asset->url,\n    // Words, not characters \u2014 see the note in queries.ts. length() on a string counts characters.\n    "wordCount": length(string::split(pt::text(body), " ")),\n    "series": series->{ title },\n    seriesOrder\n  }\n': ArticleOgQueryResult
@@ -5492,7 +5434,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "errorPages"][0]{\n    notFound{ title, body, hint, primaryCta{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n }, "links": links[]{ \n  _key, label, kind, url, description, icon, newTab,\n  "path": select(\n    kind == "reference" => select(\n      reference->_type == "post" => "/blog/" + reference->slug.current,\n      reference->_type == "project" => "/projects/" + reference->slug.current,\n      reference->_type == "series" => "/blog/series/" + reference->slug.current,\n      reference->_type == "gallery" => "/photography/" + reference->slug.current,\n      "/" + reference->slug.current\n    ),\n    path\n  )\n } },\n    error{ title, body, retryLabel, homeLabel, referenceLabel },\n    offline{ title, body, ctaLabel, ctaHref }\n  }\n': ErrorPagesQueryResult
     '\n  *[_type == "settings"][0]{\n    _id,\n    _type,\n    footer,\n    email,\n    github,\n    linkedin,\n    trello,\n    instagram,\n    bluesky,\n    gitbook,\n    calendlyUrl,\n    openTo,\n    footerHeadlinePrefix,\n    footerHeadlineHighlight,\n    footerHeadlineSuffix,\n    archiveTitle,\n    archiveSubtitle,\n    menuItems[]{\n      _key,\n      ...@->{\n        _type,\n        "slug": coalesce(slug.current, ""),\n        title\n      }\n    },\n    ogImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n  }\n': SettingsQueryResult
     '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n        overview,\n        "slug": coalesce(slug.current, ""),\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl,\n        outcome,\n        role\n      }\n    },\n    "sections": sections[]{\n      _key, _type, enabled, showNav, currentlyLabel, locationLabel, footnote, ctaLabel, heading,\n      fallbackManifesto, fallbackBio, imagePlaceholder, limit, featuredBadge, recentHeading, readLabel\n    }\n  }\n': HomePageQueryResult
-    '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // length() on a string counts characters, not words \u2014 dividing that by 220 wpm\n  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.\n  "wordCount": length(string::split(pt::text(body), " ")),\n  "series": series->{ title, "slug": slug.current }\n },\n  "recentPosts": *[_type == "post" && isFeatured != true] | order(publishedAt desc)[0...3] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // length() on a string counts characters, not words \u2014 dividing that by 220 wpm\n  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.\n  "wordCount": length(string::split(pt::text(body), " ")),\n  "series": series->{ title, "slug": slug.current }\n },\n  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {\n    _id, title, author, mediaType, progressPercent, "coverUrl": coverImage.asset->url\n  },\n  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...3] {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  }\n}': HomeIntelQueryResult
+    '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // length() on a string counts characters, not words \u2014 dividing that by 220 wpm\n  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.\n  "wordCount": length(string::split(pt::text(body), " ")),\n  "series": series->{ title, "slug": slug.current }\n },\n  // Same fix as blogIndexQuery: fetch one extra and drop the featured one in the component.\n  "recentPosts": *[_type == "post"] | order(publishedAt desc)[0...4] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // length() on a string counts characters, not words \u2014 dividing that by 220 wpm\n  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.\n  "wordCount": length(string::split(pt::text(body), " ")),\n  "series": series->{ title, "slug": slug.current }\n },\n  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {\n    _id, title, author, mediaType, progressPercent, "coverUrl": coverImage.asset->url\n  },\n  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...3] {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  }\n}': HomeIntelQueryResult
     '\n  *[_type == $type && defined(slug.current)]{"slug": slug.current}\n': SlugsByTypeQueryResult
     '{\n  "posts": *[_type == "post" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(_updatedAt, publishedAt) },\n  "projects": *[_type == "project" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "galleries": *[_type == "gallery" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "pages": *[_type == "page" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "notes": *[_type == "note" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(lastTended, _updatedAt) },\n  "series": *[_type == "series" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "glossary": *[_type == "glossaryTerm" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt }\n}': SitemapQueryResult
     '\n  *[_type == "page" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    overview,\n    body[]{\n      ...,\n      _type == "skillReference" => {\n        "skill": @->{\n          title,\n          category,\n          description\n        }\n      }\n    },\n    "resumeUrl": resumeFile.asset->url\n  }\n': PagesBySlugQueryResult
@@ -5503,7 +5445,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "gallery" && slug.current == $slug][0] {\n    _id,\n    "title": coalesce(title, "Untitled Volume"),\n    "slug": coalesce(slug.current, ""),\n    mainImage {\n      ...,\n      asset->{ url, metadata { lqip } }\n    },\n    "images": coalesce(images[] {\n      ...,\n      "imageUrl": asset->url,\n      "lqip": asset->metadata.lqip,\n      "exif": asset->metadata.exif,\n      title,\n      alt,\n      caption,\n      aperture,\n      shutter,\n      iso,\n      lensOverride,\n      systemOverride\n    }, []),\n    overview,\n    category->{\n      "title": coalesce(title, "Uncategorized"),\n      "slug": coalesce(slug.current, ""),\n      themeColor\n    },\n    system,\n    lens,\n    iso,\n    location,\n    notes\n  }\n': GalleryBySlugQueryResult
     '\n  *[_type == "category" && count(*[_type == "gallery" && references(^._id)]) > 0] {\n    _id,\n    title,\n    "slug": slug.current,\n    themeColor\n  }\n': CategoriesQueryResult
     '\n  *[_type == "testimonial" && consent == true] | order(date desc) {\n    _id, name, role, quote, date, service, "photoUrl": photo.asset->url\n  }\n': TestimonialsQueryResult
-    '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // length() on a string counts characters, not words \u2014 dividing that by 220 wpm\n  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.\n  "wordCount": length(string::split(pt::text(body), " ")),\n  "series": series->{ title, "slug": slug.current }\n },\n  "posts": *[_type == "post" && (isFeatured != true || !defined(isFeatured))] | order(publishedAt desc) { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // length() on a string counts characters, not words \u2014 dividing that by 220 wpm\n  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.\n  "wordCount": length(string::split(pt::text(body), " ")),\n  "series": series->{ title, "slug": slug.current }\n },\n  "series": *[_type == "series"] | order(title asc) {\n    _id, title, "slug": slug.current, description, "count": count(*[_type == "post" && references(^._id)])\n  },\n  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {\n    _id, title, author, mediaType, progressPercent, url\n  },\n  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...4] {\n    _id, title, "slug": slug.current, status\n  }\n}': BlogIndexQueryResult
+    '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // length() on a string counts characters, not words \u2014 dividing that by 220 wpm\n  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.\n  "wordCount": length(string::split(pt::text(body), " ")),\n  "series": series->{ title, "slug": slug.current }\n },\n  // Every post, ordered. The page removes whichever one it actually featured. Filtering\n  // isFeatured != true here hid any post flagged featured but not selected as THE featured one.\n  "posts": *[_type == "post"] | order(publishedAt desc) { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // length() on a string counts characters, not words \u2014 dividing that by 220 wpm\n  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.\n  "wordCount": length(string::split(pt::text(body), " ")),\n  "series": series->{ title, "slug": slug.current }\n },\n  "series": *[_type == "series"] | order(title asc) {\n    _id, title, "slug": slug.current, description, "count": count(*[_type == "post" && references(^._id)])\n  },\n  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {\n    _id, title, author, mediaType, progressPercent, url\n  },\n  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...4] {\n    _id, title, "slug": slug.current, status\n  }\n}': BlogIndexQueryResult
     '\n  *[_type == "post" && defined(slug.current)]{ "slug": slug.current }\n': PostSlugsQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    _id, _updatedAt, title, "slug": slug.current, publishedAt,\n    "mainImageUrl": mainImage.asset->url,\n    "mainImageAlt": coalesce(mainImage.alt, mainImage.asset->altText),\n    "lqip": mainImage.asset->metadata.lqip,\n    body, excerpt, tldr,\n    "categories": categories[]->title,\n    "tags": tags[]->{ _id, title, "slug": slug.current }[defined(_id)],\n    articleType, confidenceLevel, maturityIndicator, cognitiveLoad, recommendedTheme,\n    reviewStatus,\n    learningObjectives,\n    "prerequisites": prerequisites[] {\n      _key, description,\n      "post": post->{ title, "slug": slug.current }\n    },\n    "checkpoint": priorKnowledgeCheck,\n    conceptCards[] { _key, front, back },\n    "readNextGoDeeper":  readNextGoDeeper->{ title, "slug": slug.current, excerpt, articleType },\n    "readNextGoBroader": readNextGoBroader->{ title, "slug": slug.current, excerpt, articleType },\n    "readNextApplyThis": readNextApplyThis->{ title, "slug": slug.current, excerpt, articleType },\n    "series": series->{\n      _id, title, "slug": slug.current, description,\n      "posts": *[_type == "post" && references(^._id) && defined(slug.current)] | order(seriesOrder asc, publishedAt asc) {\n        _id, title, "slug": slug.current, seriesOrder\n      }\n    },\n    seriesOrder,\n    reviewers[] { _key, name, role, organization, quote, date, linkedIn },\n    changelog[]  { _key, date, description },\n    responsesFromField[] { _key, title, url, author, platform, summary, date },\n    sources[] { _key, title, url, author, type, description },\n    "glossary": *[_type == "glossaryTerm" && defined(slug.current)] { _id, term, "slug": slug.current, definition, aliases },\n    "backlinks": {\n      "notes": *[_type == "note" && references(^._id)] { _id, title, "slug": slug.current, status },\n      "posts": *[_type == "post" && references(^._id) && _id != ^._id] { _id, title, "slug": slug.current, articleType },\n      "library": *[_type == "mediaItem" && references(^._id)] { _id, title, mediaType, author },\n      "projects": *[_type == "project" && references(^._id)] { _id, title, "slug": slug.current }\n    }\n  }\n': PostBySlugQueryResult
     '{\n  "posts": *[_type == "post" && defined(slug.current)] {\n    _id, title, "slug": slug.current, excerpt, publishedAt, articleType,\n    "categories": categories[]->title, "text": pt::text(body)\n  },\n  "notes": *[_type == "note" && defined(slug.current)] {\n    _id, title, "slug": slug.current, status, "text": pt::text(body)\n  },\n  "projects": *[_type == "project" && defined(slug.current)] {\n    _id, title, "slug": slug.current, "excerpt": pt::text(overview), techStack\n  },\n  "library": *[_type == "mediaItem"] { _id, title, author, mediaType, oneSentenceTake, url },\n  "glossary": *[_type == "glossaryTerm" && defined(slug.current)] { _id, term, "slug": slug.current, definition }\n}': SearchIndexQueryResult

@@ -102,7 +102,8 @@ export const homePageQuery = defineQuery(`
 
 export const homeIntelQuery = defineQuery(`{
   "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] { ${postCardFields} },
-  "recentPosts": *[_type == "post" && isFeatured != true] | order(publishedAt desc)[0...3] { ${postCardFields} },
+  // Same fix as blogIndexQuery: fetch one extra and drop the featured one in the component.
+  "recentPosts": *[_type == "post"] | order(publishedAt desc)[0...4] { ${postCardFields} },
   "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {
     _id, title, author, mediaType, progressPercent, "coverUrl": coverImage.asset->url
   },
@@ -312,7 +313,9 @@ export const testimonialsQuery = defineQuery(`
 
 export const blogIndexQuery = defineQuery(`{
   "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] { ${postCardFields} },
-  "posts": *[_type == "post" && (isFeatured != true || !defined(isFeatured))] | order(publishedAt desc) { ${postCardFields} },
+  // Every post, ordered. The page removes whichever one it actually featured. Filtering
+  // isFeatured != true here hid any post flagged featured but not selected as THE featured one.
+  "posts": *[_type == "post"] | order(publishedAt desc) { ${postCardFields} },
   "series": *[_type == "series"] | order(title asc) {
     _id, title, "slug": slug.current, description, "count": count(*[_type == "post" && references(^._id)])
   },

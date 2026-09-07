@@ -185,7 +185,12 @@ export function ShowcaseSection({ s, ctx }: { s: S<'homeShowcase'>; ctx: HomeCon
 
 export function WritingSection({ s, ctx }: { s: S<'homeWriting'>; ctx: HomeContext }) {
   const featured = ctx.intel?.featuredPost ?? null
-  const recents = (ctx.intel?.recentPosts ?? []).filter((p) => p.slug).slice(0, s.limit || 3)
+  // recentPosts now returns every post (one extra), so drop whichever one is in the featured
+  // slot here rather than in GROQ — filtering `isFeatured != true` there hid any post flagged
+  // featured but not selected as THE featured one.
+  const recents = (ctx.intel?.recentPosts ?? [])
+    .filter((p) => p.slug && p._id !== featured?._id)
+    .slice(0, s.limit || 3)
   const lanes = ctx.taxonomy.articleLanes
   if (!featured && recents.length === 0) return null
   return (

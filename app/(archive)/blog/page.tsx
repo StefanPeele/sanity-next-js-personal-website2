@@ -24,7 +24,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function BlogPage() {
   const [{ data }, copy, taxonomy] = await Promise.all([sanityFetch({ query: blogIndexQuery }), getCopy(blogPageQuery, DEFAULT_BLOG_PAGE), getTaxonomy()])
   const featuredPost = data?.featuredPost ?? null
-  const posts = (data?.posts ?? []).filter((p) => p.slug && p.title)
+  // `posts` now contains every post; drop the one shown in the featured slot.
+  const posts = (data?.posts ?? []).filter((p) => p.slug && p.title && p._id !== featuredPost?._id)
   const series = data?.series ?? []
   const currentlyReading = data?.currentlyReading ?? []
   const recentNotes = (data?.recentNotes ?? []).filter((n) => n.slug)
