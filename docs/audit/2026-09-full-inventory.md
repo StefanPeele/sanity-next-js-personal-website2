@@ -204,6 +204,10 @@ goal. The problem with the article page is that there are 2 articles, not that i
 
 ## 8. Empty route dispositions
 
+> **Executed 2026-09-07.** `/paths` and `/review` are deleted (commit `f72b535`). `/glossary`,
+> `/library` and `/garden` are unchanged and still carry the dispositions below. Sections 1 and 2
+> above are a point-in-time record of 6 September and deliberately still list all nine routes.
+
 Added 2026-09-07, after the dataset was seeded. Recommendations, not descriptions. Writing time is
 **your** hours at a keyboard, not engineering sessions; engineering is called out separately.
 

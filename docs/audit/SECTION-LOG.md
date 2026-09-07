@@ -18,6 +18,7 @@ and what they left open, so you inherit their reasoning instead of re-litigating
 | --- | --- | --- | --- | --- |
 | 2026-09-06 | *(groundwork — not a section)* | Screenshot harness (`tests/screenshots.spec.ts`, 81 baseline captures at 3 breakpoints); full site inventory; Services audit; experience plan; this workflow | — | Dataset unseeded (`plan 1.4`) — **resolved 2026-09-07** |
 | 2026-09-07 | *(groundwork — not a section)* | **Dataset seeded** (`plan 1.4` done); Airtable typecast fix + live end-to-end test; empty route dispositions (inventory §8) | — | `'Portrait · Core'` vs Airtable's `'Portrait · Starter'` needs a naming decision |
+| 2026-09-07 | Cleanup | Baselines PNG→JPEG (32.5MB→11.3MB); **`/paths` and `/review` deleted**; homepage overview `". . ."` fixed in Sanity | `/paths`, `/review`, PathSteps, ReviewDeck, `learningPath` schema, 2 queries, 21.2MB of PNG | Naming decision above; `/glossary` and `/library` still to fill |
 
 ---
 
@@ -103,3 +104,32 @@ sure yet") and the linked client `recTdiGjp45DmLHY4`. Two real emails were sent 
 
 **Next session should do first:** the naming decision above, then inventory §8 — fill `/glossary`
 (~3 h, best ratio on the site) and delete `/paths` and `/review`.
+
+### 2026-09-07 — Cleanup before the blog section
+
+**Baselines are JPEG now.** 32.5MB → 11.3MB at quality 82, 65% smaller, and
+`tests/screenshots.spec.ts` emits JPEG directly. This removes the four-way commit split the PNG
+baseline needed: the remote rejects a single push above roughly 14MB.
+
+Worth knowing if you ever revisit the format: **4:4:4 chroma subsampling produced files larger than
+the source PNGs** (551KB vs 526KB for `services-njit-off` at 390) — flat dark UI compresses better
+as PNG than as high-fidelity JPEG. The 4:2:0 default is both smaller and visually identical here,
+because the site is light text on a dark ground and subsampling only touches colour, not luminance.
+Verified by cropping at native resolution, not by eyeballing a downscaled full-page image: a
+390×760 crop keeps the 9px mono product list and the 8px uppercase caption readable.
+
+**`/paths` and `/review` are gone** (`f72b535`), per inventory §8. 25 files, −1,527 lines. `lib/anki.ts`
+stayed — the per-article export is used by the article page and `LearningBlocks` and is independent
+of the deck.
+
+Two leftovers, both harmless and both deliberate: existing `knowledgePages` documents keep orphaned
+`paths` and `review` fields in the dataset (the schema no longer declares them, so Studio hides them
+and nothing queries them), and inventory §1–2 still list all nine routes because they are a
+point-in-time record of 6 September.
+
+**Homepage overview fixed** — `". . ."` → `"."`, patched in Sanity, no code change. Production took
+longer than the ~72s the earlier test saw; `X-Nextjs-Stale-Time` is 300, so allow up to 5 minutes
+before concluding a content change has not landed.
+
+**Next session should do first:** the `'Portrait · Core'` / `'Portrait · Starter'` naming decision,
+then the blog section — `/glossary` is the best-ratio content work on the site (~3 h).
