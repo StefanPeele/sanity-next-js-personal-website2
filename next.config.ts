@@ -10,16 +10,16 @@ const CSP = [
   "frame-ancestors 'self'",
   "object-src 'none'",
   "upgrade-insecure-requests",
-  // Next.js inline runtime + Vercel analytics/insights + giscus comments. Sanity Studio
+  // Next.js inline runtime + Vercel analytics/insights. Sanity Studio
   // (/studio) needs eval; keep 'unsafe-eval' until the studio moves to its own origin.
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://vercel.live https://giscus.app https://core.sanity-cdn.com",
-  // Tailwind/inline style attributes. Fonts are self-hosted by next/font; the Google Fonts hosts stay for giscus themes.
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://giscus.app",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://vercel.live https://core.sanity-cdn.com",
+  // Tailwind/inline style attributes. Fonts are self-hosted by next/font.
+  "style-src 'self' 'unsafe-inline'",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://cdn.sanity.io https://*.sanity.io https://avatars.githubusercontent.com https://images.unsplash.com https://vercel.com https://vercel.live",
   "media-src 'self' https://cdn.sanity.io",
-  "connect-src 'self' https://*.sanity.io wss://*.sanity.io https://*.api.sanity.io https://vitals.vercel-insights.com https://va.vercel-scripts.com https://vercel.live wss://ws-us3.pusher.com https://giscus.app https://api.github.com",
-  "frame-src 'self' https://giscus.app https://vercel.live https://*.sanity.io https://calendly.com",
+  "connect-src 'self' https://*.sanity.io wss://*.sanity.io https://*.api.sanity.io https://vitals.vercel-insights.com https://va.vercel-scripts.com https://vercel.live wss://ws-us3.pusher.com https://api.github.com",
+  "frame-src 'self' https://vercel.live https://*.sanity.io https://calendly.com",
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   ...(process.env.CSP_REPORT_URI ? [`report-uri ${process.env.CSP_REPORT_URI}`] : []),

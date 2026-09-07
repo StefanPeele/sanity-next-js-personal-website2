@@ -15,7 +15,9 @@ export const SITE = {
   bookingEmail: 'bookings@stefanpeele.com',
   handles: {
     github: 'https://github.com/StefanPeele',
-    gitbook: 'https://stefs-documentation.gitbook.io/stefs-documentation-docs/',
+    // Cleared: docs are moving to MkDocs. Set settings.gitbook in Studio to the new
+    // URL and the footer "Documentation" link comes back automatically.
+    gitbook: '',
     instagram: 'https://instagram.com/stefs.lens',
   },
   /**

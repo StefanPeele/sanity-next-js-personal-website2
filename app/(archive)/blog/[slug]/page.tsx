@@ -20,7 +20,6 @@ import { SeriesBanner } from '@/components/blog/SeriesBanner'
 import { Checkpoint } from '@/components/blog/Checkpoint'
 import { BacklinksSection } from '@/components/blog/Backlinks'
 import { AskArticle } from '@/components/blog/AskArticle'
-import { Comments } from '@/components/blog/Comments'
 import { getCopy, getSettings, getTaxonomy } from '@/lib/cms/loaders'
 import { DEFAULT_ARTICLE_UI } from '@/lib/cms/defaults/articleUi'
 import { SITE, absoluteUrl, articleTypeMeta } from '@/lib/site'
@@ -226,8 +225,6 @@ export default async function BlogPostPage({ params }: Props) {
             <BacklinksSection backlinks={post.backlinks} heading={B.backlinksHeading} />
 
             {askEnabled && <AskArticle slug={slug} heading={B.askHeading} placeholder={B.askPlaceholder} buttonLabel={B.askButton} />}
-
-            <Comments term={slug} heading={B.commentsHeading} />
 
             <div className="mt-16" data-print-hide>
               <NewsletterForm source={`article:${slug}`} copy={settings.newsletter} />
