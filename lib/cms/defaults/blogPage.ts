@@ -19,7 +19,6 @@ export const DEFAULT_BLOG_PAGE = {
     latestLabel: 'Latest',
     seriesLabel: 'Series',
     readLabel: 'Read',
-    noTopics: 'No topics yet',
   },
   referenceLinks: [
     { label: 'OSI model reference', kind: 'internal', path: '/blog/osi-model', icon: 'layers' },
@@ -29,9 +28,9 @@ export const DEFAULT_BLOG_PAGE = {
     { label: 'Glossary', kind: 'internal', path: '/glossary', icon: 'type' },
     { label: 'Series', kind: 'internal', path: '/blog/series', icon: 'list-ordered' },
   ] as NavLink[],
-  seriesRail: { enabled: true, heading: 'Series', ctaLabel: 'All series', ctaHref: '/blog/series', lede: '', emptyState: '' },
-  readingStrip: { enabled: true, heading: 'Currently reading', ctaLabel: 'Library', ctaHref: '/library', lede: '', emptyState: '' },
-  notesStrip: { enabled: true, heading: 'Recently tended notes', ctaLabel: 'Garden', ctaHref: '/garden', lede: '', emptyState: '' },
+  seriesRail: { enabled: true, heading: 'Series', ctaLabel: 'All series', ctaHref: '/blog/series' },
+  readingStrip: { enabled: true, heading: 'Currently reading', ctaLabel: 'Library', ctaHref: '/library' },
+  notesStrip: { enabled: true, heading: 'Recently tended notes', ctaLabel: 'Garden', ctaHref: '/garden' },
   list: {
     heading: 'All posts',
     filterLabels: { lane: 'Type', category: 'Topic', tag: 'Tag', sort: 'Sort' },

@@ -20,12 +20,12 @@ export default defineType({
     obj('directory', 'Directory panel', [
       defineField({ name: 'enabled', title: 'Show the directory panel', type: 'boolean', initialValue: true }),
       str('topicsHeading', 'Topics heading'), str('toolsHeading', 'Explore heading'), str('statsHeading', 'Stats heading'),
-      str('totalLabel', 'Posts label'), str('latestLabel', 'Latest label'), str('seriesLabel', 'Series label'), str('readLabel', 'Read label'), str('noTopics', 'No topics text'),
+      str('totalLabel', 'Posts label'), str('latestLabel', 'Latest label'), str('seriesLabel', 'Series label'), str('readLabel', 'Read label'),
     ]),
     navLinksField('referenceLinks', 'Explore links', 'Shown in the directory panel. Pick an icon on each.'),
-    defineField({ name: 'seriesRail', title: 'Series rail', type: 'sectionCopy' }),
-    defineField({ name: 'readingStrip', title: 'Currently reading strip', type: 'sectionCopy' }),
-    defineField({ name: 'notesStrip', title: 'Recently tended strip', type: 'sectionCopy' }),
+    obj('seriesRail', 'Series rail', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),
+    obj('readingStrip', 'Currently reading strip', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),
+    obj('notesStrip', 'Recently tended strip', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),
     obj('list', 'Post list', [
       str('heading', 'Heading'),
       obj('filterLabels', 'Filter labels', [str('lane', 'Type'), str('category', 'Topic'), str('tag', 'Tag'), str('sort', 'Sort')]),
