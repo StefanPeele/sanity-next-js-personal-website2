@@ -3,11 +3,10 @@
 import { useArticle } from '@/components/article/ArticleProvider'
 import { ReaderMenu, type ReaderMenuProps } from '@/components/article/ReaderMenu'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
+import { FOCUS } from '@/lib/ui'
 // components/article/ArticleToc.tsx — the one table of contents.
 // Desktop: sticky sidebar (rendered by the page in the right column).
 // Mobile: a <details> list under the header. Both carry the reader menu button.
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 type Props = { copy: ArticleUiCopy; menu: ReaderMenuProps; variant: 'sidebar' | 'mobile' }
 

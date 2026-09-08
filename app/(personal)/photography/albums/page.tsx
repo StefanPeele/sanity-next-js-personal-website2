@@ -7,13 +7,12 @@ import Link from 'next/link'
 import { getCopy } from '@/lib/cms/loaders'
 import { personalPagesQuery } from '@/sanity/lib/queries-services'
 import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
+import { FOCUS } from '@/lib/ui'
 
 export async function generateMetadata(): Promise<Metadata> {
   const a = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).photography.albums
   return { title: a.title, description: a.metaDescription }
 }
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default async function ArchivesPage() {
   const [{ data: galleries }, copy] = await Promise.all([

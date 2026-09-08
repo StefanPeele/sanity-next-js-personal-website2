@@ -13,6 +13,7 @@ import { notFound } from 'next/navigation'
 import { getCopy } from '@/lib/cms/loaders'
 import { personalPagesQuery } from '@/sanity/lib/queries-services'
 import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
+import { FOCUS } from '@/lib/ui'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -39,8 +40,6 @@ export async function generateStaticParams() {
   const data = await client.fetch(slugsByTypeQuery, { type: 'gallery' })
   return data.filter((d) => !!d.slug).map((d) => ({ slug: d.slug as string }))
 }
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default async function AlbumPage({ params }: Props) {
   const copy = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).photography.gallery

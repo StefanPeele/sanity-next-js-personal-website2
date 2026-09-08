@@ -7,10 +7,9 @@ import { useReadAloud } from '@/components/article/useReadAloud'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 import { clearBookmark, readBookmark, writeBookmark } from '@/lib/articleStorage'
 import { ARTICLE_THEMES, ARTICLE_WIDTHS, FONT_SIZES, THEME_OPTIONS } from '@/lib/articleThemeStyles'
+import { FOCUS } from '@/lib/ui'
 // components/article/ReaderMenu.tsx — the one reader-settings control.
 // Popover with theme, text size, width, accessibility, share/export, read-aloud, saved place.
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export type ReaderMenuProps = {
   copy: ArticleUiCopy['readerMenu']

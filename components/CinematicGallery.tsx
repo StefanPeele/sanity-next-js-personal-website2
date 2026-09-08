@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import { FOCUS } from '@/lib/ui'
 
 export interface GalleryPhoto {
   _id: string
@@ -33,7 +34,6 @@ interface CinematicGalleryProps {
   developing?: boolean
 }
 
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
 function lightboxSrc(url: string): string {

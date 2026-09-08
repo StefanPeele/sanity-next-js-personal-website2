@@ -14,6 +14,7 @@ import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPag
 import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { navHref } from '@/lib/cms/defaults/navigation'
 import { Icon } from '@/lib/cms/icons'
+import { FOCUS } from '@/lib/ui'
 // components/blog/BlogDirectory.tsx
 // Directory + filters + grid for /blog. Filters live in the URL:
 //   ?category=  ?lane=  ?tag=  ?sort=newest|oldest|longest
@@ -37,7 +38,6 @@ interface BlogDirectoryProps {
 type Sort = 'newest' | 'oldest' | 'longest'
 
 const READ_POSTS_KEY = 'sp_read_posts'
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 function getReadPosts(): Set<string> {
   try {

@@ -6,8 +6,7 @@ import { BookOpen, ExternalLink, GitFork, Star } from 'lucide-react'
 import { FaGithub } from 'react-icons/fa'
 import { formatDate } from '@/lib/dates'
 import type { RepoMeta } from '@/lib/github'
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
+import { FOCUS } from '@/lib/ui'
 
 interface ProjectLinksProps {
   title?: string | null

@@ -12,6 +12,7 @@ import { getCopy } from '@/lib/cms/loaders'
 import { personalPagesQuery } from '@/sanity/lib/queries-services'
 import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 import { getSettings } from '@/lib/cms/loaders'
+import { FOCUS } from '@/lib/ui'
 
 export async function generateMetadata(): Promise<Metadata> {
   const h = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).resume.header
@@ -20,8 +21,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 type Skill = ResumeQueryResult['skills'][number]
 type Cert = ResumeQueryResult['certifications'][number]
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 const LEVEL: Record<NonNullable<Skill['level']>, { label: string; dots: number }> = {
   learning: { label: 'Learning', dots: 1 },

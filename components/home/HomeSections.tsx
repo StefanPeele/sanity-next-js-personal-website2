@@ -14,8 +14,7 @@ import type { HomeSection } from '@/lib/cms/defaults/home'
 import type { TaxonomyData } from '@/lib/cms/defaults/taxonomy'
 import type { SiteSettings } from '@/lib/cms/loaders'
 import type { HomeIntelQueryResult, HomePageQueryResult } from '@/sanity.types'
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
+import { FOCUS } from '@/lib/ui'
 
 const pt: PortableTextComponents = {
   marks: {

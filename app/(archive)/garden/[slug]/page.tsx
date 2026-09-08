@@ -16,12 +16,11 @@ import { readingTime, portableTextToPlain } from '@/lib/reading'
 import { absoluteUrl, articleTypeMeta, SITE } from '@/lib/site'
 import type { GardenNote } from '@/components/garden/types'
 import { Icon } from '@/lib/cms/icons'
+import { FOCUS } from '@/lib/ui'
 // app/(archive)/garden/[slug]/page.tsx
 // A single garden note. Body rendered on the server with [[wiki links]] resolved.
 
 type Params = Promise<{ slug: string }>
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export async function generateStaticParams() {
   const slugs = await client.fetch(noteSlugsQuery)

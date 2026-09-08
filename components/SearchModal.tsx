@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, usePathname } from 'next/navigation'
 import { searchSite, type SearchGroup, type SearchResult, type SearchType } from '@/app/actions/search'
 import { DEFAULT_NAVIGATION, navHref, type NavLink } from '@/lib/cms/defaults/navigation'
+import { FOCUS } from '@/lib/ui'
 // components/SearchModal.tsx
 // Cmd/Ctrl+K site search. Grouped results with type chips, keyboard navigation across
 // groups, dialog semantics + focus trap, closes on route change, recent searches in
 // localStorage, quick links when empty.
 
 const RECENT_KEY = 'sp_recent_searches'
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 const TYPE_CHIP: Record<SearchType, { label: string; className: string }> = {
   post: { label: 'Post', className: 'text-amber-300 border-amber-400/30' },

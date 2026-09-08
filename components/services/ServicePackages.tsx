@@ -13,13 +13,12 @@ import {
 } from '@/lib/pricing'
 import { DEFAULT_SERVICES_PAGE, type ServicesPageCopy } from '@/lib/cms/defaults/servicesPage'
 import { Icon } from '@/lib/cms/icons'
+import { FOCUS } from '@/lib/ui'
 
 interface ServicePackagesProps {
   copy?: ServicesPageCopy
   calendlyUrl?: string | null
 }
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 function scrollToInquiry() {
   const el = document.getElementById('inquiry')

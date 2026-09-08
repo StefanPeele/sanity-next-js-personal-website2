@@ -5,8 +5,8 @@
 
 import { useState } from 'react'
 import { contactAction } from '@/app/actions/contact'
+import { FOCUS } from '@/lib/ui'
 
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 const inputClass = `w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-stone-500 focus:outline-none focus:border-white/30 transition-colors ${FOCUS}`
 
 export function ContactForm({ fallbackEmail }: { fallbackEmail: string }) {

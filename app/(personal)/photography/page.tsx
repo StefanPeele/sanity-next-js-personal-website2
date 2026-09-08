@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { getCopy } from '@/lib/cms/loaders'
 import { personalPagesQuery } from '@/sanity/lib/queries-services'
 import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
+import { FOCUS } from '@/lib/ui'
 
 export async function generateMetadata(): Promise<Metadata> {
   const h = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).photography.index.header
@@ -20,7 +21,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const RECENT_LIMIT = 15
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 function categoryKey(slug?: string | null, title?: string | null): string {
   return (slug || slugify(title ?? '')).toLowerCase()

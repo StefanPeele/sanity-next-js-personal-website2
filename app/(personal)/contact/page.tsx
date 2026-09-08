@@ -13,13 +13,12 @@ import { getCopy } from '@/lib/cms/loaders'
 import { personalPagesQuery } from '@/sanity/lib/queries-services'
 import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 import { getSettings } from '@/lib/cms/loaders'
+import { FOCUS } from '@/lib/ui'
 
 export async function generateMetadata(): Promise<Metadata> {
   const h = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).contact.header
   return { title: h.metaTitle || h.title, description: h.metaDescription || h.lede }
 }
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default async function ContactPage() {
   const [{ data: settings }, copy, site] = await Promise.all([sanityFetch({ query: settingsQuery }), getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES).then((c) => c.contact), getSettings()])

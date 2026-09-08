@@ -3,9 +3,8 @@
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { useErrorCopy } from '@/components/ErrorCopyProvider'
+import { FOCUS } from '@/lib/ui'
 // app/error.tsx — route segment error boundary. Copy from Studio via ErrorCopyProvider.
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const copy = useErrorCopy()

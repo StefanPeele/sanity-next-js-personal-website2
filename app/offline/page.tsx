@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { getErrorPages } from '@/lib/cms/loaders'
+import { FOCUS } from '@/lib/ui'
 // app/offline/page.tsx — served by public/sw.js when an article is requested offline and is not
 // cached. Precached on service-worker install, so keep it free of client-only dependencies.
 
@@ -7,8 +8,6 @@ export const metadata: Metadata = {
   title: 'Offline',
   robots: { index: false, follow: false },
 }
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default async function OfflinePage() {
   const { offline } = await getErrorPages()

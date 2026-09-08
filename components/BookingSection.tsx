@@ -9,6 +9,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { submitBooking } from '@/app/actions/booking'
 import { ADD_ONS, NOT_SURE_ID, PACKAGES, packageLabel, type PricingAddOn } from '@/lib/pricing'
 import { DEFAULT_SERVICES_PAGE } from '@/lib/cms/defaults/servicesPage'
+import { FOCUS } from '@/lib/ui'
 
 interface BookingSectionProps {
   copy?: typeof DEFAULT_SERVICES_PAGE.booking
@@ -21,7 +22,6 @@ interface BookingSectionProps {
   anchorId?: string
 }
 
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 const inputClass = `w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-stone-500 focus:outline-none focus:border-white/30 transition-colors ${FOCUS}`
 
 function AddOnItem({ addon, checked, onToggle }: { addon: PricingAddOn; checked: boolean; onToggle: () => void }) {

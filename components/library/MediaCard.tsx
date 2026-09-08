@@ -4,11 +4,10 @@ import { formatDate } from '@/lib/dates'
 import type { LibraryItem } from './types'
 import { MEDIA_ICON_FALLBACK, MEDIA_ICONS, MEDIA_LABELS, RATING_CONFIG } from './types'
 import { Icon } from '@/lib/cms/icons'
+import { FOCUS } from '@/lib/ui'
 // components/library/MediaCard.tsx
 // One library entry. Renders the one-sentence take, key idea, pull quote,
 // highlights (disclosure), rating, progress and the posts/notes it influenced.
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?: 'large' | 'normal' }) {
   const ratingConfig = item.rating ? RATING_CONFIG[item.rating] : null

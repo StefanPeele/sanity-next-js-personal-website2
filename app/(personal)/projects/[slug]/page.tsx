@@ -21,13 +21,12 @@ import type {Image as SanityImage} from 'sanity'
 import { getCopy } from '@/lib/cms/loaders'
 import { personalPagesQuery } from '@/sanity/lib/queries-services'
 import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
+import { FOCUS } from '@/lib/ui'
 
 type Props = {params: Promise<{slug: string}>}
 
 type RelatedPost = {title: string | null; slug: string | null; articleType: string | null}
 type RelatedNote = {title: string | null; slug: string | null; status: string | null}
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export async function generateMetadata({params}: Props, parent: ResolvingMetadata): Promise<Metadata> {
   const {slug} = await params

@@ -5,11 +5,11 @@ import { MediaCard } from './MediaCard'
 import { yearOf } from '@/lib/dates'
 import { MEDIA_ICON_FALLBACK, MEDIA_ICONS, MEDIA_LABELS, STATUS_LABELS, type LibraryItem, type LibraryStatus, type MediaType } from './types'
 import { Icon } from '@/lib/cms/icons'
+import { FOCUS } from '@/lib/ui'
 // components/library/LibraryClient.tsx
 // Filters (media type + status), then the shelves: reading now, reference shelf,
 // finished by year, on deck, abandoned.
 
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 const STATUS_ORDER: LibraryStatus[] = ['current', 'reference', 'finished', 'want-to-read', 'abandoned']
 
 function chip(active: boolean) {

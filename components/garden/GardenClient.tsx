@@ -9,6 +9,7 @@ import { GrowthTimeline } from './GrowthTimeline'
 import { formatDate } from '@/lib/dates'
 import type { GardenNoteView, GardenTag } from './types'
 import { Icon } from '@/lib/cms/icons'
+import { FOCUS } from '@/lib/ui'
 // components/garden/GardenClient.tsx
 // Interactive garden index: status legend, growth timeline, recently tended,
 // search, tag filter (synced to ?tag=), and expandable note cards whose titles
@@ -19,8 +20,6 @@ interface GardenClientProps {
   tags: GardenTag[]
   recentlyTended: GardenNoteView[]
 }
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 // ── Note card ─────────────────────────────────────────────────────
 function NoteCard({

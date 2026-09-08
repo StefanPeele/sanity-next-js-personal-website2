@@ -2,14 +2,13 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getErrorPages } from '@/lib/cms/loaders'
 import { navHref } from '@/lib/cms/defaults/navigation'
+import { FOCUS } from '@/lib/ui'
 // app/not-found.tsx — copy from Studio → Site → Error pages.
 
 export const metadata: Metadata = {
   title: 'Page not found',
   robots: { index: false, follow: false },
 }
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default async function NotFound() {
   const { notFound } = await getErrorPages()

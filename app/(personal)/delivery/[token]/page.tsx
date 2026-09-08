@@ -14,6 +14,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { formatDate } from '@/lib/dates'
 import { SITE } from '@/lib/site'
+import { FOCUS } from '@/lib/ui'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Your delivery', robots: { index: false, follow: false } }
@@ -21,7 +22,6 @@ export const metadata: Metadata = { title: 'Your delivery', robots: { index: fal
 type Props = { params: Promise<{ token: string }> }
 
 const STEPS = ['Inquiry', 'Confirmed', 'Editing', 'Delivered', 'Complete']
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 function normalizeStatus(raw: string): string {
   const s = raw.replace(/[^\p{L}\s]/gu, '').trim().toLowerCase()

@@ -11,13 +11,12 @@ import { toPlainText } from 'next-sanity'
 import { getCopy } from '@/lib/cms/loaders'
 import { personalPagesQuery } from '@/sanity/lib/queries-services'
 import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
+import { FOCUS } from '@/lib/ui'
 
 export async function generateMetadata(): Promise<Metadata> {
   const h = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).projects.header
   return { title: h.metaTitle || h.title, description: h.metaDescription || h.lede }
 }
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export default async function ProjectsIndexRoute() {
   const copy = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).projects

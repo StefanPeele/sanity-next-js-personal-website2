@@ -5,9 +5,8 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { SearchModal } from '@/components/SearchModal'
 import { DEFAULT_NAVIGATION, navHref, type NavigationData } from '@/lib/cms/defaults/navigation'
+import { FOCUS } from '@/lib/ui'
 // components/Navbar.tsx — navigation comes from Studio → Site → Navigation (with code defaults).
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export function Navbar({ nav = DEFAULT_NAVIGATION }: { nav?: NavigationData }) {
   const pathname = usePathname()

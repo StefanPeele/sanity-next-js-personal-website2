@@ -6,10 +6,9 @@ import { NewsletterForm } from '@/components/NewsletterForm'
 import { DEFAULT_NAVIGATION, navHref, type NavigationData } from '@/lib/cms/defaults/navigation'
 import type { SiteSettings } from '@/lib/cms/loaders'
 import { SITE } from '@/lib/site'
+import { FOCUS } from '@/lib/ui'
 // components/Footer.tsx — server component. Copy from Studio → Site → Identity & SEO → Footer.
 // Keeps the IndieWeb h-card and rel="me" links. No telemetry, no watermark.
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 type NetworkLink = { name: string; href: string; icon: React.ReactNode; me?: boolean; email?: boolean }
 

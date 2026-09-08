@@ -31,14 +31,13 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { PortableTextBlock } from 'next-sanity'
+import { FOCUS } from '@/lib/ui'
 // app/(archive)/blog/[slug]/page.tsx
 // Layout: progress bar → text header → [reading column | sticky TOC]. One TOC, one settings menu.
 
 type Props = { params: Promise<{ slug: string }> }
 type Post = NonNullable<PostBySlugQueryResult>
 type Tag = { _id?: string; title: string | null; slug: string | null }
-
-const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
 
 export async function generateStaticParams() {
   const slugs = await client.fetch(postSlugsQuery)
