@@ -94,7 +94,7 @@ export function CustomPortableText({
     // ── Block-level elements ───────────────────────────────────────
     block: {
       normal: ({ children }) => (
-        <p className={paragraphClasses ?? `mb-6 leading-[1.85] text-stone-300 ${bodyText}`}>{children}</p>
+        <p className={paragraphClasses ?? `mb-6 leading-[1.7] text-stone-300 ${bodyText}`}>{children}</p>
       ),
       h1: ({ children }) => (
         <h1 className="mt-16 mb-6 font-serif text-4xl md:text-5xl font-bold text-white leading-tight tracking-tight">
@@ -104,7 +104,7 @@ export function CustomPortableText({
       h2: ({ children, value: v }) => {
         const p = headingProps(v?._key)
         return (
-          <h2 {...p} className="group mt-16 mb-5 font-serif text-3xl md:text-[2rem] font-semibold text-white leading-tight tracking-tight border-b border-white/5 pb-4 scroll-mt-28">
+          <h2 {...p} className="group mt-20 mb-5 font-serif text-[32px] md:text-[38px] font-semibold text-white leading-tight tracking-tight scroll-mt-28">
             {children}
             {p.id && <HeadingAnchor id={p.id} />}
           </h2>
@@ -113,7 +113,7 @@ export function CustomPortableText({
       h3: ({ children, value: v }) => {
         const p = headingProps(v?._key)
         return (
-          <h3 {...p} className="group mt-10 mb-4 font-serif text-2xl md:text-[1.6rem] font-semibold text-white leading-snug scroll-mt-28">
+          <h3 {...p} className="group mt-12 mb-4 font-serif text-[26px] md:text-[30px] font-semibold text-white leading-snug scroll-mt-28">
             {children}
             {p.id && <HeadingAnchor id={p.id} />}
           </h3>
@@ -122,14 +122,17 @@ export function CustomPortableText({
       h4: ({ children, value: v }) => {
         const p = headingProps(v?._key)
         return (
-          <h4 {...p} className="group mt-8 mb-3 font-serif text-xl font-semibold text-stone-200 leading-snug scroll-mt-28">
+          <h4 {...p} className="group mt-9 mb-3 font-serif text-[22px] md:text-[24px] font-semibold text-stone-200 leading-snug scroll-mt-28">
             {children}
             {p.id && <HeadingAnchor id={p.id} />}
           </h4>
         )
       },
       blockquote: ({ children }) => (
-        <blockquote className="my-10 pl-6 border-l-2 border-stone-600 font-serif italic text-xl text-stone-400 leading-relaxed">
+        // A pull quote that recedes is backwards: this was text-stone-400 against a
+        // stone-300 body, so it read dimmer than the prose it was meant to lift out of.
+        // The left rule went with it — the space now does that work.
+        <blockquote className="my-14 font-serif italic text-[1.15em] text-stone-200 leading-relaxed">
           {children}
         </blockquote>
       ),
@@ -200,7 +203,7 @@ export function CustomPortableText({
     types: {
       image: ({ value: v }: { value: Image & { alt?: string; caption?: string; keepColor?: boolean } }) => (
         <figure
-          className="my-10 rounded-xl overflow-hidden border border-white/5 shadow-2xl bg-[#0a0a0a]"
+          className="my-16 rounded-xl overflow-hidden border border-white/5 shadow-2xl bg-[#0a0a0a]"
           {...(v?.keepColor === false ? { 'data-desaturate': '' } : {})}
         >
           <ImageBox

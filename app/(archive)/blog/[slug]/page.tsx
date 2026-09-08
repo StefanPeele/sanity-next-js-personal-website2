@@ -198,7 +198,7 @@ export default async function BlogPostPage({ params }: Props) {
               </aside>
             )}
 
-            <article data-article className="leading-[1.85]">
+            <article data-article className="leading-[1.7]">
               {body.length > 0 ? <CustomPortableText value={body} article /> : <p className="italic text-stone-400 text-center py-12">{B.noContent}</p>}
             </article>
 

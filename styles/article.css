@@ -21,8 +21,13 @@
 }
 
 [data-article] p {
-  line-height: 1.85;
+  /* 1.85 was set against 15px prose. At 19px it computes to a 35px line box, loose enough
+     that the paragraph stops reading as one block. 1.70 gives 32px, between Linear (1.60)
+     and Maggie Appleton (2.00). */
+  line-height: 1.7;
   letter-spacing: 0.01em;
+  /* Lets long technical nouns break rather than leaving a ragged hole in the line. */
+  hyphens: auto;
 }
 
 /* Paragraph rhythm. styles/index.css has a global `p:not(:last-child){margin-bottom:.875rem}`
@@ -30,13 +35,16 @@
    CustomPortableText puts on every paragraph has never applied. 14px against a 27.75px line
    box meant paragraphs did not visually separate. (0,2,1) here wins it back. */
 [data-article] p:not(:last-child) {
-  margin-bottom: 1.6em;
+  /* 1.5em matches the measured field: Craig Mod 30px on 20px, Maggie Appleton 33px on 22px. */
+  margin-bottom: 1.5em;
 }
 
 /* Reading width — set on <main id="content"> by the toolbar.
-   Standard was 48rem, which measured 91 characters per line at 15px prose (optimal is 60–75).
-   These land at roughly 61 / 68 / 83 characters. */
-main#content[data-width='narrow']   { max-width: 32rem; }
+   Measured on production at the 19px default: 8.86px per character, so these land at
+   61 / 65 / 79 characters. Standard sits close to the 66-character optimum and is the
+   number to protect; the proposal's 40rem was calculated when prose was still 15px and
+   would push standard to 72 for no gain, so only narrow moved (32rem was 58, under 60). */
+main#content[data-width='narrow']   { max-width: 34rem; }
 main#content[data-width='standard'] { max-width: 36rem; }
 main#content[data-width='wide']     { max-width: 44rem; }
 
@@ -147,7 +155,6 @@ main#content[data-width='wide']     { max-width: 44rem; }
 [data-article].theme-terminal h2,
 [data-article].theme-terminal h3,
 [data-article].theme-terminal h4 { color: #00ff41; font-family: var(--font-mono), monospace; letter-spacing: 0.02em; }
-[data-article].theme-terminal h2 { border-bottom-color: rgba(0, 255, 65, 0.12); }
 [data-article].theme-terminal strong { color: #00ff41; font-weight: 700; }
 [data-article].theme-terminal em { color: rgba(0, 255, 65, 0.7); font-style: italic; }
 [data-article].theme-terminal .article-link { color: #00ff41; background-image: linear-gradient(#00ff41, #00ff41); }
@@ -158,7 +165,7 @@ main#content[data-width='wide']     { max-width: 44rem; }
   color: #00ff41 !important;
   font-family: var(--font-mono), monospace !important;
 }
-[data-article].theme-terminal blockquote { border-left-color: rgba(0, 255, 65, 0.3); color: rgba(0, 255, 65, 0.6); }
+[data-article].theme-terminal blockquote { color: rgba(0, 255, 65, 0.75); }
 [data-article].theme-terminal li { color: rgba(0, 255, 65, 0.8); }
 [data-article].theme-terminal ::selection { background-color: rgba(0, 255, 65, 0.25); color: #0d1117; }
 
@@ -239,3 +246,47 @@ html.sp-reduced-motion *::after {
   main#content { max-width: none !important; }
   pre { white-space: pre-wrap !important; word-break: break-word; border: 1px solid #cccccc; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   READER MENU — entrance, edge fade, scrim
+   The panel used to appear with no transition and no origin, so it read as a jump
+   cut rather than something opened from the chip. Both keyframes are zeroed by the
+   prefers-reduced-motion block in styles/index.css and by html.sp-reduced-motion.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Below lg the panel is a bottom sheet: it rises from the bottom edge. */
+@keyframes reader-menu-sheet-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* At lg it is a dropdown: it scales open from the chip that owns it. */
+@keyframes reader-menu-drop-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.reader-menu-panel {
+  animation: reader-menu-sheet-in 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* The panel scrolls, and it was clipping mid-glyph at its bottom edge with no hint
+     that anything followed. Fading the last 2rem reads as "more below". */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2rem), transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 calc(100% - 2rem), transparent 100%);
+}
+@media (min-width: 1024px) {
+  .reader-menu-panel {
+    transform-origin: top right;
+    animation-name: reader-menu-drop-in;
+  }
+}
+
+/* Mobile only: the sheet floated over fully legible body text with nothing behind it,
+   so it never read as modal. */
+.reader-menu-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  background: rgba(0, 0, 0, 0.4);
+  animation: reader-menu-fade-in 0.15s ease-out both;
+}
+@keyframes reader-menu-fade-in { from { opacity: 0 } to { opacity: 1 } }
+@media (min-width: 1024px) { .reader-menu-scrim { display: none } }

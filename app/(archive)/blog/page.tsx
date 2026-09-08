@@ -78,7 +78,10 @@ export default async function BlogPage() {
             {copy.header.lede && <p className="mt-4 max-w-2xl font-sans text-base text-stone-400 leading-relaxed">{copy.header.lede}</p>}
           </div>
           <div className="font-sans text-sm text-stone-400 text-right">
-            {totalCount} {copy.statsLabels.posts} · {series.length} {copy.statsLabels.series}<br />
+            {/* The series count is only worth showing once there is one. "0 series" advertised
+                an empty shelf next to the post count. */}
+            {totalCount} {copy.statsLabels.posts}
+            {series.length > 0 && <> · {series.length} {copy.statsLabels.series}</>}<br />
             {copy.statsLabels.latest}: {latestDate ?? '—'}
           </div>
         </header>

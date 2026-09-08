@@ -28,16 +28,14 @@ export function SectionBreak({ value, id, words }: SectionBreakProps) {
   const dur = (d: number) => (reduced ? 0 : d)
 
   if (style === 'subtle') {
+    // A short centred rule with real air around it — the pacing device Craig Mod and
+    // Maggie Appleton both use to mark a beat. It replaced two full-width flanking rules
+    // and a 9px "Next" eyebrow: the rules read as a divider rather than a pause, and the
+    // eyebrow was below the 12px floor.
     return (
-      <div className="my-16 flex items-center gap-6" role="separator" aria-label={`Next: ${title}`}>
-        <div className="flex-1 h-px bg-white/[0.08]" />
-        <div className="text-center">
-          <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 block mb-1">
-            Next
-          </span>
-          <span className="font-serif text-stone-400 text-base">{title}</span>
-        </div>
-        <div className="flex-1 h-px bg-white/[0.08]" />
+      <div className="mt-20 mb-[4.5rem] text-center" role="separator" aria-label={title ? `Next: ${title}` : 'Section break'}>
+        <div className="mx-auto h-px w-24 bg-white/[0.18]" />
+        {title && <p className="mt-7 font-serif italic text-stone-300 text-[1.05em]">{title}</p>}
       </div>
     )
   }
