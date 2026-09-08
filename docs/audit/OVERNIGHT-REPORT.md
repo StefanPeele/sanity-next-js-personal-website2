@@ -14,18 +14,23 @@ No application code was changed. Everything below is capture, inventory, researc
 
 Marked so you can overrule them.
 
-1. **Screenshot compression.** The raw capture ran to ~1,200 frames / ~90MB, well past the ~14MB
-   push ceiling this repo has hit before. You said to compress if it approached the limit, so I
-   re-encoded the whole tree with mozjpeg at q58 and capped width at 1100px, then committed in
-   batches. Detail is preserved for design review; these are not pixel-exact diffs. **Overrule by
-   re-running the capture script with a higher quality if you want archival fidelity.**
+1. **Screenshot compression.** The raw capture ran to **997 frames / 54.6MB**, past the ~14MB push
+   ceiling this repo has hit before. You said to compress if it approached the limit, so I
+   re-encoded the whole tree with mozjpeg at q58 and capped width at 1100px — **54.6MB - 27.7MB**,
+   committed in four batches. Detail is preserved for design review; these are not pixel-exact
+   diffs. **Overrule by re-running `docs/audit/capture-site-inventory.mjs` with a higher `quality`
+   and skipping `docs/audit/compress-captures.mjs`.**
 2. **`/studio` authentication — not attempted past the first step.** See below.
 3. **I did not add anything to `.gitignore`.** No `storageState` file was ever created, so there
    was nothing to ignore. Any future auth artifact should go to the scratchpad, which is outside
    the repo entirely and cannot be committed by accident.
 4. **I treated two of your six listed defects as withdrawn** rather than proposing fixes for them,
    because I had already verified they aren't defects. Details in Part 4.
-5. **Reference set widened beyond your four.** Rauno and Increment turned out to be poor fits for
+5. **I kept the two capture scripts** as `docs/audit/capture-site-inventory.mjs` and
+   `docs/audit/compress-captures.mjs` rather than deleting them as temp files, so the overrule in
+   (1) is actually runnable and the next section audit doesn't rebuild the harness a fourth time.
+   Neither is application code and neither is wired into the build.
+6. **Reference set widened beyond your four.** Rauno and Increment turned out to be poor fits for
    your stated direction; I kept them in the research with reasons rather than dropping them
    silently.
 
@@ -57,7 +62,7 @@ anchor hover, in-body link hover mid-transition, and scrolled sticky chrome.
 | --- | --- | --- |
 | `/paths` | **404** | Still linked from the blog directory panel — see D2 |
 | `/review` | **404** | Same |
-| `/test` | **200** | **New finding (D8).** A publicly reachable test route, indexed-eligible. |
+| `/test` | **200** | **New finding (D8).** A stray Sanity `page` document, not a code route — in the sitemap and crawlable. |
 
 Everything else in the sitemap returns 200. `/blog/feed.xml`, `/blog/feed.json` and `/api/health`
 return 200 and were not screenshotted (non-visual).
@@ -184,7 +189,7 @@ Of the six you listed, **three stand, one is a Studio fix, and two are not defec
 | ~~Post counts~~ | **Withdrawn.** There are exactly 3 `post` documents. `osi-model` is a hand-built route (`app/(archive)/blog/osi-model/page.tsx`), not a post. "3 posts" is the total, "2 posts" is the grid correctly excluding the featured one. Only real issue is that both use the word "posts" — a copy fix. |
 | ~~B6 Lexend~~ | **Withdrawn.** Measured on production: 6 font files requested, Lexend reports `unloaded`. `preload: false` works as documented. |
 | **D7** *(new)* | `SearchModal.tsx:97`. The effect keyed on `[open]` falls through to `triggerRef.current?.focus()` on mount, because `open` starts `false`. Measured: the search button is `document.activeElement` and matches `:focus-visible` on first paint. Consequences: the amber ring is the brightest element above the fold on every page, **and the skip link is bypassed**. Guard with a `hasOpened` ref. Site-wide, not blog-specific. |
-| **D8** *(new)* | `/test` is publicly reachable and returns 200. Delete it or block it in `robots`/middleware. |
+| **D8** *(new)* | `/test` is publicly reachable, returns 200, and is **in the sitemap** with `robots.txt` allowing it. There is no `app/test/` — it is a Sanity `page` document with slug `test`, rendered by the generic `[slug]` route, titled "test". **Studio fix:** delete or unpublish that document. No code change. |
 | **D9** | Multi-line inline code renders as ragged stacked boxes. Drop the background (Craig Mod's approach) or add `box-decoration-break: clone`. The real fix for the `systeminfo` block is content — it should be a fenced code block in Sanity. |
 
 ### Layer 1 — Pacing
@@ -315,8 +320,11 @@ pacing → subtraction → continuity.
 
 **3. "Highly convenient" and "takes its time" are in tension, and convenience has been winning.**
 Not one reference site has a reader menu. One of ten has a TOC, collapsed. You have both plus a
-progress bar, and the article page defines 20 top-level sections of which **12 render for no
-published post**. The reader menu is genuinely good work — the mobile sheet and the high-contrast
+progress bar, and the article page defines 20 top-level sections and I measured how many actually render on
+production for each published post: **6 for the home-lab post, 6 for The Field, 7 for the portfolio
+post.** Absent from all three: TL;DR, prerequisites, checkpoint, objectives, concept cards,
+credibility, backlinks, Ask, read-next, reactions and comments. Read-next in particular is a
+genuinely useful reading feature that is built and never shown. The reader menu is genuinely good work — the mobile sheet and the high-contrast
 mode are the best-built things in the section — but every control is furniture in the reading room.
 
 ---
