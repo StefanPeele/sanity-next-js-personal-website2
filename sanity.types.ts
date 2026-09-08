@@ -491,21 +491,6 @@ export type BlogPage = {
     heading?: string
     readLabel?: string
   }
-  directory?: {
-    enabled?: boolean
-    topicsHeading?: string
-    toolsHeading?: string
-    statsHeading?: string
-    totalLabel?: string
-    latestLabel?: string
-    seriesLabel?: string
-    readLabel?: string
-  }
-  referenceLinks?: Array<
-    {
-      _key: string
-    } & NavLink
-  >
   seriesRail?: {
     heading?: string
     enabled?: boolean
@@ -2360,7 +2345,7 @@ export type ArticleUiQueryResult = {
 
 // Source: sanity/lib/queries-article-ui.ts
 // Variable: blogPageQuery
-// Query: *[_type == "blogPage"][0]{    header{ title, lede, metaTitle, metaDescription },    statsLabels{ posts, series, latest },    featured{ heading, readLabel },    directory{ enabled, topicsHeading, toolsHeading, statsHeading, totalLabel, latestLabel, seriesLabel, readLabel },    "referenceLinks": referenceLinks[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },    list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }  }
+// Query: *[_type == "blogPage"][0]{    header{ title, lede, metaTitle, metaDescription },    statsLabels{ posts, series, latest },    featured{ heading, readLabel },    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },    list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }  }
 export type BlogPageQueryResult = {
   header: {
     title: string | null
@@ -2377,66 +2362,6 @@ export type BlogPageQueryResult = {
     heading: string | null
     readLabel: string | null
   } | null
-  directory: {
-    enabled: boolean | null
-    topicsHeading: string | null
-    toolsHeading: string | null
-    statsHeading: string | null
-    totalLabel: string | null
-    latestLabel: string | null
-    seriesLabel: string | null
-    readLabel: string | null
-  } | null
-  referenceLinks: Array<{
-    _key: string
-    label: string | null
-    kind: 'external' | 'internal' | 'reference' | null
-    url: string | null
-    description: string | null
-    icon:
-      | 'alert-triangle'
-      | 'arrow-down'
-      | 'arrow-left-right'
-      | 'arrow-right'
-      | 'award'
-      | 'book-open'
-      | 'book'
-      | 'camera'
-      | 'check'
-      | 'clipboard-list'
-      | 'diamond'
-      | 'external-link'
-      | 'factory'
-      | 'file-text'
-      | 'gift'
-      | 'git-branch'
-      | 'graduation-cap'
-      | 'layers'
-      | 'leaf'
-      | 'library'
-      | 'lightbulb'
-      | 'link'
-      | 'list-ordered'
-      | 'mail'
-      | 'mic'
-      | 'network'
-      | 'newspaper'
-      | 'rotate-ccw'
-      | 'route'
-      | 'rss'
-      | 'search'
-      | 'settings-2'
-      | 'sparkles'
-      | 'sprout'
-      | 'tree-pine'
-      | 'type'
-      | 'video'
-      | 'wrench'
-      | 'zap'
-      | null
-    newTab: boolean | null
-    path: string | null
-  }> | null
   seriesRail: {
     enabled: boolean | null
     heading: string | null
@@ -5420,7 +5345,7 @@ export type NowQueryResult = {
 declare module '@sanity/client' {
   interface SanityQueries {
     '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },\n    toc{ title, mobileTitle, minutesSuffix },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, share, listen, position },\n      themeLabels{ archive, terminal },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported },\n      bookmarkLabels{ save, saved, resume, clear }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent\n    },\n    credibility{\n      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
-    '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    directory{ enabled, topicsHeading, toolsHeading, statsHeading, totalLabel, latestLabel, seriesLabel, readLabel },\n    "referenceLinks": referenceLinks[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },\n    list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }\n  }\n': BlogPageQueryResult
+    '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },\n    list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }\n  }\n': BlogPageQueryResult
     '\n  *[_type == "knowledgePages"][0]{\n    garden{ header{ title, lede, metaTitle, metaDescription }, stats{ notes, evergreen, tags }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n      note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },\n    library{ header{ title, lede, metaTitle, metaDescription }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) }, filterLabels{ type, status, all, clear } },\n    glossary{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, termsCount },\n    series{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },\n    graph{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },\n      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },\n      linesNote, nodeListLabel, openHint, ariaSummary },\n    osi{ header{ title, lede, metaTitle, metaDescription }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }\n  }\n': KnowledgePagesQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, body, tldr, excerpt\n  }\n': ArticleTextQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, excerpt, articleType, publishedAt,\n    "categories": categories[]->title,\n    "mainImageUrl": mainImage.asset->url,\n    // Words, not characters \u2014 see the note in queries.ts. length() on a string counts characters.\n    "wordCount": length(string::split(pt::text(body), " ")),\n    "series": series->{ title },\n    seriesOrder\n  }\n': ArticleOgQueryResult

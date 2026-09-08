@@ -1,5 +1,4 @@
 // lib/cms/defaults/blogPage.ts — copy and section toggles for /blog.
-import type { NavLink } from './navigation'
 
 export const DEFAULT_BLOG_PAGE = {
   header: {
@@ -10,24 +9,6 @@ export const DEFAULT_BLOG_PAGE = {
   },
   statsLabels: { posts: 'posts', series: 'series', latest: 'Latest' },
   featured: { heading: 'Featured', readLabel: 'Read' },
-  directory: {
-    enabled: true,
-    topicsHeading: 'Topics',
-    toolsHeading: 'Explore',
-    statsHeading: 'At a glance',
-    totalLabel: 'Posts',
-    latestLabel: 'Latest',
-    seriesLabel: 'Series',
-    readLabel: 'Read',
-  },
-  referenceLinks: [
-    { label: 'OSI model reference', kind: 'internal', path: '/blog/osi-model', icon: 'layers' },
-    { label: 'Garden', kind: 'internal', path: '/garden', icon: 'sprout' },
-    { label: 'Knowledge graph', kind: 'internal', path: '/graph', icon: 'network' },
-    { label: 'Library', kind: 'internal', path: '/library', icon: 'library' },
-    { label: 'Glossary', kind: 'internal', path: '/glossary', icon: 'type' },
-    { label: 'Series', kind: 'internal', path: '/blog/series', icon: 'list-ordered' },
-  ] as NavLink[],
   seriesRail: { enabled: true, heading: 'Series', ctaLabel: 'All series', ctaHref: '/blog/series' },
   readingStrip: { enabled: true, heading: 'Currently reading', ctaLabel: 'Library', ctaHref: '/library' },
   notesStrip: { enabled: true, heading: 'Recently tended notes', ctaLabel: 'Garden', ctaHref: '/garden' },

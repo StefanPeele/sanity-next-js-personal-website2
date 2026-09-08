@@ -12,7 +12,6 @@ import { noteStatus } from '@/components/garden/status'
 import type { BlogIndexQueryResult } from '@/sanity.types'
 import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPage'
 import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
-import { navHref } from '@/lib/cms/defaults/navigation'
 import { Icon } from '@/lib/cms/icons'
 import { FOCUS } from '@/lib/ui'
 // components/blog/BlogDirectory.tsx
@@ -28,8 +27,6 @@ interface BlogDirectoryProps {
   mediaTypes?: VocabEntry[]
   posts: DirectoryPost[]
   categories: string[]
-  totalCount: number
-  latestDate: string | null
   series: BlogIndexQueryResult['series']
   currentlyReading: BlogIndexQueryResult['currentlyReading']
   recentNotes: BlogIndexQueryResult['recentNotes']
@@ -63,7 +60,7 @@ function chip(active: boolean) {
   }`
 }
 
-export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, posts, categories, totalCount, latestDate, series, currentlyReading, recentNotes }: BlogDirectoryProps) {
+export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, posts, categories, series, currentlyReading, recentNotes }: BlogDirectoryProps) {
   const L = copy.list
   const mediaLabel = (key?: string | null) => mediaTypes?.find((m) => m.key === key)?.label ?? key ?? ''
   const laneMeta = (key: string) => articleTypeMeta(key, lanes) ?? ARTICLE_TYPES[key as ArticleType]
@@ -99,11 +96,6 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
   const clearAll = useCallback(() => router.replace(pathname, { scroll: false }), [router, pathname])
 
-  const handleDirectoryClick = (cat: string) => {
-    setParam('category', active === cat ? null : cat)
-    setTimeout(() => archiveRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
-  }
-
   const allTags = useMemo(() => {
     const map = new Map<string, { title: string; count: number }>()
     posts.forEach((p) => (p.tags ?? []).forEach((t) => {
@@ -131,96 +123,6 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
   return (
     <>
-      {/* ── Section Directory ──────────────────────────────────────── */}
-      {copy.directory.enabled && <nav
-        aria-label="Directory"
-        className="mb-12 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10 border border-white/15 rounded-lg overflow-hidden"
-        style={{ backgroundColor: 'rgba(20,20,24,0.85)', backdropFilter: 'blur(12px)' }}
-      >
-        {/* Column 1 — Content Pillars */}
-        <div className="p-6">
-          <p className="section-label mb-5 pb-3 border-b border-white/10">{copy.directory.topicsHeading}</p>
-          <ul className="space-y-1">
-            {categories.length > 0 ? categories.map((cat) => (
-              <li key={cat}>
-                <button
-                  type="button"
-                  onClick={() => handleDirectoryClick(cat)}
-                  aria-pressed={active === cat}
-                  className={`w-full text-left font-sans text-xs transition-all duration-200 flex items-center justify-between px-3 py-2.5 rounded-md border group ${FOCUS} ${
-                    active === cat
-                      ? 'text-white bg-white/15 border-white/30 shadow-sm'
-                      : 'text-stone-300 hover:text-white hover:bg-white/[0.08] border-transparent hover:border-white/15'
-                  }`}
-                >
-                  <span className="flex items-center gap-2.5">
-                    <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 transition-all ${active === cat ? 'bg-white scale-125' : 'bg-stone-500 group-hover:bg-stone-300'}`} aria-hidden="true" />
-                    {cat}
-                  </span>
-                  <span className={`text-[10px] font-mono transition-colors ${active === cat ? 'text-stone-300' : 'text-stone-400 group-hover:text-stone-300'}`}>
-                    {posts.filter((p) => p.categories?.includes(cat)).length}
-                  </span>
-                </button>
-              </li>
-            )) : (
-              <li className="font-mono text-[10px] text-stone-400 px-3 py-2">No categories yet</li>
-            )}
-            {anyFilter && (
-              <li className="pt-3 mt-2 border-t border-white/10">
-                <button type="button" onClick={clearAll} className={`font-sans text-xs text-stone-400 hover:text-white transition-colors flex items-center gap-2 px-3 py-1 rounded-sm ${FOCUS}`}>
-                  <span className="text-xs" aria-hidden="true">✕</span> Clear filters
-                </button>
-              </li>
-            )}
-          </ul>
-        </div>
-
-        {/* Column 2 — Reference Tools */}
-        <div className="p-6">
-          <p className="section-label mb-5 pb-3 border-b border-white/10">{copy.directory.toolsHeading}</p>
-          <ul className="space-y-1">
-            {copy.referenceLinks.map((item) => (
-              <li key={navHref(item) + item.label}>
-                <Link
-                  href={navHref(item)}
-                  className={`group font-sans text-sm text-stone-300 hover:text-white transition-all duration-200 flex items-center justify-between px-3 py-2 rounded-md border border-transparent hover:border-white/15 hover:bg-white/[0.08] ${FOCUS}`}
-                >
-                  <span className="flex items-center gap-2.5">
-                    <span className="w-4 text-stone-400 group-hover:text-white" aria-hidden="true"><Icon name={item.icon} /></span>
-                    {item.label}
-                  </span>
-                  <span className="text-stone-400 group-hover:text-white group-hover:translate-x-0.5 transition-all" aria-hidden="true">→</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Column 3 — Archive Stats */}
-        <div className="p-6">
-          <p className="section-label mb-5 pb-3 border-b border-white/10">{copy.directory.statsHeading}</p>
-          <ul className="space-y-4">
-            <li className="flex items-baseline justify-between">
-              <span className="font-sans text-sm text-stone-400">{copy.directory.totalLabel}</span>
-              <span className="font-serif text-3xl text-white font-bold">{totalCount}</span>
-            </li>
-            <li className="flex items-baseline justify-between">
-              <span className="font-sans text-sm text-stone-400">{copy.directory.latestLabel}</span>
-              <span className="font-mono text-[10px] text-stone-200">{latestDate ?? '—'}</span>
-            </li>
-            <li className="flex items-baseline justify-between">
-              <span className="font-sans text-sm text-stone-400">{copy.directory.seriesLabel}</span>
-              <span className="font-mono text-[10px] text-stone-200">{series.length}</span>
-            </li>
-            {mounted && readPosts.size > 0 && (
-              <li className="flex items-baseline justify-between">
-                <span className="font-sans text-sm text-stone-400">{copy.directory.readLabel}</span>
-                <span className="font-mono text-[10px] text-stone-300">{Math.min(readPosts.size, totalCount)} / {totalCount}</span>
-              </li>
-            )}
-          </ul>
-        </div>
-      </nav>}
 
       {/* ── Series rail ───────────────────────────────────────────── */}
       {copy.seriesRail.enabled && series.length > 0 && (

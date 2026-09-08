@@ -1,7 +1,6 @@
 import { BookIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
 import { DEFAULT_BLOG_PAGE } from '@/lib/cms/defaults/blogPage'
-import { navLinksField } from '@/sanity/schemas/objects/site'
 // sanity/schemas/singletons/blogPage.ts — the /blog index.
 
 const str = (name: string, title = name) => defineField({ name, title, type: 'string' })
@@ -17,12 +16,6 @@ export default defineType({
     defineField({ name: 'header', title: 'Header', type: 'pageHeader' }),
     obj('statsLabels', 'Stats line', [str('posts', '"posts"'), str('series', '"series"'), str('latest', '"Latest"')]),
     obj('featured', 'Featured post', [str('heading', 'Heading'), str('readLabel', 'Read link label')]),
-    obj('directory', 'Directory panel', [
-      defineField({ name: 'enabled', title: 'Show the directory panel', type: 'boolean', initialValue: true }),
-      str('topicsHeading', 'Topics heading'), str('toolsHeading', 'Explore heading'), str('statsHeading', 'Stats heading'),
-      str('totalLabel', 'Posts label'), str('latestLabel', 'Latest label'), str('seriesLabel', 'Series label'), str('readLabel', 'Read label'),
-    ]),
-    navLinksField('referenceLinks', 'Explore links', 'Shown in the directory panel. Pick an icon on each.'),
     obj('seriesRail', 'Series rail', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),
     obj('readingStrip', 'Currently reading strip', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),
     obj('notesStrip', 'Recently tended strip', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),

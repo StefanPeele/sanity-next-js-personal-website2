@@ -164,8 +164,6 @@ export default async function BlogPage() {
             mediaTypes={taxonomy.mediaTypes}
             posts={posts}
             categories={allCategories}
-            totalCount={totalCount}
-            latestDate={latestDate}
             series={series}
             currentlyReading={currentlyReading}
             recentNotes={recentNotes}

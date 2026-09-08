@@ -39,8 +39,6 @@ export const blogPageQuery = defineQuery(`
     header{ ${header} },
     statsLabels{ posts, series, latest },
     featured{ heading, readLabel },
-    directory{ enabled, topicsHeading, toolsHeading, statsHeading, totalLabel, latestLabel, seriesLabel, readLabel },
-    "referenceLinks": referenceLinks[]{ ${navLink} },
     seriesRail{ ${strip} }, readingStrip{ ${strip} }, notesStrip{ ${strip} },
     list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }
   }
