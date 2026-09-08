@@ -81,8 +81,16 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
   }
 
   // Open: reset, focus, lock scroll. Close: restore focus to trigger.
+  //
+  // hasOpened gates the restore branch. Without it this effect runs on mount with
+  // open === false, falls past the early return and focuses the trigger — so the
+  // search button became document.activeElement on first paint of every page. That
+  // painted a :focus-visible ring (the brightest thing above the fold, sitewide) and
+  // put the tab sequence past the skip link, which defeated it entirely.
+  const hasOpened = useRef(false)
   useEffect(() => {
     if (open) {
+      hasOpened.current = true
       // eslint-disable-next-line react-hooks/set-state-in-effect -- reset the dialog each time it opens
       setQuery('')
       setGroups([])
@@ -94,7 +102,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
       document.body.style.overflow = 'hidden'
       return () => { clearTimeout(t); document.body.style.overflow = '' }
     }
-    triggerRef.current?.focus({ preventScroll: true })
+    if (hasOpened.current) triggerRef.current?.focus({ preventScroll: true })
     return undefined
   }, [open])
 
