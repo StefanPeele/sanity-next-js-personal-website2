@@ -62,10 +62,27 @@ const lexend = Lexend({
 
 const WEBMENTION_ENABLED = process.env.NEXT_PUBLIC_WEBMENTION_ENABLED === 'true'
 
+/**
+ * Await a sanityFetch and return null instead of throwing.
+ *
+ * This layout wraps every route, /studio included, and /studio needs no Sanity data
+ * to render. A thrown fetch here — expired token, revoked session, Sanity down — used
+ * to 500 the entire site. Every consumer below already optional-chains `settings`, so
+ * null degrades cleanly. Generic over the promise so the generated query types survive.
+ */
+async function safeData<T>(p: Promise<{ data: T }>, label: string): Promise<T | null> {
+  try {
+    return (await p).data
+  } catch (err) {
+    console.error(`[layout] ${label} fetch failed — rendering without it.`, err)
+    return null
+  }
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  const [{ data: settings }, { data: homePage }, copy] = await Promise.all([
-    sanityFetch({ query: settingsQuery, stega: false }),
-    sanityFetch({ query: homePageQuery, stega: false }),
+  const [settings, homePage, copy] = await Promise.all([
+    safeData(sanityFetch({ query: settingsQuery, stega: false }), 'settings'),
+    safeData(sanityFetch({ query: homePageQuery, stega: false }), 'homePage'),
     getSettings(),
   ])
 
@@ -133,8 +150,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [{ data: settings }, copy, errorPages] = await Promise.all([
-    sanityFetch({ query: settingsQuery, stega: false }),
+  const [settings, copy, errorPages] = await Promise.all([
+    safeData(sanityFetch({ query: settingsQuery, stega: false }), 'settings'),
     getSettings(),
     getErrorPages(),
   ])

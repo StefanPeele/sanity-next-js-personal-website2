@@ -24,36 +24,49 @@ export type SiteSettings = SettingsCopy & {
   ogImage?: { url?: string | null } | null
 }
 
-export const getNavigation = cache(async (): Promise<NavigationData> => {
-  const { data } = await sanityFetch({ query: navigationQuery, stega: false })
-  return withDefaults(data, DEFAULT_NAVIGATION)
-})
+/**
+ * Fetch a singleton and merge it over its defaults, degrading instead of throwing.
+ *
+ * withDefaults already covers a missing or empty document, but a *thrown* fetch —
+ * an expired token, a revoked session, Sanity being unreachable — used to propagate
+ * out of the root layout and 500 every route on the site, including /studio, which
+ * needs no Sanity data to render at all. Copy is not worth an outage: fall back to
+ * the code defaults and keep the page up.
+ *
+ * The failure is logged rather than swallowed, so a degraded render is visible in
+ * the server logs instead of looking like healthy output with stale copy.
+ */
+async function fetchWithDefaults<D>(query: string, defaults: D, label: string): Promise<D> {
+  try {
+    const { data } = await sanityFetch({ query, stega: false })
+    return withDefaults(data, defaults)
+  } catch (err) {
+    console.error(`[cms] ${label} fetch failed — rendering with code defaults.`, err)
+    return defaults
+  }
+}
 
-export const getSettings = cache(async (): Promise<SiteSettings> => {
-  const { data } = await sanityFetch({ query: siteSettingsCopyQuery, stega: false })
-  return withDefaults(data, DEFAULT_SETTINGS as SiteSettings)
-})
+export const getNavigation = cache(async (): Promise<NavigationData> =>
+  fetchWithDefaults(navigationQuery, DEFAULT_NAVIGATION, 'navigation'))
+
+export const getSettings = cache(async (): Promise<SiteSettings> =>
+  fetchWithDefaults(siteSettingsCopyQuery, DEFAULT_SETTINGS as SiteSettings, 'settings'))
 
 export const getSiteChrome = cache(async () => {
   const [settings, navigation] = await Promise.all([getSettings(), getNavigation()])
   return { settings, navigation }
 })
 
-export const getTaxonomy = cache(async (): Promise<TaxonomyData> => {
-  const { data } = await sanityFetch({ query: taxonomyQuery, stega: false })
-  return withDefaults(data, DEFAULT_TAXONOMY)
-})
+export const getTaxonomy = cache(async (): Promise<TaxonomyData> =>
+  fetchWithDefaults(taxonomyQuery, DEFAULT_TAXONOMY, 'taxonomy'))
 
-export const getErrorPages = cache(async (): Promise<ErrorPagesCopy> => {
-  const { data } = await sanityFetch({ query: errorPagesQuery, stega: false })
-  return withDefaults(data, DEFAULT_ERROR_PAGES)
-})
+export const getErrorPages = cache(async (): Promise<ErrorPagesCopy> =>
+  fetchWithDefaults(errorPagesQuery, DEFAULT_ERROR_PAGES, 'errorPages'))
 
 /**
  * Generic loader for page singletons. Each page passes its own query + defaults
  * so typegen keeps the query static and the return type is the defaults' type.
  */
 export async function getCopy<D>(query: string, defaults: D): Promise<D> {
-  const { data } = await sanityFetch({ query, stega: false })
-  return withDefaults(data, defaults)
+  return fetchWithDefaults(query, defaults, 'page copy')
 }
