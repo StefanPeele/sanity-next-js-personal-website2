@@ -8,13 +8,16 @@
    BASE — reader-controlled variables and layout
    ═══════════════════════════════════════════════════════════════ */
 
+/* Pre-hydration prose size. ArticleProvider writes this same custom property as an inline
+   style once settings load, so this value MUST equal FONT_SIZES[DEFAULT_SETTINGS.fontSize]
+   (currently index 2, 'L'). When it did not, the server painted 16/17px and the client
+   replaced it with a different size, and every article visibly resized as it loaded.
+   The old 768px step-up is gone for the same reason: the client applies one size at every
+   breakpoint, so a responsive pre-hydration value could only ever be a flash. */
 [data-article] {
-  --article-fs: 1rem;
+  --article-fs: 1.1875rem;
   position: relative;
   transition: background-color 0.5s ease, color 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease;
-}
-@media (min-width: 768px) {
-  [data-article] { --article-fs: 1.0625rem; }
 }
 
 [data-article] p {

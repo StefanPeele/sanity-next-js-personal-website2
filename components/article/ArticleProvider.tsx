@@ -37,7 +37,9 @@ export interface ArticleSettings {
 
 const DEFAULT_SETTINGS: ArticleSettings = {
   theme: 'archive',
-  fontSize: 1,
+  // Index into FONT_SIZES: 2 = 'L' = 1.1875rem = 19px. The pre-hydration value in
+  // styles/article.css must stay equal to FONT_SIZES[this] or the prose resizes on load.
+  fontSize: 2,
   width: 'standard',
   dyslexia: false,
   highContrast: false,
@@ -95,7 +97,11 @@ function readStoredSettings(fallbackTheme?: string | null): ArticleSettings {
   try {
     const stored = localStorage.getItem(STORAGE.theme)
     const theme = stored ?? (isArticleTheme(fallbackTheme) ? fallbackTheme : null)
-    const fs = Number(localStorage.getItem(STORAGE.fontSize))
+    // getItem returns null for a reader who has never touched the control, and Number(null)
+    // is 0 — which satisfies every guard below, so the default was unreachable and everyone
+    // silently got the smallest size. Treat "absent" and "empty" as "no preference".
+    const rawFs = localStorage.getItem(STORAGE.fontSize)
+    const fs = rawFs === null || rawFs === '' ? DEFAULT_SETTINGS.fontSize : Number(rawFs)
     const width = localStorage.getItem(STORAGE.width)
     return {
       theme: isArticleTheme(theme) ? theme : DEFAULT_SETTINGS.theme,
