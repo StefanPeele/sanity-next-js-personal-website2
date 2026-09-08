@@ -1,6 +1,27 @@
 # Overnight session report — 2026-09-08
 
-No application code was changed. Everything below is capture, inventory, research and proposal.
+> **Status — 2026-09-08, after the first code block landed.**
+>
+> **Shipped:** D1 + the 19px default (`83a4b72`), D7 (`f78e1b7`), and the article typography block
+> — 1.25 type scale, line-height 1.70, 1.5em paragraphs, `hyphens: auto`, h2 rule removed,
+> blockquote and figure spacing, section-break rule, reader-menu entrance/mask/scrim, zero-series
+> row hidden (`5c7cca4`).
+>
+> **Two things in this document are wrong and were corrected on the way:**
+>
+> 1. **The D4 fix is wrong as written.** `max-w-[20ch]` on the h1 is *narrower* than the 36rem
+>    wrapper it sits in (~480px vs 576px), so it would make the wrapping worse. The h1 already
+>    renders ~19 characters per line over four lines. Two lines needs ~39 ch/line ≈ 1180px, more
+>    than the available grid column (~836px after the 220px TOC and gaps). Real options are three
+>    balanced lines at full column width using `text-balance` (verified available — Tailwind 3.4.19
+>    ships the `textWrap` plugin), or dropping the h1 to ~40px. Still unspecced.
+> 2. **The 34/40/46rem widths were calculated against 15px prose and are now counterproductive.**
+>    Measured after the font change: 8.86px per character, so 36rem reads 65 — close to the
+>    66-character optimum. 40rem would push it to 72. Only narrow moved (32rem read 58, under the
+>    band). Standard stays 36rem, wide stays 44rem.
+
+No application code was changed *in the session that produced this report*. Everything below is
+capture, inventory, research and proposal.
 
 **Companion documents (all committed):**
 - `docs/audit/UI-INVENTORY.md` — Part 2

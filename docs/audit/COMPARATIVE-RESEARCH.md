@@ -1,5 +1,10 @@
 # Comparative research — reading experience and interface craft (2026-09-08)
 
+> **Status — updated 2026-09-08.** The `stefanpeele.com` row below is the *before* state. As of
+> `83a4b72` and `5c7cca4` the article is **19px / line-height 1.70 / 576px / 65 characters**, which
+> moves it from the bottom of this table into the middle of it. The Linear comparison that follows
+> is what motivated that change and still stands.
+
 Sixteen sites visited, thirteen measured on an identical probe (largest paragraph on the page,
 computed style, canvas-derived characters-per-line). Screenshots are in the scratchpad, not the
 repo. Where a site is discussed without measurements, the probe's URL was wrong — **every site
@@ -20,7 +25,8 @@ below is live**; none were down.
 | **linear.app/blog** | **17px** | **1.60** | **624** | **78** | **`#08090a`** | Inter Variable | **none** |
 | notes.andymatuschak.org | 17px | 1.41 | 561 | 79 | `#fafafc` | system sans | stacked panes |
 | docs.stripe.com | 16px | 1.63 | 486 | 66 | light | system sans | persistent nav + TOC |
-| **stefanpeele.com** | **15px** | **1.85** | **576** | **80** | **`#0a0a0a`** | Inter | **TOC + reader menu + progress bar** |
+| **stefanpeele.com** *(before)* | **15px** | **1.85** | **576** | **80** | **`#0a0a0a`** | Inter | **TOC + reader menu + progress bar** |
+| **stefanpeele.com** *(now, `5c7cca4`)* | **19px** | **1.70** | **576** | **65** | **`#0a0a0a`** | Inter | TOC + reader menu + progress bar |
 
 ---
 
@@ -53,7 +59,7 @@ the differences are:
 
 | | Linear | You | Gap |
 | --- | --- | --- | --- |
-| Body size | 17px | 15px | **2px** |
+| Body size | 17px | 15px → **19px** | closed, `83a4b72` |
 | Line height | 1.60 | 1.85 | yours looser |
 | Column | 624px | 576px | 48px |
 | CPL | 78 | 80 | negligible |

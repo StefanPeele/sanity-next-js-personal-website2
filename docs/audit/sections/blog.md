@@ -1,5 +1,11 @@
 # SECTION: `/blog` and `/blog/[slug]`
 
+> **Status — 2026-09-08.** Every prose measurement in this document is historical. The article was
+> 15px at 80 characters when this was written; it is now 19px at 65 (`83a4b72`, `5c7cca4`), with a
+> single 1.25 type scale, line-height 1.70 and no rule under h2. D1 and D7 are fixed. The
+> "12 of 20 sections don't render" figure that circulated from this pass is wrong — measured, 6, 6
+> and 7 of 20 render across the three published posts.
+
 Deep diagnosis pass, 2026-09-07. **No code was changed.** Everything below is measured, driven, or
 read from an image — where a claim is inferred rather than observed, it says so.
 

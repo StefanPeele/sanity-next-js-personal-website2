@@ -1,6 +1,36 @@
 # Blog overhaul — research and proposal (2026-09-08)
 
-Proposal only. Nothing in this document has been applied.
+> **Status — 2026-09-08, after the first code block landed.**
+>
+> **Shipped:** D1 + the 19px default (`83a4b72`), D7 (`f78e1b7`), and the article typography block
+> — 1.25 type scale, line-height 1.70, 1.5em paragraphs, `hyphens: auto`, h2 rule removed,
+> blockquote and figure spacing, section-break rule, reader-menu entrance/mask/scrim, zero-series
+> row hidden (`5c7cca4`).
+>
+> **Two things in this document are wrong and were corrected on the way:**
+>
+> 1. **The D4 fix is wrong as written.** `max-w-[20ch]` on the h1 is *narrower* than the 36rem
+>    wrapper it sits in (~480px vs 576px), so it would make the wrapping worse. The h1 already
+>    renders ~19 characters per line over four lines. Two lines needs ~39 ch/line ≈ 1180px, more
+>    than the available grid column (~836px after the 220px TOC and gaps). Real options are three
+>    balanced lines at full column width using `text-balance` (verified available — Tailwind 3.4.19
+>    ships the `textWrap` plugin), or dropping the h1 to ~40px. Still unspecced.
+> 2. **The 34/40/46rem widths were calculated against 15px prose and are now counterproductive.**
+>    Measured after the font change: 8.86px per character, so 36rem reads 65 — close to the
+>    66-character optimum. 40rem would push it to 72. Only narrow moved (32rem read 58, under the
+>    band). Standard stays 36rem, wide stays 44rem.
+>
+> **Superseded — the dark-palette recommendation in Part 5.** Part 5 offered "make the article route
+> light" and Part 6 block 7 scheduled it. Both are dead: `linear.app/blog` runs long design essays
+> on `rgb(8,9,10)`, and this site's body text already measured 13.29:1 against Linear's 13.64:1.
+> The "warm the near-black to `#0b0a09`" suggestion in Layer 3 is withdrawn for the same reason —
+> `#0a0a0a` was never the problem. See `COMPARATIVE-RESEARCH.md`.
+>
+> Part 5's other claim — "body text at `stone-300` not `stone-400`" — was also wrong: the article
+> body is already `stone-200`. `stone-400` is the meta colour.
+
+Proposal only. Nothing in this document has been applied *as of the session that wrote it*; see the
+status box above for what has shipped since.
 
 Direction taken as given: **pacing** (typography and space) is the substrate, **continuity**
 (removing jolts) is second, **atmosphere** is a thin restrained third, effects are out.

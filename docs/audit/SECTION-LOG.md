@@ -155,7 +155,8 @@ controls reachable 3/24 → **20/22**; index reading times 22 and 110 min → **
 **Theme decision: cut Paper and Broadcast, keep Archive and Terminal.** Theme classes only reach
 `<article data-article>` and the CSS only selects prose inside it, so on cream or white every framed
 component and all page chrome stayed near-black. Repairing that needs light variants for 15 card
-treatments and 37 border colours — i.e. the B18/B19 consolidation that was deferred — so fixing it
+treatments and 37 border colours (**site-wide the real figure is 56 border tokens and 52 background
+fills** — see `UI-INVENTORY.md`) — i.e. the B18/B19 consolidation that was deferred — so fixing it
 now would mean writing light variants twice. Evidence kept in
 `docs/audit/screenshots/themes/` even though two of those themes no longer exist.
 
@@ -277,5 +278,47 @@ measuring command rather than the code — the `published`-perspective secret qu
 hit-test, and this `sed` range. When a measurement contradicts observed behaviour, suspect the
 measurement first.
 
-**Still genuinely open (unchanged):** B6 Lexend on the article page (17KB, verified still loading on
-`60d18c5`), and the content items B16 / B20 / B21.
+**Still genuinely open (unchanged):** ~~B6 Lexend on the article page (17KB, verified still loading
+on `60d18c5`)~~ — **withdrawn 2026-09-08**, see below — and the content items B16 / B20 / B21.
+
+---
+
+## 2026-09-08 — first code block shipped
+
+**Shipped:** `83a4b72` D1 + the 19px default. `f78e1b7` D7. `5c7cca4` the article typography block.
+
+- **D1** — `ArticleProvider.tsx:98`. `Number(localStorage.getItem('sp_font_size'))` returns 0 for a
+  first-time reader because `Number(null) === 0`, which passed every guard, so
+  `DEFAULT_SETTINGS.fontSize` was unreachable and everyone silently read at 15px. Default also moved
+  to index 2 (L, 19px). `styles/article.css` had to change with it — its pre-hydration value must
+  equal `FONT_SIZES[DEFAULT_SETTINGS.fontSize]` or the prose visibly resizes on load, which it had
+  been doing on every article view. Measured after: 19px, identical pre- and post-hydration at all
+  three breakpoints, **80 → 65 characters per line**.
+- **D7** — `SearchModal.tsx:97`. The `[open]` effect fell through to the focus-restore branch on
+  mount, so the search button was `document.activeElement` on first paint sitewide. Verified on
+  production before and after: `BUTTON` + `:focus-visible` → `BODY`, and the skip link is now the
+  first Tab stop on `/`, `/blog` and an article.
+- **Typography** — single 1.25 scale on a 19px base (48/38/30/24/19), line-height 1.85 → 1.70,
+  paragraph 1.6em → 1.5em, `hyphens: auto`, the rule under every h2 removed, blockquote from
+  stone-400 to stone-200 with no left border, figures 4rem, `SectionBreak` subtle variant retuned to
+  a 96px centred rule, reader menu given an origin/entrance/mask/scrim, zero-series row hidden.
+
+**Deliberately not applied:** the proposal's 34/40/46rem widths. They were calculated against 15px
+prose and an 80-character measure. The font fix already closed that; standard now reads 65, close to
+the 66-character optimum, and 40rem would push it to 72. Only narrow moved (32rem read 58).
+
+**Corrections folded into the audit documents this session:** the D4 spec was wrong (`max-w-[20ch]`
+is *narrower* than the wrapper it sits in and would worsen the wrap); the light-reading-theme
+recommendation is dead (Linear runs long essays on `rgb(8,9,10)` and our contrast already matched);
+"body is stone-400" was wrong (it is stone-200); "12 of 20 sections don't render" was wrong
+(measured 6, 6 and 7 of 20 render); the sub-12px "dormant code" claim was blog-scoped, not
+site-scoped; **B6 Lexend is withdrawn** — measured `document.fonts` reports `Lexend:unloaded` and it
+is absent from the six font requests, so `preload: false` works and the earlier "17KB" counted a
+declared `@font-face` rather than a network request.
+
+**Method note, seventh and eighth artifacts.** A stale `next start` on port 3100 — `pkill -f` does
+not work here, the port must be freed by PID — served a pre-rebuild manifest after `rm -rf .next`,
+producing chunk 500s, an unstyled page and a missing skip link that all looked like code defects.
+Separately, a `grep` pattern with shell-escaped brackets reported six generated Tailwind classes as
+MISSING when live measurement had already proved them present. Same standing rule: when a
+measurement contradicts observed behaviour, suspect the measurement first.

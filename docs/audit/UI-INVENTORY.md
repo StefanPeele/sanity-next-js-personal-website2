@@ -1,5 +1,15 @@
 # UI and feature inventory — stefanpeele.com (2026-09-08)
 
+
+> **Status — corrections applied 2026-09-08.** Read this box before acting on anything below.
+>
+> - **"12 of 20 sections do not render" is wrong.** Measured: 6, 6 and 7 of 20 render across the
+>   three published posts, so 13-14 do not.
+> - **The sub-12px "dormant code" claim was scoped wrongly** and its file table was the blog subset,
+>   not the 339 site-wide figure. Both corrected in §2.
+> - **D1 and D7 are fixed** (`83a4b72`, `f78e1b7`). Prose is 19px at 65 characters, not 15px at 80,
+>   and the search button no longer takes focus on load.
+
 Built from static analysis of `components/` and `app/`, plus the production capture run in
 `docs/audit/screenshots/site-inventory/`. Counts are from `grep -r` over `*.tsx` and are
 reproducible; where a count contradicts observed behaviour, re-measure before acting on it.
@@ -61,14 +71,17 @@ the distribution matters: 62 at 8px and 7 at 7px are below the threshold at whic
 is legible at all on `#0a0a0a`. Worst offenders by file:
 
 ```
-LearningBlocks.tsx      19    CredibilitySection.tsx  12
-PacketAnimator.tsx       9    KnowledgeQuiz.tsx        9
-GlossaryList.tsx         8    BlogDirectory.tsx        8
-LayerExplorer.tsx        7    WiresharkCallout.tsx     6
+GardenClient.tsx        27    LearningBlocks.tsx      24
+KnowledgeGraph.tsx      20    ServicePackages.tsx     19
+SearchModal.tsx         19    MediaCard.tsx           14
+LibraryClient.tsx       14    CredibilitySection.tsx  13
+BlogDirectory.tsx       12    PacketAnimator.tsx       9
 ```
 
-Note that six of those eight are learning-block components that do not render for any published
-post — the drift is concentrated in code no reader has seen.
+**Corrected 2026-09-08.** An earlier version of this table listed only `components/blog` and
+concluded the drift was concentrated in learning-block components no reader has seen. That is true
+of the 114-instance blog subset and false of the 339-instance site total: `GardenClient`,
+`KnowledgeGraph`, `SearchModal`, `ServicePackages`, `MediaCard` and `LibraryClient` all render.
 
 **Mono label system:** 172 distinct `font-mono … uppercase …` class strings expressing one idea,
 across 8 letter-spacing values (`tracking-[0.3em]` ×54, `[0.4em]` ×14, `[0.2em]` ×15, `[0.35em]`,
@@ -146,8 +159,8 @@ This is the clearest single candidate for extraction on the site.
 | Overlay | Trigger | Backdrop | Entrance |
 | --- | --- | --- | --- |
 | Search modal | Navbar / ⌘K | `bg-black/70 backdrop-blur-sm` | framer-motion |
-| Reader menu (desktop) | TOC chip | **none** | **none** |
-| Reader menu (mobile sheet) | TOC chip | **none** | **none** |
+| Reader menu (desktop) | TOC chip | n/a (dropdown) | scale from top-right, 180ms — added `5c7cca4` |
+| Reader menu (mobile sheet) | TOC chip | `bg-black/40` — added `5c7cca4` | rises from bottom edge, 180ms |
 | Mobile nav | hamburger | yes | yes |
 | Lightbox | `CinematicGallery` | yes | yes |
 
@@ -184,7 +197,8 @@ verified functional.
 - **Text size defaults to S, not M** — `ArticleProvider.tsx:98`, `Number(null) === 0`. See §10.
 - **Themes are scoped to `<article data-article>`**, so `theme-green` and `a11y-high-contrast`
   render as a hard-edged rectangle while the TOC beside them stays in the default theme.
-- The article page defines 20 top-level sections; **12 do not render for any published post.**
+- The article page defines 20 top-level sections; **13-14 do not render for any published post**
+  (measured 2026-09-08: 6, 6 and 7 render across the three posts).
 - Per-section TOC estimates sum to 5 min on a post whose header reads "3 min read".
 
 ---
@@ -226,11 +240,11 @@ the transitions were not chosen deliberately.
 
 | # | Defect | Location | Status |
 | --- | --- | --- | --- |
-| D1 | `Number(null) === 0` → every new reader gets 15px, measure 80 chars, and the text visibly reflows smaller after hydration | `ArticleProvider.tsx:98` | Confirmed twice |
+| D1 | `Number(null) === 0` → every new reader got 15px, measure 80 chars, and the text visibly reflowed smaller after hydration | `ArticleProvider.tsx:98` | **Fixed `83a4b72`** — now 19px at 65 chars, no reflow |
 | D2 | `/paths` and `/review` 404 but are still linked | published `blogPage` doc, **not** the code defaults | Confirmed |
 | D4 | h1 constrained to the 36rem body measure; wraps to 4 lines, splits "Week / 2:" | `BlogArticleHeader.tsx:71` | Confirmed |
 | D5 | Theme class applied to `[data-article]` only | `ArticleProvider.tsx:257` | Confirmed |
-| D7 | Search button auto-focused on mount → amber ring is the brightest element above the fold, **and the skip link is bypassed** | `SearchModal.tsx:97` | Confirmed on production |
+| D7 | Search button auto-focused on mount → amber ring above the fold, and the skip link bypassed | `SearchModal.tsx:97` | **Fixed `f78e1b7`** — verified on production: `activeElement` is `BODY`, skip link is the first Tab stop |
 | D8 | `/test` is publicly reachable and returns 200 | `app/test/` | New |
 | D9 | Multi-line inline code renders as ragged stacked boxes | `CustomPortableText.tsx` + content | Confirmed |
 

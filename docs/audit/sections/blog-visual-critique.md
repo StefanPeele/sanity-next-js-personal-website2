@@ -1,5 +1,20 @@
 # Blog — visual and experience critique (2026-09-08)
 
+
+> **Status — corrections applied 2026-09-08.** Read this box before acting on anything below.
+>
+> - **V4 (three post counts) is WITHDRAWN.** There are exactly 3 `post` documents. `osi-model` is a
+>   hand-built route at `app/(archive)/blog/osi-model/page.tsx`, not a post. "3 posts" is the total
+>   and "2 posts" is the grid correctly excluding the featured one. Only the shared word is a problem.
+> - **The amber search border was diagnosed wrongly here.** It is not the focus colour used as
+>   chrome; `SearchModal.tsx:97` focused the trigger on mount. Fixed in `f78e1b7`.
+> - **V3's fix is a Studio action, not a code one.** `lib/cms/defaults/blogPage.ts` is already clean;
+>   the published `blogPage` document carries the two dead links.
+> - **"12 of 20 sections don't render" is wrong.** Measured on production: 6, 6 and 7 of 20 render
+>   across the three posts, so 13-14 do not.
+> - **Every 15px / 80-character measurement below is historical.** As of `83a4b72` and `5c7cca4`
+>   the prose is 19px at 65 characters. V1 and V2 are fixed.
+
 Captured against **production** (`60d18c5`), not the dev server, so everything here is what a
 reader actually gets. 85 frames in `docs/audit/screenshots/blog-critique/{1440,768,390}/`.
 
@@ -164,7 +179,9 @@ The article page is well-engineered and under-art-directed. Concretely:
   `ves for the week`), so the grid's first impression is a broken image.
 - **The brightest element on every page is the search button's amber border.** Above the fold on
   both `/blog` and the article, the highest-contrast object is a utility affordance, not the
-  writing. The focus-ring colour has become permanent chrome.
+  writing. **Wrong diagnosis, corrected 2026-09-08:** `SearchModal.tsx:97` focused the trigger on
+  mount, so the ring was a genuine `:focus-visible` state on every load, and it bypassed the skip
+  link. Fixed in `f78e1b7`.
 - **28 glyph icons** (`→`, `✕`, `↑`, `↓`) sit alongside the lucide set that CLAUDE.md mandates.
   Mixed icon languages read as unfinished.
 
@@ -203,8 +220,10 @@ The through-line: every one of these has **fewer** components than this blog and
 
 1. V1 — the `Number(null)` font-size bug. One line; fixes text size and measure sitewide.
 2. Give the h1 its own measure. One class on the header's inner div.
-3. V3 — remove the two 404 links from the directory defaults.
-4. V4/V5 — reconcile the post counts and the read-time arithmetic (both are query/derivation bugs).
+3. V3 — remove the two 404 links. **Correction:** a Studio edit to the published `blogPage`
+   document, not a code change; `lib/cms/defaults/blogPage.ts` was already clean.
+4. **V4 withdrawn — the counts are correct** (total vs. grid-excluding-featured). V5, the read-time
+   arithmetic, still stands.
 5. Unify the taxonomy treatment between index and article. Pick the pill.
 6. Raise the sub-12px text to 12px minimum. Mechanical.
 7. Replace the stock featured image and the markdown-screenshot hero. Content, not code.
@@ -253,7 +272,8 @@ that's slightly too small and slightly too wide. The ordered list in §6 is deli
 ## 8. The unavoidable observation
 
 Four posts now, up from two. The article page renders 19 sections of chrome around one body of
-writing, and 12 of those don't render at all for the published posts. The most striking frame in
+writing, and 13-14 of those don't render at all for the published posts (measured: 6, 6 and 7 of 20
+render across the three posts). The most striking frame in
 this entire capture set is `1440/post-theme-green.jpg` — not because of the theme, but because the
 whole right half of the screen is empty.
 
