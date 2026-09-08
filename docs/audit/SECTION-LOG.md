@@ -262,3 +262,20 @@ nothing changes after 5 minutes the field did not save.
 - **B16 needs your Studio action to take effect** — unset **mainImage** on "Building My Physical Home Lab — Week 2" and the tidied placeholder renders. The code is in; the card still shows the clipped documentation screenshot until you do.
 - Lexend still loads on the article page (above).
 - `articleUi.blocks.credibilityHeading` and the `maturity`/`load` vocabularies are still live and used — not deleted.
+
+### 2026-09-08 — Corrections to the blog closeout (verification pass, no code changed)
+
+Three claims from the closeout re-tested against production `60d18c5`. Two were wrong, and both
+errors were mine — bad test method, not bad code.
+
+- **B13 reading time is correct and deployed.** Production renders **"18 min read"** (The Field) and **"3 min read"** (home lab); `/blog/osi-model` 6 min, portfolio 2 min. A reported "165 min read" is **not reproducible** on any route. Grepping raw HTML for `[0-9]+ min` is unsafe — it matches Tailwind classes like `min-h-[480px]`, which is where an apparent "10 min" on `/blog` came from. Read rendered `innerText`, not markup.
+- **The reader menu is 22/22, not 20/22.** Print and Share failed only a *strict* `el === hit || el.contains(hit)` check; `elementFromPoint` returns an **ancestor** `div` for them. Re-tested allowing ancestors: 19 pass, 3 reachable by scrolling inside the panel, **zero genuinely covered**. Confirmed independently by Stefan clicking both. The earlier "18 of 24 blocked" figure was real; this residue was not.
+- **The "Also open" list was never empty.** It still holds all three bullets (B16 Studio action, Lexend on the article page, live `credibility` vocabularies). A `sed` range terminating at the first blank line made it look truncated.
+
+**Method note for future sessions:** three separate findings this week were artifacts of the
+measuring command rather than the code — the `published`-perspective secret query, the strict
+hit-test, and this `sed` range. When a measurement contradicts observed behaviour, suspect the
+measurement first.
+
+**Still genuinely open (unchanged):** B6 Lexend on the article page (17KB, verified still loading on
+`60d18c5`), and the content items B16 / B20 / B21.
