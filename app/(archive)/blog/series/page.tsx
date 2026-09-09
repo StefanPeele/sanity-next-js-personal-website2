@@ -8,6 +8,7 @@ import type { Metadata } from 'next'
 import { getCopy } from '@/lib/cms/loaders'
 import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
+import { FOCUS } from '@/lib/ui'
 // app/(archive)/blog/series/page.tsx
 // Every series with its parts, status and how far along it is.
 
@@ -41,7 +42,7 @@ export default async function SeriesIndexPage() {
 
       <main id="content" className="relative max-w-5xl mx-auto px-6 pt-32 pb-24">
         <header className="mb-12 border-b border-white/5 pb-8">
-          <Link href="/blog" className="font-sans text-sm text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">← {copy.backLabel}</Link>
+          <Link href="/blog" className={`font-sans text-sm text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>← {copy.backLabel}</Link>
           <h1 className="mt-6 text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
           <p className="mt-4 max-w-xl font-sans text-base text-stone-400">{copy.header.lede}</p>
         </header>
@@ -60,7 +61,7 @@ export default async function SeriesIndexPage() {
                 <li key={s._id}>
                   <Link
                     href={`/blog/series/${s.slug}`}
-                    className="group flex h-full flex-col gap-4 rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 hover:border-white/20 hover:bg-white/[0.04] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+                    className={`group flex h-full flex-col gap-4 rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 hover:border-white/20 hover:bg-white/[0.04] transition-colors ${FOCUS}`}
                   >
                     <div className="flex items-center justify-between gap-3">
                       <span className={`font-mono text-[9px] uppercase tracking-[0.3em] px-2.5 py-1 rounded-sm border ${status.className}`}>{status.label}</span>

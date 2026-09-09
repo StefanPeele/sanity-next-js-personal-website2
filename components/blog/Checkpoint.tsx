@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { KnowledgeQuiz } from '@/components/blog/KnowledgeQuiz'
+import { FOCUS } from '@/lib/ui'
 // components/blog/Checkpoint.tsx
 // Prior-knowledge self-check, collapsed under a disclosure at the top of a deep dive.
 
@@ -24,7 +25,7 @@ export function Checkpoint({ quiz, heading = 'Check what you already know' }: { 
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls="checkpoint-body"
-          className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-amber-500/5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+          className={`w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-amber-500/5 transition-colors ${FOCUS}`}
         >
           <span>
             <span className="font-serif text-base text-stone-100">{heading}</span>

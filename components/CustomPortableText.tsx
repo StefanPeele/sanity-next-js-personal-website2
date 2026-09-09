@@ -15,6 +15,7 @@ import { slugify, countWords } from '@/lib/reading'
 import type { PathSegment } from '@sanity/client/csm'
 import { PortableText, type PortableTextBlock, type PortableTextComponents } from 'next-sanity'
 import type { Image } from 'sanity'
+import { FOCUS } from '@/lib/ui'
 // components/CustomPortableText.tsx
 // Shared Portable Text renderer. When `article` is true the headings get stable
 // slugified ids (deduped -2, -3 …), a data-words attribute with the word count
@@ -171,7 +172,7 @@ export function CustomPortableText({
         const external = /^https?:\/\//i.test(href)
         return (
           <a
-            className="article-link text-white decoration-stone-500 underline underline-offset-4 transition hover:decoration-white hover:text-stone-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+            className={`article-link text-white decoration-stone-500 underline underline-offset-4 transition hover:decoration-white hover:text-stone-200 ${FOCUS}`}
             href={href}
             rel={external ? 'noreferrer noopener' : undefined}
             target={external ? '_blank' : undefined}

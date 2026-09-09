@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { FOCUS } from '@/lib/ui'
 // components/blog/SeriesBanner.tsx
 // "Part N of M · Series title" with prev/next and a native <details> list of all parts.
 
@@ -27,7 +28,7 @@ export function SeriesBanner({ series, currentSlug, seriesOrder, labels = DEFAUL
         {series.slug ? (
           <Link
             href={`/blog/series/${series.slug}`}
-            className="font-serif text-stone-100 hover:text-white underline decoration-stone-600 underline-offset-4 hover:decoration-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm"
+            className={`font-serif text-stone-100 hover:text-white underline decoration-stone-600 underline-offset-4 hover:decoration-white transition-colors ${FOCUS} rounded-sm`}
           >
             {series.title}
           </Link>
@@ -36,19 +37,19 @@ export function SeriesBanner({ series, currentSlug, seriesOrder, labels = DEFAUL
         )}
         <div className="ml-auto flex items-center gap-2">
           {prev?.slug ? (
-            <Link href={`/blog/${prev.slug}`} rel="prev" className="font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-white/10 rounded-lg hover:border-white/30 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400" title={prev.title ?? undefined}>
+            <Link href={`/blog/${prev.slug}`} rel="prev" className={`font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-white/10 rounded-lg hover:border-white/30 transition-colors ${FOCUS}`} title={prev.title ?? undefined}>
               ← {labels.prevLabel}
             </Link>
           ) : null}
           {next?.slug ? (
-            <Link href={`/blog/${next.slug}`} rel="next" className="font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-white/10 rounded-lg hover:border-white/30 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400" title={next.title ?? undefined}>
+            <Link href={`/blog/${next.slug}`} rel="next" className={`font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-white/10 rounded-lg hover:border-white/30 transition-colors ${FOCUS}`} title={next.title ?? undefined}>
               {labels.nextLabel} →
             </Link>
           ) : null}
         </div>
       </div>
       <details className="group border-t border-white/5">
-        <summary className="cursor-pointer list-none px-5 py-3 font-sans text-sm text-stone-400 hover:text-white transition-colors flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
+        <summary className={`cursor-pointer list-none px-5 py-3 font-sans text-sm text-stone-400 hover:text-white transition-colors flex items-center gap-2 ${FOCUS}`}>
           <span className="transition-transform group-open:rotate-90" aria-hidden="true">▸</span>
           {labels.allPartsLabel}
         </summary>
@@ -61,7 +62,7 @@ export function SeriesBanner({ series, currentSlug, seriesOrder, labels = DEFAUL
                 {current ? (
                   <span className="font-serif text-sm text-white" aria-current="page">{p.title}</span>
                 ) : (
-                  <Link href={`/blog/${p.slug}`} className="font-serif text-sm text-stone-300 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
+                  <Link href={`/blog/${p.slug}`} className={`font-serif text-sm text-stone-300 hover:text-white transition-colors ${FOCUS} rounded-sm`}>
                     {p.title}
                   </Link>
                 )}

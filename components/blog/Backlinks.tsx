@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { FOCUS } from '@/lib/ui'
 // components/blog/Backlinks.tsx
 // "Referenced by" — every note, post, library item and project that links to this article.
 
@@ -18,7 +19,7 @@ export function BacklinksSection({ backlinks, heading = 'Referenced by' }: { bac
   const total = notes.length + posts.length + library.length + projects.length
   if (!total) return null
 
-  const linkClass = 'font-serif text-sm text-stone-300 hover:text-white transition-colors underline decoration-stone-700 underline-offset-4 hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm'
+  const linkClass = `font-serif text-sm text-stone-300 hover:text-white transition-colors underline decoration-stone-700 underline-offset-4 hover:decoration-white ${FOCUS} rounded-sm`
   const label = 'font-sans text-xs text-stone-400 w-16 flex-shrink-0 pt-1'
 
   return (

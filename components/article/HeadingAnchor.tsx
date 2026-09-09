@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { FOCUS } from '@/lib/ui'
 // components/article/HeadingAnchor.tsx
 // "#" link that appears on heading hover/focus. Click copies the deep link and
 // updates the hash; keyboard users reach it by tabbing through the article.
@@ -22,7 +23,7 @@ export function HeadingAnchor({ id }: { id: string }) {
     <a
       href={`#${id}`}
       onClick={onClick}
-      className="heading-anchor focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm"
+      className={`heading-anchor ${FOCUS} rounded-sm`}
       aria-label={copied ? 'Link copied' : 'Copy link to this section'}
       title="Copy link to this section"
       data-print-hide

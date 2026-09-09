@@ -9,6 +9,7 @@ import { absoluteUrl } from '@/lib/site'
 import { getCopy, getTaxonomy } from '@/lib/cms/loaders'
 import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
+import { FOCUS } from '@/lib/ui'
 // app/graph/page.tsx
 // Full-bleed graph page — outside (archive) layout for full viewport use.
 
@@ -63,7 +64,7 @@ export default async function GraphPage() {
       <div className="absolute top-24 right-4 z-30">
         <Link
           href="/blog"
-          className="font-sans text-sm text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm"
+          className={`font-sans text-sm text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}
         >
           ← {copy.backLabel}
         </Link>

@@ -8,6 +8,7 @@ import { readingTime } from '@/lib/reading'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { FOCUS } from '@/lib/ui'
 // app/(archive)/blog/series/[slug]/page.tsx
 // One series: description, status and its parts in reading order.
 
@@ -76,7 +77,7 @@ export default async function SeriesPage({ params }: Props) {
 
       <main id="content" className="relative max-w-4xl mx-auto px-6 pt-32 pb-24">
         <header className="mb-12 border-b border-white/5 pb-8">
-          <Link href="/blog/series" className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
+          <Link href="/blog/series" className={`font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>
             ← All series
           </Link>
           <div className="mt-6 mb-4 flex flex-wrap items-center gap-3">
@@ -100,7 +101,7 @@ export default async function SeriesPage({ params }: Props) {
                 <li key={p._id}>
                   <Link
                     href={`/blog/${p.slug}`}
-                    className="group flex gap-5 rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 hover:border-white/20 hover:bg-white/[0.04] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+                    className={`group flex gap-5 rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 hover:border-white/20 hover:bg-white/[0.04] transition-colors ${FOCUS}`}
                   >
                     <span className="font-serif text-3xl text-stone-400 group-hover:text-stone-300 leading-none w-10 flex-shrink-0 tabular-nums" aria-hidden="true">
                       {String(i + 1).padStart(2, '0')}

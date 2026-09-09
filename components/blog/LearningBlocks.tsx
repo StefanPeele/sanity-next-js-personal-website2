@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 import { downloadTextFile } from '@/lib/anki'
 import { Icon } from '@/lib/cms/icons'
+import { FOCUS } from '@/lib/ui'
 
 // ══════════════════════════════════════════════════════════════════
 // WHAT I GOT WRONG FIRST
@@ -315,7 +316,7 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
           <button
             type="button"
             onClick={download}
-            className="ml-auto font-mono text-[9px] uppercase tracking-widest px-3 py-2 border border-white/10 rounded-lg text-stone-300 hover:text-white hover:border-white/30 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+            className={`ml-auto font-mono text-[9px] uppercase tracking-widest px-3 py-2 border border-white/10 rounded-lg text-stone-300 hover:text-white hover:border-white/30 transition-colors ${FOCUS}`}
             data-print-hide
           >
             {downloaded ? 'Saved ✓' : `Download study deck (${deckCount} cards, Anki)`}
@@ -331,7 +332,7 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
               key={card._key}
               type="button"
               onClick={() => toggleFlip(card._key)}
-              className="relative h-36 w-full text-left group focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-xl"
+              className={`relative h-36 w-full text-left group ${FOCUS} rounded-xl`}
               aria-pressed={isFlipped}
               aria-label={isFlipped ? `Definition of ${card.front}: ${card.back}. Activate to show the term.` : `Concept card: ${card.front}. Activate to reveal the definition.`}
             >

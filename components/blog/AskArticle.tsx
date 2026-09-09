@@ -2,6 +2,7 @@
 
 import { useId, useState, useTransition } from 'react'
 import { askArticle } from '@/app/actions/ask'
+import { FOCUS } from '@/lib/ui'
 // components/blog/AskArticle.tsx
 // Ask a question about this article. Answers come from the article text only
 // (see app/actions/ask.ts). Only rendered by the page when the API key is set.
@@ -45,14 +46,14 @@ export function AskArticle({ slug, heading = 'Ask this article', placeholder = '
           rows={3}
           maxLength={500}
           placeholder={placeholder}
-          className="w-full rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 font-sans text-sm text-stone-100 placeholder:text-stone-500 focus:border-white/30 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 resize-y"
+          className={`w-full rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 font-sans text-sm text-stone-100 placeholder:text-stone-500 focus:border-white/30 focus:outline-none ${FOCUS} resize-y`}
           disabled={pending}
         />
         <div className="flex items-center gap-4 flex-wrap">
           <button
             type="submit"
             disabled={pending || !question.trim()}
-            className="font-sans text-sm px-5 py-3 bg-white text-black rounded-lg hover:bg-stone-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+            className={`font-sans text-sm px-5 py-3 bg-white text-black rounded-lg hover:bg-stone-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${FOCUS}`}
           >
             {pending ? 'Reading the article…' : buttonLabel}
           </button>

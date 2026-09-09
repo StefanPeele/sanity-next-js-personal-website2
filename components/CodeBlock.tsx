@@ -1,6 +1,7 @@
 'use client'
 
 import { useId, useMemo, useState } from 'react'
+import { FOCUS } from '@/lib/ui'
 // components/CodeBlock.tsx
 // Code block from the Sanity code type: filename tab, copy button, line-number
 // toggle and highlighted lines. Tokenising is a small regex pass — no dependency.
@@ -111,14 +112,14 @@ export function CodeBlock({ value }: { value: CodeValue }) {
             onClick={() => setNumbers((n) => !n)}
             aria-pressed={numbers}
             aria-controls={id}
-            className="px-2 py-1.5 rounded font-mono text-[10px] uppercase tracking-widest text-stone-400 hover:text-white hover:bg-white/5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+            className={`px-2 py-1.5 rounded font-mono text-[10px] uppercase tracking-widest text-stone-400 hover:text-white hover:bg-white/5 transition-colors ${FOCUS}`}
           >
             Lines
           </button>
           <button
             type="button"
             onClick={handleCopy}
-            className="px-2 py-1.5 rounded font-mono text-[10px] uppercase tracking-widest text-stone-400 hover:text-white hover:bg-white/5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+            className={`px-2 py-1.5 rounded font-mono text-[10px] uppercase tracking-widest text-stone-400 hover:text-white hover:bg-white/5 transition-colors ${FOCUS}`}
             aria-live="polite"
           >
             {copied ? 'Copied' : 'Copy'}

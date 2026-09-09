@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from 'react'
 import Link from 'next/link'
+import { FOCUS } from '@/lib/ui'
 // components/blog/GlossaryList.tsx
 // Client half of /glossary: category filter + A–Z groups. The longDefinition is
 // rendered on the server and arrives here as a ReactNode.
@@ -48,7 +49,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
             type="button"
             aria-pressed={category === c}
             onClick={() => setCategory(c)}
-            className={`font-mono text-[9px] uppercase tracking-widest px-3 py-2 rounded-full border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 ${
+            className={`font-mono text-[9px] uppercase tracking-widest px-3 py-2 rounded-full border transition-colors ${FOCUS} ${
               category === c ? 'bg-white text-black border-white' : 'border-white/10 text-stone-300 hover:text-white hover:border-white/30'
             }`}
           >
@@ -62,7 +63,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
           <a
             key={l}
             href={`#letter-${l === '#' ? 'other' : l}`}
-            className="w-8 h-8 flex items-center justify-center rounded font-mono text-[10px] text-stone-400 hover:text-white hover:bg-white/5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+            className={`w-8 h-8 flex items-center justify-center rounded font-mono text-[10px] text-stone-400 hover:text-white hover:bg-white/5 transition-colors ${FOCUS}`}
           >
             {l}
           </a>
@@ -80,7 +81,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
             {items.map((e) => (
               <div key={e._id} id={e.slug} className="scroll-mt-28 group">
                 <dt className="flex flex-wrap items-baseline gap-3">
-                  <a href={`#${e.slug}`} className="font-serif text-xl text-white hover:text-stone-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
+                  <a href={`#${e.slug}`} className={`font-serif text-xl text-white hover:text-stone-200 ${FOCUS} rounded-sm`}>
                     {e.term}
                   </a>
                   {e.aliases.length > 0 && (
@@ -94,7 +95,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
                   <p className="font-sans text-[15px] text-stone-300 leading-relaxed max-w-2xl">{e.definition}</p>
                   {e.longDefinition && (
                     <details className="mt-3 group/long">
-                      <summary className="cursor-pointer list-none font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm inline-flex items-center gap-2">
+                      <summary className={`cursor-pointer list-none font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm inline-flex items-center gap-2`}>
                         <span className="transition-transform group-open/long:rotate-90" aria-hidden="true">▸</span>
                         Longer explanation
                       </summary>
@@ -105,14 +106,14 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
                     <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
                       {e.relatedPosts.filter((p) => p.slug).map((p) => (
                         <li key={p.slug}>
-                          <Link href={`/blog/${p.slug}`} className="font-mono text-[10px] text-stone-400 hover:text-white underline underline-offset-4 decoration-stone-700 hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
+                          <Link href={`/blog/${p.slug}`} className={`font-mono text-[10px] text-stone-400 hover:text-white underline underline-offset-4 decoration-stone-700 hover:decoration-white ${FOCUS} rounded-sm`}>
                             Post: {p.title}
                           </Link>
                         </li>
                       ))}
                       {e.relatedNotes.filter((n) => n.slug).map((n) => (
                         <li key={n.slug}>
-                          <Link href={`/garden/${n.slug}`} className="font-mono text-[10px] text-stone-400 hover:text-white underline underline-offset-4 decoration-stone-700 hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
+                          <Link href={`/garden/${n.slug}`} className={`font-mono text-[10px] text-stone-400 hover:text-white underline underline-offset-4 decoration-stone-700 hover:decoration-white ${FOCUS} rounded-sm`}>
                             Note: {n.title}
                           </Link>
                         </li>

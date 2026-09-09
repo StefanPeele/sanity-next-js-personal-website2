@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { sanityFetch } from '@/sanity/lib/live'
 import { graphQuery } from '@/sanity/lib/queries'
 import { GraphNeighborhood } from './KnowledgeGraph'
+import { FOCUS } from '@/lib/ui'
 // components/graph/GraphEmbed.tsx
 // Server-safe wrapper: fetches the graph and renders the 1-hop neighbourhood of `focusId`.
 //
@@ -25,7 +26,7 @@ export async function GraphEmbed({ focusId, title = 'In the knowledge graph' }: 
     <section aria-label={title}>
       <div className="mb-3 flex items-center justify-between">
         <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-700 pl-3">{title}</span>
-        <Link href="/graph" className="font-mono text-[8px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
+        <Link href="/graph" className={`font-mono text-[8px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>
           Full graph →
         </Link>
       </div>

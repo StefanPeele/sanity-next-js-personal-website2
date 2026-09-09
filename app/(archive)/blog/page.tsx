@@ -13,6 +13,7 @@ import { absoluteUrl, articleTypeMeta, SITE } from '@/lib/site'
 import { getCopy, getTaxonomy } from '@/lib/cms/loaders'
 import { blogPageQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_BLOG_PAGE } from '@/lib/cms/defaults/blogPage'
+import { FOCUS } from '@/lib/ui'
 // app/(archive)/blog/page.tsx
 // Supports ?category= ?lane= ?tag= ?sort= (handled client-side in BlogDirectory).
 
@@ -93,7 +94,7 @@ export default async function BlogPage() {
 
             <Link
               href={`/blog/${featuredPost.slug}`}
-              className="block group mb-20 relative overflow-hidden rounded-lg border border-white/10 min-h-[480px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+              className={`block group mb-20 relative overflow-hidden rounded-lg border border-white/10 min-h-[480px] ${FOCUS}`}
             >
               <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/70 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
 

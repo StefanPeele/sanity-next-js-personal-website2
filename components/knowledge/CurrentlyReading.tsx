@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { MEDIA_ICON_FALLBACK, MEDIA_ICONS, MEDIA_LABELS } from '@/components/library/types'
 import { Icon } from '@/lib/cms/icons'
+import { FOCUS } from '@/lib/ui'
 // components/knowledge/CurrentlyReading.tsx
 // Server component. Accepts already-fetched items (homeIntelQuery.currentlyReading / nowQuery.reading).
 //
@@ -22,7 +23,7 @@ export function CurrentlyReading({ items, title = 'Currently reading' }: { items
     <section aria-label={title}>
       {title && <div className="mb-3 flex items-center justify-between">
         <span className="section-label">{title}</span>
-        <Link href="/library" className="font-sans text-sm text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">
+        <Link href="/library" className={`font-sans text-sm text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>
           Library →
         </Link>
       </div>}
@@ -32,7 +33,7 @@ export function CurrentlyReading({ items, title = 'Currently reading' }: { items
             const href = item._id ? `/library#${item._id}` : '/library'
             return (
               <li key={item._id ?? `${item.title}-${i}`}>
-                <Link href={href} className="group flex gap-3 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400">
+                <Link href={href} className={`group flex gap-3 rounded-sm ${FOCUS}`}>
                   <span className="flex-shrink-0 w-9 h-12 rounded border border-white/10 bg-stone-900 overflow-hidden flex items-center justify-center">
                     {item.coverUrl ? (
                       <Image src={item.coverUrl} alt="" width={36} height={48} className="w-full h-full object-cover" />

@@ -3,6 +3,7 @@
 import { useActionState, useId } from 'react'
 import { subscribe, type SubscribeState } from '@/app/actions/subscribe'
 import { DEFAULT_SETTINGS } from '@/lib/cms/defaults/settings'
+import { FOCUS } from '@/lib/ui'
 // components/NewsletterForm.tsx
 // Double opt-in newsletter signup. No required props.
 //   <NewsletterForm />                       — card (footer, article end)
@@ -40,7 +41,7 @@ export function NewsletterForm({ variant = 'card', source = 'site', className = 
       disabled={pending || succeeded}
       aria-describedby={statusId}
       aria-invalid={state.status === 'error' ? true : undefined}
-      className="min-w-0 flex-1 bg-transparent border border-white/10 px-4 py-3 font-sans text-sm text-stone-100 placeholder:text-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 disabled:opacity-60"
+      className={`min-w-0 flex-1 bg-transparent border border-white/10 px-4 py-3 font-sans text-sm text-stone-100 placeholder:text-stone-500 ${FOCUS} disabled:opacity-60`}
     />
   )
 
@@ -48,7 +49,7 @@ export function NewsletterForm({ variant = 'card', source = 'site', className = 
     <button
       type="submit"
       disabled={pending || succeeded}
-      className="shrink-0 px-5 py-3 bg-white text-black font-sans text-sm hover:bg-stone-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+      className={`shrink-0 px-5 py-3 bg-white text-black font-sans text-sm hover:bg-stone-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${FOCUS}`}
     >
       {pending ? 'Sending…' : succeeded ? 'Sent' : c.buttonLabel}
     </button>

@@ -10,6 +10,7 @@ import type { PortableTextBlock } from 'next-sanity'
 import { getCopy } from '@/lib/cms/loaders'
 import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
+import { FOCUS } from '@/lib/ui'
 // app/(archive)/glossary/page.tsx
 // Every glossary term, A–Z, filterable by category. Terms also power the hover
 // cards inside articles (lib/glossary.ts).
@@ -61,7 +62,7 @@ export default async function GlossaryPage() {
 
       <main id="content" className="relative max-w-4xl mx-auto px-6 pt-32 pb-24">
         <header className="mb-12 border-b border-white/5 pb-8">
-          <Link href="/blog" className="font-sans text-sm text-stone-400 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm">← {copy.backLabel}</Link>
+          <Link href="/blog" className={`font-sans text-sm text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>← {copy.backLabel}</Link>
           <h1 className="mt-6 text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
           <p className="mt-4 max-w-xl font-sans text-base text-stone-400">{copy.termsCount.replace('{n}', String(entries.length))}. {copy.header.lede}</p>
         </header>

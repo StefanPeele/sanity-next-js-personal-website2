@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react'
 import Link from 'next/link'
+import { FOCUS } from '@/lib/ui'
 // components/blog/GlossaryTerm.tsx
 // Inline glossary annotation. The term is a button (keyboard reachable) that
 // shows a definition card on hover / focus / click; Escape closes it. The card
@@ -45,7 +46,7 @@ export function GlossaryTerm({ slug, term, definition, children }: Props) {
     >
       <button
         type="button"
-        className="glossary-term focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-sm"
+        className={`glossary-term ${FOCUS} rounded-sm`}
         aria-describedby={open ? cardId : undefined}
         aria-expanded={open}
         onClick={() => { setPinned((p) => !p); setOpen((o) => !(o && pinned)) }}
@@ -71,7 +72,7 @@ export function GlossaryTerm({ slug, term, definition, children }: Props) {
           </span>
           <Link
             href={`/glossary#${slug}`}
-            className="mt-2.5 inline-block font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+            className={`mt-2.5 inline-block font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white ${FOCUS}`}
           >
             Read more →
           </Link>

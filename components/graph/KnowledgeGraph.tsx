@@ -9,6 +9,7 @@ import { NOTE_STATUS } from '@/components/garden/status'
 import type { GraphQueryResult } from '@/sanity.types'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
 import { DEFAULT_TAXONOMY, type VocabEntry } from '@/lib/cms/defaults/taxonomy'
+import { FOCUS } from '@/lib/ui'
 
 type GraphCopy = typeof DEFAULT_KNOWLEDGE_PAGES.graph
 // components/graph/KnowledgeGraph.tsx
@@ -480,7 +481,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
               type="button"
               onClick={() => toggleFilter(key)}
               aria-pressed={filters[key]}
-              className={`flex items-center justify-between w-full px-2 py-1.5 rounded-md transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 ${
+              className={`flex items-center justify-between w-full px-2 py-1.5 rounded-md transition-all ${FOCUS} ${
                 filters[key] ? 'bg-white/5 opacity-100' : 'bg-transparent opacity-40'
               }`}
             >
@@ -500,7 +501,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={copy.searchPlaceholder}
-          className="w-full bg-white/5 border border-white/10 rounded-md px-3 py-1.5 font-mono text-[10px] text-white placeholder:text-stone-500 focus:border-white/25 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+          className={`w-full bg-white/5 border border-white/10 rounded-md px-3 py-1.5 font-mono text-[10px] text-white placeholder:text-stone-500 focus:border-white/25 transition-colors ${FOCUS}`}
         />
 
         <p className="font-mono text-[7px] text-stone-400 uppercase tracking-widest mt-3 leading-loose">
@@ -510,7 +511,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
 
       {/* Legend */}
       <details className="absolute bottom-4 left-4 bg-[#0d0d0f]/85 border border-white/[0.08] rounded-lg backdrop-blur-xl max-w-[220px]" open>
-        <summary className="cursor-pointer px-3 py-2 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-lg">
+        <summary className={`cursor-pointer px-3 py-2 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 ${FOCUS} rounded-lg`}>
           {copy.legendHeading}
         </summary>
         <ul className="px-3 pb-3 space-y-1.5">
@@ -533,7 +534,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
       {/* Keyboard / screen-reader alternative */}
       <div className="absolute bottom-4 right-4">
         <details className="bg-[#0d0d0f]/90 border border-white/[0.08] rounded-lg backdrop-blur-xl max-w-xs">
-          <summary className="cursor-pointer px-3 py-2 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 rounded-lg">
+          <summary className={`cursor-pointer px-3 py-2 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 ${FOCUS} rounded-lg`}>
             {copy.nodeListLabel} ({listNodes.length})
           </summary>
           <ul ref={listRef} className="max-h-64 overflow-y-auto px-3 pb-3 space-y-1" aria-label={copy.nodeListLabel}>
@@ -542,7 +543,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
                 {n.url ? (
                   <a
                     href={n.url}
-                    className="flex items-center gap-2 font-mono text-[9px] text-stone-300 hover:text-white rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+                    className={`flex items-center gap-2 font-mono text-[9px] text-stone-300 hover:text-white rounded-sm ${FOCUS}`}
                   >
                     <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: n.color }} aria-hidden="true" />
                     <span className="truncate">{n.label}</span>
@@ -610,7 +611,7 @@ export function GraphNeighborhood({ data, focusId, height = 260 }: { data: Graph
           <li key={n.id}>
             <a
               href={n.url}
-              className="flex items-center gap-1.5 font-mono text-[9px] text-stone-400 hover:text-white border border-white/10 hover:border-white/30 px-2 py-1 rounded-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+              className={`flex items-center gap-1.5 font-mono text-[9px] text-stone-400 hover:text-white border border-white/10 hover:border-white/30 px-2 py-1 rounded-sm transition-colors ${FOCUS}`}
             >
               <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: n.color }} aria-hidden="true" />
               {n.label}

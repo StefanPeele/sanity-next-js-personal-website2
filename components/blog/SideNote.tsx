@@ -1,6 +1,7 @@
 'use client'
 
 import { useId, useState } from 'react'
+import { FOCUS } from '@/lib/ui'
 // components/blog/SideNote.tsx
 // Inline annotation mark. The highlighted text is a button so keyboard users can
 // reach it: hover or focus shows the tooltip on desktop, click/tap toggles an
@@ -25,7 +26,7 @@ export function SideNote({ children, note }: SideNoteProps) {
         aria-expanded={open}
         aria-describedby={noteId}
         style={{ font: 'inherit', color: 'inherit' }}
-        className="border-b border-dashed border-amber-400/60 cursor-help bg-transparent p-0 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400"
+        className={`border-b border-dashed border-amber-400/60 cursor-help bg-transparent p-0 rounded-sm ${FOCUS}`}
       >
         {children}
         <sup className="font-mono text-[9px] text-amber-400/80 ml-0.5 select-none" aria-hidden="true">※</sup>
