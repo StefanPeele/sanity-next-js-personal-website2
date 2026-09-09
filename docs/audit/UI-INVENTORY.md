@@ -1,14 +1,11 @@
 # UI and feature inventory — stefanpeele.com (2026-09-08)
 
 
-> **Status — corrections applied 2026-09-08.** Read this box before acting on anything below.
->
-> - **"12 of 20 sections do not render" is wrong.** Measured: 6, 6 and 7 of 20 render across the
->   three published posts, so 13-14 do not.
-> - **The sub-12px "dormant code" claim was scoped wrongly** and its file table was the blog subset,
->   not the 339 site-wide figure. Both corrected in §2.
-> - **D1 and D7 are fixed** (`83a4b72`, `f78e1b7`). Prose is 19px at 65 characters, not 15px at 80,
->   and the search button no longer takes focus on load.
+> **Status — re-measured 2026-09-09 against `e880405`.** This document now describes the site as
+> shipped, not the pre-change site. Everything below reflects: the 19px prose default and the
+> typography block, the `FOCUS` extraction and the fold of all 45 inline literals, the removal of
+> the Topics / Explore / At a glance panel, the 9 glyph-to-lucide swaps, and taxonomy rendering as
+> one pill. Defect measurements live in `UI-AUDIT-2.md`; implementation specs in `SPECS.md`.
 
 Built from static analysis of `components/` and `app/`, plus the production capture run in
 `docs/audit/screenshots/site-inventory/`. Counts are from `grep -r` over `*.tsx` and are
@@ -22,14 +19,16 @@ reproducible; where a count contradicts observed behaviour, re-measure before ac
 
 | Dimension | Distinct values in use | Comment |
 | --- | --- | --- |
-| Type sizes | **22** | No scale. See §2. |
-| Sub-12px text instances | **339** | `text-[9px]` ×141, `text-[10px]` ×114, `text-[8px]` ×62, `text-[11px]` ×15, `text-[7px]` ×7 |
-| Border colour tokens | **56** | Top 3 cover 228 of ~400 uses; the tail is 50+ one-offs |
-| Background fill tokens | **52** | Near-black alone is defined three ways |
+| Type sizes | **26** | 6 of them are the shipped article scale; no site-wide scale. See §2. |
+| Sub-12px in source | **328** | `9px` ×137, `10px` ×109, `8px` ×60, `11px` ×15, `7px` ×7 |
+| Sub-12px **rendered** | **465** | across 16 routes × 2 breakpoints; 70% on 3 routes |
+| Border colour tokens | **58** | Top 3 cover 224 of ~400 uses; the tail is 50+ one-offs |
+| Background fill tokens | **53** | Near-black alone is spelled three ways |
 | Mono + uppercase class strings | **172** | One visual idea, 172 spellings |
 | Letter-spacing values | **8** | `tracking-wide` ×163 plus 7 bracketed variants |
 | Button padding combinations | **25+** | No button primitive exists |
-| `const FOCUS` re-declarations | **30** | 29 byte-identical, never exported |
+| `const FOCUS` re-declarations | **0** | Was 29. Now one export in `lib/ui.ts`, 51 importers, **163 call sites** |
+| `.focus-ring` usages | **0** | Dead CSS in `styles/index.css:49`; includes an `outline-offset-2` the constant lacks |
 | Border-radius tokens | **9** | `rounded-sm` ×127, `rounded-full` ×77, `rounded-lg` ×55, `rounded-xl` ×53 |
 
 The pattern across every row: the site has a consistent *visual intent* and no *shared
@@ -51,9 +50,11 @@ compounding.
 | Footer "Pages" grid | Footer | default, hover | Consistent |
 | Back link ("← Writing") | Article header | default, hover, focus | **Collides with the logo at 390** — sits directly under it, reads as nav chrome rather than article chrome |
 
-**Inconsistency:** the article back-link uses a lucide `ArrowLeft`; the directory panel and card
-CTAs use the literal glyph `→`. 28 glyph arrows (`→`, `←`, `✕`, `↑`, `↓`) coexist with the lucide
-set that `CLAUDE.md` mandates.
+**Glyphs, re-counted 2026-09-09.** The earlier "28 glyph arrows … that CLAUDE.md mandates" was
+wrong twice: the count came from a narrow grep (there are 60 glyph lines), and CLAUDE.md says
+"never emoji" — none of these are emoji. Current split: 6 comments, 2 content strings, 1 keyboard
+hint, **9 decorative icons swapped to lucide in `8f266cb`**, and 42 typographic arrows inside text
+runs, deliberately left. See that commit for the reasoning.
 
 ---
 
@@ -63,8 +64,9 @@ set that `CLAUDE.md` mandates.
 `text-lg` ×28 … `text-7xl` ×5) mixed with 10 bracketed one-offs (`text-[17px]`, `text-[15px]`,
 `text-[13px]`, `text-[2rem]`, `text-[1.6rem]`, `text-[12px]`).
 
-Measured article scale at 1440: h1 48 / h2 32 / h3 25.6 / h4 20 / body 15 — ratios of
-**1.50 / 1.25 / 1.28 / 1.33**. Four steps, four ratios.
+Measured article scale at 1440, **as shipped in `5c7cca4`**: h1 48 / h2 38 / h3 30 / h4 24 /
+body 19 — a single **1.25** ratio. Line-height 1.70, paragraph gap 1.5em, `hyphens: auto`, 65
+characters per line. The site-wide scale outside the article is still 26 sizes; spec in `SPECS.md` §d.
 
 **The sub-12px problem is the single largest consistency defect on the site.** 339 instances, and
 the distribution matters: 62 at 8px and 7 at 7px are below the threshold at which the stone palette
@@ -109,8 +111,9 @@ when a reader enables the toggle. Working as designed.
 | Note card | `/blog` notes strip, `/garden` | default, hover |
 
 **Inconsistencies:**
-- Category taxonomy is rendered **two different ways for the same data**: uppercase mono
-  micro-labels on the index (`HOMELAB`), sentence-case pills on the article (`Homelab`).
+- ~~Category taxonomy is rendered two different ways for the same data.~~ **Fixed `1b0fb5b`** —
+  lane, category and series all use one pill (`font-sans text-xs px-3 py-1.5 rounded-full border`)
+  on the card, the hero and the article. Read time is still 9px mono beside a 12px pill.
 - Card borders drift across `border-white/5`, `/10`, `/15`, `/[0.08]`, `/20`, `/30` with no rule
   distinguishing them.
 - The featured card stacks three badges (`FEATURED`, `NETWORK & INFRASTRUCTURE`, `PERSPECTIVE`).
@@ -159,7 +162,7 @@ This is the clearest single candidate for extraction on the site.
 | Overlay | Trigger | Backdrop | Entrance |
 | --- | --- | --- | --- |
 | Search modal | Navbar / ⌘K | `bg-black/70 backdrop-blur-sm` | framer-motion |
-| Reader menu (desktop) | TOC chip | n/a (dropdown) | scale from top-right, 180ms — added `5c7cca4` |
+| Reader menu (desktop) | TOC chip | n/a (dropdown) | scale from top-right, 180ms (`5c7cca4`) |
 | Reader menu (mobile sheet) | TOC chip | `bg-black/40` — added `5c7cca4` | rises from bottom edge, 180ms |
 | Mobile nav | hamburger | yes | yes |
 | Lightbox | `CinematicGallery` | yes | yes |
