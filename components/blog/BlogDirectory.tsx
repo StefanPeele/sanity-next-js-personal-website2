@@ -14,6 +14,7 @@ import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPag
 import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { Icon } from '@/lib/cms/icons'
 import { FOCUS } from '@/lib/ui'
+import { ArrowRight } from 'lucide-react'
 // components/blog/BlogDirectory.tsx
 // Directory + filters + grid for /blog. Filters live in the URL:
 //   ?category=  ?lane=  ?tag=  ?sort=newest|oldest|longest
@@ -354,7 +355,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                 <div className="flex items-center justify-between font-sans text-xs border-t border-white/10 pt-4">
                   <time dateTime={formatDate(post.publishedAt, 'iso')} className="text-stone-400">{formatDate(post.publishedAt, 'short', 'Undated')}</time>
                   <span className="text-stone-300 group-hover:text-white flex items-center gap-1.5 transition-colors">
-                    Read <span className="group-hover:translate-x-0.5 transition-transform inline-block" aria-hidden="true">→</span>
+                    Read <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform inline-block" aria-hidden="true" />
                   </span>
                 </div>
               </div>

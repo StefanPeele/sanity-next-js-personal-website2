@@ -5,6 +5,7 @@ import type { LibraryItem } from './types'
 import { MEDIA_ICON_FALLBACK, MEDIA_ICONS, MEDIA_LABELS, RATING_CONFIG } from './types'
 import { Icon } from '@/lib/cms/icons'
 import { FOCUS } from '@/lib/ui'
+import { ChevronRight } from 'lucide-react'
 // components/library/MediaCard.tsx
 // One library entry. Renders the one-sentence take, key idea, pull quote,
 // highlights (disclosure), rating, progress and the posts/notes it influenced.
@@ -105,7 +106,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
         {highlights.length > 0 && (
           <details className="mt-3 group">
             <summary className={`cursor-pointer font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors rounded-sm list-none flex items-center gap-2 ${FOCUS}`}>
-              <span className="inline-block transition-transform group-open:rotate-90" aria-hidden="true">▸</span>
+              <ChevronRight size={14} className="inline-block transition-transform group-open:rotate-90" aria-hidden="true" />
               {highlights.length} highlight{highlights.length === 1 ? '' : 's'}
             </summary>
             <ul className="mt-2 space-y-2 pl-4 border-l border-white/[0.08]">

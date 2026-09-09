@@ -3,6 +3,7 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { FOCUS } from '@/lib/ui'
+import { ChevronRight } from 'lucide-react'
 // components/blog/GlossaryList.tsx
 // Client half of /glossary: category filter + A–Z groups. The longDefinition is
 // rendered on the server and arrives here as a ReactNode.
@@ -96,7 +97,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
                   {e.longDefinition && (
                     <details className="mt-3 group/long">
                       <summary className={`cursor-pointer list-none font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm inline-flex items-center gap-2`}>
-                        <span className="transition-transform group-open/long:rotate-90" aria-hidden="true">▸</span>
+                        <ChevronRight size={14} className="transition-transform group-open/long:rotate-90" aria-hidden="true" />
                         Longer explanation
                       </summary>
                       <div className="mt-3 pl-4 border-l border-white/10 max-w-2xl">{e.longDefinition}</div>

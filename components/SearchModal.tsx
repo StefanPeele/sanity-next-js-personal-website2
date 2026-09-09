@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { searchSite, type SearchGroup, type SearchResult, type SearchType } from '@/app/actions/search'
 import { DEFAULT_NAVIGATION, navHref, type NavLink } from '@/lib/cms/defaults/navigation'
 import { FOCUS } from '@/lib/ui'
+import { ArrowRight } from 'lucide-react'
 // components/SearchModal.tsx
 // Cmd/Ctrl+K site search. Grouped results with type chips, keyboard navigation across
 // groups, dialog semantics + focus trap, closes on route change, recent searches in
@@ -321,7 +322,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                               onClick={() => navigate(link.href)}
                               className={`w-full text-left font-mono text-[10px] uppercase tracking-[0.2em] text-stone-400 hover:text-white transition-colors py-2 flex items-center gap-3 rounded-sm ${FOCUS}`}
                             >
-                              <span className="text-stone-600" aria-hidden="true">→</span>
+                              <ArrowRight size={14} className="text-stone-600" aria-hidden="true" />
                               {link.label}
                               <span className="ml-auto normal-case tracking-normal text-[9px] text-stone-400">{link.hint}</span>
                             </button>

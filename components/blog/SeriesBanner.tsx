@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { FOCUS } from '@/lib/ui'
+import { ChevronRight } from 'lucide-react'
 // components/blog/SeriesBanner.tsx
 // "Part N of M · Series title" with prev/next and a native <details> list of all parts.
 
@@ -50,7 +51,7 @@ export function SeriesBanner({ series, currentSlug, seriesOrder, labels = DEFAUL
       </div>
       <details className="group border-t border-white/5">
         <summary className={`cursor-pointer list-none px-5 py-3 font-sans text-sm text-stone-400 hover:text-white transition-colors flex items-center gap-2 ${FOCUS}`}>
-          <span className="transition-transform group-open:rotate-90" aria-hidden="true">▸</span>
+          <ChevronRight size={14} className="transition-transform group-open:rotate-90" aria-hidden="true" />
           {labels.allPartsLabel}
         </summary>
         <ol className="px-5 pb-4 space-y-1.5">

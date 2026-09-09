@@ -22,6 +22,7 @@ import { getCopy } from '@/lib/cms/loaders'
 import { personalPagesQuery } from '@/sanity/lib/queries-services'
 import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 import { FOCUS } from '@/lib/ui'
+import { ArrowRight } from 'lucide-react'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -234,7 +235,7 @@ export default async function ProjectSlugRoute({params}: Props) {
               )}
               {liveUrl && (
                 <a href={liveUrl} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between px-4 py-2 text-xs font-mono tracking-widest uppercase bg-white text-black hover:bg-stone-200 transition-colors rounded-sm font-bold group ${FOCUS}`}>
-                  <span>{copy.linkLabels.live}</span><span aria-hidden="true">→</span>
+                  <span>{copy.linkLabels.live}</span><ArrowRight size={14} aria-hidden="true" />
                 </a>
               )}
             </div>

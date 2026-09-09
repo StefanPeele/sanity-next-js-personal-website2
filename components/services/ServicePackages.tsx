@@ -14,6 +14,7 @@ import {
 import { DEFAULT_SERVICES_PAGE, type ServicesPageCopy } from '@/lib/cms/defaults/servicesPage'
 import { Icon } from '@/lib/cms/icons'
 import { FOCUS } from '@/lib/ui'
+import { Check } from 'lucide-react'
 
 interface ServicePackagesProps {
   copy?: ServicesPageCopy
@@ -230,7 +231,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                   <ul className="space-y-2.5 mb-6 flex-grow">
                     {pkg.includes.map((item) => (
                       <li key={item} className="flex items-start gap-2.5 text-stone-200 text-sm leading-snug">
-                        <span className={`mt-0.5 flex-shrink-0 text-xs ${accent ? 'text-amber-500' : 'text-stone-400'}`} aria-hidden="true">✓</span>
+                        <Check size={14} className={`mt-0.5 flex-shrink-0 ${accent ? 'text-amber-500' : 'text-stone-400'}`} aria-hidden="true" />
                         <span>
                           {item}
                           {item.includes('in development') && (

@@ -14,6 +14,7 @@ import { getCopy } from '@/lib/cms/loaders'
 import { personalPagesQuery } from '@/sanity/lib/queries-services'
 import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 import { FOCUS } from '@/lib/ui'
+import { ArrowLeft } from 'lucide-react'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -81,7 +82,7 @@ export default async function AlbumPage({ params }: Props) {
           href="/photography/albums"
           className={`inline-flex items-center gap-2 text-stone-400 font-sans text-sm hover:text-white transition-colors mb-16 ${FOCUS}`}
         >
-          <span aria-hidden="true">←</span> {copy.backLabel}
+          <ArrowLeft size={14} aria-hidden="true" /> {copy.backLabel}
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end border-b border-white/10 pb-16">

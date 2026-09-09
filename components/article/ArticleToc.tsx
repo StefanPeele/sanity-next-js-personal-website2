@@ -4,6 +4,7 @@ import { useArticle } from '@/components/article/ArticleProvider'
 import { ReaderMenu, type ReaderMenuProps } from '@/components/article/ReaderMenu'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 import { FOCUS } from '@/lib/ui'
+import { ChevronDown } from 'lucide-react'
 // components/article/ArticleToc.tsx — the one table of contents.
 // Desktop: sticky sidebar (rendered by the page in the right column).
 // Mobile: a <details> list under the header. Both carry the reader menu button.
@@ -66,7 +67,7 @@ export function ArticleToc({ copy, menu, variant }: Props) {
         <details className="flex-1 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3" open={headings.length <= 8} data-toc="mobile">
           <summary className={`cursor-pointer section-label list-none flex items-center justify-between ${FOCUS} rounded-sm`}>
             {copy.toc.mobileTitle}
-            <span aria-hidden="true" className="text-stone-400 text-sm">▾</span>
+            <ChevronDown size={16} className="text-stone-400" aria-hidden="true" />
           </summary>
           <div className="mt-3"><TocList copy={copy} /></div>
         </details>
