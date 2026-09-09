@@ -332,17 +332,17 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <div className="flex gap-2 flex-wrap items-center">
                     {meta && (
-                      <span className="font-mono text-[8px] tracking-[0.2em] uppercase border px-2 py-0.5 rounded-sm" style={{ color: meta.color, borderColor: `${meta.color}55`, backgroundColor: meta.bg }}>
+                      <span className="font-sans text-xs px-3 py-1.5 rounded-full border" style={{ color: meta.color, borderColor: `${meta.color}66`, backgroundColor: meta.bg }}>
                         {meta.label}
                       </span>
                     )}
                     {firstCat && (
-                      <span className={`font-mono text-[9px] tracking-[0.2em] uppercase border px-2 py-1 rounded-sm ${firstCat === active ? 'border-stone-300 text-stone-200 bg-white/[0.08]' : 'border-stone-600 text-stone-400'}`}>
+                      <span className={`font-sans text-xs px-3 py-1.5 rounded-full border ${firstCat === active ? 'border-stone-300 text-stone-200 bg-white/[0.08]' : 'border-white/10 text-stone-400'}`}>
                         {firstCat}
                       </span>
                     )}
                     {post.series?.title && (
-                      <span className="font-mono text-[8px] tracking-[0.2em] uppercase text-orange-300/80"><Icon name="layers" size={9} className="inline -mt-px mr-1" />{post.series.title}</span>
+                      <span className="font-sans text-xs px-3 py-1.5 rounded-full border border-orange-300/30 text-orange-300/90 inline-flex items-center gap-1.5"><Icon name="layers" size={12} aria-hidden />{post.series.title}</span>
                     )}
                   </div>
                   <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest flex-shrink-0">{minutes} min</span>

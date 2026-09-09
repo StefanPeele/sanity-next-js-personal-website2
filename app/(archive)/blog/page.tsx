@@ -123,12 +123,12 @@ export default async function BlogPage() {
                 <div className="flex gap-3 mb-4 flex-wrap">
                   <span className="bg-white text-black font-mono text-[9px] tracking-[0.2em] uppercase px-3 py-1 rounded-sm">Featured</span>
                   {featuredMeta && (
-                    <span className="font-mono text-[9px] tracking-[0.2em] uppercase px-3 py-1 rounded-sm border backdrop-blur-md" style={{ color: featuredMeta.color, borderColor: `${featuredMeta.color}66`, backgroundColor: featuredMeta.bg }}>
+                    <span className="font-sans text-xs px-3 py-1.5 rounded-full border backdrop-blur-md" style={{ color: featuredMeta.color, borderColor: `${featuredMeta.color}66`, backgroundColor: featuredMeta.bg }}>
                       {featuredMeta.label}
                     </span>
                   )}
                   {featuredPost.categories?.filter(Boolean).map((cat) => (
-                    <span key={cat} className="border border-stone-600 text-stone-300 font-mono text-[9px] tracking-[0.2em] uppercase px-3 py-1 rounded-sm backdrop-blur-md bg-black/30">
+                    <span key={cat} className="font-sans text-xs px-3 py-1.5 rounded-full border border-white/20 text-stone-300 backdrop-blur-md bg-black/30">
                       {cat}
                     </span>
                   ))}
