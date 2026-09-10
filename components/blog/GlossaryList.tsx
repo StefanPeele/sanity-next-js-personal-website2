@@ -91,7 +91,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
                   )}
                 </dt>
                 <dd className="mt-2">
-                  <p className="font-sans text-[15px] text-stone-300 leading-relaxed max-w-2xl">{e.definition}</p>
+                  <p className="font-sans text-base text-stone-300 leading-relaxed max-w-2xl">{e.definition}</p>
                   {e.longDefinition && (
                     <details className="mt-3 group/long">
                       <summary className={`meta-label cursor-pointer list-none text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm inline-flex items-center gap-2`}>

@@ -53,12 +53,12 @@ export default async function ArchivesPage() {
                     />
                   )}
                   <div className="absolute inset-0 p-6 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent">
-                    <span className="text-amber-400 font-mono text-[9px] tracking-widest uppercase mb-2 block">
+                    <span className="meta-label text-amber-400 mb-2 block">
                       {gallery.category?.title || copy.uncategorized}{frames ? ` · ${copy.framesLabel.replace('{n}', String(frames))}` : ''}
                     </span>
                     <h2 className="text-white text-xl font-serif">{gallery.title}</h2>
                     {gallery.location && (
-                      <span className="text-stone-400 font-mono text-[9px] uppercase tracking-widest mt-1">{gallery.location}</span>
+                      <span className="meta-label text-stone-400 mt-1">{gallery.location}</span>
                     )}
                   </div>
                 </Link>

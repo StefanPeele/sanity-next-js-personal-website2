@@ -34,7 +34,7 @@ export default async function GlossaryPage() {
     category: t.category ?? null,
     aliases: (t.aliases ?? []).filter((a): a is string => !!a),
     longDefinition: t.longDefinition?.length
-      ? <CustomPortableText value={t.longDefinition as unknown as PortableTextBlock[]} paragraphClasses="mb-4 font-sans text-[15px] text-stone-300 leading-relaxed" />
+      ? <CustomPortableText value={t.longDefinition as unknown as PortableTextBlock[]} paragraphClasses="mb-4 font-sans text-base text-stone-300 leading-relaxed" />
       : null,
     relatedPosts: ((t.relatedPosts ?? []) as unknown as Array<{ title: string | null; slug: string | null } | null>).filter((p): p is { title: string | null; slug: string | null } => !!p),
     relatedNotes: ((t.relatedNotes ?? []) as unknown as Array<{ title: string | null; slug: string | null } | null>).filter((n): n is { title: string | null; slug: string | null } => !!n),

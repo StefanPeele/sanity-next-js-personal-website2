@@ -67,9 +67,9 @@ export default async function DeliveryPage({ params }: Props) {
   return (
     <div className="w-full min-h-screen text-stone-300 pb-24">
       <div className="max-w-2xl mx-auto pt-24">
-        <span className="text-stone-400 font-mono text-[10px] tracking-[0.4em] uppercase border-l border-stone-700 pl-4 mb-4 block">Client delivery</span>
+        <span className="meta-label text-stone-400 border-l border-stone-700 pl-4 mb-4 block">Client delivery</span>
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-white tracking-tight">{shoot.title}</h1>
-        <p className="mt-3 font-mono text-[10px] uppercase tracking-widest text-stone-400">
+        <p className="meta-label mt-3 text-stone-400">
           {[shoot.pkg, shoot.date ? formatDate(shoot.date, 'long') : null].filter(Boolean).join(' · ')}
         </p>
 
@@ -77,7 +77,7 @@ export default async function DeliveryPage({ params }: Props) {
           {STEPS.map((step, i) => (
             <li key={step} className="flex flex-col gap-2" aria-current={i === stepIndex ? 'step' : undefined}>
               <span className={`h-1 rounded-full ${i <= stepIndex ? 'bg-amber-400' : 'bg-white/10'}`} aria-hidden="true" />
-              <span className={`font-mono text-[9px] uppercase tracking-widest ${i === stepIndex ? 'text-white' : i < stepIndex ? 'text-stone-300' : 'text-stone-400'}`}>{step}</span>
+              <span className={`meta-label ${i === stepIndex ? 'text-white' : i < stepIndex ? 'text-stone-300' : 'text-stone-400'}`}>{step}</span>
             </li>
           ))}
         </ol>
@@ -87,7 +87,7 @@ export default async function DeliveryPage({ params }: Props) {
             <>
               <p className="font-serif text-2xl text-white mb-3">Your gallery is ready.</p>
               <p className="text-stone-400 text-sm mb-6">Download everything you want to keep — galleries are not permanent storage.</p>
-              <a href={shoot.link} target="_blank" rel="noopener noreferrer" className={`inline-block bg-white text-black font-mono text-[10px] uppercase tracking-[0.2em] font-bold px-6 py-3 rounded-lg hover:bg-stone-200 transition-colors ${FOCUS}`}>
+              <a href={shoot.link} target="_blank" rel="noopener noreferrer" className={`meta-label inline-block bg-white text-black font-bold px-6 py-3 rounded-lg hover:bg-stone-200 transition-colors ${FOCUS}`}>
                 Open gallery →
               </a>
             </>

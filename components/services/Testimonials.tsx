@@ -12,7 +12,7 @@ export function Testimonials({ items, heading = 'What clients said' }: { items: 
   return (
     <section aria-labelledby="testimonials-heading" className="py-20 border-b border-white/5">
       <div className="mb-10">
-        <h2 id="testimonials-heading" className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 block border-l border-stone-700 pl-4 font-sans">{heading}</h2>
+        <h2 id="testimonials-heading" className="meta-label text-stone-400 block border-l border-stone-700 pl-4">{heading}</h2>
       </div>
       <ul className="grid grid-cols-1 md:grid-cols-3 gap-6 list-none m-0 p-0">
         {visible.map((t) => (
@@ -32,7 +32,7 @@ export function Testimonials({ items, heading = 'What clients said' }: { items: 
               )}
               <div className="min-w-0">
                 <span className="block text-white text-sm font-medium truncate">{t.name}</span>
-                <span className="block font-mono text-[9px] uppercase tracking-widest text-stone-400 truncate">
+                <span className="meta-label block text-stone-400 truncate">
                   {[t.service, t.role, formatDate(t.date, 'month')].filter(Boolean).join(' · ')}
                 </span>
               </div>

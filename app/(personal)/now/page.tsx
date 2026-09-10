@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 function Block({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   return (
     <section aria-labelledby={id} className="py-10 border-t border-white/5 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8">
-      <h2 id={id} className="md:col-span-3 font-mono text-[10px] tracking-[0.3em] text-stone-400 uppercase font-sans pt-1">{label}</h2>
+      <h2 id={id} className="meta-label md:col-span-3 text-stone-400 pt-1">{label}</h2>
       <div className="md:col-span-9">{children}</div>
     </section>
   )
@@ -72,7 +72,7 @@ export default async function NowPage() {
                   <li key={c._id}>
                     <div className="flex items-baseline justify-between gap-4">
                       <span className="text-stone-200">{c.title}{c.issuer && <span className="text-stone-400 text-xs ml-2">{c.issuer}</span>}</span>
-                      <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400">{c.targetDate ? `${copy.targetLabel} ${formatDate(c.targetDate, 'month')}` : `${pct}%`}</span>
+                      <span className="meta-label text-stone-400">{c.targetDate ? `${copy.targetLabel} ${formatDate(c.targetDate, 'month')}` : `${pct}%`}</span>
                     </div>
                     <div className="mt-2 h-1 w-full rounded-full bg-white/10 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${c.title} study progress`}>
                       <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
@@ -102,7 +102,7 @@ export default async function NowPage() {
               {posts.map((p) => (
                 <li key={p._id} className="flex items-baseline justify-between gap-4">
                   <Link href={`/blog/${p.slug}`} className={`text-stone-200 hover:text-white font-serif text-lg ${FOCUS} rounded-sm`}>{p.title}</Link>
-                  <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400 whitespace-nowrap">
+                  <span className="meta-label text-stone-400 whitespace-nowrap">
                     {articleTypeMeta(p.articleType) && <span className="mr-2" style={{ color: articleTypeMeta(p.articleType)!.color }}>{articleTypeMeta(p.articleType)!.short}</span>}
                     {formatDate(p.publishedAt, 'short')}
                   </span>

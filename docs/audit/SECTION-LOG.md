@@ -427,3 +427,112 @@ contradicts observed behaviour, suspect the measurement first.
   commit: the border there is part of a semantic accent, not the neutral scale.
 - `styles/index.css:97` — the skip link is `font-size: 11px`, a sub-12px instance the floor commit
   did not reach because it was blog-scoped and this file is platform-owned. Still open.
+
+---
+
+## 2026-09-10 — the type scale (SPECS item d), and the floor finished site-wide
+
+**Shipped:** the last of the five specs. `a`, `c`, `e` and `b` landed earlier; this closes `d`.
+
+### The spec's "26 sizes" was already stale
+
+Re-measured before touching anything, split by side:
+
+| | distinct sizes | occurrences | bracketed one-offs |
+| --- | --- | --- | --- |
+| knowledge side, before | 15 | 259 | 5 |
+| knowledge side, after | **11** | 259 | **0** |
+| portfolio + shared, before | 24 | 338 | 88 |
+| portfolio + shared, after | **18** | 279 | **6**, all the article heading scale |
+
+Item (a) had taken the knowledge side to a 12px floor, so it arrived here already almost on a scale
+— eleven named Tailwind steps and four strays. **The 81 sub-12px instances that remained were all on
+the portfolio side**, untouched because (a) was blog-scoped. Finishing them is most of what (d)
+actually was, and this commit therefore crosses to the portfolio side deliberately: item (d) is
+titled *site-wide*, and a 12px floor that stops at the blog is not a floor.
+
+Same three buckets as (a), 80 instances in 15 files:
+
+```
+59  mono + uppercase + one of seven tracking values   ->  .meta-label
+16  mono, not uppercase                               ->  text-xs, face kept
+ 5  plain small text                                  ->  text-xs
+```
+
+The seven tracking values were `widest`, `wide`, `[0.15em]`, `[0.2em]`, `[0.25em]`, `[0.3em]`,
+`[0.4em]` — and `components/Header.tsx:24` and `delivery/[token]/page.tsx:70` were byte-identical to
+each other, as were `now/page.tsx:24` and `projects/[slug]/page.tsx:59`. One idea, spelled 59 ways.
+
+### Ten labels were rendering in the wrong typeface
+
+Found while censusing, and it is not a consistency issue. Ten elements carried **both `font-mono`
+and `font-sans`**. Tailwind emits `.font-mono` at byte 55724 of the bundle and `.font-sans` at
+55790 — same specificity, later wins — so every one of them rendered in **Inter**, not IBM Plex
+Mono, despite the markup saying otherwise. Measured on the built site before the change:
+`/resume` "Programming" and "Education" and `/services` "Add-ons" all reported
+`font-family: Inter`.
+
+Eight of the ten are among the 59 and are fixed by the migration, which drops both font utilities —
+mandatory, because `.meta-label` lives in `@layer components` and any font utility left behind
+silently beats it. That is the same corollary the (a) commit recorded for `text-[9px]`.
+
+### The strays, and where the mapping departs from the spec
+
+| Call site | Was | Now | Why |
+| --- | --- | --- | --- |
+| `FailureNote.tsx:62` | `text-[12px]` | `text-xs` | identical value, bracketed spelling |
+| `GlossaryList.tsx:94` | `text-[15px]` | `text-base` | **spec said 14.** This is definition prose; the article typography pass moved reading text *up*, so it rounds up |
+| `glossary/page.tsx:37` | `text-[15px]` | `text-base` | same paragraph, passed to `CustomPortableText` |
+| `GlossaryTerm.tsx:70` | `text-[13px]` | `text-sm` | **spec said 12.** Hover-card definition — reading text |
+| `CodeBlock.tsx:129` | `text-[13px]` | `text-sm` | code wants scanning size |
+| `CustomPortableText.tsx:91` | `md:text-[17px]` | `md:text-lg` | **spec said 16.** The only 17 on the site; 18 is an existing step and one below the article body's 19 |
+| `TldrBlock.tsx:26` | `md:text-[17px]` | `md:text-lg` | same pair |
+| `resume/page.tsx:122` | `md:text-8xl` | `md:text-7xl` | the only `text-8xl`; every other hero tops out at 7xl |
+
+**`text-lg` was NOT redefined to 19px**, which the spec proposed as its one config change. It merges
+nothing — 19px lives in `styles/article.css` as `--article-fs`, not as a utility step — so it would
+be 28 invisible call-site changes to a platform-owned config for no reduction in the scale. Instead
+`text-lg` (18) now has a job: non-article prose, one step below the article body.
+
+### Where it landed
+
+Eleven named steps carry the whole site: `xs sm base lg xl 2xl 3xl 4xl 5xl 6xl 7xl`. The six
+remaining bracketed values are all in `CustomPortableText` — the article heading scale
+(h2 32/38, h3 26/30, h4 22/24, mobile/desktop) shipped in `5c7cca4`, which is deliberately its own
+set and owned by the article, not the utility scale. Zero bracketed sizes remain anywhere else.
+
+**Measured on the built site, 14 routes at 1440: no text below 12px renders anywhere except four
+node labels on `/graph`.** Those are D3 `<text>` elements with `font-size: 8px` set as an SVG
+attribute (`KnowledgeGraph.tsx:256`), not a class — and at
+`fill: rgba(255,255,255,0.45)` they are under the `stone-400` colour floor too. They are left, with
+the reason recorded below. `.meta-label` measures **IBM Plex Mono 12px, letter-spacing 1.44px
+(0.12em), uppercase** on `/resume`, `/services`, `/now` and `/projects` — one geometry, and the ten
+labels that had been silently rendering in Inter now render in mono.
+
+226 `.meta-label` call sites across 46 files, verified none carrying a competing font, size or
+tracking utility that would defeat the primitive.
+
+### One regression caught before it shipped
+
+`BookingSection.tsx:48` — the add-on label had no colour of its own and inherited `text-white` /
+`text-stone-400` from the row `<label>` depending on checked state. `.meta-label` sets
+`color: #a8a29e`, which would have pinned a checked add-on's label to grey while its price went
+white. Takes `text-inherit` at the call site. The other three colourless conversions supply a colour
+from a conditional branch and are fine.
+
+### Deliberately not done
+
+- **A seventh chip definition exists on the portfolio side** — `photography/page.tsx:72,86`,
+  `px-4 py-2 rounded-full` with `bg-white text-black` when active. `buttonClass()` would take it,
+  but the button commit was knowledge-side and this one is the type scale. Next pass.
+- **Five sans uppercase micro-labels** in `CinematicGallery.tsx` keep `text-xs uppercase tracking-*`
+  rather than becoming `.meta-label`, consistent with (a): the primitive is the *mono* label, and
+  converting a sans label changes its face rather than its size.
+- `text-xl` (20) and `text-4xl` (36) are off the article's 1.25 ratio and stay. Forcing them to
+  19/38 means redefining Tailwind steps for no visible gain.
+- **The graph's node labels stay at 8px** (`KnowledgeGraph.tsx:256`). They are the only text on the
+  site still under the floor. Raising them is not a type-scale change: they are positioned by a
+  force layout with no label-collision handling, and they already display only for nodes with
+  `radius >= 6` or on hover precisely because they would otherwise pile up. Growing them by 50%
+  needs that collision work first, and the colour (`rgba(255,255,255,0.45)`) should go up with it.
+  **Open, and the last item on the floor.**

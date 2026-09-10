@@ -45,7 +45,7 @@ export function ProjectIconLinks({ title, githubUrl, liveUrl, docsUrl, className
 
 export function RepoMetaLine({ meta, className = '' }: { meta: RepoMeta; className?: string }) {
   return (
-    <p className={`flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-stone-400 ${className}`}>
+    <p className={`meta-label flex flex-wrap items-center gap-x-4 gap-y-1 text-stone-400 ${className}`}>
       {meta.language && <span>{meta.language}</span>}
       <span className="inline-flex items-center gap-1"><Star size={11} aria-hidden /> {meta.stars}<span className="sr-only"> stars</span></span>
       {meta.forks > 0 && <span className="inline-flex items-center gap-1"><GitFork size={11} aria-hidden /> {meta.forks}<span className="sr-only"> forks</span></span>}

@@ -154,7 +154,7 @@ export default function CinematicGallery({ photos, developing = true }: Cinemati
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); setIsDeveloping(false) }}
-              className={`font-mono text-[10px] uppercase tracking-[0.3em] text-red-200/80 hover:text-white border border-red-400/40 px-4 py-2 rounded-full ${FOCUS}`}
+ className={`meta-label text-red-200/80 hover:text-white border border-red-400/40 px-4 py-2 rounded-full ${FOCUS}`}
             >
               Skip
             </button>
@@ -199,7 +199,7 @@ export default function CinematicGallery({ photos, developing = true }: Cinemati
                           {photo.title}
                         </span>
                         {photo.category && (
-                          <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-stone-300 mt-2">{photo.category}</span>
+                          <span className="meta-label text-stone-300 mt-2">{photo.category}</span>
                         )}
                       </div>
                     </>
@@ -309,11 +309,11 @@ export default function CinematicGallery({ photos, developing = true }: Cinemati
 
                     {specs.length > 0 && (
                       <div className="pt-8 mt-8 border-t border-white/10 space-y-5">
-                        <p className="text-stone-400 text-[10px] uppercase tracking-[0.2em] font-semibold">Technical profile</p>
+                        <p className="text-stone-400 text-xs uppercase tracking-[0.2em] font-semibold">Technical profile</p>
                         <dl className="grid grid-cols-2 gap-y-6 gap-x-4">
                           {specs.map(({ label, value }) => (
                             <div key={label} className={`flex flex-col min-w-0 ${label === 'Lens' || label === 'Location' || label === 'Camera' ? 'col-span-2' : ''}`}>
-                              <dt className="text-[9px] text-stone-400 tracking-widest uppercase">{label}</dt>
+                              <dt className="text-xs text-stone-400 tracking-widest uppercase">{label}</dt>
                               <dd className="text-sm font-mono tracking-tight text-stone-200 truncate m-0">{value}</dd>
                             </div>
                           ))}
@@ -323,14 +323,14 @@ export default function CinematicGallery({ photos, developing = true }: Cinemati
 
                     {current.notes && (
                       <div className="pt-4 mt-4 border-t border-white/5">
-                        <span className="text-[9px] text-stone-400 tracking-widest uppercase mb-2 block">Field notes</span>
+                        <span className="text-xs text-stone-400 tracking-widest uppercase mb-2 block">Field notes</span>
                         <p className="text-stone-400 font-mono text-xs leading-relaxed italic">“{current.notes}”</p>
                       </div>
                     )}
 
                     <div className="flex gap-3 sm:hidden">
-                      <button type="button" onClick={prev} className={`flex-1 border border-white/15 rounded-lg py-2 font-mono text-[10px] uppercase tracking-widest text-stone-300 ${FOCUS}`}>← Prev</button>
-                      <button type="button" onClick={next} className={`flex-1 border border-white/15 rounded-lg py-2 font-mono text-[10px] uppercase tracking-widest text-stone-300 ${FOCUS}`}>Next →</button>
+                      <button type="button" onClick={prev} className={`meta-label flex-1 border border-white/15 rounded-lg py-2 text-stone-300 ${FOCUS}`}>← Prev</button>
+                      <button type="button" onClick={next} className={`meta-label flex-1 border border-white/15 rounded-lg py-2 text-stone-300 ${FOCUS}`}>Next →</button>
                     </div>
                   </div>
                 </div>

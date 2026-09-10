@@ -67,7 +67,7 @@ export function GlossaryTerm({ slug, term, definition, children }: Props) {
           <span className="meta-label text-amber-400/80 block mb-1.5">
             Glossary · {term}
           </span>
-          <span className="font-sans text-[13px] leading-relaxed text-stone-200 block">
+          <span className="font-sans text-sm leading-relaxed text-stone-200 block">
             {definition}
           </span>
           <Link

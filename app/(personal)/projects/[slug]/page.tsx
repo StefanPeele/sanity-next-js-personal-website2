@@ -56,7 +56,7 @@ export async function generateStaticParams() {
 function Section({label, children}: {label: string; children: React.ReactNode}) {
   return (
     <section className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-8 py-6 border-t border-white/5">
-      <h2 className="md:col-span-3 font-mono text-[10px] tracking-[0.3em] text-stone-400 uppercase font-sans pt-1">{label}</h2>
+      <h2 className="meta-label md:col-span-3 text-stone-400 pt-1">{label}</h2>
       <div className="md:col-span-9 text-stone-300 text-base leading-relaxed whitespace-pre-line">{children}</div>
     </section>
   )
@@ -137,7 +137,7 @@ export default async function ProjectSlugRoute({params}: Props) {
               classesWrapper="aspect-[21/9] w-full rounded-none"
             />
           )}
-          <dl className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5 border-t border-white/5 text-[10px] font-mono uppercase tracking-widest text-stone-400 bg-[#0f0f0f] m-0">
+          <dl className="meta-label grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5 border-t border-white/5 text-stone-400 bg-[#0f0f0f] m-0">
             {startYear && (
               <div className="p-4 flex flex-col justify-center">
                 <dt className="text-stone-400 mb-1">{copy.metaLabels.timeline}</dt>
@@ -193,8 +193,8 @@ export default async function ProjectSlugRoute({params}: Props) {
                   {metrics.map((m) => (
                     <div key={m._key} className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
                       <dd className="font-serif text-2xl md:text-3xl text-white font-bold m-0 leading-tight">{m.value}</dd>
-                      <dt className="font-mono text-[9px] uppercase tracking-widest text-stone-400 mt-2">{m.label}</dt>
-                      {m.note && <p className="text-[11px] text-stone-400 mt-1 leading-snug">{m.note}</p>}
+                      <dt className="meta-label text-stone-400 mt-2">{m.label}</dt>
+ {m.note && <p className="text-xs text-stone-400 mt-1 leading-snug">{m.note}</p>}
                     </div>
                   ))}
                 </dl>
@@ -212,7 +212,7 @@ export default async function ProjectSlugRoute({params}: Props) {
                 <h2 className="section-label mb-4 font-sans">{copy.sectionLabels.stack}</h2>
                 <ul className="flex flex-wrap gap-2 list-none m-0 p-0">
                   {techStack.map((tech) => (
-                    <li key={tech} className="px-3 py-1 text-[11px] font-mono tracking-wide bg-white/5 border border-white/10 text-stone-300 rounded-sm">{tech}</li>
+                    <li key={tech} className="px-3 py-1 text-xs font-mono tracking-wide bg-white/5 border border-white/10 text-stone-300 rounded-sm">{tech}</li>
                   ))}
                 </ul>
               </div>
@@ -258,7 +258,7 @@ export default async function ProjectSlugRoute({params}: Props) {
                     imageClassName="object-contain"
                   />
                   {image.caption && (
-                    <figcaption className="w-full bg-black/80 p-3 text-[10px] font-mono text-stone-400 border-t border-white/10">{image.caption}</figcaption>
+                    <figcaption className="w-full bg-black/80 p-3 text-xs font-mono text-stone-400 border-t border-white/10">{image.caption}</figcaption>
                   )}
                 </figure>
               ))}
@@ -291,7 +291,7 @@ export default async function ProjectSlugRoute({params}: Props) {
                         {p.title}
                       </Link>
                       {articleTypeMeta(p.articleType) && (
-                        <span className="ml-2 font-mono text-[9px] uppercase tracking-widest" style={{color: articleTypeMeta(p.articleType)!.color}}>
+                        <span className="meta-label ml-2" style={{color: articleTypeMeta(p.articleType)!.color}}>
                           {articleTypeMeta(p.articleType)!.short}
                         </span>
                       )}
@@ -307,7 +307,7 @@ export default async function ProjectSlugRoute({params}: Props) {
                   {relatedNotes.map((n) => (
                     <li key={n.slug}>
                       <Link href={`/garden/${n.slug}`} className={`text-stone-200 hover:text-white font-serif text-lg ${FOCUS} rounded-sm`}>{n.title}</Link>
-                      {n.status && <span className="ml-2 font-mono text-[9px] uppercase tracking-widest text-stone-400">{n.status}</span>}
+ {n.status && <span className="meta-label ml-2 text-stone-400">{n.status}</span>}
                     </li>
                   ))}
                 </ul>

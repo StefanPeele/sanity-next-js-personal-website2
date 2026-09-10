@@ -26,7 +26,7 @@ export function TimelineItem({milestone}: {milestone: MilestoneLike}) {
       </div>
       <div className="flex-initial pl-4">
         <div className="font-serif text-lg text-white">{title}</div>
-        <div className="font-mono text-[10px] uppercase tracking-widest text-stone-400 mt-1">
+        <div className="meta-label text-stone-400 mt-1">
           {tags?.map((tag) => (
             <span key={tag}>
               {tag}

@@ -21,7 +21,7 @@ export function Header(props: HeaderProps) {
   return (
     <div className={centered ? 'text-center' : 'w-full lg:w-4/5'}>
       {eyebrow && (
-        <span className="text-stone-400 font-mono text-[10px] tracking-[0.4em] uppercase border-l border-stone-700 pl-4 mb-4 block">
+        <span className="meta-label text-stone-400 border-l border-stone-700 pl-4 mb-4 block">
           {eyebrow}
         </span>
       )}

@@ -23,7 +23,7 @@ export function TldrBlock({ items, articleType, heading = 'TL;DR', sub = 'If you
         {clean.map((t, i) => (
           <li key={i} className="flex items-start gap-3">
             <span className="mt-2.5 h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: accent }} aria-hidden="true" />
-            <span className="font-serif text-base md:text-[17px] text-stone-200 leading-relaxed">{t}</span>
+            <span className="font-serif text-base md:text-lg text-stone-200 leading-relaxed">{t}</span>
           </li>
         ))}
       </ul>

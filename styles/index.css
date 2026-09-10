@@ -94,8 +94,10 @@ ol {
   background: #fff;
   color: #0a0a0a;
   font-family: var(--font-mono), monospace;
-  font-size: 11px;
-  letter-spacing: 0.2em;
+  /* 12px, not 11 -- the last sub-12px text on the site. It is the first thing a
+     keyboard user reads, so it belongs above the floor like every other label. */
+  font-size: 12px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   border-radius: 4px;
 }

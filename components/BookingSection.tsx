@@ -45,9 +45,9 @@ function AddOnItem({ addon, checked, onToggle }: { addon: PricingAddOn; checked:
           aria-describedby={descId}
           className={`h-4 w-4 rounded border-white/30 bg-transparent accent-white ${FOCUS}`}
         />
-        <span className="font-mono text-[10px] uppercase tracking-[0.15em] truncate">{addon.label}</span>
+        <span className="meta-label text-inherit truncate">{addon.label}</span>
       </span>
-      <span className={`font-mono text-[10px] font-bold flex-shrink-0 ${checked ? 'text-white' : 'text-stone-400'}`}>{addon.price}</span>
+      <span className={`font-mono text-xs font-bold flex-shrink-0 ${checked ? 'text-white' : 'text-stone-400'}`}>{addon.price}</span>
       <span id={descId} className="sr-only">{addon.description}</span>
     </label>
   )
@@ -178,7 +178,7 @@ export default function BookingSection({ copy = DEFAULT_SERVICES_PAGE.booking, s
               <option value={NOT_SURE_ID} className="bg-stone-900">{copy.notSureLabel}</option>
             </select>
             {selectedPkg?.comingSoon && (
-              <p className="mt-2 font-mono text-[10px] text-amber-400/90 uppercase tracking-widest">
+              <p className="meta-label mt-2 text-amber-400/90">
                 {copy.expandingSoonNote}
               </p>
             )}
@@ -207,7 +207,7 @@ export default function BookingSection({ copy = DEFAULT_SERVICES_PAGE.booking, s
 
           <label className="flex items-center gap-3 mb-4 cursor-pointer group">
             <input type="checkbox" name="njit_affiliate" className={`h-4 w-4 rounded border-white/30 bg-transparent accent-white ${FOCUS}`} />
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-stone-400 group-hover:text-stone-200 transition-colors">
+            <span className="meta-label text-stone-400 group-hover:text-stone-200 transition-colors">
               {copy.njitCheckbox}
               <span className="text-stone-400 ml-2">{copy.njitNote}</span>
             </span>
@@ -232,7 +232,7 @@ export default function BookingSection({ copy = DEFAULT_SERVICES_PAGE.booking, s
                   <span className="flex items-center gap-2">
                     <span className="font-sans text-sm text-stone-300">{copy.addOnsLabel}</span>
                     {addOns.size > 0 && (
-                      <span className="font-mono text-[9px] text-white bg-white/15 px-2 py-0.5 rounded-sm">{addOns.size} selected</span>
+                      <span className="font-mono text-xs text-white bg-white/15 px-2 py-0.5 rounded-sm">{addOns.size} selected</span>
                     )}
                   </span>
                   <span className={`font-mono text-stone-400 text-sm transition-transform duration-200 ${showAddOns ? 'rotate-45' : ''}`} aria-hidden="true">+</span>

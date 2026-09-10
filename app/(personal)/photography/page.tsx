@@ -69,7 +69,7 @@ export default async function PhotographyPage({ searchParams }: { searchParams: 
           <Link
             href="/photography"
             aria-current={!active ? 'page' : undefined}
-            className={`px-4 py-2 rounded-full font-mono text-[10px] uppercase tracking-[0.25em] transition-colors ${FOCUS} ${
+ className={`meta-label px-4 py-2 rounded-full transition-colors ${FOCUS} ${
               !active ? 'bg-white text-black' : 'text-stone-300 hover:text-white border border-white/10 hover:border-white/30'
             }`}
           >
@@ -83,7 +83,7 @@ export default async function PhotographyPage({ searchParams }: { searchParams: 
                 key={c._id}
                 href={`/photography?category=${encodeURIComponent(key)}`}
                 aria-current={isActive ? 'page' : undefined}
-                className={`px-4 py-2 rounded-full font-mono text-[10px] uppercase tracking-[0.25em] transition-colors ${FOCUS} ${
+ className={`meta-label px-4 py-2 rounded-full transition-colors ${FOCUS} ${
                   isActive ? 'bg-white text-black' : 'text-stone-300 hover:text-white border border-white/10 hover:border-white/30'
                 }`}
               >
@@ -104,7 +104,7 @@ export default async function PhotographyPage({ searchParams }: { searchParams: 
         <CinematicGallery photos={recent} />
         {filtered.length > 0 && (
           <div className="text-center mt-16">
-            <Link href="/photography/albums" className={`font-mono text-[10px] uppercase tracking-[0.3em] text-stone-300 hover:text-white border-b border-stone-700 hover:border-white pb-1 transition-colors ${FOCUS}`}>
+            <Link href="/photography/albums" className={`meta-label text-stone-300 hover:text-white border-b border-stone-700 hover:border-white pb-1 transition-colors ${FOCUS}`}>
               {copy.browseAllLabel} →
             </Link>
           </div>

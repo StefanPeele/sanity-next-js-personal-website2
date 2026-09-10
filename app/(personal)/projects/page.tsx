@@ -58,10 +58,10 @@ export default async function ProjectsIndexRoute() {
                     )}
                     <div className="absolute top-4 right-4 flex gap-2">
                       {project.featured && (
-                        <span className="bg-amber-500 text-black px-2 py-1 rounded-sm text-[9px] font-mono tracking-widest uppercase font-bold">{copy.card.featuredBadge}</span>
+                        <span className="meta-label bg-amber-500 text-black px-2 py-1 rounded-sm font-bold">{copy.card.featuredBadge}</span>
                       )}
                       {startYear && (
-                        <span className="bg-black/60 backdrop-blur-md px-2 py-1 rounded-sm border border-white/10 text-[9px] font-mono tracking-widest text-white uppercase">
+                        <span className="meta-label bg-black/60 backdrop-blur-md px-2 py-1 rounded-sm border border-white/10 text-white">
                           {startYear} – {endYear}
                         </span>
                       )}
@@ -77,12 +77,12 @@ export default async function ProjectsIndexRoute() {
                     </div>
 
                     {project.role && (
-                      <p className="font-mono text-[10px] uppercase tracking-widest text-stone-400 mb-3">{project.role}</p>
+                      <p className="meta-label text-stone-400 mb-3">{project.role}</p>
                     )}
 
                     {project.outcome ? (
                       <p className="text-stone-300 text-sm leading-relaxed mb-4 line-clamp-3">
-                        <span className="font-mono text-[9px] uppercase tracking-widest text-amber-400 mr-2">{copy.card.outcomeLabel}</span>{project.outcome}
+                        <span className="meta-label text-amber-400 mr-2">{copy.card.outcomeLabel}</span>{project.outcome}
                       </p>
                     ) : project.overview ? (
                       <p className="text-stone-400 text-sm leading-relaxed mb-4 line-clamp-3">{toPlainText(project.overview)}</p>
@@ -93,10 +93,10 @@ export default async function ProjectsIndexRoute() {
                     {project.techStack && project.techStack.length > 0 && (
                       <ul className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5 list-none m-0 p-0" aria-label="Tech stack">
                         {project.techStack.slice(0, 5).map((tech) => (
-                          <li key={tech} className="px-2 py-1 text-[9px] font-mono tracking-wide bg-white/5 border border-white/10 text-stone-300 rounded-sm">{tech}</li>
+                          <li key={tech} className="px-2 py-1 text-xs font-mono tracking-wide bg-white/5 border border-white/10 text-stone-300 rounded-sm">{tech}</li>
                         ))}
                         {project.techStack.length > 5 && (
-                          <li className="px-2 py-1 text-[9px] font-mono tracking-wide text-stone-400">+{project.techStack.length - 5}</li>
+                          <li className="px-2 py-1 text-xs font-mono tracking-wide text-stone-400">+{project.techStack.length - 5}</li>
                         )}
                       </ul>
                     )}

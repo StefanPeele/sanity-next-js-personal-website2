@@ -38,7 +38,7 @@ export function TimelineSection({
           const {title, milestones, _key} = timeline
           return (
             <div className="max-w-[80%] md:max-w-[50%]" key={_key} data-sanity={dataAttribute?.([{_key}])}>
-              <div className="pb-5 font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400">{stegaClean(title)}</div>
+              <div className="meta-label pb-5 text-stone-400">{stegaClean(title)}</div>
               <OptimisticSortOrder id={id ?? ''} path={[...path, {_key}, 'milestones']}>
                 {milestones?.map((experience) => (
                   <div

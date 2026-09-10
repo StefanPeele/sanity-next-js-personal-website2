@@ -251,7 +251,9 @@ button primitive depends on the floor for its `sm` size.
 
 ### Status, 2026-09-10
 
-`a` shipped `5370ca9`, `c` shipped `1fef26f`, `e` shipped `c4ca8c9`, `b` shipped this session — see
-`SECTION-LOG.md`, which records where the built primitive departs from the spec above (no
-`<Button>` component, no `ghost` variant, `chip` selected on tokens rather than a white fill, and
-`NewsletterForm` left out). **Only `d`, the site-wide type scale, is still open.**
+**All five are shipped.** `a` `5370ca9`, `c` `1fef26f`, `e` `c4ca8c9`, `b` `d390b91`, `d` this
+session. `SECTION-LOG.md` records where each built version departs from its spec above — for `b`,
+no `<Button>` component, no `ghost` variant, `chip` selected on tokens rather than a white fill and
+`NewsletterForm` left out; for `d`, the reading strays round *up* to the scale rather than down as
+written here, `text-lg` was not redefined to 19px, and the 81 sub-12px instances that item (a) left
+on the portfolio side were finished here, because a floor that stops at the blog is not a floor.

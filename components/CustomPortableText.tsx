@@ -88,7 +88,7 @@ export function CustomPortableText({
 
   const bodyText = article
     ? 'text-[length:var(--article-fs,1rem)]'
-    : 'text-base md:text-[17px]'
+    : 'text-base md:text-lg'
 
   const components: PortableTextComponents = {
 

@@ -42,12 +42,12 @@ function PhysicalProductBadge({ tier, labels }: { tier: PhysicalTier; labels: Se
       <ul className="space-y-1.5">
         {products.map((product) => (
           <li key={product} className="flex items-start gap-2">
-            <span className={`text-[10px] mt-0.5 flex-shrink-0 ${premium ? 'text-amber-500' : 'text-stone-400'}`} aria-hidden="true">—</span>
-            <span className={`font-mono text-[9px] leading-snug ${premium ? 'text-stone-300' : 'text-stone-400'}`}>{product}</span>
+            <span className={`text-xs mt-0.5 flex-shrink-0 ${premium ? 'text-amber-500' : 'text-stone-400'}`} aria-hidden="true">—</span>
+            <span className={`font-mono text-xs leading-snug ${premium ? 'text-stone-300' : 'text-stone-400'}`}>{product}</span>
           </li>
         ))}
       </ul>
-      <p className={`font-mono text-[8px] uppercase tracking-widest mt-3 ${premium ? 'text-amber-400' : 'text-stone-400'}`}>
+      <p className={`meta-label mt-3 ${premium ? 'text-amber-400' : 'text-stone-400'}`}>
         {labels.final}
       </p>
     </div>
@@ -123,17 +123,17 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                   <span className={`relative w-11 h-6 rounded-full transition-colors duration-300 flex-shrink-0 ${isNJIT ? 'bg-emerald-500' : 'bg-white/20'}`} aria-hidden="true">
                     <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform duration-300 ${isNJIT ? 'translate-x-6' : 'translate-x-1'}`} />
                   </span>
-                  <span className={`font-mono text-[11px] uppercase tracking-[0.3em] font-bold ${isNJIT ? 'text-emerald-300' : 'text-stone-200'}`}>
+                  <span className={`meta-label font-bold ${isNJIT ? 'text-emerald-300' : 'text-stone-200'}`}>
                     {copy.njitToggle.label}
                   </span>
                 </div>
-                <p className={`font-mono text-[10px] ${isNJIT ? 'text-emerald-300/90' : 'text-stone-400'}`}>
+                <p className={`font-mono text-xs ${isNJIT ? 'text-emerald-300/90' : 'text-stone-400'}`}>
                   {isNJIT ? `${copy.njitToggle.savingsCopy[category]} · ${copy.njitToggle.idNote}` : copy.njitToggle.offText}
                 </p>
               </div>
               {isNJIT && fromPublic !== null && fromNjit !== null && (
                 <div className="hidden sm:block text-right flex-shrink-0">
-                  <span className="font-mono text-[8px] text-stone-400 uppercase tracking-widest block line-through">From {formatPrice(fromPublic)}</span>
+                  <span className="meta-label text-stone-400 block line-through">From {formatPrice(fromPublic)}</span>
                   <span className="font-serif text-xl font-bold text-emerald-300">From {formatPrice(fromNjit)}</span>
                 </div>
               )}
@@ -152,7 +152,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                 <Icon name="check" size={14} className="text-stone-400 flex-shrink-0 mt-0.5" />
                 <div>
                   <span className="font-sans text-xs text-stone-300 block mb-0.5">{item.label}</span>
-                  <span className="font-mono text-[9px] text-stone-400 leading-snug block">{item.desc}</span>
+                  <span className="font-mono text-xs text-stone-400 leading-snug block">{item.desc}</span>
                 </div>
               </div>
             ))}
@@ -196,12 +196,12 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                   {specialty ? (
                     <div className="flex items-center gap-6">
                       <div>
-                        <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest block mb-0.5">NJIT</span>
+                        <span className="meta-label text-stone-400 block mb-0.5">NJIT</span>
                         <span className={`font-serif text-3xl font-bold ${accent ? 'text-amber-300' : 'text-emerald-300'}`}>{formatPrice(pkg.njitPrice)}</span>
                       </div>
                       <div className="w-px h-8 bg-white/10" aria-hidden="true" />
                       <div>
-                        <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest block mb-0.5">Public</span>
+                        <span className="meta-label text-stone-400 block mb-0.5">Public</span>
                         <span className={`font-serif text-3xl font-bold ${accent ? 'text-amber-300/80' : 'text-stone-300'}`}>{formatPrice(pkg.publicPrice)}</span>
                       </div>
                     </div>
@@ -219,7 +219,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                       )}
                     </>
                   )}
-                  <span className="font-mono text-[10px] text-stone-400 block mt-1.5">{pkg.duration}</span>
+                  <span className="font-mono text-xs text-stone-400 block mt-1.5">{pkg.duration}</span>
                   {pkg.turnaround && specialty && (
                     <span className="font-sans text-xs text-stone-400 block mt-0.5">{C.deliveryLabel}: {pkg.turnaround}</span>
                   )}
@@ -235,7 +235,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                         <span>
                           {item}
                           {item.includes('in development') && (
-                            <span className="font-mono text-[8px] text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded-sm ml-2 align-middle">WIP</span>
+                            <span className="font-mono text-xs text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded-sm ml-2 align-middle">WIP</span>
                           )}
                         </span>
                       </li>
@@ -248,14 +248,14 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                 {pkg.recommended && (
                   <div className="pt-4 border-t border-white/[0.08] mb-6">
                     <span className="font-sans text-xs text-stone-400 block mb-1">{C.idealFor}</span>
-                    <p className="font-mono text-[10px] text-stone-400 leading-relaxed">{pkg.recommended}</p>
+                    <p className="font-mono text-xs text-stone-400 leading-relaxed">{pkg.recommended}</p>
                   </div>
                 )}
 
                 {specialty && pkg.highlight && (
                   <div className="mb-4 p-3 rounded-lg border border-amber-500/20 bg-amber-950/10">
                     <span className="font-sans text-xs text-amber-300 block mb-1">{C.includes}</span>
-                    <span className="font-mono text-[9px] text-stone-300">Full three-part delivery + physical product of your choice</span>
+                    <span className="font-mono text-xs text-stone-300">Full three-part delivery + physical product of your choice</span>
                   </div>
                 )}
 
@@ -268,7 +268,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
                     pkg={pkg}
                     labels={C}
                     calendlyUrl={calendlyUrl}
-                    className={`w-full text-center font-mono text-[11px] uppercase tracking-[0.25em] py-3.5 rounded-lg transition-all duration-200 font-bold ${
+ className={`meta-label w-full text-center py-3.5 rounded-lg transition-all duration-200 font-bold ${
                       accent ? 'bg-amber-500 text-black hover:bg-amber-400' : pkg.consultation ? 'bg-white text-black hover:bg-stone-200' : 'border border-white/20 text-stone-300 hover:border-white/50 hover:text-white hover:bg-white/5'
                     }`}
                   />
@@ -282,7 +282,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
       {/* ── Add-ons ───────────────────────────────────────────────── */}
       <div className="mb-16">
         <div className="mb-6 pb-4 border-b border-white/10">
-          <h3 className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 border-l-2 border-stone-500 pl-4 font-sans">
+          <h3 className="meta-label text-stone-400 border-l-2 border-stone-500 pl-4">
             {C.addOnsHeading} · {C.addOnsLede}
           </h3>
         </div>
@@ -290,10 +290,10 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
           {ADD_ONS.map((addon) => (
             <div key={addon.id} className="px-5 py-4 rounded-lg border border-white/[0.08] bg-[#141418]/60">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="font-mono text-[10px] text-stone-200 uppercase tracking-[0.15em] font-bold">{addon.label}</span>
-                <span className="font-mono text-[10px] text-white font-bold ml-4 flex-shrink-0">{addon.price}</span>
+                <span className="meta-label text-stone-200 font-bold">{addon.label}</span>
+                <span className="font-mono text-xs text-white font-bold ml-4 flex-shrink-0">{addon.price}</span>
               </div>
-              <p className="font-mono text-[9px] text-stone-400 leading-relaxed">{addon.description}</p>
+              <p className="font-mono text-xs text-stone-400 leading-relaxed">{addon.description}</p>
             </div>
           ))}
         </div>
@@ -304,7 +304,7 @@ export function ServicePackages({ calendlyUrl, copy = DEFAULT_SERVICES_PAGE }: S
         <div className="text-center mb-8">
           <span className="section-label block mb-3">{C.inquiryEyebrow}</span>
           <h3 className="font-serif text-3xl text-white mb-3">{C.inquiryHeading}</h3>
-          <p className="font-mono text-[10px] text-stone-400 uppercase tracking-widest max-w-md mx-auto leading-relaxed">
+          <p className="meta-label text-stone-400 max-w-md mx-auto leading-relaxed">
             {C.inquiryLede}
           </p>
         </div>

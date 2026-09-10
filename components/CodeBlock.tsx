@@ -126,7 +126,7 @@ export function CodeBlock({ value }: { value: CodeValue }) {
           </button>
         </div>
       </figcaption>
-      <pre id={id} className="p-4 overflow-x-auto text-[13px] leading-relaxed font-mono text-stone-300" tabIndex={0}>
+      <pre id={id} className="p-4 overflow-x-auto text-sm leading-relaxed font-mono text-stone-300" tabIndex={0}>
         <code>
           {lines.map((tokens, i) => {
             const n = i + 1

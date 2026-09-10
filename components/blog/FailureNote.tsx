@@ -59,7 +59,7 @@ export function FailureNote({ value }: FailureNoteProps) {
 
       {/* Content */}
       <div className="px-5 py-4">
-        <p className="font-mono text-[12px] text-stone-300 leading-relaxed whitespace-pre-wrap">
+        <p className="font-mono text-xs text-stone-300 leading-relaxed whitespace-pre-wrap">
           {content}
         </p>
       </div>
