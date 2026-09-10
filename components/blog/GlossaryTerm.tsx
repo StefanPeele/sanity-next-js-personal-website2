@@ -64,7 +64,7 @@ export function GlossaryTerm({ slug, term, definition, children }: Props) {
           role="tooltip"
           className="article-light-invert absolute left-1/2 top-full z-40 mt-2 w-72 -translate-x-1/2 rounded-lg border border-amber-400/20 bg-[#141416] p-3.5 text-left shadow-2xl shadow-black/60 font-sans not-italic tracking-normal normal-case block"
         >
-          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-amber-400/80 block mb-1.5">
+          <span className="meta-label text-amber-400/80 block mb-1.5">
             Glossary · {term}
           </span>
           <span className="font-sans text-[13px] leading-relaxed text-stone-200 block">
@@ -72,7 +72,7 @@ export function GlossaryTerm({ slug, term, definition, children }: Props) {
           </span>
           <Link
             href={`/glossary#${slug}`}
-            className={`mt-2.5 inline-block font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white ${FOCUS}`}
+            className={`meta-label mt-2.5 inline-block text-stone-400 hover:text-white ${FOCUS}`}
           >
             Read more →
           </Link>

@@ -8,7 +8,7 @@ export default function PostNotFound() {
 
       <div className="max-w-lg w-full text-center">
 
-        <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-stone-400 block mb-8 border-l border-stone-700 pl-4 text-left">
+        <span className="meta-label text-stone-400 block mb-8 border-l border-stone-700 pl-4 text-left">
           Archive // Post Not Found
         </span>
 
@@ -22,27 +22,27 @@ export default function PostNotFound() {
         <p className="font-serif italic text-stone-400 text-xl mb-2 leading-snug">
           This report hasn't been filed yet.
         </p>
-        <p className="font-mono text-[10px] text-stone-400 uppercase tracking-widest mb-12">
+        <p className="meta-label text-stone-400 mb-12">
           The post you're looking for may have moved or been unpublished.
         </p>
 
         <div className="flex items-center justify-center gap-4 flex-wrap">
           <Link
             href="/blog"
-            className="font-mono text-[10px] uppercase tracking-[0.3em] px-5 py-3 bg-white text-black hover:bg-stone-200 transition-colors"
+            className="meta-label px-5 py-3 bg-white text-black hover:bg-stone-200 transition-colors"
           >
             Browse the Archive
           </Link>
           <Link
             href="/"
-            className="font-mono text-[10px] uppercase tracking-[0.3em] px-5 py-3 border border-white/10 text-stone-400 hover:border-white/30 hover:text-white transition-colors"
+            className="meta-label px-5 py-3 border border-white/10 text-stone-400 hover:border-white/30 hover:text-white transition-colors"
           >
             Home
           </Link>
         </div>
 
         <div className="mt-16 pt-8 border-t border-white/5">
-          <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">
+          <p className="meta-label text-stone-400">
             ERROR_CODE: 404 · STATUS: POST_NOT_FOUND · ARCHIVE: STEFANPEELE.COM
           </p>
         </div>

@@ -29,10 +29,10 @@ export function WiresharkCallout({ value }: WiresharkCalloutProps) {
     <div className="my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]">
       {/* Header */}
       <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400">
+        <span className="meta-label text-stone-400">
           Wireshark Capture
         </span>
-        <span className="font-mono text-[10px] text-stone-700">
+        <span className="font-mono text-xs text-stone-700">
           {callouts.length > 0 ? `${callouts.length} annotations` : 'Lab Evidence'}
         </span>
       </div>
@@ -58,7 +58,7 @@ export function WiresharkCallout({ value }: WiresharkCalloutProps) {
                 onClick={() =>
                   setActiveCallout(activeCallout === callout.number ? null : callout.number)
                 }
-                className={`w-6 h-6 rounded-full font-mono text-[10px] font-bold flex items-center justify-center transition-all duration-200 shadow-lg ${
+                className={`w-6 h-6 rounded-full font-mono text-xs font-bold flex items-center justify-center transition-all duration-200 shadow-lg ${
                   activeCallout === callout.number
                     ? 'bg-white text-black scale-125 ring-2 ring-white/30'
                     : 'bg-emerald-500 text-black hover:scale-110'
@@ -75,18 +75,18 @@ export function WiresharkCallout({ value }: WiresharkCalloutProps) {
       <div className="p-5 border-t border-white/5 min-h-[72px] flex items-center">
         {active ? (
           <div className="flex gap-4 items-start w-full">
-            <span className="w-6 h-6 rounded-full bg-emerald-500 text-black font-mono text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="w-6 h-6 rounded-full bg-emerald-500 text-black font-mono text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
               {active.number}
             </span>
             <div>
-              <p className="font-mono text-[10px] text-stone-400 mb-1">
+              <p className="font-mono text-xs text-stone-400 mb-1">
                 {active.rowDescription}
               </p>
               <p className="text-stone-400 text-sm leading-relaxed">{active.explanation}</p>
             </div>
           </div>
         ) : (
-          <p className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">
+          <p className="meta-label text-stone-400">
             {value.caption || 'Hover a callout number to inspect the capture'}
           </p>
         )}

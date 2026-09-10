@@ -13,7 +13,7 @@
 - `sanity/lib/queries.ts` (content), `queries-site.ts`, `queries-article-ui.ts`, `queries-services.ts` (singleton copy) — every GROQ query (`defineQuery`); `sanity/lib/live.ts` — `sanityFetch`; `sanity/lib/client.ts` — read client; `sanity/lib/writeClient.ts` — mutating client (needs `SANITY_API_WRITE_TOKEN`).
 - `lib/cms/` — `defaults/*.ts` (one module per Studio singleton: schema `initialValue` + runtime fallback), `withDefaults.ts` (deep merge doc over defaults), `loaders.ts` (server-only, cached: `getSiteChrome`, `getCopy`, `getTaxonomy`, `getErrorPages`), `icons.tsx` (editable lucide icon names). `scripts/seed-content.ts` publishes the defaults.
 - `lib/` — `site.ts` (SITE constants, RESERVED_SLUGS; nav/ARTICLE_TYPES re-exports are deprecated — read `lib/cms/defaults`), `dates.ts`, `reading.ts`, `security.ts` (escapeHtml, rateLimit, getClientIp), `motion.ts`, `feed.ts`, `portableTextToHtml.ts`.
-- `styles/index.css` — base styles, skip link, `.focus-ring`, print styles. `styles/article.css` belongs to article pages.
+- `styles/index.css` — base styles, skip link, `.meta-label`, print styles. `styles/article.css` belongs to article pages.
 
 ## Commands
 
@@ -25,7 +25,7 @@
 - Run `npm run typegen` after adding a query or schema field; import result types from `@/sanity.types`.
 - Dates from Sanity are `YYYY-MM-DD` — always format with `lib/dates.ts` (UTC) to avoid off-by-one and hydration mismatches.
 - Aesthetic: dark archive — `#0a0a0a` background, stone palette, Lora headings, IBM Plex Mono labels. Readable text never below `stone-400`; decorative only may go darker.
-- Focus: `focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400` (or `.focus-ring`).
+- Focus: always the `FOCUS` constant from `lib/ui.ts` — one spelling, site-wide. Do not re-spell the classes inline; the `.focus-ring` utility was deleted (it had zero call sites) and its `outline-offset-2` folded into `FOCUS`.
 - Tailwind opacity modifiers only from the scale (`/5`, `/10`, `/20`) or bracketed (`/[0.08]`); arbitrary decimals like `/8` do not compile.
 - Motion: tokens in `lib/motion.ts`; Tailwind classes `motion-safe:animate-fade-up|fade-in|draw|page-enter`, `ease-out-expo`, `duration-fast|base|slow`. Always gate animations with `motion-safe:`. framer-motion is wrapped in `MotionConfig reducedMotion="user"`.
 - Exactly one `<h1>` per page. Every page needs an element with `id="content"` for the skip link.

@@ -10,12 +10,12 @@
  * globs in tailwind.config.ts), so the classes are still generated from here, and
  * anything more clever would hide them from that scan.
  *
- * NOT identical to the `.focus-ring` utility in styles/index.css, which applies the
- * same three classes plus `focus-visible:outline-offset-2`. Two spellings of "the
- * focus ring" therefore exist and render differently — `.focus-ring` sits 2px off
- * the element, this one sits flush. CLAUDE.md presents them as interchangeable
- * ("`focus-visible:outline …` (or `.focus-ring`)"), which is not accurate. Left as
- * it is here on purpose: adding the offset would change the appearance of every
- * focus ring on the site, which is a design decision, not a refactor.
+ * There used to be a second spelling — a `.focus-ring` utility in styles/index.css
+ * carrying these three classes plus `focus-visible:outline-offset-2`. It had zero
+ * call sites against this constant's 163, so it was dead CSS rather than a rival
+ * convention. Resolved by adopting its offset here and deleting it: a ring held 2px
+ * off the element stays legible on the many controls that already carry a border,
+ * where a flush ring merged with that border. One spelling, site-wide.
  */
-export const FOCUS = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400'
+export const FOCUS =
+  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 focus-visible:outline-offset-2'

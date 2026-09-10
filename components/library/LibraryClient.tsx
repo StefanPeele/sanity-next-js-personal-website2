@@ -13,7 +13,7 @@ import { FOCUS } from '@/lib/ui'
 const STATUS_ORDER: LibraryStatus[] = ['current', 'reference', 'finished', 'want-to-read', 'abandoned']
 
 function chip(active: boolean) {
-  return `font-mono text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-sm border transition-all ${FOCUS} ${
+  return `meta-label px-3 py-1.5 rounded-sm border transition-all ${FOCUS} ${
     active ? 'bg-white text-black border-white' : 'border-white/15 text-stone-400 hover:text-white hover:border-white/30'
   }`
 }
@@ -22,8 +22,8 @@ function Shelf({ id, label, accent = 'border-stone-600', children, count }: { id
   return (
     <section className="mb-16" aria-labelledby={id}>
       <div className="mb-6 pb-4 border-b border-white/[0.08] flex items-center justify-between">
-        <h2 id={id} className={`font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 border-l-2 ${accent} pl-4`}>{label}</h2>
-        <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">{count}</span>
+        <h2 id={id} className={`meta-label text-stone-400 border-l-2 ${accent} pl-4`}>{label}</h2>
+        <span className="meta-label text-stone-400">{count}</span>
       </div>
       {children}
     </section>
@@ -74,24 +74,24 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
       {/* Filters */}
       <div className="space-y-3 mb-12">
         <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by media type">
-          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 w-14">Type</span>
+          <span className="meta-label text-stone-400 w-14">Type</span>
           <button type="button" onClick={() => setType(null)} aria-pressed={type === null} className={chip(type === null)}>All</button>
           {types.map(([t, n]) => (
             <button key={t} type="button" onClick={() => setType(type === t ? null : t)} aria-pressed={type === t} className={chip(type === t)}>
-              <Icon name={MEDIA_ICONS[t]} size={10} className="inline -mt-px mr-1" />{MEDIA_LABELS[t] ?? t} <span className="opacity-60 text-[8px]">{n}</span>
+              <Icon name={MEDIA_ICONS[t]} size={10} className="inline -mt-px mr-1" />{MEDIA_LABELS[t] ?? t} <span className="opacity-60 text-xs">{n}</span>
             </button>
           ))}
         </div>
         <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by status">
-          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 w-14">Status</span>
+          <span className="meta-label text-stone-400 w-14">Status</span>
           <button type="button" onClick={() => setStatus(null)} aria-pressed={status === null} className={chip(status === null)}>All</button>
           {statuses.map(([s, n]) => (
             <button key={s} type="button" onClick={() => setStatus(status === s ? null : s)} aria-pressed={status === s} className={chip(status === s)}>
-              {STATUS_LABELS[s]} <span className="opacity-60 text-[8px]">{n}</span>
+              {STATUS_LABELS[s]} <span className="opacity-60 text-xs">{n}</span>
             </button>
           ))}
         </div>
-        <p className="font-mono text-[9px] uppercase tracking-widest text-stone-400" aria-live="polite">
+        <p className="meta-label text-stone-400" aria-live="polite">
           {filtered.length} of {items.length} item{items.length === 1 ? '' : 's'}
           {anyFilter && (
             <>
@@ -105,7 +105,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
       {filtered.length === 0 && (
         <div className="py-20 text-center border border-white/5 rounded-xl mb-16">
           <p className="font-serif italic text-stone-400 text-lg mb-2">Nothing on this shelf.</p>
-          <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">Try another type or status.</p>
+          <p className="meta-label text-stone-400">Try another type or status.</p>
         </div>
       )}
 
@@ -119,7 +119,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
 
       {reference.length > 0 && (
         <Shelf id="shelf-reference" label="Reference Shelf — Constantly Returning" accent="border-cyan-700" count={reference.length}>
-          <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest mb-4 -mt-2">
+          <p className="meta-label text-stone-400 mb-4 -mt-2">
             Never finished on purpose. Dipped into whenever a real problem needs the authoritative answer.
           </p>
           <div className="space-y-3">
@@ -147,8 +147,8 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
                 ) : (
                   <span className="font-serif text-stone-300">{item.title}</span>
                 )}
-                {item.oneSentenceTake && <span className="font-mono text-[9px] text-stone-400 hidden md:inline truncate">— {item.oneSentenceTake}</span>}
-                {item.author && <span className="font-mono text-[9px] text-stone-400 ml-auto flex-shrink-0">{item.author}</span>}
+                {item.oneSentenceTake && <span className="font-mono text-xs text-stone-400 hidden md:inline truncate">— {item.oneSentenceTake}</span>}
+                {item.author && <span className="font-mono text-xs text-stone-400 ml-auto flex-shrink-0">{item.author}</span>}
               </li>
             ))}
           </ul>
@@ -163,8 +163,8 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
                 <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={14} className="flex-shrink-0 text-stone-400 mt-1" />
                 <div>
                   <span className="font-serif text-stone-400 line-through decoration-stone-600">{item.title}</span>
-                  {item.author && <span className="font-mono text-[9px] text-stone-400 ml-2">{item.author}</span>}
-                  {item.abandonedReason && <p className="font-mono text-[9px] text-stone-400 mt-0.5">{item.abandonedReason}</p>}
+                  {item.author && <span className="font-mono text-xs text-stone-400 ml-2">{item.author}</span>}
+                  {item.abandonedReason && <p className="font-mono text-xs text-stone-400 mt-0.5">{item.abandonedReason}</p>}
                 </div>
               </li>
             ))}

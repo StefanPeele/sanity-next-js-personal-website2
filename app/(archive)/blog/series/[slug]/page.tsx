@@ -77,22 +77,22 @@ export default async function SeriesPage({ params }: Props) {
 
       <main id="content" className="relative max-w-4xl mx-auto px-6 pt-32 pb-24">
         <header className="mb-12 border-b border-white/5 pb-8">
-          <Link href="/blog/series" className={`font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>
+          <Link href="/blog/series" className={`meta-label text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>
             ← All series
           </Link>
           <div className="mt-6 mb-4 flex flex-wrap items-center gap-3">
-            <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-stone-400 border-l border-stone-700 pl-4">Series</span>
-            <span className={`font-mono text-[9px] uppercase tracking-[0.3em] px-2.5 py-1 rounded-sm border ${status.className}`}>{status.label}</span>
+            <span className="meta-label text-stone-400 border-l border-stone-700 pl-4">Series</span>
+            <span className={`meta-label px-2.5 py-1 rounded-sm border ${status.className}`}>{status.label}</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none">{series.title}</h1>
           {series.description && <p className="mt-5 max-w-2xl font-serif text-lg text-stone-300 leading-relaxed">{series.description}</p>}
-          <p className="mt-4 font-mono text-[10px] uppercase tracking-widest text-stone-400">
+          <p className="meta-label mt-4 text-stone-400">
             {parts.length} part{parts.length !== 1 ? 's' : ''} · ~{totalMinutes} min total · {status.note}
           </p>
         </header>
 
         {parts.length === 0 ? (
-          <p className="font-mono text-[11px] uppercase tracking-widest text-stone-400">No parts published yet.</p>
+          <p className="meta-label text-stone-400">No parts published yet.</p>
         ) : (
           <ol className="space-y-4">
             {parts.map((p, i) => {
@@ -108,7 +108,7 @@ export default async function SeriesPage({ params }: Props) {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="sr-only">Part {i + 1}: </span>
-                      <span className="flex flex-wrap items-center gap-2 mb-1.5 font-mono text-[9px] uppercase tracking-widest text-stone-400">
+                      <span className="meta-label flex flex-wrap items-center gap-2 mb-1.5 text-stone-400">
                         {lane && <span style={{ color: lane.color }}>{lane.label}</span>}
                         {p.publishedAt && <span>{formatDate(p.publishedAt, 'short')}</span>}
                         <span>{readingTime(p.wordCount ?? 0)} min</span>

@@ -59,7 +59,7 @@ export function SeriesBanner({ series, currentSlug, seriesOrder, labels = DEFAUL
             const current = p.slug === currentSlug
             return (
               <li key={p._id} className="flex items-baseline gap-3">
-                <span className="font-mono text-[10px] text-stone-400 w-5 text-right flex-shrink-0">{i + 1}.</span>
+                <span className="font-mono text-xs text-stone-400 w-5 text-right flex-shrink-0">{i + 1}.</span>
                 {current ? (
                   <span className="font-serif text-sm text-white" aria-current="page">{p.title}</span>
                 ) : (

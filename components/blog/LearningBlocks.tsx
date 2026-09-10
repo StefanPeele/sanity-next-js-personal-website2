@@ -27,13 +27,13 @@ export function WhatIGotWrong({ value }: WhatIGotWrongProps) {
     <div className="my-8 rounded-xl overflow-hidden border border-indigo-500/20 bg-indigo-950/10">
       <div className="flex items-center gap-2.5 px-5 py-3 border-b border-indigo-500/20">
         <span className="text-sm">✗</span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.35em] font-bold text-indigo-400">
+        <span className="meta-label font-bold text-indigo-400">
           What I Got Wrong First
         </span>
       </div>
       <div className="px-5 py-5 space-y-4">
         <div className="flex items-start gap-3">
-          <span className="font-mono text-[9px] uppercase tracking-widest text-indigo-500/70 flex-shrink-0 mt-1 w-20">
+          <span className="meta-label text-indigo-500/70 flex-shrink-0 mt-1 w-20">
             I thought
           </span>
           <p className="font-mono text-sm text-stone-400 leading-relaxed line-through decoration-indigo-500/40">
@@ -42,7 +42,7 @@ export function WhatIGotWrong({ value }: WhatIGotWrongProps) {
         </div>
         <div className="h-px bg-indigo-500/10" />
         <div className="flex items-start gap-3">
-          <span className="font-mono text-[9px] uppercase tracking-widest text-indigo-400 flex-shrink-0 mt-1 w-20">
+          <span className="meta-label text-indigo-400 flex-shrink-0 mt-1 w-20">
             Actually
           </span>
           <p className="font-mono text-sm text-stone-200 leading-relaxed">
@@ -53,7 +53,7 @@ export function WhatIGotWrong({ value }: WhatIGotWrongProps) {
           <>
             <div className="h-px bg-indigo-500/10" />
             <div className="flex items-start gap-3">
-              <span className="font-mono text-[9px] uppercase tracking-widest text-indigo-500/70 flex-shrink-0 mt-1 w-20">
+              <span className="meta-label text-indigo-500/70 flex-shrink-0 mt-1 w-20">
                 Why it matters
               </span>
               <p className="font-mono text-xs text-stone-400 leading-relaxed italic">
@@ -96,12 +96,12 @@ export function WhatEngineersUse({ value }: WhatEngineersUseProps) {
       <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-stone-600/20">
         <div className="flex items-center gap-2.5">
           <Icon name="wrench" size={14} className="text-stone-400" />
-          <span className="font-mono text-[10px] uppercase tracking-[0.35em] font-bold text-stone-400">
+          <span className="meta-label font-bold text-stone-400">
             What Engineers Actually Use This For
           </span>
         </div>
         {env && (
-          <span className={`font-mono text-[8px] uppercase tracking-widest px-2 py-1 rounded-sm border ${env.color}`}>
+          <span className={`meta-label px-2 py-1 rounded-sm border ${env.color}`}>
             {env.label}
           </span>
         )}
@@ -112,10 +112,10 @@ export function WhatEngineersUse({ value }: WhatEngineersUseProps) {
         </p>
         {value.toolsInvolved && (
           <div className="flex items-center gap-2 pt-2 border-t border-stone-700/30">
-            <span className="font-mono text-[9px] uppercase tracking-widest text-stone-600">
+            <span className="meta-label text-stone-400">
               Tools:
             </span>
-            <span className="font-mono text-[10px] text-stone-400">
+            <span className="font-mono text-xs text-stone-400">
               {value.toolsInvolved}
             </span>
           </div>
@@ -142,11 +142,11 @@ export function TheProblemSolved({ value }: TheProblemSolvedProps) {
     <div className="my-8 rounded-xl overflow-hidden border border-amber-700/20 bg-amber-950/[0.08]">
       <div className="flex items-center gap-2.5 px-5 py-3 border-b border-amber-700/20">
         <span className="text-sm">🕰</span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.35em] font-bold text-amber-600/80">
+        <span className="meta-label font-bold text-amber-600/80">
           The Problem This Solved
         </span>
         {value.year && (
-          <span className="ml-auto font-mono text-[9px] text-amber-700/60 uppercase tracking-widest">
+          <span className="meta-label ml-auto text-amber-700/60">
             {value.year}
           </span>
         )}
@@ -160,7 +160,7 @@ export function TheProblemSolved({ value }: TheProblemSolvedProps) {
             href={value.externalLink}
             target="_blank"
             rel="noreferrer noopener"
-            className="mt-4 inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-amber-600/70 hover:text-amber-400 transition-colors"
+            className="meta-label mt-4 inline-flex items-center gap-2 text-amber-600/70 hover:text-amber-400 transition-colors"
           >
             Further reading ↗
           </a>
@@ -190,14 +190,14 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
     <div className="my-10 border border-white/10 rounded-xl overflow-hidden bg-[#0f0f12]">
       <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400">
+          <span className="meta-label text-stone-400">
             Stress Test
           </span>
-          <span className="font-mono text-[9px] uppercase tracking-widest px-2 py-0.5 border border-stone-700 text-stone-600 rounded-sm">
+          <span className="meta-label px-2 py-0.5 border border-stone-700 text-stone-400 rounded-sm">
             Before moving on
           </span>
         </div>
-        <span className="font-mono text-[10px] text-stone-400">Active recall</span>
+        <span className="font-mono text-xs text-stone-400">Active recall</span>
       </div>
 
       <div className="p-6">
@@ -210,14 +210,14 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
             <>
               <button
                 onClick={() => setRevealed(true)}
-                className="font-mono text-[10px] uppercase tracking-widest px-4 py-2.5 bg-white text-black hover:bg-stone-200 transition-colors rounded-sm"
+                className="meta-label px-4 py-2.5 bg-white text-black hover:bg-stone-200 transition-colors rounded-sm"
               >
                 Reveal Answer
               </button>
               {value.hint && !showHint && (
                 <button
                   onClick={() => setShowHint(true)}
-                  className="font-mono text-[10px] uppercase tracking-widest px-4 py-2.5 border border-white/10 text-stone-600 hover:text-stone-400 transition-colors rounded-sm"
+                  className="meta-label px-4 py-2.5 border border-white/10 text-stone-400 hover:text-stone-400 transition-colors rounded-sm"
                 >
                   Show Hint
                 </button>
@@ -226,7 +226,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
           ) : (
             <button
               onClick={() => setRevealed(false)}
-              className="font-mono text-[10px] uppercase tracking-widest px-4 py-2.5 border border-white/10 text-stone-600 hover:text-stone-400 transition-colors rounded-sm"
+              className="meta-label px-4 py-2.5 border border-white/10 text-stone-400 hover:text-stone-400 transition-colors rounded-sm"
             >
               Hide Answer
             </button>
@@ -239,7 +239,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
             animate={{ opacity: 1, height: 'auto' }}
             className="mt-4 pt-4 border-t border-white/5"
           >
-            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-600 mb-2">Hint</p>
+            <p className="meta-label text-stone-400 mb-2">Hint</p>
             <p className="text-stone-400 text-sm italic leading-relaxed">{value.hint}</p>
           </motion.div>
         )}
@@ -253,7 +253,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
               transition={{ duration: 0.4, ease: 'easeOut' }}
               className="mt-6 pt-6 border-t border-white/[0.08] overflow-hidden"
             >
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-stone-400 mb-3">Answer</p>
+              <p className="meta-label text-stone-400 mb-3">Answer</p>
               <p className="text-stone-300 text-sm leading-relaxed whitespace-pre-wrap">
                 {value.answer}
               </p>
@@ -316,7 +316,7 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
           <button
             type="button"
             onClick={download}
-            className={`ml-auto font-mono text-[9px] uppercase tracking-widest px-3 py-2 border border-white/10 rounded-lg text-stone-300 hover:text-white hover:border-white/30 transition-colors ${FOCUS}`}
+            className={`meta-label ml-auto px-3 py-2 border border-white/10 rounded-lg text-stone-300 hover:text-white hover:border-white/30 transition-colors ${FOCUS}`}
             data-print-hide
           >
             {downloaded ? 'Saved ✓' : `Download study deck (${deckCount} cards, Anki)`}
@@ -349,13 +349,13 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
                   className="absolute inset-0 border border-white/15 rounded-xl p-5 flex flex-col justify-between bg-[#111] hover:border-white/30 transition-colors"
                   style={{ backfaceVisibility: 'hidden' }}
                 >
-                  <span className="font-mono text-[8px] uppercase tracking-[0.4em] text-stone-600">
+                  <span className="meta-label text-stone-400">
                     Term
                   </span>
                   <p className="font-serif text-lg text-white leading-snug">
                     {card.front}
                   </p>
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400 group-hover:text-stone-300 transition-colors">
+                  <span className="meta-label text-stone-400 group-hover:text-stone-300 transition-colors">
                     Click to define →
                   </span>
                 </div>
@@ -365,13 +365,13 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
                   className="absolute inset-0 border border-stone-600/50 rounded-xl p-5 flex flex-col justify-between bg-[#0f1510]"
                   style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                 >
-                  <span className="font-mono text-[8px] uppercase tracking-[0.4em] text-stone-600">
+                  <span className="meta-label text-stone-400">
                     Definition
                   </span>
                   <p className="font-mono text-xs text-stone-300 leading-relaxed">
                     {card.back}
                   </p>
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400">
+                  <span className="meta-label text-stone-400">
                     ← Click to flip back
                   </span>
                 </div>

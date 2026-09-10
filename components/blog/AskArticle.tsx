@@ -63,10 +63,10 @@ export function AskArticle({ slug, heading = 'Ask this article', placeholder = '
 
       <div aria-live="polite" className="mt-5">
         {pending && (
-          <p className="font-mono text-[10px] uppercase tracking-widest text-stone-400 motion-safe:animate-pulse">Thinking…</p>
+          <p className="meta-label text-stone-400 motion-safe:animate-pulse">Thinking…</p>
         )}
         {error && !pending && (
-          <p role="alert" className="font-mono text-[11px] text-amber-400 border border-amber-500/30 bg-amber-950/10 rounded-lg px-4 py-3">{error}</p>
+          <p role="alert" className="font-mono text-xs text-amber-400 border border-amber-500/30 bg-amber-950/10 rounded-lg px-4 py-3">{error}</p>
         )}
         {answer && !pending && (
           <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-5">

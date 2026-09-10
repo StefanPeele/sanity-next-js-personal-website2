@@ -100,7 +100,13 @@ export function BlogArticleHeader({
           </div>
         )}
 
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-white mb-5 leading-tight tracking-tight">
+        {/* D4: the h1 alone breaks out of the 36rem prose measure at lg. `text-wrap: balance`
+            (styles/index.css) can only pick better breaks inside the width it is given, and 576px
+            is too narrow for a display title at 48px -- it split "Week / 2:" across a line. An
+            explicit width is required because max-width would still resolve to the parent's 576px.
+            Measured: 4 lines/192px -> 3 lines/144px at 1440, no overflow, tablet and mobile
+            unchanged because it is gated at lg. */}
+        <h1 className="text-3xl md:text-4xl lg:text-5xl lg:w-[52rem] lg:max-w-none font-serif font-bold text-white mb-5 leading-tight tracking-tight">
           {title}
         </h1>
 

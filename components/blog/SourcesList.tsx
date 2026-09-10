@@ -50,7 +50,7 @@ export function SourcesList({ sources, heading = 'Sources' }: SourcesListProps &
               className="flex items-start gap-4 group"
             >
               {/* Index number */}
-              <span className="font-mono text-[10px] text-stone-400 flex-shrink-0 mt-0.5 w-6 text-right">
+              <span className="font-mono text-xs text-stone-400 flex-shrink-0 mt-0.5 w-6 text-right">
                 [{i + 1}]
               </span>
 
@@ -69,7 +69,7 @@ export function SourcesList({ sources, heading = 'Sources' }: SourcesListProps &
                         className="font-serif text-stone-300 hover:text-white transition-colors leading-snug group-hover:underline underline-offset-4 decoration-stone-600 hover:decoration-white"
                       >
                         {source.title}
-                        <span className="font-mono text-[9px] text-stone-400 ml-1.5 group-hover:text-stone-400 transition-colors">
+                        <span className="font-mono text-xs text-stone-400 ml-1.5 group-hover:text-stone-400 transition-colors">
                           ↗
                         </span>
                       </a>
@@ -81,11 +81,11 @@ export function SourcesList({ sources, heading = 'Sources' }: SourcesListProps &
 
                     {/* Meta */}
                     <div className="flex flex-wrap items-center gap-2 mt-1">
-                      <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400 border border-stone-700 px-1.5 py-0.5 rounded-sm">
+                      <span className="meta-label text-stone-400 border border-stone-700 px-1.5 py-0.5 rounded-sm">
                         {config.label}
                       </span>
                       {source.author && (
-                        <span className="font-mono text-[9px] text-stone-400">
+                        <span className="font-mono text-xs text-stone-400">
                           {source.author}
                         </span>
                       )}
@@ -93,7 +93,7 @@ export function SourcesList({ sources, heading = 'Sources' }: SourcesListProps &
 
                     {/* Optional description */}
                     {source.description && (
-                      <p className="font-mono text-[10px] text-stone-400 mt-1.5 leading-relaxed italic">
+                      <p className="font-mono text-xs text-stone-400 mt-1.5 leading-relaxed italic">
                         {source.description}
                       </p>
                     )}

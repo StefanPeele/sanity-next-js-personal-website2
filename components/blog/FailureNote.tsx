@@ -52,7 +52,7 @@ export function FailureNote({ value }: FailureNoteProps) {
       {/* Header */}
       <div className={`flex items-center gap-2.5 px-5 py-3 border-b ${config.border}`}>
         <Icon name={config.icon} size={16} className={config.accent} />
-        <span className={`font-mono text-[10px] uppercase tracking-[0.35em] font-bold ${config.accent}`}>
+        <span className={`meta-label font-bold ${config.accent}`}>
           {config.label}
         </span>
       </div>

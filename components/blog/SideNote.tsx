@@ -29,7 +29,7 @@ export function SideNote({ children, note }: SideNoteProps) {
         className={`border-b border-dashed border-amber-400/60 cursor-help bg-transparent p-0 rounded-sm ${FOCUS}`}
       >
         {children}
-        <sup className="font-mono text-[9px] text-amber-400/80 ml-0.5 select-none" aria-hidden="true">※</sup>
+        <sup className="font-mono text-xs text-amber-400/80 ml-0.5 select-none" aria-hidden="true">※</sup>
       </button>
 
       {/* Desktop tooltip — hover or focus-within */}
@@ -43,16 +43,16 @@ export function SideNote({ children, note }: SideNoteProps) {
           hidden lg:group-hover:block lg:group-focus-within:block
         `}
       >
-        <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-amber-400/80 block mb-1.5">Note</span>
-        <span className="font-mono text-[11px] text-stone-200 leading-relaxed block">{note}</span>
+        <span className="meta-label text-amber-400/80 block mb-1.5">Note</span>
+        <span className="font-mono text-xs text-stone-200 leading-relaxed block">{note}</span>
         <span className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-amber-400/20" aria-hidden="true" />
       </span>
 
       {/* Mobile inline expander */}
       {open && (
         <span className="lg:hidden block mt-2 mb-3 pl-3 border-l-2 border-amber-400/40 bg-amber-950/20 rounded-r-lg py-2 pr-3">
-          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-amber-400/80 block mb-1">Note</span>
-          <span className="font-mono text-[11px] text-stone-200 leading-relaxed block">{note}</span>
+          <span className="meta-label text-amber-400/80 block mb-1">Note</span>
+          <span className="font-mono text-xs text-stone-200 leading-relaxed block">{note}</span>
         </span>
       )}
     </span>

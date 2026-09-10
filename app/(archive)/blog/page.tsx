@@ -121,7 +121,7 @@ export default async function BlogPage() {
 
               <div className="relative z-20 pt-64 pb-12 px-8 md:px-16 flex flex-col justify-end h-full">
                 <div className="flex gap-3 mb-4 flex-wrap">
-                  <span className="bg-white text-black font-mono text-[9px] tracking-[0.2em] uppercase px-3 py-1 rounded-sm">Featured</span>
+                  <span className="meta-label bg-white text-black px-3 py-1 rounded-sm">Featured</span>
                   {featuredMeta && (
                     <span className="font-sans text-xs px-3 py-1.5 rounded-full border backdrop-blur-md" style={{ color: featuredMeta.color, borderColor: `${featuredMeta.color}66`, backgroundColor: featuredMeta.bg }}>
                       {featuredMeta.label}

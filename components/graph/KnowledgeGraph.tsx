@@ -429,7 +429,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
       {settling && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3 pointer-events-none" aria-hidden="true">
           <div className="w-6 h-6 border border-white/20 border-t-white/50 rounded-full animate-spin" />
-          <p className="font-mono text-[8px] text-stone-400 uppercase tracking-widest">Mapping connections…</p>
+          <p className="meta-label text-stone-400">Mapping connections…</p>
         </div>
       )}
 
@@ -445,16 +445,16 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
           <div className="bg-[#111]/95 border border-white/15 rounded-xl p-4 w-56 backdrop-blur-xl shadow-2xl">
             <div className="flex items-center gap-2 mb-2.5">
               <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: hoveredNode.color }} />
-              <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400">
+              <span className="meta-label text-stone-400">
                 {hoveredNode.type}{hoveredNode.subtype ? ` · ${hoveredNode.subtype.replace(/-/g, ' ')}` : ''}
               </span>
             </div>
             <p className="font-serif text-sm text-white leading-snug mb-1.5">{hoveredNode.label}</p>
             {hoveredNode.description && (
-              <p className="font-mono text-[9px] text-stone-400 leading-relaxed line-clamp-2">{hoveredNode.description}</p>
+              <p className="font-mono text-xs text-stone-400 leading-relaxed line-clamp-2">{hoveredNode.description}</p>
             )}
             {hoveredNode.url && (
-              <p className="font-mono text-[8px] text-stone-400 mt-2 uppercase tracking-widest">{copy.openHint}</p>
+              <p className="meta-label text-stone-400 mt-2">{copy.openHint}</p>
             )}
           </div>
         </div>
@@ -465,15 +465,15 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
         <div className="flex gap-4 mb-4 pb-3 border-b border-white/[0.08]">
           <div>
             <div className="font-serif text-lg text-white font-bold">{model.nodes.length}</div>
-            <div className="font-mono text-[7px] uppercase tracking-widest text-stone-400">{copy.nodesLabel}</div>
+            <div className="meta-label text-stone-400">{copy.nodesLabel}</div>
           </div>
           <div>
             <div className="font-serif text-lg text-white font-bold">{model.links.length}</div>
-            <div className="font-mono text-[7px] uppercase tracking-widest text-stone-400">{copy.edgesLabel}</div>
+            <div className="meta-label text-stone-400">{copy.edgesLabel}</div>
           </div>
         </div>
 
-        <p className="font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 mb-2.5" id={`${glowId}-visible`}>{copy.visibleHeading}</p>
+        <p className="meta-label text-stone-400 mb-2.5" id={`${glowId}-visible`}>{copy.visibleHeading}</p>
         <div className="space-y-1 mb-4" role="group" aria-labelledby={`${glowId}-visible`}>
           {filterRows.map(({ key, label, color, count }) => (
             <button
@@ -487,9 +487,9 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
             >
               <span className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} aria-hidden="true" />
-                <span className="font-mono text-[9px] uppercase tracking-widest text-stone-300">{label}</span>
+                <span className="meta-label text-stone-300">{label}</span>
               </span>
-              <span className="font-mono text-[8px] text-stone-400">{count}</span>
+              <span className="font-mono text-xs text-stone-400">{count}</span>
             </button>
           ))}
         </div>
@@ -501,17 +501,17 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={copy.searchPlaceholder}
-          className={`w-full bg-white/5 border border-white/10 rounded-md px-3 py-1.5 font-mono text-[10px] text-white placeholder:text-stone-500 focus:border-white/25 transition-colors ${FOCUS}`}
+          className={`w-full bg-white/5 border border-white/10 rounded-md px-3 py-1.5 font-mono text-xs text-white placeholder:text-stone-500 focus:border-white/25 transition-colors ${FOCUS}`}
         />
 
-        <p className="font-mono text-[7px] text-stone-400 uppercase tracking-widest mt-3 leading-loose">
+        <p className="meta-label text-stone-400 mt-3 leading-loose">
           {copy.helpLine}
         </p>
       </div>
 
       {/* Legend */}
       <details className="absolute bottom-4 left-4 bg-[#0d0d0f]/85 border border-white/[0.08] rounded-lg backdrop-blur-xl max-w-[220px]" open>
-        <summary className={`cursor-pointer px-3 py-2 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 ${FOCUS} rounded-lg`}>
+        <summary className={`meta-label cursor-pointer px-3 py-2 text-stone-400 ${FOCUS} rounded-lg`}>
           {copy.legendHeading}
         </summary>
         <ul className="px-3 pb-3 space-y-1.5">
@@ -522,10 +522,10 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
                 style={shape === 'ring' ? { border: `1.5px solid ${color}` } : { backgroundColor: color }}
                 aria-hidden="true"
               />
-              <span className="font-mono text-[7px] text-stone-400 uppercase tracking-widest">{label}</span>
+              <span className="meta-label text-stone-400">{label}</span>
             </li>
           ))}
-          <li className="pt-1 mt-1 border-t border-white/[0.06] font-mono text-[7px] text-stone-400 uppercase tracking-widest">
+          <li className="meta-label pt-1 mt-1 border-t border-white/[0.06] text-stone-400">
             {copy.linesNote}
           </li>
         </ul>
@@ -534,7 +534,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
       {/* Keyboard / screen-reader alternative */}
       <div className="absolute bottom-4 right-4">
         <details className="bg-[#0d0d0f]/90 border border-white/[0.08] rounded-lg backdrop-blur-xl max-w-xs">
-          <summary className={`cursor-pointer px-3 py-2 font-mono text-[8px] uppercase tracking-[0.3em] text-stone-400 ${FOCUS} rounded-lg`}>
+          <summary className={`meta-label cursor-pointer px-3 py-2 text-stone-400 ${FOCUS} rounded-lg`}>
             {copy.nodeListLabel} ({listNodes.length})
           </summary>
           <ul ref={listRef} className="max-h-64 overflow-y-auto px-3 pb-3 space-y-1" aria-label={copy.nodeListLabel}>
@@ -543,14 +543,14 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
                 {n.url ? (
                   <a
                     href={n.url}
-                    className={`flex items-center gap-2 font-mono text-[9px] text-stone-300 hover:text-white rounded-sm ${FOCUS}`}
+                    className={`flex items-center gap-2 font-mono text-xs text-stone-300 hover:text-white rounded-sm ${FOCUS}`}
                   >
                     <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: n.color }} aria-hidden="true" />
                     <span className="truncate">{n.label}</span>
-                    <span className="ml-auto text-[7px] uppercase tracking-widest text-stone-400 flex-shrink-0">{n.type}</span>
+                    <span className="ml-auto text-xs uppercase tracking-widest text-stone-400 flex-shrink-0">{n.type}</span>
                   </a>
                 ) : (
-                  <span className="flex items-center gap-2 font-mono text-[9px] text-stone-400">
+                  <span className="flex items-center gap-2 font-mono text-xs text-stone-400">
                     <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: n.color }} aria-hidden="true" />
                     {n.label}
                   </span>
@@ -603,7 +603,7 @@ export function GraphNeighborhood({ data, focusId, height = 260 }: { data: Graph
         role="img"
         aria-label={`${focus?.label ?? 'This item'} is connected to ${neighbours.length} other item${neighbours.length === 1 ? '' : 's'}: ${neighbours.map((n) => n.label).join(', ')}.`}
       />
-      <div className="absolute top-2 right-3 font-mono text-[8px] uppercase tracking-widest text-stone-400" aria-live="polite">
+      <div className="meta-label absolute top-2 right-3 text-stone-400" aria-live="polite">
         {hovered ? `${hovered.type} · ${hovered.label}` : `${neighbours.length} connection${neighbours.length === 1 ? '' : 's'}`}
       </div>
       <ul className="flex flex-wrap gap-2 p-3 border-t border-white/[0.06]" aria-label="Connected items">
@@ -611,7 +611,7 @@ export function GraphNeighborhood({ data, focusId, height = 260 }: { data: Graph
           <li key={n.id}>
             <a
               href={n.url}
-              className={`flex items-center gap-1.5 font-mono text-[9px] text-stone-400 hover:text-white border border-white/10 hover:border-white/30 px-2 py-1 rounded-sm transition-colors ${FOCUS}`}
+              className={`flex items-center gap-1.5 font-mono text-xs text-stone-400 hover:text-white border border-white/10 hover:border-white/30 px-2 py-1 rounded-sm transition-colors ${FOCUS}`}
             >
               <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: n.color }} aria-hidden="true" />
               {n.label}

@@ -33,7 +33,7 @@ export function RecentlyTended({ notes, title = 'Recently tended' }: { notes: Re
                 <Link href={`/garden/${n.slug}`} className={`group flex items-center gap-2.5 rounded-sm ${FOCUS}`}>
                   <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${s.dot}`} aria-hidden="true" />
                   <span className="font-serif text-sm text-stone-200 group-hover:text-white transition-colors truncate">{n.title}</span>
-                  <time dateTime={formatDate(n.lastTended, 'iso')} className="ml-auto font-mono text-[8px] uppercase tracking-widest text-stone-400 flex-shrink-0">
+                  <time dateTime={formatDate(n.lastTended, 'iso')} className="meta-label ml-auto text-stone-400 flex-shrink-0">
                     {formatDate(n.lastTended, 'short')}
                   </time>
                 </Link>
@@ -42,7 +42,7 @@ export function RecentlyTended({ notes, title = 'Recently tended' }: { notes: Re
           })}
         </ul>
       ) : (
-        <p className="font-mono text-[9px] text-stone-400 uppercase tracking-widest">No notes tended yet.</p>
+        <p className="meta-label text-stone-400">No notes tended yet.</p>
       )}
     </section>
   )

@@ -60,7 +60,7 @@ export function NewsletterForm({ variant = 'card', source = 'site', className = 
       id={statusId}
       role="status"
       aria-live="polite"
-      className={`font-mono text-[11px] leading-relaxed ${
+      className={`font-mono text-xs leading-relaxed ${
         state.status === 'error' ? 'text-amber-400' : state.status === 'success' ? 'text-emerald-400' : 'text-stone-400'
       } ${state.message ? 'mt-3' : 'sr-only'}`}
     >

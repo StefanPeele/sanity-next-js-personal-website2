@@ -57,7 +57,7 @@ export function EmptyThumbnail({ title, category }: EmptyThumbnailProps) {
           gradient) to 11px/0.15em/stone-400. */}
       <div className="absolute inset-0 flex items-center justify-center p-6">
         {category && (
-          <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-stone-400">
+          <span className="meta-label text-stone-400">
             {category}
           </span>
         )}

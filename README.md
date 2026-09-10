@@ -173,7 +173,7 @@ No comment system is wired up yet. The CSP already allows `giscus.app` so a gisc
 
 ## Accessibility and motion
 
-Skip link → `#content` on every layout. Focus ring: `focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400` (or the `.focus-ring` utility). Readable text never below `stone-400` on `#0a0a0a`. Motion tokens live in `lib/motion.ts` and mirror Tailwind's `animate-fade-up`, `animate-fade-in`, `animate-draw`, `animate-page-enter`, `ease-out-expo`, `duration-fast|base|slow`; always prefix animations with `motion-safe:`.
+Skip link → `#content` on every layout. Focus ring: the `FOCUS` constant in `lib/ui.ts` (`focus-visible:outline outline-2 outline-amber-400 outline-offset-2`), used everywhere; there is no second spelling. Readable text never below `stone-400` on `#0a0a0a`. Motion tokens live in `lib/motion.ts` and mirror Tailwind's `animate-fade-up`, `animate-fade-in`, `animate-draw`, `animate-page-enter`, `ease-out-expo`, `duration-fast|base|slow`; always prefix animations with `motion-safe:`.
 
 ## Conventions
 

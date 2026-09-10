@@ -123,7 +123,7 @@ export default async function OSIModelPage() {
             {copy.quickReference.heading}
           </h2>
           <div className="overflow-x-auto">
-            <table className="w-full font-mono text-[11px]">
+            <table className="w-full font-mono text-xs">
               <thead>
                 <tr className="border-b border-white/5 text-stone-400 uppercase tracking-widest">
                   <th className="text-left py-3 pr-6 w-8">{col.n}</th>

@@ -41,12 +41,12 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 flex-wrap mb-1">
-          <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400">
+          <span className="meta-label text-stone-400">
             <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={10} className="inline -mt-px mr-1" />{MEDIA_LABELS[item.mediaType ?? ''] ?? item.mediaType}
           </span>
-          {item.category && <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400">· {item.category}</span>}
+          {item.category && <span className="meta-label text-stone-400">· {item.category}</span>}
           {item.finishedAt && item.status === 'finished' && (
-            <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400">· Finished {formatDate(item.finishedAt, 'month')}</span>
+            <span className="meta-label text-stone-400">· Finished {formatDate(item.finishedAt, 'month')}</span>
           )}
         </div>
 
@@ -60,7 +60,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
           )}
         </h3>
 
-        {item.author && <p className="font-mono text-[10px] text-stone-400 mb-2">{item.author}</p>}
+        {item.author && <p className="font-mono text-xs text-stone-400 mb-2">{item.author}</p>}
 
         {item.status === 'current' && typeof item.progressPercent === 'number' && (
           <div className="mb-3">
@@ -68,10 +68,10 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
               <div className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label="Reading progress">
                 <div className="h-full bg-emerald-500/70 rounded-full" style={{ width: `${item.progressPercent}%` }} />
               </div>
-              <span className="font-mono text-[9px] text-stone-400">{item.progressPercent}%</span>
+              <span className="font-mono text-xs text-stone-400">{item.progressPercent}%</span>
             </div>
             {item.startedAt && (
-              <span className="font-mono text-[8px] text-stone-400 uppercase tracking-widest">Started {formatDate(item.startedAt, 'month')}</span>
+              <span className="meta-label text-stone-400">Started {formatDate(item.startedAt, 'month')}</span>
             )}
           </div>
         )}
@@ -82,7 +82,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
 
         {item.keyIdea && (
           <p className="text-stone-400 text-sm leading-relaxed mb-2">
-            <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400 mr-2">Key idea</span>
+            <span className="meta-label text-stone-400 mr-2">Key idea</span>
             {item.keyIdea}
           </p>
         )}
@@ -90,22 +90,22 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
         {item.quote && (
           <blockquote className="my-3 pl-4 border-l-2 border-stone-600 font-serif text-stone-300 text-base leading-relaxed">
             <p>“{item.quote}”</p>
-            {item.author && <footer className="font-mono text-[9px] text-stone-400 uppercase tracking-widest mt-1">— {item.author}</footer>}
+            {item.author && <footer className="meta-label text-stone-400 mt-1">— {item.author}</footer>}
           </blockquote>
         )}
 
         <div className="flex flex-wrap items-center gap-3">
           {ratingConfig && (
-            <span className={`font-mono text-[9px] uppercase tracking-widest ${ratingConfig.color}`}>{ratingConfig.label}</span>
+            <span className={`meta-label ${ratingConfig.color}`}>{ratingConfig.label}</span>
           )}
           {item.status === 'abandoned' && item.abandonedReason && (
-            <span className="font-mono text-[9px] text-stone-400">{item.abandonedReason}</span>
+            <span className="font-mono text-xs text-stone-400">{item.abandonedReason}</span>
           )}
         </div>
 
         {highlights.length > 0 && (
           <details className="mt-3 group">
-            <summary className={`cursor-pointer font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors rounded-sm list-none flex items-center gap-2 ${FOCUS}`}>
+            <summary className={`meta-label cursor-pointer text-stone-400 hover:text-white transition-colors rounded-sm list-none flex items-center gap-2 ${FOCUS}`}>
               <ChevronRight size={14} className="inline-block transition-transform group-open:rotate-90" aria-hidden="true" />
               {highlights.length} highlight{highlights.length === 1 ? '' : 's'}
             </summary>
@@ -119,18 +119,18 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
 
         {(posts.length > 0 || notes.length > 0) && (
           <div className="mt-3 pt-3 border-t border-white/5">
-            <span className="font-mono text-[8px] uppercase tracking-widest text-stone-400 block mb-1.5">Influenced</span>
+            <span className="meta-label text-stone-400 block mb-1.5">Influenced</span>
             <ul className="flex flex-wrap gap-x-3 gap-y-1">
               {posts.map((post) => (
                 <li key={`p-${post.slug}`}>
-                  <Link href={`/blog/${post.slug}`} className={`font-mono text-[9px] text-stone-400 hover:text-white transition-colors underline underline-offset-4 decoration-stone-700 hover:decoration-stone-400 rounded-sm ${FOCUS}`}>
+                  <Link href={`/blog/${post.slug}`} className={`font-mono text-xs text-stone-400 hover:text-white transition-colors underline underline-offset-4 decoration-stone-700 hover:decoration-stone-400 rounded-sm ${FOCUS}`}>
                     {post.title}
                   </Link>
                 </li>
               ))}
               {notes.map((note) => (
                 <li key={`n-${note.slug}`}>
-                  <Link href={`/garden/${note.slug}`} className={`font-mono text-[9px] text-emerald-300/80 hover:text-white transition-colors underline underline-offset-4 decoration-emerald-900 hover:decoration-emerald-400 rounded-sm ${FOCUS}`}>
+                  <Link href={`/garden/${note.slug}`} className={`font-mono text-xs text-emerald-300/80 hover:text-white transition-colors underline underline-offset-4 decoration-emerald-900 hover:decoration-emerald-400 rounded-sm ${FOCUS}`}>
                     <Icon name="sprout" size={10} className="inline -mt-px mr-1" />{note.title}
                   </Link>
                 </li>

@@ -166,13 +166,13 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                         <span className="font-serif text-sm text-white leading-snug">{item.title}</span>
                         <span className="font-sans text-xs text-stone-400 flex-shrink-0">{mediaLabel(item.mediaType)}</span>
                       </span>
-                      {item.author && <span className="font-mono text-[9px] text-stone-400 block">{item.author}</span>}
+                      {item.author && <span className="font-mono text-xs text-stone-400 block">{item.author}</span>}
                       {typeof item.progressPercent === 'number' && (
                         <span className="flex items-center gap-2 mt-1.5">
                           <span className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${item.title} progress`}>
                             <span className="block h-full bg-emerald-500/70 rounded-full" style={{ width: `${item.progressPercent}%` }} />
                           </span>
-                          <span className="font-mono text-[8px] text-stone-400">{item.progressPercent}%</span>
+                          <span className="font-mono text-xs text-stone-400">{item.progressPercent}%</span>
                         </span>
                       )}
                     </Link>
@@ -257,7 +257,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
             <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.tag}</span>
             {allTags.map((t) => (
               <button key={t.slug} type="button" onClick={() => setParam('tag', tag === t.slug ? null : t.slug)} aria-pressed={tag === t.slug} className={chip(tag === t.slug)}>
-                #{t.title} <span className="opacity-60 text-[8px]">{t.count}</span>
+                #{t.title} <span className="opacity-60 text-xs">{t.count}</span>
               </button>
             ))}
           </div>
@@ -345,7 +345,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                       <span className="font-sans text-xs px-3 py-1.5 rounded-full border border-orange-300/30 text-orange-300/90 inline-flex items-center gap-1.5"><Icon name="layers" size={12} aria-hidden />{post.series.title}</span>
                     )}
                   </div>
-                  <span className="font-mono text-[9px] text-stone-400 uppercase tracking-widest flex-shrink-0">{minutes} min</span>
+                  <span className="meta-label text-stone-400 flex-shrink-0">{minutes} min</span>
                 </div>
 
                 <h3 className="text-xl font-serif text-white group-hover:text-stone-100 transition-colors mb-2 leading-snug">{post.title}</h3>

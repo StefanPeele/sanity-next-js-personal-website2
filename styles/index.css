@@ -44,12 +44,6 @@ ol {
   list-style-type: disc;
 }
 
-@layer utilities {
-  /* Shared keyboard focus ring — same as the inline focus-visible classes used site-wide. */
-  .focus-ring {
-    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 focus-visible:outline-offset-2;
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -118,9 +112,20 @@ ol {
     letter-spacing: 0;
     text-transform: none;
   }
+  /* The micro-label primitive. Before this, one idea -- a small mono uppercase label --
+     was spelled 232 ways: font-mono + uppercase + one of eight tracking values at one of
+     five sizes between 7px and 11px. 12px is the floor, not a suggestion, and 0.12em
+     replaces the eight tracking values.
+
+     Deliberately in @layer components, below Tailwind's utilities, so a call site can still
+     override the colour (`text-amber-400`) without a specificity fight. The corollary is
+     that migrating a call site MUST drop its own `text-[9px]` and `tracking-[...]` -- a
+     utility left in place silently wins and the label does not move. */
   .meta-label {
-    font-family: var(--font-sans), system-ui, sans-serif;
-    font-size: 0.8rem;
+    font-family: var(--font-mono), "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: #a8a29e;
   }
 }

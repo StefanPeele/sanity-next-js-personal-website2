@@ -64,8 +64,8 @@ export default async function SeriesIndexPage() {
                     className={`group flex h-full flex-col gap-4 rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 hover:border-white/20 hover:bg-white/[0.04] transition-colors ${FOCUS}`}
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <span className={`font-mono text-[9px] uppercase tracking-[0.3em] px-2.5 py-1 rounded-sm border ${status.className}`}>{status.label}</span>
-                      <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400">{parts.length} part{parts.length !== 1 ? 's' : ''}</span>
+                      <span className={`meta-label px-2.5 py-1 rounded-sm border ${status.className}`}>{status.label}</span>
+                      <span className="meta-label text-stone-400">{parts.length} part{parts.length !== 1 ? 's' : ''}</span>
                     </div>
                     <h2 className="font-serif text-2xl text-white leading-tight group-hover:text-stone-100">{s.title}</h2>
                     {s.description && <p className="font-sans text-sm text-stone-400 leading-relaxed">{s.description}</p>}
@@ -73,7 +73,7 @@ export default async function SeriesIndexPage() {
                       <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${published} of ${parts.length} parts published`}>
                         <div className="h-full bg-stone-400 rounded-full" style={{ width: `${pct}%` }} />
                       </div>
-                      <div className="mt-2 flex justify-between font-mono text-[9px] uppercase tracking-widest text-stone-400">
+                      <div className="meta-label mt-2 flex justify-between text-stone-400">
                         <span>{published}/{parts.length} published</span>
                         {latest && <span>Updated {formatDate(latest, 'short')}</span>}
                       </div>

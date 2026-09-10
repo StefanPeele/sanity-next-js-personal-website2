@@ -33,7 +33,7 @@ export function BacklinksSection({ backlinks, heading = 'Referenced by' }: { bac
           <li key={n._id} className="flex items-start gap-3">
             <span className={label}>Note</span>
             <Link href={`/garden/${n.slug}`} className={linkClass}>{n.title}</Link>
-            {n.status && <span className="font-mono text-[9px] text-stone-400 pt-1">{n.status}</span>}
+            {n.status && <span className="font-mono text-xs text-stone-400 pt-1">{n.status}</span>}
           </li>
         ))}
         {posts.map((p) => (
@@ -52,7 +52,7 @@ export function BacklinksSection({ backlinks, heading = 'Referenced by' }: { bac
           <li key={m._id} className="flex items-start gap-3">
             <span className={label}>Library</span>
             <Link href="/library" className={linkClass}>{m.title}</Link>
-            {m.author && <span className="font-mono text-[9px] text-stone-400 pt-1">{m.author}</span>}
+            {m.author && <span className="font-mono text-xs text-stone-400 pt-1">{m.author}</span>}
           </li>
         ))}
       </ul>

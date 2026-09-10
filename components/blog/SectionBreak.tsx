@@ -66,7 +66,7 @@ export function SectionBreak({ value, id, words }: SectionBreakProps) {
           initial={reduced ? false : { opacity: 0, letterSpacing: '0.2em' }}
           animate={show ? { opacity: 1, letterSpacing: '0.5em' } : {}}
           transition={{ duration: dur(0.8), delay: dur(0.3) }}
-          className="font-mono text-[9px] uppercase text-stone-400 block mb-5"
+          className="meta-label text-stone-400 block mb-5"
         >
           Chapter
         </motion.span>
@@ -89,7 +89,7 @@ export function SectionBreak({ value, id, words }: SectionBreakProps) {
             initial={reduced ? false : { opacity: 0, y: 10 }}
             animate={show ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: dur(0.6), delay: dur(0.55) }}
-            className="font-mono text-[11px] text-stone-400 uppercase tracking-[0.2em] max-w-sm mx-auto leading-relaxed"
+            className="meta-label text-stone-400 max-w-sm mx-auto leading-relaxed"
           >
             {teaser}
           </motion.p>

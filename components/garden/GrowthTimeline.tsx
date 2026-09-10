@@ -58,10 +58,10 @@ export function GrowthTimeline({ notes, onSelect }: { notes: TimelineNote[]; onS
   return (
     <figure className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 overflow-hidden">
       <figcaption className="flex items-center justify-between gap-4 mb-3">
-        <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-stone-400 border-l-2 border-stone-700 pl-3">
+        <span className="meta-label text-stone-400 border-l-2 border-stone-700 pl-3">
           Growth timeline
         </span>
-        <span className="font-mono text-[9px] uppercase tracking-widest text-stone-400">
+        <span className="meta-label text-stone-400">
           {firstDate} → {lastDate}
         </span>
       </figcaption>
@@ -142,7 +142,7 @@ export function GrowthTimeline({ notes, onSelect }: { notes: TimelineNote[]; onS
       </div>
 
       {/* Text alternative */}
-      <p className="mt-3 font-mono text-[9px] uppercase tracking-widest text-stone-400">
+      <p className="meta-label mt-3 text-stone-400">
         {model.rows.length} notes · {summary}. Lines run from created to last tended.
       </p>
     </figure>

@@ -50,7 +50,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
             type="button"
             aria-pressed={category === c}
             onClick={() => setCategory(c)}
-            className={`font-mono text-[9px] uppercase tracking-widest px-3 py-2 rounded-full border transition-colors ${FOCUS} ${
+            className={`meta-label px-3 py-2 rounded-full border transition-colors ${FOCUS} ${
               category === c ? 'bg-white text-black border-white' : 'border-white/10 text-stone-300 hover:text-white hover:border-white/30'
             }`}
           >
@@ -64,7 +64,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
           <a
             key={l}
             href={`#letter-${l === '#' ? 'other' : l}`}
-            className={`w-8 h-8 flex items-center justify-center rounded font-mono text-[10px] text-stone-400 hover:text-white hover:bg-white/5 transition-colors ${FOCUS}`}
+            className={`w-8 h-8 flex items-center justify-center rounded font-mono text-xs text-stone-400 hover:text-white hover:bg-white/5 transition-colors ${FOCUS}`}
           >
             {l}
           </a>
@@ -72,7 +72,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
       </nav>
 
       {groups.length === 0 && (
-        <p className="font-mono text-[11px] uppercase tracking-widest text-stone-400">No terms in this category yet.</p>
+        <p className="meta-label text-stone-400">No terms in this category yet.</p>
       )}
 
       {groups.map(([letter, items]) => (
@@ -86,17 +86,17 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
                     {e.term}
                   </a>
                   {e.aliases.length > 0 && (
-                    <span className="font-mono text-[10px] text-stone-400">also: {e.aliases.join(', ')}</span>
+                    <span className="font-mono text-xs text-stone-400">also: {e.aliases.join(', ')}</span>
                   )}
                   {e.category && (
-                    <span className="ml-auto font-mono text-[9px] uppercase tracking-widest text-stone-400 border border-white/10 px-2 py-0.5 rounded-sm">{e.category}</span>
+                    <span className="meta-label ml-auto text-stone-400 border border-white/10 px-2 py-0.5 rounded-sm">{e.category}</span>
                   )}
                 </dt>
                 <dd className="mt-2">
                   <p className="font-sans text-[15px] text-stone-300 leading-relaxed max-w-2xl">{e.definition}</p>
                   {e.longDefinition && (
                     <details className="mt-3 group/long">
-                      <summary className={`cursor-pointer list-none font-mono text-[9px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm inline-flex items-center gap-2`}>
+                      <summary className={`meta-label cursor-pointer list-none text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm inline-flex items-center gap-2`}>
                         <ChevronRight size={14} className="transition-transform group-open/long:rotate-90" aria-hidden="true" />
                         Longer explanation
                       </summary>
@@ -107,14 +107,14 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
                     <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
                       {e.relatedPosts.filter((p) => p.slug).map((p) => (
                         <li key={p.slug}>
-                          <Link href={`/blog/${p.slug}`} className={`font-mono text-[10px] text-stone-400 hover:text-white underline underline-offset-4 decoration-stone-700 hover:decoration-white ${FOCUS} rounded-sm`}>
+                          <Link href={`/blog/${p.slug}`} className={`font-mono text-xs text-stone-400 hover:text-white underline underline-offset-4 decoration-stone-700 hover:decoration-white ${FOCUS} rounded-sm`}>
                             Post: {p.title}
                           </Link>
                         </li>
                       ))}
                       {e.relatedNotes.filter((n) => n.slug).map((n) => (
                         <li key={n.slug}>
-                          <Link href={`/garden/${n.slug}`} className={`font-mono text-[10px] text-stone-400 hover:text-white underline underline-offset-4 decoration-stone-700 hover:decoration-white ${FOCUS} rounded-sm`}>
+                          <Link href={`/garden/${n.slug}`} className={`font-mono text-xs text-stone-400 hover:text-white underline underline-offset-4 decoration-stone-700 hover:decoration-white ${FOCUS} rounded-sm`}>
                             Note: {n.title}
                           </Link>
                         </li>
