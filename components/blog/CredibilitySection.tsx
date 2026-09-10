@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { formatDate } from '@/lib/dates'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 import { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
+import { FOCUS, QUIET_LINK } from '@/lib/ui'
 // components/blog/CredibilitySection.tsx
 
 interface Reviewer {
@@ -160,7 +161,7 @@ export function CredibilitySection({
                           href={reviewer.linkedIn}
                           target="_blank"
                           rel="noreferrer"
-                          className="font-serif text-white hover:text-emerald-300 transition-colors font-semibold"
+                          className={`font-serif text-white hover:text-emerald-300 transition-colors font-semibold rounded-sm ${FOCUS}`}
                         >
                           {reviewer.name} ↗
                         </a>
@@ -202,7 +203,7 @@ export function CredibilitySection({
                 href={response.url}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="flex items-start gap-4 p-4 rounded-lg border border-edge hover:border-edge-strong bg-surface-veil hover:bg-surface-fill transition-all group"
+                className={`flex items-start gap-4 p-4 rounded-lg border border-edge hover:border-edge-strong bg-surface-veil hover:bg-surface-fill transition-all group ${FOCUS}`}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -238,7 +239,7 @@ export function CredibilitySection({
             onClick={() => setChangelogOpen((v) => !v)}
             aria-expanded={changelogOpen}
             type="button"
-            className="flex items-center gap-3 group"
+            className={`flex items-center gap-3 group rounded-sm ${FOCUS}`}
           >
             <span className="section-label group-hover:text-white transition-colors">
               {labels.changelogHeading}
@@ -283,7 +284,7 @@ export function CredibilitySection({
           href={labels.correctionsUrl}
           target="_blank"
           rel="noreferrer noopener"
-          className="font-sans text-sm text-stone-400 hover:text-white transition-colors"
+          className={`font-sans text-sm ${QUIET_LINK}`}
         >
           {labels.correctionsLabel} →
         </a>

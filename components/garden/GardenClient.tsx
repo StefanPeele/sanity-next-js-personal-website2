@@ -9,7 +9,7 @@ import { GrowthTimeline } from './GrowthTimeline'
 import { formatDate } from '@/lib/dates'
 import type { GardenNoteView, GardenTag } from './types'
 import { Icon } from '@/lib/cms/icons'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
 // components/garden/GardenClient.tsx
 // Interactive garden index: status legend, growth timeline, recently tended,
 // search, tag filter (synced to ?tag=), and expandable note cards whose titles
@@ -89,11 +89,7 @@ function NoteCard({
                   type="button"
                   onClick={() => tag.slug && onTag(tag.slug)}
                   aria-pressed={activeTag === tag.slug}
-                  className={`meta-label border px-2 py-0.5 rounded-sm transition-colors ${FOCUS} ${
-                    activeTag === tag.slug
-                      ? 'text-white border-edge-active bg-surface-fill-strong'
-                      : 'text-stone-400 border-stone-800 hover:text-stone-300 hover:border-stone-600'
-                  }`}
+                  className={`meta-label ${buttonClass({ variant: 'chip', size: 'sm', active: activeTag === tag.slug })}`}
                 >
                   #{tag.title}
                 </button>
@@ -143,7 +139,7 @@ function NoteCard({
                 <span className="meta-label text-stone-400">
                   Tended <time dateTime={formatDate(note.lastTended, 'iso')}>{formatDate(note.lastTended, 'short')}</time>
                 </span>
-                <Link href={href} className={`meta-label ml-auto text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>
+                <Link href={href} className={`meta-label ml-auto ${QUIET_LINK}`}>
                   Open note →
                 </Link>
               </div>
@@ -158,7 +154,7 @@ function NoteCard({
                         <li key={related._id}>
                           <Link
                             href={`/garden/${related.slug}`}
-                            className={`font-mono text-xs text-stone-400 hover:text-white border border-edge hover:border-edge-strong px-2.5 py-1 rounded-sm flex items-center gap-1.5 transition-all ${FOCUS}`}
+                            className={`font-mono text-xs gap-1.5 ${buttonClass({ variant: 'chip', size: 'sm' })}`}
                           >
                             <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${rc.dot}`} aria-hidden="true" />
                             {related.title}
@@ -178,7 +174,7 @@ function NoteCard({
                       <li key={post._id}>
                         <Link
                           href={`/blog/${post.slug}`}
-                          className={`font-mono text-xs text-stone-400 hover:text-white border border-edge hover:border-edge-strong px-2.5 py-1 rounded-sm transition-all ${FOCUS}`}
+                          className={`font-mono text-xs ${buttonClass({ variant: 'chip', size: 'sm' })}`}
                         >
                           {post.title} →
                         </Link>
@@ -347,7 +343,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
                   <button
                     type="button"
                     onClick={() => note.slug && reveal(note.slug)}
-                    className={`flex items-center gap-2 font-mono text-xs text-stone-400 hover:text-white border border-edge hover:border-edge-strong px-3 py-1.5 rounded-sm transition-all ${FOCUS}`}
+                    className={`font-mono text-xs gap-2 ${buttonClass({ variant: 'chip', size: 'sm' })}`}
                   >
                     <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${config.dot}`} aria-hidden="true" />
                     {note.title}
@@ -380,9 +376,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
             type="button"
             onClick={() => setTag(null)}
             aria-pressed={activeTag === null}
-            className={`meta-label px-3 py-1.5 rounded-sm border transition-all ${FOCUS} ${
-              activeTag === null ? 'bg-white text-black border-white' : 'border-edge text-stone-400 hover:text-white hover:border-edge-strong'
-            }`}
+            className={`font-sans text-sm ${buttonClass({ variant: 'chip', size: 'sm', active: activeTag === null })}`}
           >
             All
           </button>
@@ -392,9 +386,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
               type="button"
               onClick={() => setTag(activeTag === tag.slug ? null : tag.slug)}
               aria-pressed={activeTag === tag.slug}
-              className={`meta-label px-3 py-1.5 rounded-sm border transition-all ${FOCUS} ${
-                activeTag === tag.slug ? 'bg-white text-black border-white' : 'border-edge text-stone-400 hover:text-white hover:border-edge-strong'
-              }`}
+              className={`font-sans text-sm ${buttonClass({ variant: 'chip', size: 'sm', active: activeTag === tag.slug })}`}
             >
               #{tag.title} <span className="text-xs opacity-60">{tag.count}</span>
             </button>

@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react'
 import Link from 'next/link'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, QUIET_LINK } from '@/lib/ui'
 // components/blog/GlossaryTerm.tsx
 // Inline glossary annotation. The term is a button (keyboard reachable) that
 // shows a definition card on hover / focus / click; Escape closes it. The card
@@ -72,7 +72,7 @@ export function GlossaryTerm({ slug, term, definition, children }: Props) {
           </span>
           <Link
             href={`/glossary#${slug}`}
-            className={`meta-label mt-2.5 inline-block text-stone-400 hover:text-white ${FOCUS}`}
+            className={`meta-label mt-2.5 inline-block ${QUIET_LINK}`}
           >
             Read more →
           </Link>

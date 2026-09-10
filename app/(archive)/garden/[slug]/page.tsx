@@ -16,7 +16,7 @@ import { readingTime, portableTextToPlain } from '@/lib/reading'
 import { absoluteUrl, articleTypeMeta, SITE } from '@/lib/site'
 import type { GardenNote } from '@/components/garden/types'
 import { Icon } from '@/lib/cms/icons'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
 // app/(archive)/garden/[slug]/page.tsx
 // A single garden note. Body rendered on the server with [[wiki links]] resolved.
 
@@ -166,7 +166,7 @@ export default async function NotePage({ params }: { params: Params }) {
                 <li key={tag._id}>
                   <Link
                     href={`/garden?tag=${tag.slug}`}
-                    className={`meta-label text-stone-400 hover:text-white border border-edge hover:border-edge-strong px-2.5 py-1 rounded-sm transition-all ${FOCUS}`}
+                    className={`meta-label ${buttonClass({ variant: 'chip', size: 'sm' })}`}
                   >
                     #{tag.title}
                   </Link>
@@ -224,10 +224,10 @@ export default async function NotePage({ params }: { params: Params }) {
         </nav>
 
         <div className="mt-10 flex flex-wrap gap-6">
-          <Link href={`/garden?note=${slug}`} className={`meta-label text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>
+          <Link href={`/garden?note=${slug}`} className={`meta-label ${QUIET_LINK}`}>
             ← Back to the Garden
           </Link>
-          <Link href={`/graph`} className={`meta-label text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>
+          <Link href={`/graph`} className={`meta-label ${QUIET_LINK}`}>
             Open full graph →
           </Link>
         </div>

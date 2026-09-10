@@ -26,6 +26,7 @@
 - Dates from Sanity are `YYYY-MM-DD` — always format with `lib/dates.ts` (UTC) to avoid off-by-one and hydration mismatches.
 - Aesthetic: dark archive — `#0a0a0a` background, stone palette, Lora headings, IBM Plex Mono labels. Readable text never below `stone-400`; decorative only may go darker.
 - Focus: always the `FOCUS` constant from `lib/ui.ts` — one spelling, site-wide. Do not re-spell the classes inline; the `.focus-ring` utility was deleted (it had zero call sites) and its `outline-offset-2` folded into `FOCUS`.
+- Buttons, chips and CTAs: `buttonClass({ variant, size, active })` from `lib/ui.ts` — `primary` / `secondary` / `chip`, three sizes, two radii (`rounded-full` for chips, `rounded-lg` otherwise), built on the palette tokens so a theme restates them for free. Do not re-spell the padding, border, radius or hover inline. The type face stays at the call site (`.meta-label` or `font-sans text-sm`) — baking one in would override the other, since utilities beat `@layer components`. Quiet nav links ("All posts →") use `QUIET_LINK`.
 - Tailwind opacity modifiers only from the scale (`/5`, `/10`, `/20`) or bracketed (`/[0.08]`); arbitrary decimals like `/8` do not compile.
 - Motion: tokens in `lib/motion.ts`; Tailwind classes `motion-safe:animate-fade-up|fade-in|draw|page-enter`, `ease-out-expo`, `duration-fast|base|slow`. Always gate animations with `motion-safe:`. framer-motion is wrapped in `MotionConfig reducedMotion="user"`.
 - Exactly one `<h1>` per page. Every page needs an element with `id="content"` for the skip link.

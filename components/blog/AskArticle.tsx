@@ -2,7 +2,7 @@
 
 import { useId, useState, useTransition } from 'react'
 import { askArticle } from '@/app/actions/ask'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, buttonClass } from '@/lib/ui'
 // components/blog/AskArticle.tsx
 // Ask a question about this article. Answers come from the article text only
 // (see app/actions/ask.ts). Only rendered by the page when the API key is set.
@@ -53,7 +53,7 @@ export function AskArticle({ slug, heading = 'Ask this article', placeholder = '
           <button
             type="submit"
             disabled={pending || !question.trim()}
-            className={`font-sans text-sm px-5 py-3 bg-white text-black rounded-lg hover:bg-stone-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${FOCUS}`}
+            className={`font-sans text-sm ${buttonClass({ variant: 'primary', size: 'lg' })}`}
           >
             {pending ? 'Reading the article…' : buttonLabel}
           </button>

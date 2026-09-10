@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { buttonClass } from '@/lib/ui'
 // app/blog/[slug]/not-found.tsx
 // Shown when a valid /blog/[slug] URL returns no Sanity document
 
@@ -29,13 +30,13 @@ export default function PostNotFound() {
         <div className="flex items-center justify-center gap-4 flex-wrap">
           <Link
             href="/blog"
-            className="meta-label px-5 py-3 bg-white text-black hover:bg-stone-200 transition-colors"
+            className={`meta-label ${buttonClass({ variant: 'primary', size: 'lg' })}`}
           >
             Browse the Archive
           </Link>
           <Link
             href="/"
-            className="meta-label px-5 py-3 border border-edge text-stone-400 hover:border-edge-strong hover:text-white transition-colors"
+            className={`meta-label ${buttonClass({ size: 'lg' })}`}
           >
             Home
           </Link>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import ImageBox, { type ImageBoxImage } from '@/components/ImageBox'
+import { FOCUS } from '@/lib/ui'
 // components/blog/WiresharkCallout.tsx
 
 interface Callout {
@@ -58,7 +59,7 @@ export function WiresharkCallout({ value }: WiresharkCalloutProps) {
                 onClick={() =>
                   setActiveCallout(activeCallout === callout.number ? null : callout.number)
                 }
-                className={`w-6 h-6 rounded-full font-mono text-xs font-bold flex items-center justify-center transition-all duration-200 shadow-lg ${
+                className={`w-6 h-6 rounded-full font-mono text-xs font-bold flex items-center justify-center transition-all duration-200 shadow-lg ${FOCUS} ${
                   activeCallout === callout.number
                     ? 'bg-white text-black scale-125 ring-2 ring-white/30'
                     : 'bg-emerald-500 text-black hover:scale-110'

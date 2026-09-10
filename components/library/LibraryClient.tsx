@@ -5,7 +5,7 @@ import { MediaCard } from './MediaCard'
 import { yearOf } from '@/lib/dates'
 import { MEDIA_ICON_FALLBACK, MEDIA_ICONS, MEDIA_LABELS, STATUS_LABELS, type LibraryItem, type LibraryStatus, type MediaType } from './types'
 import { Icon } from '@/lib/cms/icons'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, buttonClass } from '@/lib/ui'
 // components/library/LibraryClient.tsx
 // Filters (media type + status), then the shelves: reading now, reference shelf,
 // finished by year, on deck, abandoned.
@@ -13,9 +13,7 @@ import { FOCUS } from '@/lib/ui'
 const STATUS_ORDER: LibraryStatus[] = ['current', 'reference', 'finished', 'want-to-read', 'abandoned']
 
 function chip(active: boolean) {
-  return `meta-label px-3 py-1.5 rounded-sm border transition-all ${FOCUS} ${
-    active ? 'bg-white text-black border-white' : 'border-edge text-stone-400 hover:text-white hover:border-edge-strong'
-  }`
+  return `font-sans text-sm ${buttonClass({ variant: 'chip', size: 'sm', active })}`
 }
 
 function Shelf({ id, label, accent = 'border-stone-600', children, count }: { id: string; label: string; accent?: string; children: React.ReactNode; count: number }) {

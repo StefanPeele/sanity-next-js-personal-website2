@@ -16,6 +16,7 @@ import { getCopy } from '@/lib/cms/loaders'
 import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
 import { navHref } from '@/lib/cms/defaults/navigation'
+import { QUIET_LINK } from '@/lib/ui'
 // app/(archive)/garden/page.tsx
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -106,7 +107,7 @@ export default async function GardenPage() {
 
 <nav className="mt-16 pt-8 border-t border-edge-faint flex flex-wrap gap-6" aria-label="Related sections">
           {copy.relatedNav.map((l) => (
-            <Link key={navHref(l) + l.label} href={navHref(l)} className="font-sans text-sm text-stone-400 hover:text-white transition-colors">{l.label}</Link>
+            <Link key={navHref(l) + l.label} href={navHref(l)} className={`font-sans text-sm ${QUIET_LINK}`}>{l.label}</Link>
           ))}
         </nav>
       </main>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { FOCUS, buttonClass } from '@/lib/ui'
 // components/blog/PacketAnimator.tsx
 
 interface PacketStep {
@@ -58,12 +59,19 @@ export function PacketAnimator({ value }: PacketAnimatorProps) {
               key={s._key}
               onClick={() => setCurrentStep(i)}
               title={s.label}
-              className="flex-1 h-1 rounded-full transition-all duration-300"
-              style={{
-                backgroundColor: i <= currentStep ? color : '#292524',
-                opacity: i === currentStep ? 1 : i < currentStep ? 0.6 : 0.3,
-              }}
-            />
+              aria-label={`Step ${i + 1}: ${s.label}`}
+              aria-current={i === currentStep ? 'step' : undefined}
+              className={`flex-1 h-6 flex items-center rounded-sm ${FOCUS}`}
+            >
+              <span
+                aria-hidden="true"
+                className="w-full h-1 rounded-full transition-all duration-300"
+                style={{
+                  backgroundColor: i <= currentStep ? color : '#292524',
+                  opacity: i === currentStep ? 1 : i < currentStep ? 0.6 : 0.3,
+                }}
+              />
+            </button>
           ))}
         </div>
         <div className="flex justify-between mt-2">
@@ -115,21 +123,21 @@ export function PacketAnimator({ value }: PacketAnimatorProps) {
         <button
           onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
           disabled={currentStep === 0}
-          className="meta-label px-4 py-2 border border-edge text-stone-400 hover:border-edge-strong hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+          className={`meta-label ${buttonClass({ size: 'sm' })}`}
         >
           ← Back
         </button>
         <button
           onClick={() => setCurrentStep((s) => Math.min(total - 1, s + 1))}
           disabled={currentStep === total - 1}
-          className="meta-label px-4 py-2 border border-edge text-stone-400 hover:border-edge-strong hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+          className={`meta-label ${buttonClass({ size: 'sm' })}`}
         >
           Next →
         </button>
         {currentStep === total - 1 && (
           <button
             onClick={() => setCurrentStep(0)}
-            className="meta-label px-4 py-2 text-stone-400 hover:text-white transition-colors"
+            className={`meta-label px-4 py-2 text-stone-400 hover:text-white transition-colors rounded-lg ${FOCUS}`}
           >
             Restart
           </button>

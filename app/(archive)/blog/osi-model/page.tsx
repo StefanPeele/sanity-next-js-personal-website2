@@ -6,6 +6,7 @@ import { getCopy } from '@/lib/cms/loaders'
 import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
 import { absoluteUrl } from '@/lib/site'
+import { FOCUS } from '@/lib/ui'
 // app/blog/osi-model/page.tsx
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -81,7 +82,7 @@ export default async function OSIModelPage() {
 
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-10 flex items-center gap-2 font-sans text-sm text-stone-400">
-          <Link href="/blog" className="hover:text-white transition-colors">{copy.backLabel}</Link>
+          <Link href="/blog" className={`hover:text-white transition-colors rounded-sm ${FOCUS}`}>{copy.backLabel}</Link>
           <span aria-hidden="true">/</span>
           <span className="text-stone-200">{copy.breadcrumbLabel}</span>
         </nav>

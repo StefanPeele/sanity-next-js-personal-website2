@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { FOCUS, buttonClass } from '@/lib/ui'
 // components/blog/KnowledgeQuiz.tsx
 
 interface QuizOption {
@@ -92,7 +93,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
                   key={option._key}
                   onClick={() => !revealed && setSelected(option._key)}
                   disabled={revealed}
-                  className={`w-full text-left px-4 py-3 rounded border font-mono text-sm transition-all duration-300 ${stateClass} ${
+                  className={`w-full text-left px-4 py-3 rounded border font-mono text-sm transition-all duration-300 ${FOCUS} ${stateClass} ${
                     !revealed ? 'cursor-pointer' : 'cursor-default'
                   }`}
                 >
@@ -110,7 +111,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
               <button
                 onClick={handleReveal}
                 disabled={!selected}
-                className="meta-label px-4 py-2 border border-edge-strong text-stone-400 hover:border-white hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className={`meta-label ${buttonClass({ size: 'sm' })}`}
               >
                 {isGated ? 'Submit Answer' : 'Reveal Answer'}
               </button>
@@ -126,7 +127,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
                 {(!isGated || !unlocked) && (
                   <button
                     onClick={reset}
-                    className="meta-label px-4 py-2 border border-edge text-stone-400 hover:text-white transition-colors"
+                    className={`meta-label ${buttonClass({ size: 'sm' })}`}
                   >
                     Try Again
                   </button>

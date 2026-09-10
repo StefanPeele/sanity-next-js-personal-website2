@@ -8,7 +8,7 @@ import { readingTime } from '@/lib/reading'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, QUIET_LINK } from '@/lib/ui'
 // app/(archive)/blog/series/[slug]/page.tsx
 // One series: description, status and its parts in reading order.
 
@@ -77,7 +77,7 @@ export default async function SeriesPage({ params }: Props) {
 
       <main id="content" className="relative max-w-4xl mx-auto px-6 pt-32 pb-24">
         <header className="mb-12 border-b border-edge-faint pb-8">
-          <Link href="/blog/series" className={`meta-label text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>
+          <Link href="/blog/series" className={`meta-label ${QUIET_LINK}`}>
             ← All series
           </Link>
           <div className="mt-6 mb-4 flex flex-wrap items-center gap-3">

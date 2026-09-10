@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { noteStatus } from '@/components/garden/status'
 import { formatDate } from '@/lib/dates'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, QUIET_LINK } from '@/lib/ui'
 // components/knowledge/RecentlyTended.tsx
 // Server component. Accepts already-fetched notes (homeIntelQuery.recentNotes / nowQuery.recentNotes).
 //
@@ -20,7 +20,7 @@ export function RecentlyTended({ notes, title = 'Recently tended' }: { notes: Re
     <section aria-label={title}>
       {title && <div className="mb-3 flex items-center justify-between">
         <span className="section-label">{title}</span>
-        <Link href="/garden" className={`font-sans text-sm text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>
+        <Link href="/garden" className={`font-sans text-sm ${QUIET_LINK}`}>
           Garden →
         </Link>
       </div>}

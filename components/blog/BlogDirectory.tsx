@@ -13,7 +13,7 @@ import type { BlogIndexQueryResult } from '@/sanity.types'
 import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPage'
 import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { Icon } from '@/lib/cms/icons'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
 import { ArrowRight } from 'lucide-react'
 // components/blog/BlogDirectory.tsx
 // Directory + filters + grid for /blog. Filters live in the URL:
@@ -54,11 +54,7 @@ function markPostRead(slug: string) {
 
 
 function chip(active: boolean) {
-  return `font-sans text-sm px-3 py-1.5 rounded-full border transition-all duration-200 ${FOCUS} ${
-    active
-      ? 'border-edge-active text-white bg-surface-fill-strong shadow-sm'
-      : 'border-edge-strong text-stone-300 hover:border-edge-active hover:text-white hover:bg-surface-fill-strong'
-  }`
+  return `font-sans text-sm ${buttonClass({ variant: 'chip', size: 'sm', active })}`
 }
 
 export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, posts, categories, series, currentlyReading, recentNotes }: BlogDirectoryProps) {
@@ -130,7 +126,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
         <section className="mb-12" aria-labelledby="series-rail">
           <div className="mb-4 flex items-center justify-between">
             <h2 id="series-rail" className="section-label">{copy.seriesRail.heading}</h2>
-            <Link href={copy.seriesRail.ctaHref || '/blog/series'} className={`font-sans text-sm text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>{copy.seriesRail.ctaLabel} →</Link>
+            <Link href={copy.seriesRail.ctaHref || '/blog/series'} className={`font-sans text-sm ${QUIET_LINK}`}>{copy.seriesRail.ctaLabel} →</Link>
           </div>
           <ul className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x">
             {series.map((s) => (
@@ -156,7 +152,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
             <section className="rounded-lg border border-edge bg-surface-veil p-5" aria-labelledby="reading-strip">
               <div className="mb-3 flex items-center justify-between">
                 <h2 id="reading-strip" className="section-label">{copy.readingStrip.heading}</h2>
-                <Link href={copy.readingStrip.ctaHref || '/library'} className={`font-sans text-sm text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>{copy.readingStrip.ctaLabel} →</Link>
+                <Link href={copy.readingStrip.ctaHref || '/library'} className={`font-sans text-sm ${QUIET_LINK}`}>{copy.readingStrip.ctaLabel} →</Link>
               </div>
               <ul className="space-y-3">
                 {currentlyReading.map((item) => (
@@ -185,7 +181,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
             <section className="rounded-lg border border-edge bg-surface-veil p-5" aria-labelledby="notes-strip">
               <div className="mb-3 flex items-center justify-between">
                 <h2 id="notes-strip" className="section-label">{copy.notesStrip.heading}</h2>
-                <Link href={copy.notesStrip.ctaHref || '/garden'} className={`font-sans text-sm text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>{copy.notesStrip.ctaLabel} →</Link>
+                <Link href={copy.notesStrip.ctaHref || '/garden'} className={`font-sans text-sm ${QUIET_LINK}`}>{copy.notesStrip.ctaLabel} →</Link>
               </div>
               <ul className="space-y-2">
                 {recentNotes.map((n) => {

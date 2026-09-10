@@ -1,4 +1,5 @@
 import { Icon, type IconName } from '@/lib/cms/icons'
+import { FOCUS } from '@/lib/ui'
 // components/blog/SourcesList.tsx
 
 interface Source {
@@ -66,7 +67,7 @@ export function SourcesList({ sources, heading = 'Sources' }: SourcesListProps &
                         href={source.url}
                         target="_blank"
                         rel="noreferrer noopener"
-                        className="font-serif text-stone-300 hover:text-white transition-colors leading-snug group-hover:underline underline-offset-4 decoration-stone-600 hover:decoration-white"
+                        className={`font-serif text-stone-300 hover:text-white transition-colors leading-snug group-hover:underline underline-offset-4 decoration-stone-600 hover:decoration-white rounded-sm ${FOCUS}`}
                       >
                         {source.title}
                         <span className="font-mono text-xs text-stone-400 ml-1.5 group-hover:text-stone-400 transition-colors">

@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 import { downloadTextFile } from '@/lib/anki'
 import { Icon } from '@/lib/cms/icons'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, buttonClass } from '@/lib/ui'
 
 // ══════════════════════════════════════════════════════════════════
 // WHAT I GOT WRONG FIRST
@@ -160,7 +160,7 @@ export function TheProblemSolved({ value }: TheProblemSolvedProps) {
             href={value.externalLink}
             target="_blank"
             rel="noreferrer noopener"
-            className="meta-label mt-4 inline-flex items-center gap-2 text-amber-600/70 hover:text-amber-400 transition-colors"
+            className={`meta-label mt-4 inline-flex items-center gap-2 text-amber-600/70 hover:text-amber-400 transition-colors rounded-sm ${FOCUS}`}
           >
             Further reading ↗
           </a>
@@ -210,14 +210,14 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
             <>
               <button
                 onClick={() => setRevealed(true)}
-                className="meta-label px-4 py-2.5 bg-white text-black hover:bg-stone-200 transition-colors rounded-sm"
+                className={`meta-label ${buttonClass({ variant: 'primary' })}`}
               >
                 Reveal Answer
               </button>
               {value.hint && !showHint && (
                 <button
                   onClick={() => setShowHint(true)}
-                  className="meta-label px-4 py-2.5 border border-edge text-stone-400 hover:text-stone-400 transition-colors rounded-sm"
+                  className={`meta-label ${buttonClass()}`}
                 >
                   Show Hint
                 </button>
@@ -226,7 +226,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
           ) : (
             <button
               onClick={() => setRevealed(false)}
-              className="meta-label px-4 py-2.5 border border-edge text-stone-400 hover:text-stone-400 transition-colors rounded-sm"
+              className={`meta-label ${buttonClass()}`}
             >
               Hide Answer
             </button>
@@ -316,7 +316,7 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
           <button
             type="button"
             onClick={download}
-            className={`meta-label ml-auto px-3 py-2 border border-edge rounded-lg text-stone-300 hover:text-white hover:border-edge-strong transition-colors ${FOCUS}`}
+            className={`meta-label ml-auto ${buttonClass({ size: 'sm' })}`}
             data-print-hide
           >
             {downloaded ? 'Saved ✓' : `Download study deck (${deckCount} cards, Anki)`}

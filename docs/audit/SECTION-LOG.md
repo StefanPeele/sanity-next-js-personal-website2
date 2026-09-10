@@ -322,3 +322,108 @@ producing chunk 500s, an unstyled page and a missing skip link that all looked l
 Separately, a `grep` pattern with shell-escaped brackets reported six generated Tailwind classes as
 MISSING when live measurement had already proved them present. Same standing rule: when a
 measurement contradicts observed behaviour, suspect the measurement first.
+
+---
+
+## 2026-09-10 — the button primitive (SPECS item b)
+
+**Shipped:** `buttonClass()` and `QUIET_LINK` in `lib/ui.ts`, migrated across 28 files. The specced
+order was `a → c → b → d → e`; `a`, `c` and `e` landed in the previous session, so this is `b`, and
+only `d` (the site-wide type scale) remains.
+
+### What was actually there
+
+The census that mattered was not the padding count — it was that **the filter chip had six
+independent definitions**, and they did not agree on anything:
+
+| Where | Face | Padding | Radius | Rest border | Selected |
+| --- | --- | --- | --- | --- | --- |
+| `BlogDirectory.chip()` | sans 14 | `px-3 py-1.5` | full | `edge-strong` | `edge-active` + fill-strong + shadow |
+| `LibraryClient.chip()` | meta-label | `px-3 py-1.5` | sm | `edge` | white fill |
+| Garden tag cloud | meta-label | `px-3 py-1.5` | sm | `edge` | white fill |
+| Garden note tags | meta-label | `px-2 py-0.5` | sm | `stone-800` | `edge-active` + fill-strong |
+| Glossary filter | meta-label | `px-3 py-2` | full | `edge` | white fill |
+| Reader menu | sans 14 | `px-3 py-1.5` | full | `edge` | white fill |
+
+Two selected languages, two radii, two faces, three paddings, three rest-borders — for one control
+that appears on `/blog`, `/library`, `/garden`, `/glossary` and inside every article. The bordered
+controls were the same story at lower contrast: six paddings and four radii across sixteen sites.
+
+### The decisions, so they can be overruled
+
+1. **Selected is `border-edge-active` + `bg-surface-fill-strong` + `text-white`, not `bg-white
+   text-black`.** Three of the six used the white fill, but it is the only thing in the chip family
+   that does not restate under an article theme — a white pill inside `theme-terminal` stays white.
+   The token version themes for free, which is the whole point of the palette commit.
+2. **Filter chips are `font-sans text-sm` everywhere.** `/library`, `/garden` and `/glossary` moved
+   off `.meta-label`. A row of filter buttons in mono uppercase reads as the archive jargon
+   `CLAUDE.md:36` rules out; a control label is not a micro-label. The garden's **in-card** note tags
+   stay `.meta-label`, because they sit inside a card whose whole metadata block is mono.
+3. **`min-h` 32/40/48 is baked into the sizes.** The spec predicted chip rows would grow; the garden
+   note tags were the only real casualty, going from ~20px to 32px. WCAG 2.5.8 is the tiebreaker.
+4. **No `<Button>` component, and no `ghost` variant.** Half the call sites are `<Link>` or `<a>`,
+   which a component cannot serve, and the other half would be a wrapper computing the same string —
+   so `buttonClass()` returns a string. `ghost` had exactly one true call site (the packet animator's
+   Replay), and this repo deleted `.focus-ring` last week for having zero. Quiet text links are not
+   buttons and got `QUIET_LINK` instead, which is the same shape as the `FOCUS` constant.
+5. **`NewsletterForm` was left alone.** Its button is half of a joined square input+button pair and
+   the component ships in the site-wide `Footer`; giving only the button `rounded-lg` would break the
+   pair on the portfolio side too. Out of scope for a blog-side commit.
+
+### 24 controls had no focus ring
+
+Found while wiring the primitive, and worth stating separately because it is not a consistency
+issue. `FOCUS` had 163 call sites, but **ten files on the knowledge side never imported it at all**:
+
+```
+KnowledgeQuiz 3   PacketAnimator 4   CredibilitySection 4   LearningBlocks 4
+LayerExplorer 1   WiresharkCallout 1  SourcesList 1
+not-found 2       garden/page 1      library/page 1        osi-model 1
+```
+
+Twelve of those are the **in-body learning blocks** — the interactive teaching widgets in the middle
+of an article, which is exactly what a keyboard reader tabs through. Fourteen were fixed by the
+primitive; ten were patched inline. A 24th, the footer's `p-name u-url` h-card link, is on every page
+of the site and got a one-line additive fix in the platform-owned `Footer.tsx`.
+
+The packet animator's step track was also a **4px-tall button**. It now carries a 24px box around
+the same 4px bar, plus `aria-label` and `aria-current="step"`; the bar itself is unchanged.
+
+**Measured after, at 1440 on the built output:** `ringless: none` on `/blog`, `/blog/series`,
+`/garden`, `/library`, `/glossary`, `/graph` and `/blog/osi-model` — every visible `a` and `button`
+carries the ring except the skip link, which has its own amber outline in `styles/index.css:102`.
+`/blog`'s fourteen filter chips render as **one geometry: 34px, `border-radius: 9999px`, Inter
+14px**. The reader menu's radios render `rounded-full`, Inter 14px, selected at
+`rgba(255,255,255,0.45)` border on `rgba(255,255,255,0.1)` — the tokens, not the white fill.
+
+Verified in the built CSS rather than assumed: `.min-h-\[32px\]{min-height:32px}`, `40px`, `48px`,
+`.hover\:bg-surface-veil:hover`, `.hover\:border-edge-strong:hover`, `.hover\:bg-stone-200:hover`
+and `.disabled\:opacity-40:disabled` all emit. Build, tsc, eslint clean; **33/33 Playwright**
+including the CSP and axe checks and the article page's reader-menu assertions.
+
+### Method notes — the ninth and tenth artifacts
+
+**A stale `next start` on port 3000 cost ten test failures.** `playwright.config.ts` sets
+`reuseExistingServer: !CI`, so the suite silently attached to a server started before any of this
+session's edits and reported 10 failed — including `/photography` 500, a missing `<title>` on `/`,
+and CSP violations on routes this commit does not touch. Proved stale by comparing the CSS chunk the
+server was serving (`06wpz9uxvhmgy.css`) against the fresh build (`0imku8ejwzv6v.css`); no such file
+existed on disk. Freed by PID — `Stop-Process -Id`, since the port cannot be freed by name — after
+which the same suite passed 33/33 unchanged. **This is the second time this exact server has
+manufactured failures.** Check the served chunk hash before believing a broad test failure.
+
+**Then the built-CSS check reported all eight new utilities MISSING.** They were all present; the
+shell was eating the backslashes in `grep 'min-h-\[32px\]'`. Confirmed with `grep -F` and then with
+plain `str.find` in Python. Same standing rule, now on its tenth instance: when a measurement
+contradicts observed behaviour, suspect the measurement first.
+
+### Deliberately not migrated
+
+- The knowledge graph's legend filter rows (`px-2 py-1.5 rounded-md`, measured 30px) — full-width
+  toggle rows in a panel, not chips.
+- `KnowledgeQuiz` option rows, `LayerExplorer` layer rows and `Checkpoint` — large left-aligned
+  option panels with their own state colours. They got focus rings, not the primitive.
+- The opaque `stone-600/700/800` borders inside the coloured learning blocks, as in the palette
+  commit: the border there is part of a semantic accent, not the neutral scale.
+- `styles/index.css:97` — the skip link is `font-size: 11px`, a sub-12px instance the floor commit
+  did not reach because it was blog-scoped and this file is platform-owned. Still open.

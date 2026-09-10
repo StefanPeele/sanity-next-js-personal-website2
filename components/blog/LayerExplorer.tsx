@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { FOCUS } from '@/lib/ui'
 // components/blog/LayerExplorer.tsx
 
 const DEFAULT_LAYERS = [
@@ -119,7 +120,7 @@ export function LayerExplorer({ value }: LayerExplorerProps) {
               onClick={() =>
                 setActiveLayer(activeLayer === layer.number ? null : layer.number)
               }
-              className={`w-full flex items-center gap-4 px-4 py-3 rounded transition-all duration-200 text-left group ${
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded transition-all duration-200 text-left group ${FOCUS} ${
                 activeLayer === layer.number ? 'bg-surface-fill' : 'hover:bg-surface-veil'
               }`}
             >

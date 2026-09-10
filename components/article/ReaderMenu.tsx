@@ -7,7 +7,7 @@ import { useReadAloud } from '@/components/article/useReadAloud'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 import { clearBookmark, readBookmark, writeBookmark } from '@/lib/articleStorage'
 import { ARTICLE_THEMES, ARTICLE_WIDTHS, FONT_SIZES, THEME_OPTIONS } from '@/lib/articleThemeStyles'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, buttonClass } from '@/lib/ui'
 // components/article/ReaderMenu.tsx — the one reader-settings control.
 // Popover with theme, text size, width, accessibility, share/export, read-aloud, saved place.
 
@@ -33,7 +33,7 @@ function Chip({ active, onClick, children, role = 'radio' }: { active: boolean; 
       role={role}
       aria-checked={role === 'radio' ? active : undefined}
       onClick={onClick}
-      className={`px-3 py-1.5 rounded-full text-sm font-sans border transition-colors ${FOCUS} ${active ? 'bg-white text-black border-white' : 'border-edge text-stone-300 hover:border-edge-strong'}`}
+      className={`font-sans text-sm ${buttonClass({ variant: 'chip', size: 'sm', active })}`}
     >
       {children}
     </button>

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, buttonClass } from '@/lib/ui'
 import { ChevronRight } from 'lucide-react'
 // components/blog/SeriesBanner.tsx
 // "Part N of M · Series title" with prev/next and a native <details> list of all parts.
@@ -38,12 +38,12 @@ export function SeriesBanner({ series, currentSlug, seriesOrder, labels = DEFAUL
         )}
         <div className="ml-auto flex items-center gap-2">
           {prev?.slug ? (
-            <Link href={`/blog/${prev.slug}`} rel="prev" className={`font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-edge rounded-lg hover:border-edge-strong transition-colors ${FOCUS}`} title={prev.title ?? undefined}>
+            <Link href={`/blog/${prev.slug}`} rel="prev" className={`font-sans text-sm ${buttonClass({ size: 'sm' })}`} title={prev.title ?? undefined}>
               ← {labels.prevLabel}
             </Link>
           ) : null}
           {next?.slug ? (
-            <Link href={`/blog/${next.slug}`} rel="next" className={`font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-edge rounded-lg hover:border-edge-strong transition-colors ${FOCUS}`} title={next.title ?? undefined}>
+            <Link href={`/blog/${next.slug}`} rel="next" className={`font-sans text-sm ${buttonClass({ size: 'sm' })}`} title={next.title ?? undefined}>
               {labels.nextLabel} →
             </Link>
           ) : null}

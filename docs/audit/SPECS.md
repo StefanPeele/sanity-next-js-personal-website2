@@ -248,3 +248,10 @@ would have to become a token rather than a literal class string.
 `a` → `c` → `b` → `d` → `e`. Each one makes the next cheaper: the floor removes 328 occurrences
 before the scale pass, the palette turns the theme work from 40 selectors into 6 overrides, and the
 button primitive depends on the floor for its `sm` size.
+
+### Status, 2026-09-10
+
+`a` shipped `5370ca9`, `c` shipped `1fef26f`, `e` shipped `c4ca8c9`, `b` shipped this session — see
+`SECTION-LOG.md`, which records where the built primitive departs from the spec above (no
+`<Button>` component, no `ghost` variant, `chip` selected on tokens rather than a white fill, and
+`NewsletterForm` left out). **Only `d`, the site-wide type scale, is still open.**

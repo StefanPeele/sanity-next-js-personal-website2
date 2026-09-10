@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { MEDIA_ICON_FALLBACK, MEDIA_ICONS, MEDIA_LABELS } from '@/components/library/types'
 import { Icon } from '@/lib/cms/icons'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, QUIET_LINK } from '@/lib/ui'
 // components/knowledge/CurrentlyReading.tsx
 // Server component. Accepts already-fetched items (homeIntelQuery.currentlyReading / nowQuery.reading).
 //
@@ -23,7 +23,7 @@ export function CurrentlyReading({ items, title = 'Currently reading' }: { items
     <section aria-label={title}>
       {title && <div className="mb-3 flex items-center justify-between">
         <span className="section-label">{title}</span>
-        <Link href="/library" className={`font-sans text-sm text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>
+        <Link href="/library" className={`font-sans text-sm ${QUIET_LINK}`}>
           Library →
         </Link>
       </div>}

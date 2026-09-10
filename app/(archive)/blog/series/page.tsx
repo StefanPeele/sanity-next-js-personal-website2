@@ -8,7 +8,7 @@ import type { Metadata } from 'next'
 import { getCopy } from '@/lib/cms/loaders'
 import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, QUIET_LINK } from '@/lib/ui'
 // app/(archive)/blog/series/page.tsx
 // Every series with its parts, status and how far along it is.
 
@@ -42,7 +42,7 @@ export default async function SeriesIndexPage() {
 
       <main id="content" className="relative max-w-5xl mx-auto px-6 pt-32 pb-24">
         <header className="mb-12 border-b border-edge-faint pb-8">
-          <Link href="/blog" className={`font-sans text-sm text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>← {copy.backLabel}</Link>
+          <Link href="/blog" className={`font-sans text-sm ${QUIET_LINK}`}>← {copy.backLabel}</Link>
           <h1 className="mt-6 text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
           <p className="mt-4 max-w-xl font-sans text-base text-stone-400">{copy.header.lede}</p>
         </header>

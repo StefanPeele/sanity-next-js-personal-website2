@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from 'react'
 import Link from 'next/link'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, buttonClass } from '@/lib/ui'
 import { ChevronRight } from 'lucide-react'
 // components/blog/GlossaryList.tsx
 // Client half of /glossary: category filter + A–Z groups. The longDefinition is
@@ -50,9 +50,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
             type="button"
             aria-pressed={category === c}
             onClick={() => setCategory(c)}
-            className={`meta-label px-3 py-2 rounded-full border transition-colors ${FOCUS} ${
-              category === c ? 'bg-white text-black border-white' : 'border-edge text-stone-300 hover:text-white hover:border-edge-strong'
-            }`}
+            className={`font-sans text-sm ${buttonClass({ variant: 'chip', size: 'sm', active: category === c })}`}
           >
             {c === 'all' ? `All (${entries.length})` : c}
           </button>

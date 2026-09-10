@@ -9,7 +9,7 @@ import { NOTE_STATUS } from '@/components/garden/status'
 import type { GraphQueryResult } from '@/sanity.types'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
 import { DEFAULT_TAXONOMY, type VocabEntry } from '@/lib/cms/defaults/taxonomy'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, buttonClass } from '@/lib/ui'
 
 type GraphCopy = typeof DEFAULT_KNOWLEDGE_PAGES.graph
 // components/graph/KnowledgeGraph.tsx
@@ -611,7 +611,7 @@ export function GraphNeighborhood({ data, focusId, height = 260 }: { data: Graph
           <li key={n.id}>
             <a
               href={n.url}
-              className={`flex items-center gap-1.5 font-mono text-xs text-stone-400 hover:text-white border border-edge hover:border-edge-strong px-2 py-1 rounded-sm transition-colors ${FOCUS}`}
+              className={`font-mono text-xs gap-1.5 ${buttonClass({ variant: 'chip', size: 'sm' })}`}
             >
               <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: n.color }} aria-hidden="true" />
               {n.label}

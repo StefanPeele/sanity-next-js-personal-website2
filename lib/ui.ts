@@ -19,3 +19,66 @@
  */
 export const FOCUS =
   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400 focus-visible:outline-offset-2'
+
+/**
+ * Quiet navigation link — "All posts", "View the graph", "← Back to the garden".
+ *
+ * Fifteen of these sit at the end of section headers across the knowledge side and
+ * were spelled out at each one; three had lost the focus ring along the way. The
+ * type face is deliberately NOT included: the same link is `font-sans text-sm` in a
+ * section header and `meta-label` in a footer row, and that difference is real.
+ */
+export const QUIET_LINK = `text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`
+
+type ButtonVariant = 'primary' | 'secondary' | 'chip'
+type ButtonSize = 'sm' | 'md' | 'lg'
+
+/** Geometry only — no type face, no gap. See buttonClass. */
+const BUTTON_BASE = `inline-flex items-center justify-center border transition-colors ${FOCUS}`
+
+const BUTTON_SIZE: Record<ButtonSize, string> = {
+  sm: 'min-h-[32px] px-3 py-1.5', // chips, filter rows, inline tag links
+  md: 'min-h-[40px] px-4 py-2.5', // the default: panel and card actions
+  lg: 'min-h-[48px] px-6 py-3', //  page-level and form submits
+}
+
+const BUTTON_VARIANT: Record<ButtonVariant, string> = {
+  primary:
+    'rounded-lg bg-white text-black border-white hover:bg-stone-200 disabled:opacity-40 disabled:cursor-not-allowed',
+  secondary:
+    'rounded-lg border-edge text-stone-300 hover:text-white hover:border-edge-strong hover:bg-surface-veil disabled:opacity-40 disabled:cursor-not-allowed',
+  chip: 'rounded-full',
+}
+
+/** `chip` is the only variant with a selected state, because it is the only toggle. */
+const CHIP_STATE = {
+  on: 'border-edge-active bg-surface-fill-strong text-white',
+  off: 'border-edge text-stone-300 hover:text-white hover:border-edge-strong hover:bg-surface-veil',
+}
+
+/**
+ * Button, chip and CTA geometry — one spelling for a control that had six.
+ *
+ * The knowledge side carried six independent definitions of a filter chip (blog,
+ * library, garden tag cloud, garden note tags, glossary, reader menu) across two
+ * selected languages, two radii, two faces and three paddings; and its bordered
+ * controls ran through six paddings and four radii. This collapses them to three
+ * variants × three sizes × two radii, on the palette tokens — so an article theme
+ * restates a button the same way it restates a card, without naming buttons.
+ *
+ * It returns a string rather than rendering a component on purpose: half of these
+ * call sites are `<Link>` or `<a>`, which a `<Button>` cannot serve, and the other
+ * half would be a wrapper whose only job is to compute this same string.
+ *
+ * The type face stays at the call site. `.meta-label` (mono, uppercase) and
+ * `font-sans text-sm` are both correct here depending on context, and baking either
+ * one in would silently override the other — utilities beat `@layer components`.
+ */
+export function buttonClass({
+  variant = 'secondary',
+  size = 'md',
+  active = false,
+}: { variant?: ButtonVariant; size?: ButtonSize; active?: boolean } = {}) {
+  const state = variant === 'chip' ? ` ${active ? CHIP_STATE.on : CHIP_STATE.off}` : ''
+  return `${BUTTON_BASE} ${BUTTON_SIZE[size]} ${BUTTON_VARIANT[variant]}${state}`
+}
