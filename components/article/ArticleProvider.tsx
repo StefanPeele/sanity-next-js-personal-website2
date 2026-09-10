@@ -261,16 +261,23 @@ export function ArticleProvider({
   useEffect(() => {
     if (!hydrated) return
     const article = document.querySelector<HTMLElement>('[data-article]')
+    // The theme and accessibility classes belong on the ROUTE root, not on the prose
+    // element: [data-article] lives inside a 36rem column, so theming it painted a
+    // rectangle instead of a page. Font size stays on the prose, where it means
+    // something. Falls back to the article element if the root is ever absent.
+    const themeRoot = document.querySelector<HTMLElement>('[data-article-root]') ?? article
     const main = document.getElementById('content')
     const html = document.documentElement
     if (article) {
-      article.classList.remove(...ARTICLE_THEMES.map((t) => `theme-${t}`))
-      article.classList.add(`theme-${settings.theme}`)
       article.style.setProperty('--article-fs', FONT_SIZES[settings.fontSize]?.value ?? FONT_SIZES[1].value)
-      article.classList.toggle('a11y-dyslexia', settings.dyslexia)
-      article.classList.toggle('a11y-high-contrast', settings.highContrast)
-      article.classList.toggle('a11y-reduced-motion', settings.reducedMotion)
-      article.classList.toggle('a11y-reading-ruler', settings.ruler)
+    }
+    if (themeRoot) {
+      themeRoot.classList.remove(...ARTICLE_THEMES.map((t) => `theme-${t}`))
+      themeRoot.classList.add(`theme-${settings.theme}`)
+      themeRoot.classList.toggle('a11y-dyslexia', settings.dyslexia)
+      themeRoot.classList.toggle('a11y-high-contrast', settings.highContrast)
+      themeRoot.classList.toggle('a11y-reduced-motion', settings.reducedMotion)
+      themeRoot.classList.toggle('a11y-reading-ruler', settings.ruler)
     }
     if (main) main.dataset.width = settings.width
     html.classList.toggle('sp-reduced-motion', settings.reducedMotion)

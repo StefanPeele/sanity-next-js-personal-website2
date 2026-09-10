@@ -136,7 +136,13 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <ArticleProvider slug={slug} title={title} totalWords={wordCount} initialTheme={post.recommendedTheme}>
-      <div className="relative min-h-screen text-stone-300 selection:bg-stone-500/30 pb-32">
+      {/* D5: the theme root. It used to be the <article> element, which sits inside a
+          36rem column -- so a non-default theme painted a rounded rectangle floating in
+          the middle of an otherwise unthemed page. This div is min-h-screen and full
+          width, and covers the header, the TOC and the reading column together. Navbar
+          and Footer stay outside it on purpose: they are shared with every other archive
+          route, and a saved theme must not leak off the article. */}
+      <div data-article-root className="relative min-h-screen text-stone-300 selection:bg-stone-500/30 pb-32">
         <JsonLd data={jsonLd} />
         <ReadingProgressBar color={lane?.color} />
 

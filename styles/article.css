@@ -140,73 +140,111 @@ main#content[data-width='wide']     { max-width: 44rem; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TERMINAL THEME — phosphor green on near-black, monospace
+   THEMES AND ACCESSIBILITY MODES
+   Scoped to [data-article-root] -- the route-level, full-width, min-h-screen
+   wrapper -- not to [data-article], which is the prose element inside a 36rem
+   column. Theming the prose element made a non-default theme render as a hard
+   rounded rectangle floating in an unthemed page (D5).
+
+   Each theme restates the eight palette tokens from styles/index.css and little
+   else. Everything inside the article -- cards, the TOC, the reader menu, the
+   learning blocks, every border-edge and bg-surface-* -- follows automatically,
+   which is the reason the palette work came first. Prose colour still needs
+   naming here, because body text is not a token.
    ═══════════════════════════════════════════════════════════════ */
 
-[data-article].theme-terminal {
-  background-color: #0d1117;
-  color: rgba(0, 255, 65, 0.85);
-  font-family: var(--font-mono), 'IBM Plex Mono', 'Courier New', monospace;
-  padding: 1.5rem;
-  border-radius: 4px;
+/* ── Terminal: phosphor green on near-black, monospace ────────── */
+[data-article-root].theme-terminal {
+  --surface:             #0d1117;
+  --surface-raised:      #0f1620;
+  --surface-veil:        rgb(0 255 65 / 0.03);
+  --surface-fill:        rgb(0 255 65 / 0.06);
+  --surface-fill-strong: rgb(0 255 65 / 0.12);
+  --edge-faint:          rgb(0 255 65 / 0.10);
+  --edge:                rgb(0 255 65 / 0.18);
+  --edge-strong:         rgb(0 255 65 / 0.35);
+  --edge-active:         rgb(0 255 65 / 0.60);
+
+  background-color: var(--surface);
+  color: rgb(0 255 65 / 0.85);
 }
-[data-article].theme-terminal p { color: rgba(0, 255, 65, 0.82); line-height: 1.8; letter-spacing: 0.025em; }
-[data-article].theme-terminal h1,
-[data-article].theme-terminal h2,
-[data-article].theme-terminal h3,
-[data-article].theme-terminal h4 { color: #00ff41; font-family: var(--font-mono), monospace; letter-spacing: 0.02em; }
-[data-article].theme-terminal strong { color: #00ff41; font-weight: 700; }
-[data-article].theme-terminal em { color: rgba(0, 255, 65, 0.7); font-style: italic; }
-[data-article].theme-terminal .article-link { color: #00ff41; background-image: linear-gradient(#00ff41, #00ff41); }
-[data-article].theme-terminal .article-link:hover { color: #ffffff; background-image: linear-gradient(#ffffff, #ffffff); }
-[data-article].theme-terminal code {
-  background-color: rgba(0, 255, 65, 0.08) !important;
-  border-color: rgba(0, 255, 65, 0.2) !important;
+[data-article-root].theme-terminal [data-article] {
+  font-family: var(--font-mono), 'IBM Plex Mono', 'Courier New', monospace;
+}
+[data-article-root].theme-terminal [data-article] p { color: rgb(0 255 65 / 0.82); line-height: 1.8; letter-spacing: 0.025em; }
+[data-article-root].theme-terminal [data-article] h1,
+[data-article-root].theme-terminal [data-article] h2,
+[data-article-root].theme-terminal [data-article] h3,
+[data-article-root].theme-terminal [data-article] h4 { color: #00ff41; font-family: var(--font-mono), monospace; letter-spacing: 0.02em; }
+[data-article-root].theme-terminal [data-article] strong { color: #00ff41; font-weight: 700; }
+[data-article-root].theme-terminal [data-article] em { color: rgb(0 255 65 / 0.7); font-style: italic; }
+[data-article-root].theme-terminal [data-article] .article-link { color: #00ff41; background-image: linear-gradient(#00ff41, #00ff41); }
+[data-article-root].theme-terminal [data-article] .article-link:hover { color: #ffffff; background-image: linear-gradient(#ffffff, #ffffff); }
+[data-article-root].theme-terminal [data-article] code {
+  background-color: rgb(0 255 65 / 0.08) !important;
+  border-color: rgb(0 255 65 / 0.2) !important;
   color: #00ff41 !important;
   font-family: var(--font-mono), monospace !important;
 }
-[data-article].theme-terminal blockquote { color: rgba(0, 255, 65, 0.75); }
-[data-article].theme-terminal li { color: rgba(0, 255, 65, 0.8); }
-[data-article].theme-terminal ::selection { background-color: rgba(0, 255, 65, 0.25); color: #0d1117; }
+[data-article-root].theme-terminal [data-article] blockquote { color: rgb(0 255 65 / 0.75); }
+[data-article-root].theme-terminal [data-article] li { color: rgb(0 255 65 / 0.8); }
+[data-article-root].theme-terminal ::selection { background-color: rgb(0 255 65 / 0.25); color: #0d1117; }
+/* Page chrome that is not prose: headings, meta and the TOC sit on the same ground. */
+[data-article-root].theme-terminal h1,
+[data-article-root].theme-terminal h2,
+[data-article-root].theme-terminal .section-label { color: #00ff41; }
+[data-article-root].theme-terminal .meta-label { color: rgb(0 255 65 / 0.55); }
 
-[data-article].theme-terminal [data-desaturate] img { filter: grayscale(60%) brightness(0.7) sepia(20%) hue-rotate(80deg); }
-[data-article].theme-terminal [data-desaturate]:hover img { filter: grayscale(40%) brightness(0.85) sepia(10%) hue-rotate(80deg); }
+[data-article-root].theme-terminal [data-desaturate] img { filter: grayscale(60%) brightness(0.7) sepia(20%) hue-rotate(80deg); }
+[data-article-root].theme-terminal [data-desaturate]:hover img { filter: grayscale(40%) brightness(0.85) sepia(10%) hue-rotate(80deg); }
 
 
-
-/* ═══════════════════════════════════════════════════════════════
-   ACCESSIBILITY MODES — stack on top of any theme
-   ═══════════════════════════════════════════════════════════════ */
-
-[data-article].a11y-dyslexia,
-[data-article].a11y-dyslexia p,
-[data-article].a11y-dyslexia li,
-[data-article].a11y-dyslexia span {
+/* ── Dyslexia: Lexend, looser tracking and leading ────────────── */
+[data-article-root].a11y-dyslexia,
+[data-article-root].a11y-dyslexia p,
+[data-article-root].a11y-dyslexia li,
+[data-article-root].a11y-dyslexia span {
   font-family: var(--font-lexend, var(--font-sans)), system-ui, sans-serif !important;
   letter-spacing: 0.06em !important;
   word-spacing: 0.18em !important;
   line-height: 2.1 !important;
 }
-[data-article].a11y-dyslexia p { margin-bottom: 1.6em !important; max-width: 65ch !important; }
-[data-article].a11y-dyslexia h1,
-[data-article].a11y-dyslexia h2,
-[data-article].a11y-dyslexia h3,
-[data-article].a11y-dyslexia h4 { font-family: var(--font-lexend, var(--font-sans)), system-ui, sans-serif !important; letter-spacing: 0.02em !important; line-height: 1.3 !important; }
-[data-article].a11y-dyslexia { text-align: left !important; }
+[data-article-root].a11y-dyslexia [data-article] p { margin-bottom: 1.6em !important; max-width: 65ch !important; }
+[data-article-root].a11y-dyslexia h1,
+[data-article-root].a11y-dyslexia h2,
+[data-article-root].a11y-dyslexia h3,
+[data-article-root].a11y-dyslexia h4 { font-family: var(--font-lexend, var(--font-sans)), system-ui, sans-serif !important; letter-spacing: 0.02em !important; line-height: 1.3 !important; }
+[data-article-root].a11y-dyslexia [data-article] { text-align: left !important; }
 
-[data-article].a11y-high-contrast { background-color: #000000 !important; color: #ffffff !important; box-shadow: none !important; }
-[data-article].a11y-high-contrast p,
-[data-article].a11y-high-contrast li,
-[data-article].a11y-high-contrast span,
-[data-article].a11y-high-contrast h1,
-[data-article].a11y-high-contrast h2,
-[data-article].a11y-high-contrast h3,
-[data-article].a11y-high-contrast h4 { color: #ffffff !important; }
-[data-article].a11y-high-contrast .article-link { color: #ffff00 !important; text-decoration: underline !important; background-image: none !important; }
-[data-article].a11y-high-contrast code { background-color: #222222 !important; border-color: #555555 !important; color: #00ff00 !important; }
-[data-article].a11y-high-contrast blockquote { border-left-color: #ffff00 !important; color: #ffffff !important; }
-[data-article].a11y-high-contrast img { filter: none !important; border: 2px solid #ffffff !important; }
-[data-article].a11y-high-contrast ::selection { background-color: #ffffff !important; color: #000000 !important; }
+/* ── High contrast: pure black ground, white text, yellow links ─ */
+[data-article-root].a11y-high-contrast {
+  --surface:             #000000;
+  --surface-raised:      #0a0a0a;
+  --surface-veil:        rgb(255 255 255 / 0.06);
+  --surface-fill:        rgb(255 255 255 / 0.10);
+  --surface-fill-strong: rgb(255 255 255 / 0.18);
+  --edge-faint:          rgb(255 255 255 / 0.30);
+  --edge:                rgb(255 255 255 / 0.50);
+  --edge-strong:         rgb(255 255 255 / 0.75);
+  --edge-active:         #ffffff;
+
+  background-color: var(--surface) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+[data-article-root].a11y-high-contrast p,
+[data-article-root].a11y-high-contrast li,
+[data-article-root].a11y-high-contrast span,
+[data-article-root].a11y-high-contrast h1,
+[data-article-root].a11y-high-contrast h2,
+[data-article-root].a11y-high-contrast h3,
+[data-article-root].a11y-high-contrast h4 { color: #ffffff !important; }
+[data-article-root].a11y-high-contrast .meta-label { color: #d4d4d4 !important; }
+[data-article-root].a11y-high-contrast .article-link { color: #ffff00 !important; text-decoration: underline !important; background-image: none !important; }
+[data-article-root].a11y-high-contrast code { background-color: #222222 !important; border-color: #555555 !important; color: #00ff00 !important; }
+[data-article-root].a11y-high-contrast blockquote { border-left-color: #ffff00 !important; color: #ffffff !important; }
+[data-article-root].a11y-high-contrast img { filter: none !important; border: 2px solid #ffffff !important; }
+[data-article-root].a11y-high-contrast ::selection { background-color: #ffffff !important; color: #000000 !important; }
 
 /* Reduced motion — the in-app toggle mirrors to <html class="sp-reduced-motion">
    so widgets outside [data-article] can respond too. */

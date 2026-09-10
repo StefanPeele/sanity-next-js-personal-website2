@@ -3,10 +3,12 @@
 // styles/article.css (imported by the [slug] page) so it is served as a real
 // stylesheet instead of riding along in the RSC payload.
 
-// Paper and Broadcast were removed. Theme classes only ever reach <article data-article>, and
-// styles/article.css only selects prose inside it — so on a cream or white ground every framed
-// component and all page chrome stayed near-black. Fixing that properly needs the card/border
-// consolidation first; revisit when a light theme is a token swap rather than 20 rewrites.
+// Paper and Broadcast were removed because theme classes only reached <article data-article>,
+// so on a cream ground every framed component and all page chrome stayed near-black. That
+// blocker is gone: the class now lands on [data-article-root] (the full-width route wrapper)
+// and each theme restates the eight palette tokens from styles/index.css, so a light theme IS
+// now the token swap this note was waiting for rather than 20 selector rewrites. Adding one
+// back is a design decision, not a technical one — it is deliberately NOT done here.
 // A reader with a stale `sp_theme` falls back to archive via isArticleTheme() in ArticleProvider.
 export const ARTICLE_THEMES = ['archive', 'terminal'] as const
 export type ArticleTheme = (typeof ARTICLE_THEMES)[number]
