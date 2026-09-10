@@ -187,8 +187,8 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
   const [showHint, setShowHint]   = useState(false)
 
   return (
-    <div className="my-10 border border-white/10 rounded-xl overflow-hidden bg-[#0f0f12]">
-      <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+    <div className="my-10 border border-edge rounded-xl overflow-hidden bg-[#0f0f12]">
+      <div className="px-6 py-4 border-b border-edge-faint flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="meta-label text-stone-400">
             Stress Test
@@ -217,7 +217,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
               {value.hint && !showHint && (
                 <button
                   onClick={() => setShowHint(true)}
-                  className="meta-label px-4 py-2.5 border border-white/10 text-stone-400 hover:text-stone-400 transition-colors rounded-sm"
+                  className="meta-label px-4 py-2.5 border border-edge text-stone-400 hover:text-stone-400 transition-colors rounded-sm"
                 >
                   Show Hint
                 </button>
@@ -226,7 +226,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
           ) : (
             <button
               onClick={() => setRevealed(false)}
-              className="meta-label px-4 py-2.5 border border-white/10 text-stone-400 hover:text-stone-400 transition-colors rounded-sm"
+              className="meta-label px-4 py-2.5 border border-edge text-stone-400 hover:text-stone-400 transition-colors rounded-sm"
             >
               Hide Answer
             </button>
@@ -237,7 +237,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            className="mt-4 pt-4 border-t border-white/5"
+            className="mt-4 pt-4 border-t border-edge-faint"
           >
             <p className="meta-label text-stone-400 mb-2">Hint</p>
             <p className="text-stone-400 text-sm italic leading-relaxed">{value.hint}</p>
@@ -251,7 +251,7 @@ export function ConceptStressTest({ value }: ConceptStressTestProps) {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="mt-6 pt-6 border-t border-white/[0.08] overflow-hidden"
+              className="mt-6 pt-6 border-t border-edge overflow-hidden"
             >
               <p className="meta-label text-stone-400 mb-3">Answer</p>
               <p className="text-stone-300 text-sm leading-relaxed whitespace-pre-wrap">
@@ -306,7 +306,7 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
   }
 
   return (
-    <section className="mt-16 pt-12 border-t border-white/[0.08]" aria-labelledby="concept-cards-heading" data-no-toc>
+    <section className="mt-16 pt-12 border-t border-edge" aria-labelledby="concept-cards-heading" data-no-toc>
       <div className="flex items-center gap-4 mb-6 flex-wrap">
         <h2 id="concept-cards-heading" className="section-label">{heading}</h2>
         <span className="font-sans text-xs text-stone-400">
@@ -316,7 +316,7 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
           <button
             type="button"
             onClick={download}
-            className={`meta-label ml-auto px-3 py-2 border border-white/10 rounded-lg text-stone-300 hover:text-white hover:border-white/30 transition-colors ${FOCUS}`}
+            className={`meta-label ml-auto px-3 py-2 border border-edge rounded-lg text-stone-300 hover:text-white hover:border-edge-strong transition-colors ${FOCUS}`}
             data-print-hide
           >
             {downloaded ? 'Saved ✓' : `Download study deck (${deckCount} cards, Anki)`}
@@ -346,7 +346,7 @@ export function ConceptCards({ cards, deck, deckCount = 0, deckFilename = 'study
               >
                 {/* Front */}
                 <div
-                  className="absolute inset-0 border border-white/15 rounded-xl p-5 flex flex-col justify-between bg-[#111] hover:border-white/30 transition-colors"
+                  className="absolute inset-0 border border-edge rounded-xl p-5 flex flex-col justify-between bg-surface-raised hover:border-edge-strong transition-colors"
                   style={{ backfaceVisibility: 'hidden' }}
                 >
                   <span className="meta-label text-stone-400">

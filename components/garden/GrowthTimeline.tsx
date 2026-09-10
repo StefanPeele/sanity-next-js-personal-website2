@@ -56,7 +56,7 @@ export function GrowthTimeline({ notes, onSelect }: { notes: TimelineNote[]; onS
   const lastDate = formatDate(new Date(model.max), 'month')
 
   return (
-    <figure className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 overflow-hidden">
+    <figure className="rounded-xl border border-edge bg-surface-veil p-4 overflow-hidden">
       <figcaption className="flex items-center justify-between gap-4 mb-3">
         <span className="meta-label text-stone-400 border-l-2 border-stone-700 pl-3">
           Growth timeline

@@ -43,7 +43,7 @@ function NoteCard({
   return (
     <article
       className={`rounded-xl border transition-all duration-300 overflow-hidden ${
-        expanded ? 'border-white/25 shadow-lg shadow-black/40' : 'border-white/[0.08] hover:border-white/[0.18]'
+        expanded ? 'border-edge-strong shadow-lg shadow-black/40' : 'border-edge hover:border-white/[0.18]'
       }`}
       style={{ backgroundColor: expanded ? 'rgba(20,20,24,0.98)' : 'rgba(14,14,16,0.9)' }}
       aria-labelledby={`note-title-${note._id}`}
@@ -91,7 +91,7 @@ function NoteCard({
                   aria-pressed={activeTag === tag.slug}
                   className={`meta-label border px-2 py-0.5 rounded-sm transition-colors ${FOCUS} ${
                     activeTag === tag.slug
-                      ? 'text-white border-white/40 bg-white/10'
+                      ? 'text-white border-edge-active bg-surface-fill-strong'
                       : 'text-stone-400 border-stone-800 hover:text-stone-300 hover:border-stone-600'
                   }`}
                 >
@@ -119,7 +119,7 @@ function NoteCard({
             transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-5 border-t border-white/[0.08] pt-4">
+            <div className="px-5 pb-5 border-t border-edge pt-4">
               {note.status === 'seedling' && (
                 <div className="mb-4 p-3 border border-stone-700/40 rounded-lg bg-stone-900/40">
                   <p className="meta-label text-stone-400">
@@ -134,7 +134,7 @@ function NoteCard({
                 <p className="font-mono text-xs text-stone-400 italic">No content yet — this note is a placeholder.</p>
               )}
 
-              <div className="flex flex-wrap items-center gap-4 mt-5 pt-4 border-t border-white/5">
+              <div className="flex flex-wrap items-center gap-4 mt-5 pt-4 border-t border-edge-faint">
                 {note.origin && (
                   <span className="meta-label text-stone-400">
                     {ORIGIN_LABELS[note.origin] ?? note.origin}
@@ -158,7 +158,7 @@ function NoteCard({
                         <li key={related._id}>
                           <Link
                             href={`/garden/${related.slug}`}
-                            className={`font-mono text-xs text-stone-400 hover:text-white border border-white/10 hover:border-white/30 px-2.5 py-1 rounded-sm flex items-center gap-1.5 transition-all ${FOCUS}`}
+                            className={`font-mono text-xs text-stone-400 hover:text-white border border-edge hover:border-edge-strong px-2.5 py-1 rounded-sm flex items-center gap-1.5 transition-all ${FOCUS}`}
                           >
                             <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${rc.dot}`} aria-hidden="true" />
                             {related.title}
@@ -178,7 +178,7 @@ function NoteCard({
                       <li key={post._id}>
                         <Link
                           href={`/blog/${post.slug}`}
-                          className={`font-mono text-xs text-stone-400 hover:text-white border border-white/10 hover:border-white/30 px-2.5 py-1 rounded-sm transition-all ${FOCUS}`}
+                          className={`font-mono text-xs text-stone-400 hover:text-white border border-edge hover:border-edge-strong px-2.5 py-1 rounded-sm transition-all ${FOCUS}`}
                         >
                           {post.title} →
                         </Link>
@@ -335,7 +335,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
 
       {/* ── Recently tended ─────────────────────────────────────── */}
       {recentlyTended.length > 0 && (
-        <div className="mb-10 pb-8 border-b border-white/[0.08]">
+        <div className="mb-10 pb-8 border-b border-edge">
           <span className="meta-label text-stone-400 block mb-4 border-l-2 border-stone-700 pl-3">
             Recently tended
           </span>
@@ -347,7 +347,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
                   <button
                     type="button"
                     onClick={() => note.slug && reveal(note.slug)}
-                    className={`flex items-center gap-2 font-mono text-xs text-stone-400 hover:text-white border border-white/10 hover:border-white/25 px-3 py-1.5 rounded-sm transition-all ${FOCUS}`}
+                    className={`flex items-center gap-2 font-mono text-xs text-stone-400 hover:text-white border border-edge hover:border-edge-strong px-3 py-1.5 rounded-sm transition-all ${FOCUS}`}
                   >
                     <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${config.dot}`} aria-hidden="true" />
                     {note.title}
@@ -369,7 +369,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search notes…"
-          className={`w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 font-mono text-sm text-white placeholder:text-stone-500 focus:border-white/25 transition-colors ${FOCUS}`}
+          className={`w-full bg-surface-veil border border-edge rounded-lg px-4 py-3 font-mono text-sm text-white placeholder:text-stone-500 focus:border-edge-strong transition-colors ${FOCUS}`}
         />
       </div>
 
@@ -381,7 +381,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
             onClick={() => setTag(null)}
             aria-pressed={activeTag === null}
             className={`meta-label px-3 py-1.5 rounded-sm border transition-all ${FOCUS} ${
-              activeTag === null ? 'bg-white text-black border-white' : 'border-white/15 text-stone-400 hover:text-white hover:border-white/30'
+              activeTag === null ? 'bg-white text-black border-white' : 'border-edge text-stone-400 hover:text-white hover:border-edge-strong'
             }`}
           >
             All
@@ -393,7 +393,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
               onClick={() => setTag(activeTag === tag.slug ? null : tag.slug)}
               aria-pressed={activeTag === tag.slug}
               className={`meta-label px-3 py-1.5 rounded-sm border transition-all ${FOCUS} ${
-                activeTag === tag.slug ? 'bg-white text-black border-white' : 'border-white/15 text-stone-400 hover:text-white hover:border-white/30'
+                activeTag === tag.slug ? 'bg-white text-black border-white' : 'border-edge text-stone-400 hover:text-white hover:border-edge-strong'
               }`}
             >
               #{tag.title} <span className="text-xs opacity-60">{tag.count}</span>
@@ -403,7 +403,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
       )}
 
       {/* ── Archive header ──────────────────────────────────────── */}
-      <div className="mb-5 pb-4 border-b border-white/[0.08] flex items-center justify-between">
+      <div className="mb-5 pb-4 border-b border-edge flex items-center justify-between">
         <span className="meta-label text-stone-400 border-l-2 border-stone-600 pl-3">
           Notes // {[activeTagTitle && `#${activeTagTitle}`, statusFilter && NOTE_STATUS[statusFilter].label].filter(Boolean).join(' · ') || 'All'}
         </span>
@@ -428,7 +428,7 @@ export function GardenClient({ notes, tags, recentlyTended }: GardenClientProps)
           ))}
         </div>
       ) : (
-        <div className="py-20 text-center border border-white/5 rounded-xl">
+        <div className="py-20 text-center border border-edge-faint rounded-xl">
           <p className="meta-label text-stone-400 mb-3">
             {search ? `No notes matching "${search}"` : activeTagTitle ? `No notes tagged #${activeTagTitle}` : 'No notes here yet.'}
           </p>

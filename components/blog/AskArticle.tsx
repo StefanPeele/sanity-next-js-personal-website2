@@ -28,7 +28,7 @@ export function AskArticle({ slug, heading = 'Ask this article', placeholder = '
   }
 
   return (
-    <section className="mt-16 pt-10 border-t border-white/[0.08]" aria-labelledby={`${id}-heading`} data-print-hide>
+    <section className="mt-16 pt-10 border-t border-edge" aria-labelledby={`${id}-heading`} data-print-hide>
       <div className="flex items-center gap-4 mb-2">
         <h2 id={`${id}-heading`} className="section-label">{heading}</h2>
       </div>
@@ -46,7 +46,7 @@ export function AskArticle({ slug, heading = 'Ask this article', placeholder = '
           rows={3}
           maxLength={500}
           placeholder={placeholder}
-          className={`w-full rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 font-sans text-sm text-stone-100 placeholder:text-stone-500 focus:border-white/30 focus:outline-none ${FOCUS} resize-y`}
+          className={`w-full rounded-xl border border-edge bg-surface-veil px-4 py-3 font-sans text-sm text-stone-100 placeholder:text-stone-500 focus:border-edge-strong focus:outline-none ${FOCUS} resize-y`}
           disabled={pending}
         />
         <div className="flex items-center gap-4 flex-wrap">
@@ -69,7 +69,7 @@ export function AskArticle({ slug, heading = 'Ask this article', placeholder = '
           <p role="alert" className="font-mono text-xs text-amber-400 border border-amber-500/30 bg-amber-950/10 rounded-lg px-4 py-3">{error}</p>
         )}
         {answer && !pending && (
-          <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-5">
+          <div className="rounded-xl border border-edge bg-surface-veil p-5">
             <span className="font-sans text-xs text-stone-400 block mb-3">From the article</span>
             <p className="font-serif text-base text-stone-200 leading-relaxed whitespace-pre-wrap">{answer}</p>
           </div>

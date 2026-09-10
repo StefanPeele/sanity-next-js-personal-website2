@@ -14,6 +14,23 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // Role-named surface and border tokens. Values live as CSS variables in
+      // styles/index.css so an article theme can restate the palette in eight
+      // declarations instead of re-specifying every selector that uses it.
+      //
+      // They carry their own alpha, so `border-edge` is complete on its own --
+      // a `/20` opacity modifier does NOT compose with these.
+      colors: {
+        'edge-faint':        'var(--edge-faint)',        // dividers, hairlines
+        'edge':              'var(--edge)',              // default card and control border
+        'edge-strong':       'var(--edge-strong)',       // hover
+        'edge-active':       'var(--edge-active)',       // selected / pressed
+        'surface':           'var(--surface)',           // page ground
+        'surface-raised':    'var(--surface-raised)',    // panels, sheets, code blocks
+        'surface-veil':      'var(--surface-veil)',      // faintest fill inside a card
+        'surface-fill':      'var(--surface-fill)',      // standard fill
+        'surface-fill-strong':'var(--surface-fill-strong)', // hover / selected fill
+      },
       fontFamily: {
         // These reference the CSS variables set by Next.js font optimization in layout.tsx
         serif:  ['var(--font-serif)', 'Georgia', 'serif'],

@@ -93,11 +93,11 @@ export function CodeBlock({ value }: { value: CodeValue }) {
   const gutterWidth = String(lines.length).length
 
   return (
-    <figure className="article-light-invert relative my-8 rounded-lg bg-[#0a0a0a] border border-white/10 overflow-hidden shadow-2xl not-prose" data-no-toc>
-      <figcaption className="flex items-center justify-between gap-3 px-3 py-2 bg-[#111] border-b border-white/5">
+    <figure className="article-light-invert relative my-8 rounded-lg bg-surface border border-edge overflow-hidden shadow-2xl not-prose" data-no-toc>
+      <figcaption className="flex items-center justify-between gap-3 px-3 py-2 bg-surface-raised border-b border-edge-faint">
         <div className="flex items-center gap-2 min-w-0">
           {value?.filename ? (
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-t-md bg-[#0a0a0a] border border-b-0 border-white/10 font-mono text-xs text-stone-200 truncate">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-t-md bg-surface border border-b-0 border-edge font-mono text-xs text-stone-200 truncate">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400/80" aria-hidden="true" />
               {value.filename}
             </span>
@@ -112,14 +112,14 @@ export function CodeBlock({ value }: { value: CodeValue }) {
             onClick={() => setNumbers((n) => !n)}
             aria-pressed={numbers}
             aria-controls={id}
-            className={`px-2 py-1.5 rounded meta-label text-stone-400 hover:text-white hover:bg-white/5 transition-colors ${FOCUS}`}
+            className={`px-2 py-1.5 rounded meta-label text-stone-400 hover:text-white hover:bg-surface-fill transition-colors ${FOCUS}`}
           >
             Lines
           </button>
           <button
             type="button"
             onClick={handleCopy}
-            className={`px-2 py-1.5 rounded meta-label text-stone-400 hover:text-white hover:bg-white/5 transition-colors ${FOCUS}`}
+            className={`px-2 py-1.5 rounded meta-label text-stone-400 hover:text-white hover:bg-surface-fill transition-colors ${FOCUS}`}
             aria-live="polite"
           >
             {copied ? 'Copied' : 'Copy'}

@@ -56,8 +56,8 @@ function markPostRead(slug: string) {
 function chip(active: boolean) {
   return `font-sans text-sm px-3 py-1.5 rounded-full border transition-all duration-200 ${FOCUS} ${
     active
-      ? 'border-white/50 text-white bg-white/15 shadow-sm'
-      : 'border-white/20 text-stone-300 hover:border-white/40 hover:text-white hover:bg-white/[0.08]'
+      ? 'border-edge-active text-white bg-surface-fill-strong shadow-sm'
+      : 'border-edge-strong text-stone-300 hover:border-edge-active hover:text-white hover:bg-surface-fill-strong'
   }`
 }
 
@@ -137,7 +137,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
               <li key={s._id} className="snap-start flex-shrink-0 w-64">
                 <Link
                   href={`/blog/series/${s.slug}`}
-                  className={`block h-full rounded-lg border border-white/10 hover:border-white/30 bg-white/[0.02] p-4 transition-colors ${FOCUS}`}
+                  className={`block h-full rounded-lg border border-edge hover:border-edge-strong bg-surface-veil p-4 transition-colors ${FOCUS}`}
                 >
                   <span className="font-sans text-xs text-stone-400 block mb-2">{s.count} part{s.count === 1 ? '' : 's'}</span>
                   <span className="font-serif text-white text-base leading-snug block mb-1">{s.title}</span>
@@ -153,7 +153,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
       {((copy.readingStrip.enabled && currentlyReading.length > 0) || (copy.notesStrip.enabled && recentNotes.length > 0)) && (
         <div className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-6">
           {copy.readingStrip.enabled && currentlyReading.length > 0 && (
-            <section className="rounded-lg border border-white/10 bg-white/[0.02] p-5" aria-labelledby="reading-strip">
+            <section className="rounded-lg border border-edge bg-surface-veil p-5" aria-labelledby="reading-strip">
               <div className="mb-3 flex items-center justify-between">
                 <h2 id="reading-strip" className="section-label">{copy.readingStrip.heading}</h2>
                 <Link href={copy.readingStrip.ctaHref || '/library'} className={`font-sans text-sm text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>{copy.readingStrip.ctaLabel} →</Link>
@@ -169,7 +169,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                       {item.author && <span className="font-mono text-xs text-stone-400 block">{item.author}</span>}
                       {typeof item.progressPercent === 'number' && (
                         <span className="flex items-center gap-2 mt-1.5">
-                          <span className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${item.title} progress`}>
+                          <span className="flex-1 h-0.5 bg-surface-fill-strong rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${item.title} progress`}>
                             <span className="block h-full bg-emerald-500/70 rounded-full" style={{ width: `${item.progressPercent}%` }} />
                           </span>
                           <span className="font-mono text-xs text-stone-400">{item.progressPercent}%</span>
@@ -182,7 +182,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
             </section>
           )}
           {copy.notesStrip.enabled && recentNotes.length > 0 && (
-            <section className="rounded-lg border border-white/10 bg-white/[0.02] p-5" aria-labelledby="notes-strip">
+            <section className="rounded-lg border border-edge bg-surface-veil p-5" aria-labelledby="notes-strip">
               <div className="mb-3 flex items-center justify-between">
                 <h2 id="notes-strip" className="section-label">{copy.notesStrip.heading}</h2>
                 <Link href={copy.notesStrip.ctaHref || '/garden'} className={`font-sans text-sm text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`}>{copy.notesStrip.ctaLabel} →</Link>
@@ -207,7 +207,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
       )}
 
       {/* ── Archive header ─────────────────────────────────────────── */}
-      <div ref={archiveRef} className="mb-6 border-b border-white/10 pb-5 flex items-end justify-between scroll-mt-24">
+      <div ref={archiveRef} className="mb-6 border-b border-edge pb-5 flex items-end justify-between scroll-mt-24">
         <h2 className="text-2xl font-serif font-bold text-white">
           {activeLabel || L.heading}
         </h2>
@@ -288,7 +288,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
               onClick={() => post.slug && markPostRead(post.slug)}
               className={`group flex flex-col space-y-4 transition-all duration-300 rounded-lg ${FOCUS} ${isRead ? 'opacity-60 hover:opacity-100' : 'opacity-100'}`}
             >
-              <div className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-white/15 relative" style={{ backgroundColor: 'rgba(20,20,24,0.8)' }}>
+              <div className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-edge relative" style={{ backgroundColor: 'rgba(20,20,24,0.8)' }}>
                 <div className="absolute inset-0 z-10 bg-black/20 group-hover:bg-transparent transition-all duration-500" />
 
                 {post.imageUrl ? (
@@ -316,13 +316,13 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                 )}
 
                 {isRead && (
-                  <div className="absolute top-3 right-3 z-20 font-sans text-xs text-stone-300 bg-black/70 px-2 py-1 rounded-sm border border-white/15 backdrop-blur-sm">
+                  <div className="absolute top-3 right-3 z-20 font-sans text-xs text-stone-300 bg-black/70 px-2 py-1 rounded-sm border border-edge backdrop-blur-sm">
                     Read
                   </div>
                 )}
 
                 <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
-                  <span className="font-sans text-xs text-white bg-black/75 px-5 py-2.5 rounded-sm backdrop-blur-sm border border-white/25 shadow-lg">
+                  <span className="font-sans text-xs text-white bg-black/75 px-5 py-2.5 rounded-sm backdrop-blur-sm border border-edge-strong shadow-lg">
                     {isRead ? `${L.readAgainLabel} →` : `${L.readLabel} →`}
                   </span>
                 </div>
@@ -337,7 +337,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                       </span>
                     )}
                     {firstCat && (
-                      <span className={`font-sans text-xs px-3 py-1.5 rounded-full border ${firstCat === active ? 'border-stone-300 text-stone-200 bg-white/[0.08]' : 'border-white/10 text-stone-400'}`}>
+                      <span className={`font-sans text-xs px-3 py-1.5 rounded-full border ${firstCat === active ? 'border-stone-300 text-stone-200 bg-surface-fill-strong' : 'border-edge text-stone-400'}`}>
                         {firstCat}
                       </span>
                     )}
@@ -352,7 +352,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
                 <p className="text-stone-300 text-sm line-clamp-2 mb-4 flex-grow leading-relaxed">{post.excerpt}</p>
 
-                <div className="flex items-center justify-between font-sans text-xs border-t border-white/10 pt-4">
+                <div className="flex items-center justify-between font-sans text-xs border-t border-edge pt-4">
                   <time dateTime={formatDate(post.publishedAt, 'iso')} className="text-stone-400">{formatDate(post.publishedAt, 'short', 'Undated')}</time>
                   <span className="text-stone-300 group-hover:text-white flex items-center gap-1.5 transition-colors">
                     Read <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform inline-block" aria-hidden="true" />

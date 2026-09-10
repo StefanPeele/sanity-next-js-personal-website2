@@ -41,7 +41,7 @@ export default async function SeriesIndexPage() {
       }} />
 
       <main id="content" className="relative max-w-5xl mx-auto px-6 pt-32 pb-24">
-        <header className="mb-12 border-b border-white/5 pb-8">
+        <header className="mb-12 border-b border-edge-faint pb-8">
           <Link href="/blog" className={`font-sans text-sm text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>← {copy.backLabel}</Link>
           <h1 className="mt-6 text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
           <p className="mt-4 max-w-xl font-sans text-base text-stone-400">{copy.header.lede}</p>
@@ -61,7 +61,7 @@ export default async function SeriesIndexPage() {
                 <li key={s._id}>
                   <Link
                     href={`/blog/series/${s.slug}`}
-                    className={`group flex h-full flex-col gap-4 rounded-xl border border-white/[0.08] bg-white/[0.02] p-6 hover:border-white/20 hover:bg-white/[0.04] transition-colors ${FOCUS}`}
+                    className={`group flex h-full flex-col gap-4 rounded-xl border border-edge bg-surface-veil p-6 hover:border-edge-strong hover:bg-surface-fill transition-colors ${FOCUS}`}
                   >
                     <div className="flex items-center justify-between gap-3">
                       <span className={`meta-label px-2.5 py-1 rounded-sm border ${status.className}`}>{status.label}</span>
@@ -70,7 +70,7 @@ export default async function SeriesIndexPage() {
                     <h2 className="font-serif text-2xl text-white leading-tight group-hover:text-stone-100">{s.title}</h2>
                     {s.description && <p className="font-sans text-sm text-stone-400 leading-relaxed">{s.description}</p>}
                     <div className="mt-auto pt-2">
-                      <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${published} of ${parts.length} parts published`}>
+                      <div className="h-1 w-full bg-surface-fill rounded-full overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${published} of ${parts.length} parts published`}>
                         <div className="h-full bg-stone-400 rounded-full" style={{ width: `${pct}%` }} />
                       </div>
                       <div className="meta-label mt-2 flex justify-between text-stone-400">

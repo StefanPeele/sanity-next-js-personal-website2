@@ -64,8 +64,8 @@ export function EmptyThumbnail({ title, category }: EmptyThumbnailProps) {
       </div>
 
       {/* Corner accent */}
-      <div className="absolute top-3 left-3 w-4 h-4 border-t border-l border-white/10" />
-      <div className="absolute bottom-3 right-3 w-4 h-4 border-b border-r border-white/10" />
+      <div className="absolute top-3 left-3 w-4 h-4 border-t border-l border-edge" />
+      <div className="absolute bottom-3 right-3 w-4 h-4 border-b border-r border-edge" />
     </div>
   )
 }

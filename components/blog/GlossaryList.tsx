@@ -51,7 +51,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
             aria-pressed={category === c}
             onClick={() => setCategory(c)}
             className={`meta-label px-3 py-2 rounded-full border transition-colors ${FOCUS} ${
-              category === c ? 'bg-white text-black border-white' : 'border-white/10 text-stone-300 hover:text-white hover:border-white/30'
+              category === c ? 'bg-white text-black border-white' : 'border-edge text-stone-300 hover:text-white hover:border-edge-strong'
             }`}
           >
             {c === 'all' ? `All (${entries.length})` : c}
@@ -64,7 +64,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
           <a
             key={l}
             href={`#letter-${l === '#' ? 'other' : l}`}
-            className={`w-8 h-8 flex items-center justify-center rounded font-mono text-xs text-stone-400 hover:text-white hover:bg-white/5 transition-colors ${FOCUS}`}
+            className={`w-8 h-8 flex items-center justify-center rounded font-mono text-xs text-stone-400 hover:text-white hover:bg-surface-fill transition-colors ${FOCUS}`}
           >
             {l}
           </a>
@@ -77,7 +77,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
 
       {groups.map(([letter, items]) => (
         <section key={letter} id={`letter-${letter === '#' ? 'other' : letter}`} className="mb-12 scroll-mt-28" aria-labelledby={`letter-heading-${letter}`}>
-          <h2 id={`letter-heading-${letter}`} className="font-serif text-4xl text-white mb-6 border-b border-white/5 pb-3">{letter}</h2>
+          <h2 id={`letter-heading-${letter}`} className="font-serif text-4xl text-white mb-6 border-b border-edge-faint pb-3">{letter}</h2>
           <dl className="space-y-8">
             {items.map((e) => (
               <div key={e._id} id={e.slug} className="scroll-mt-28 group">
@@ -89,7 +89,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
                     <span className="font-mono text-xs text-stone-400">also: {e.aliases.join(', ')}</span>
                   )}
                   {e.category && (
-                    <span className="meta-label ml-auto text-stone-400 border border-white/10 px-2 py-0.5 rounded-sm">{e.category}</span>
+                    <span className="meta-label ml-auto text-stone-400 border border-edge px-2 py-0.5 rounded-sm">{e.category}</span>
                   )}
                 </dt>
                 <dd className="mt-2">
@@ -100,7 +100,7 @@ export function GlossaryList({ entries, categories }: { entries: GlossaryListEnt
                         <ChevronRight size={14} className="transition-transform group-open/long:rotate-90" aria-hidden="true" />
                         Longer explanation
                       </summary>
-                      <div className="mt-3 pl-4 border-l border-white/10 max-w-2xl">{e.longDefinition}</div>
+                      <div className="mt-3 pl-4 border-l border-edge max-w-2xl">{e.longDefinition}</div>
                     </details>
                   )}
                   {(e.relatedPosts.length > 0 || e.relatedNotes.length > 0) && (

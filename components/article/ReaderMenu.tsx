@@ -19,7 +19,7 @@ export type ReaderMenuProps = {
 
 function Group({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <section className="py-3 border-b border-white/[0.08] last:border-b-0">
+    <section className="py-3 border-b border-edge last:border-b-0">
       <h3 className="text-xs font-sans text-stone-400 mb-2">{label}</h3>
       {children}
     </section>
@@ -33,7 +33,7 @@ function Chip({ active, onClick, children, role = 'radio' }: { active: boolean; 
       role={role}
       aria-checked={role === 'radio' ? active : undefined}
       onClick={onClick}
-      className={`px-3 py-1.5 rounded-full text-sm font-sans border transition-colors ${FOCUS} ${active ? 'bg-white text-black border-white' : 'border-white/10 text-stone-300 hover:border-white/30'}`}
+      className={`px-3 py-1.5 rounded-full text-sm font-sans border transition-colors ${FOCUS} ${active ? 'bg-white text-black border-white' : 'border-edge text-stone-300 hover:border-edge-strong'}`}
     >
       {children}
     </button>
@@ -45,7 +45,7 @@ function Switch({ label, checked, onChange }: { label: string; checked: boolean;
     <button type="button" role="switch" aria-checked={checked} onClick={onChange}
       className={`w-full flex items-center justify-between py-2 text-sm font-sans rounded-sm ${FOCUS} ${checked ? 'text-white' : 'text-stone-300'}`}>
       <span>{label}</span>
-      <span aria-hidden="true" className={`w-9 h-5 rounded-full border flex items-center px-0.5 transition-colors ${checked ? 'bg-white/20 border-white/30' : 'bg-white/5 border-white/10'}`}>
+      <span aria-hidden="true" className={`w-9 h-5 rounded-full border flex items-center px-0.5 transition-colors ${checked ? 'bg-white/20 border-edge-strong' : 'bg-surface-fill border-edge'}`}>
         <span className={`w-4 h-4 rounded-full transition-transform ${checked ? 'bg-white translate-x-4' : 'bg-stone-500'}`} />
       </span>
     </button>
@@ -138,7 +138,7 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
         aria-expanded={open}
         aria-controls={`${id}-panel`}
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex items-center gap-2 px-3 py-2 rounded-full border border-white/10 text-sm font-sans text-stone-300 hover:text-white hover:border-white/30 transition-colors ${FOCUS}`}
+        className={`inline-flex items-center gap-2 px-3 py-2 rounded-full border border-edge text-sm font-sans text-stone-300 hover:text-white hover:border-edge-strong transition-colors ${FOCUS}`}
       >
         <Settings2 size={14} aria-hidden />
         <span className="hidden sm:inline">{L.buttonLabel}</span>
@@ -163,7 +163,7 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
           aria-label={L.buttonLabel}
           // Below lg the panel is a bottom sheet: anchored as a dropdown it opened ~240px past
           // the fold at 390 and half its controls were unreachable. At lg it is a dropdown again.
-          className="reader-menu-panel fixed inset-x-4 bottom-4 max-h-[75vh] lg:absolute lg:inset-x-auto lg:bottom-auto lg:right-0 lg:top-full lg:mt-2 lg:w-80 lg:max-h-[70vh] overflow-y-auto z-[1002] rounded-xl border border-white/10 bg-[#111] shadow-2xl p-4 text-stone-200"
+          className="reader-menu-panel fixed inset-x-4 bottom-4 max-h-[75vh] lg:absolute lg:inset-x-auto lg:bottom-auto lg:right-0 lg:top-full lg:mt-2 lg:w-80 lg:max-h-[70vh] overflow-y-auto z-[1002] rounded-xl border border-edge bg-surface-raised shadow-2xl p-4 text-stone-200"
         >
           <div className="flex items-center justify-between mb-1">
             <span className="section-label">{L.buttonLabel}</span>

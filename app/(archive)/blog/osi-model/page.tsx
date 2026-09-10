@@ -87,7 +87,7 @@ export default async function OSIModelPage() {
         </nav>
 
         {/* Header */}
-        <header className="mb-16 border-b border-white/5 pb-10">
+        <header className="mb-16 border-b border-edge-faint pb-10">
           <h1 className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none mb-6">
             {copy.header.title}
           </h1>
@@ -103,7 +103,7 @@ export default async function OSIModelPage() {
 
         {/* Packet Journey */}
         <section className="mb-20">
-          <h2 className="font-serif text-2xl text-white mb-3 pb-4 border-b border-white/5">
+          <h2 className="font-serif text-2xl text-white mb-3 pb-4 border-b border-edge-faint">
             {copy.packetJourney.heading}
           </h2>
           <p className="text-stone-400 text-sm mb-6 max-w-xl">
@@ -119,13 +119,13 @@ export default async function OSIModelPage() {
 
         {/* Quick Reference Table */}
         <section className="mb-20">
-          <h2 className="font-serif text-2xl text-white mb-6 pb-4 border-b border-white/5">
+          <h2 className="font-serif text-2xl text-white mb-6 pb-4 border-b border-edge-faint">
             {copy.quickReference.heading}
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full font-mono text-xs">
               <thead>
-                <tr className="border-b border-white/5 text-stone-400 uppercase tracking-widest">
+                <tr className="border-b border-edge-faint text-stone-400 uppercase tracking-widest">
                   <th className="text-left py-3 pr-6 w-8">{col.n}</th>
                   <th className="text-left py-3 pr-6">{col.layer}</th>
                   <th className="text-left py-3 pr-6">{col.pdu}</th>
@@ -145,7 +145,7 @@ export default async function OSIModelPage() {
                 ].map((row) => (
                   <tr
                     key={row.n}
-                    className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                    className="border-b border-edge-faint hover:bg-surface-veil transition-colors"
                   >
                     <td className="py-3 pr-6 text-stone-400">{row.n}</td>
                     <td className="py-3 pr-6 text-stone-300">{row.name}</td>

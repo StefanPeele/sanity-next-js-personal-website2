@@ -48,8 +48,8 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
     <div ref={quizRef} className="relative" data-no-toc>
 
       {/* ── Quiz card ─────────────────────────────────────────────── */}
-      <div className="my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]">
-        <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+      <div className="my-10 border border-edge rounded-lg overflow-hidden bg-surface-raised">
+        <div className="px-6 py-4 border-b border-edge-faint flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="meta-label text-stone-400">
               Knowledge Check
@@ -79,9 +79,9 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
               const isThisCorrect = option.isCorrect
 
               let stateClass =
-                'border-white/10 text-stone-400 hover:border-stone-600 hover:text-white'
+                'border-edge text-stone-400 hover:border-stone-600 hover:text-white'
               if (isSelected && !revealed)
-                stateClass = 'border-stone-400 text-white bg-white/5'
+                stateClass = 'border-stone-400 text-white bg-surface-fill'
               if (revealed && isThisCorrect)
                 stateClass = 'border-emerald-500/50 text-emerald-400 bg-emerald-500/5'
               if (revealed && isSelected && !isThisCorrect)
@@ -110,7 +110,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
               <button
                 onClick={handleReveal}
                 disabled={!selected}
-                className="meta-label px-4 py-2 border border-white/20 text-stone-400 hover:border-white hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className="meta-label px-4 py-2 border border-edge-strong text-stone-400 hover:border-white hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 {isGated ? 'Submit Answer' : 'Reveal Answer'}
               </button>
@@ -126,7 +126,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
                 {(!isGated || !unlocked) && (
                   <button
                     onClick={reset}
-                    className="meta-label px-4 py-2 border border-white/10 text-stone-400 hover:text-white transition-colors"
+                    className="meta-label px-4 py-2 border border-edge text-stone-400 hover:text-white transition-colors"
                   >
                     Try Again
                   </button>
@@ -142,7 +142,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.4 }}
-                className="mt-6 pt-6 border-t border-white/5 overflow-hidden"
+                className="mt-6 pt-6 border-t border-edge-faint overflow-hidden"
               >
                 <p className="meta-label text-stone-400 mb-2">
                   Explanation
@@ -176,7 +176,7 @@ export function KnowledgeQuiz({ value }: KnowledgeQuizProps) {
               }}
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
-              <div className="w-10 h-10 rounded-full border border-white/10 bg-[#111] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full border border-edge bg-surface-raised flex items-center justify-center">
                 <svg
                   className="w-4 h-4 text-stone-400"
                   fill="none"

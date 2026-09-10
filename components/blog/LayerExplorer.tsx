@@ -101,9 +101,9 @@ export function LayerExplorer({ value }: LayerExplorerProps) {
   const active = layers.find((l) => l.number === activeLayer)
 
   return (
-    <div className="article-light-invert my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]" data-no-toc>
+    <div className="article-light-invert my-10 border border-edge rounded-lg overflow-hidden bg-surface-raised" data-no-toc>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-edge-faint flex items-center justify-between">
         <span className="meta-label text-stone-400">
           {value?.title || 'OSI Model Explorer'}
         </span>
@@ -120,7 +120,7 @@ export function LayerExplorer({ value }: LayerExplorerProps) {
                 setActiveLayer(activeLayer === layer.number ? null : layer.number)
               }
               className={`w-full flex items-center gap-4 px-4 py-3 rounded transition-all duration-200 text-left group ${
-                activeLayer === layer.number ? 'bg-white/5' : 'hover:bg-white/[0.03]'
+                activeLayer === layer.number ? 'bg-surface-fill' : 'hover:bg-surface-veil'
               }`}
             >
               <span
@@ -140,7 +140,7 @@ export function LayerExplorer({ value }: LayerExplorerProps) {
         </div>
 
         {/* Detail panel */}
-        <div className="p-6 min-h-[300px] flex items-center justify-center border-t md:border-t-0 border-white/5">
+        <div className="p-6 min-h-[300px] flex items-center justify-center border-t md:border-t-0 border-edge-faint">
           <AnimatePresence mode="wait">
             {active ? (
               <motion.div
@@ -175,7 +175,7 @@ export function LayerExplorer({ value }: LayerExplorerProps) {
                     {active.protocols.split(',').map((p) => (
                       <span
                         key={p}
-                        className="font-mono text-xs text-stone-400 border border-white/10 px-2 py-1 rounded-sm"
+                        className="font-mono text-xs text-stone-400 border border-edge px-2 py-1 rounded-sm"
                       >
                         {p.trim()}
                       </span>
@@ -183,7 +183,7 @@ export function LayerExplorer({ value }: LayerExplorerProps) {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/5">
+                <div className="pt-4 border-t border-edge-faint">
                   <p className="meta-label text-stone-400 mb-2">
                     Real World
                   </p>

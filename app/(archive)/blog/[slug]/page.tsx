@@ -165,7 +165,7 @@ export default async function BlogPostPage({ params }: Props) {
             {(post.tldr?.length ?? 0) > 0 && <TldrBlock items={post.tldr ?? []} articleType={post.articleType} heading={B.tldrHeading} sub={B.tldrSub} />}
 
             {(post.prerequisites?.length ?? 0) > 0 && (
-              <aside className="mb-10 p-5 rounded-xl border border-white/[0.08] bg-white/[0.02]" aria-labelledby="prereq-heading">
+              <aside className="mb-10 p-5 rounded-xl border border-edge bg-surface-veil" aria-labelledby="prereq-heading">
                 <h2 id="prereq-heading" className="section-label mb-3">{B.prerequisitesHeading}</h2>
                 <ul className="space-y-2">
                   {(post.prerequisites ?? []).map((prereq) => (

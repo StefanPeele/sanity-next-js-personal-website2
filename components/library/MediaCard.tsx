@@ -20,11 +20,11 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
   return (
     <article
       id={item._id}
-      className={`flex gap-5 p-5 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:border-white/15 transition-all scroll-mt-28 target:border-amber-400/40 ${large ? 'md:gap-6 md:p-6' : ''}`}
+      className={`flex gap-5 p-5 rounded-xl border border-edge bg-surface-veil hover:border-edge transition-all scroll-mt-28 target:border-amber-400/40 ${large ? 'md:gap-6 md:p-6' : ''}`}
       aria-labelledby={`lib-${item._id}`}
     >
       {/* Cover */}
-      <div className={`flex-shrink-0 bg-stone-900 rounded-lg border border-white/[0.08] overflow-hidden flex items-center justify-center ${large ? 'w-20 h-28 md:w-24 md:h-32' : 'w-14 h-20'}`}>
+      <div className={`flex-shrink-0 bg-surface-raised rounded-lg border border-edge overflow-hidden flex items-center justify-center ${large ? 'w-20 h-28 md:w-24 md:h-32' : 'w-14 h-20'}`}>
         {item.coverUrl ? (
           <Image
             src={item.coverUrl}
@@ -65,7 +65,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
         {item.status === 'current' && typeof item.progressPercent === 'number' && (
           <div className="mb-3">
             <div className="flex items-center gap-2 mb-1">
-              <div className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label="Reading progress">
+              <div className="flex-1 h-0.5 bg-surface-fill-strong rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label="Reading progress">
                 <div className="h-full bg-emerald-500/70 rounded-full" style={{ width: `${item.progressPercent}%` }} />
               </div>
               <span className="font-mono text-xs text-stone-400">{item.progressPercent}%</span>
@@ -109,7 +109,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
               <ChevronRight size={14} className="inline-block transition-transform group-open:rotate-90" aria-hidden="true" />
               {highlights.length} highlight{highlights.length === 1 ? '' : 's'}
             </summary>
-            <ul className="mt-2 space-y-2 pl-4 border-l border-white/[0.08]">
+            <ul className="mt-2 space-y-2 pl-4 border-l border-edge">
               {highlights.map((h, i) => (
                 <li key={i} className="font-serif text-sm text-stone-300 leading-relaxed">{h}</li>
               ))}
@@ -118,7 +118,7 @@ export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?:
         )}
 
         {(posts.length > 0 || notes.length > 0) && (
-          <div className="mt-3 pt-3 border-t border-white/5">
+          <div className="mt-3 pt-3 border-t border-edge-faint">
             <span className="meta-label text-stone-400 block mb-1.5">Influenced</span>
             <ul className="flex flex-wrap gap-x-3 gap-y-1">
               {posts.map((post) => (

@@ -23,7 +23,7 @@ export function BacklinksSection({ backlinks, heading = 'Referenced by' }: { bac
   const label = 'font-sans text-xs text-stone-400 w-16 flex-shrink-0 pt-1'
 
   return (
-    <section className="mt-16 pt-10 border-t border-white/[0.08]" aria-labelledby="backlinks-heading">
+    <section className="mt-16 pt-10 border-t border-edge" aria-labelledby="backlinks-heading">
       <div className="flex items-center gap-4 mb-6">
         <h2 id="backlinks-heading" className="section-label">{heading}</h2>
         <span className="font-sans text-xs text-stone-400">{total} link{total !== 1 ? 's' : ''}</span>

@@ -34,7 +34,7 @@ export default async function GraphPage() {
   const totalNodes = Object.values(graph).reduce((n, arr) => n + arr.length, 0)
 
   return (
-    <div className="relative flex flex-col bg-[#0a0a0a]" style={{ height: '100dvh' }}>
+    <div className="relative flex flex-col bg-surface" style={{ height: '100dvh' }}>
       <JsonLd
         data={{
           '@context': 'https://schema.org',

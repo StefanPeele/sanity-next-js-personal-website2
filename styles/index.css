@@ -2,6 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+/* The surface and border palette. Eight role-named tokens replacing 24 border and 30
+   background spellings on the knowledge side -- near-black alone was written three ways
+   (#0a0a0a, #0f0f0f, #111) and the default border four (white/10, white/[0.08], and the
+   opaque stone pair). Consumed through tailwind.config.ts as border-edge, bg-surface-raised
+   and so on; each carries its own alpha, so no /20 modifier is needed or honoured.
+
+   The site already used a consistent four-step border system -- divider, default, hover,
+   selected -- it was just spelled nine ways. The values below are the centres of what was
+   already there, so no call site moves by more than 0.05 alpha:
+
+     edge-faint   <- white/5, /[0.04], /[0.06]        divider
+     edge         <- white/10, /[0.08], /15           default card and control
+     edge-strong  <- white/20, /25, /30               hover and focus
+     edge-active  <- white/40, /50                    selected
+
+   An article theme overrides these here rather than restating the selectors that use them. */
+:root {
+  --edge-faint:          rgb(255 255 255 / 0.05);
+  --edge:                rgb(255 255 255 / 0.10);
+  --edge-strong:         rgb(255 255 255 / 0.25);
+  --edge-active:         rgb(255 255 255 / 0.45);
+  --surface:             #0a0a0a;
+  --surface-raised:      #111111;
+  --surface-veil:        rgb(255 255 255 / 0.02);
+  --surface-fill:        rgb(255 255 255 / 0.05);
+  --surface-fill-strong: rgb(255 255 255 / 0.10);
+}
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

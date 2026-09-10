@@ -20,7 +20,7 @@ export function SeriesBanner({ series, currentSlug, seriesOrder, labels = DEFAUL
   const next = idx >= 0 && idx < parts.length - 1 ? parts[idx + 1] : null
 
   return (
-    <nav aria-label="Series navigation" className="mb-10 rounded-xl border border-white/[0.08] bg-white/[0.02] overflow-hidden">
+    <nav aria-label="Series navigation" className="mb-10 rounded-xl border border-edge bg-surface-veil overflow-hidden">
       <div className="px-5 py-4 flex flex-wrap items-center gap-x-4 gap-y-2">
         <span className="font-sans text-sm text-amber-300">
           {position ? labels.partLabel.replace('{n}', String(position)).replace('{m}', String(parts.length)) : `${parts.length} parts`}
@@ -38,18 +38,18 @@ export function SeriesBanner({ series, currentSlug, seriesOrder, labels = DEFAUL
         )}
         <div className="ml-auto flex items-center gap-2">
           {prev?.slug ? (
-            <Link href={`/blog/${prev.slug}`} rel="prev" className={`font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-white/10 rounded-lg hover:border-white/30 transition-colors ${FOCUS}`} title={prev.title ?? undefined}>
+            <Link href={`/blog/${prev.slug}`} rel="prev" className={`font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-edge rounded-lg hover:border-edge-strong transition-colors ${FOCUS}`} title={prev.title ?? undefined}>
               ← {labels.prevLabel}
             </Link>
           ) : null}
           {next?.slug ? (
-            <Link href={`/blog/${next.slug}`} rel="next" className={`font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-white/10 rounded-lg hover:border-white/30 transition-colors ${FOCUS}`} title={next.title ?? undefined}>
+            <Link href={`/blog/${next.slug}`} rel="next" className={`font-sans text-sm text-stone-300 hover:text-white px-3 py-2 border border-edge rounded-lg hover:border-edge-strong transition-colors ${FOCUS}`} title={next.title ?? undefined}>
               {labels.nextLabel} →
             </Link>
           ) : null}
         </div>
       </div>
-      <details className="group border-t border-white/5">
+      <details className="group border-t border-edge-faint">
         <summary className={`cursor-pointer list-none px-5 py-3 font-sans text-sm text-stone-400 hover:text-white transition-colors flex items-center gap-2 ${FOCUS}`}>
           <ChevronRight size={14} className="transition-transform group-open:rotate-90" aria-hidden="true" />
           {labels.allPartsLabel}

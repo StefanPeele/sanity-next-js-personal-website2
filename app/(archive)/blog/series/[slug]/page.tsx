@@ -76,7 +76,7 @@ export default async function SeriesPage({ params }: Props) {
       }} />
 
       <main id="content" className="relative max-w-4xl mx-auto px-6 pt-32 pb-24">
-        <header className="mb-12 border-b border-white/5 pb-8">
+        <header className="mb-12 border-b border-edge-faint pb-8">
           <Link href="/blog/series" className={`meta-label text-stone-400 hover:text-white transition-colors ${FOCUS} rounded-sm`}>
             ← All series
           </Link>
@@ -101,7 +101,7 @@ export default async function SeriesPage({ params }: Props) {
                 <li key={p._id}>
                   <Link
                     href={`/blog/${p.slug}`}
-                    className={`group flex gap-5 rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 hover:border-white/20 hover:bg-white/[0.04] transition-colors ${FOCUS}`}
+                    className={`group flex gap-5 rounded-xl border border-edge bg-surface-veil p-5 hover:border-edge-strong hover:bg-surface-fill transition-colors ${FOCUS}`}
                   >
                     <span className="font-serif text-3xl text-stone-400 group-hover:text-stone-300 leading-none w-10 flex-shrink-0 tabular-nums" aria-hidden="true">
                       {String(i + 1).padStart(2, '0')}

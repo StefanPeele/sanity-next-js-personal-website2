@@ -123,7 +123,7 @@ export default async function NotePage({ params }: { params: Params }) {
         </header>
 
         {/* Growth strip: created → tended → status */}
-        <section aria-label="Growth timeline" className="mb-10 rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+        <section aria-label="Growth timeline" className="mb-10 rounded-xl border border-edge bg-surface-veil p-4">
           <ol className="grid grid-cols-3 gap-2 relative">
             <div aria-hidden="true" className="absolute left-[16%] right-[16%] top-[7px] h-px bg-gradient-to-r from-stone-700 via-stone-600 to-stone-500" />
             {[
@@ -166,7 +166,7 @@ export default async function NotePage({ params }: { params: Params }) {
                 <li key={tag._id}>
                   <Link
                     href={`/garden?tag=${tag.slug}`}
-                    className={`meta-label text-stone-400 hover:text-white border border-white/10 hover:border-white/30 px-2.5 py-1 rounded-sm transition-all ${FOCUS}`}
+                    className={`meta-label text-stone-400 hover:text-white border border-edge hover:border-edge-strong px-2.5 py-1 rounded-sm transition-all ${FOCUS}`}
                   >
                     #{tag.title}
                   </Link>
@@ -206,16 +206,16 @@ export default async function NotePage({ params }: { params: Params }) {
         </section>
 
         {/* Prev / next by lastTended */}
-        <nav aria-label="Neighbouring notes" className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-white/5 pt-8">
+        <nav aria-label="Neighbouring notes" className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-edge-faint pt-8">
           {older ? (
-            <Link href={`/garden/${older.slug}`} className={`group rounded-lg border border-white/[0.08] hover:border-white/25 p-4 transition-colors ${FOCUS}`}>
+            <Link href={`/garden/${older.slug}`} className={`group rounded-lg border border-edge hover:border-edge-strong p-4 transition-colors ${FOCUS}`}>
               <span className="meta-label text-stone-400 block mb-1">← Tended earlier</span>
               <span className="font-serif text-white group-hover:text-stone-200">{older.title}</span>
               <span className="block font-mono text-xs text-stone-400 mt-1">{formatDate(older.lastTended, 'short')}</span>
             </Link>
           ) : <span />}
           {newer ? (
-            <Link href={`/garden/${newer.slug}`} className={`group rounded-lg border border-white/[0.08] hover:border-white/25 p-4 text-right transition-colors ${FOCUS}`}>
+            <Link href={`/garden/${newer.slug}`} className={`group rounded-lg border border-edge hover:border-edge-strong p-4 text-right transition-colors ${FOCUS}`}>
               <span className="meta-label text-stone-400 block mb-1">Tended later →</span>
               <span className="font-serif text-white group-hover:text-stone-200">{newer.title}</span>
               <span className="block font-mono text-xs text-stone-400 mt-1">{formatDate(newer.lastTended, 'short')}</span>
@@ -246,7 +246,7 @@ function ConnectionList({
   items: { key: string; href: string; label: string; meta?: string; dot?: string }[]
 }) {
   return (
-    <section className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+    <section className="rounded-xl border border-edge bg-surface-veil p-4">
       <h2 className="meta-label text-stone-400 mb-3 border-l-2 border-stone-700 pl-3">{title}</h2>
       {items.length > 0 ? (
         <ul className="space-y-2">

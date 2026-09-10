@@ -26,9 +26,9 @@ export function WiresharkCallout({ value }: WiresharkCalloutProps) {
   const active = callouts.find((c) => c.number === activeCallout)
 
   return (
-    <div className="my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]">
+    <div className="my-10 border border-edge rounded-lg overflow-hidden bg-surface-raised">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-edge-faint flex items-center justify-between">
         <span className="meta-label text-stone-400">
           Wireshark Capture
         </span>
@@ -72,7 +72,7 @@ export function WiresharkCallout({ value }: WiresharkCalloutProps) {
       </div>
 
       {/* Detail panel */}
-      <div className="p-5 border-t border-white/5 min-h-[72px] flex items-center">
+      <div className="p-5 border-t border-edge-faint min-h-[72px] flex items-center">
         {active ? (
           <div className="flex gap-4 items-start w-full">
             <span className="w-6 h-6 rounded-full bg-emerald-500 text-black font-mono text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">

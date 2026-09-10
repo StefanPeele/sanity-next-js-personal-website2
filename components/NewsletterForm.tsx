@@ -41,7 +41,7 @@ export function NewsletterForm({ variant = 'card', source = 'site', className = 
       disabled={pending || succeeded}
       aria-describedby={statusId}
       aria-invalid={state.status === 'error' ? true : undefined}
-      className={`min-w-0 flex-1 bg-transparent border border-white/10 px-4 py-3 font-sans text-sm text-stone-100 placeholder:text-stone-500 ${FOCUS} disabled:opacity-60`}
+      className={`min-w-0 flex-1 bg-transparent border border-edge px-4 py-3 font-sans text-sm text-stone-100 placeholder:text-stone-500 ${FOCUS} disabled:opacity-60`}
     />
   )
 
@@ -93,7 +93,7 @@ export function NewsletterForm({ variant = 'card', source = 'site', className = 
   return (
     <form
       action={action}
-      className={`relative border border-white/10 bg-white/[0.02] p-6 md:p-8 ${className}`}
+      className={`relative border border-edge bg-surface-veil p-6 md:p-8 ${className}`}
     >
       <input type="hidden" name="source" value={source} />
       {honeypot}

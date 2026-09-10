@@ -14,14 +14,14 @@ const STATUS_ORDER: LibraryStatus[] = ['current', 'reference', 'finished', 'want
 
 function chip(active: boolean) {
   return `meta-label px-3 py-1.5 rounded-sm border transition-all ${FOCUS} ${
-    active ? 'bg-white text-black border-white' : 'border-white/15 text-stone-400 hover:text-white hover:border-white/30'
+    active ? 'bg-white text-black border-white' : 'border-edge text-stone-400 hover:text-white hover:border-edge-strong'
   }`
 }
 
 function Shelf({ id, label, accent = 'border-stone-600', children, count }: { id: string; label: string; accent?: string; children: React.ReactNode; count: number }) {
   return (
     <section className="mb-16" aria-labelledby={id}>
-      <div className="mb-6 pb-4 border-b border-white/[0.08] flex items-center justify-between">
+      <div className="mb-6 pb-4 border-b border-edge flex items-center justify-between">
         <h2 id={id} className={`meta-label text-stone-400 border-l-2 ${accent} pl-4`}>{label}</h2>
         <span className="meta-label text-stone-400">{count}</span>
       </div>
@@ -103,7 +103,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
       </div>
 
       {filtered.length === 0 && (
-        <div className="py-20 text-center border border-white/5 rounded-xl mb-16">
+        <div className="py-20 text-center border border-edge-faint rounded-xl mb-16">
           <p className="font-serif italic text-stone-400 text-lg mb-2">Nothing on this shelf.</p>
           <p className="meta-label text-stone-400">Try another type or status.</p>
         </div>
@@ -140,7 +140,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
         <Shelf id="shelf-deck" label="On Deck" count={wantToRead.length}>
           <ul className="space-y-2">
             {wantToRead.map((item) => (
-              <li key={item._id} id={item._id} className="flex items-center gap-3 py-2 border-b border-white/5 scroll-mt-28">
+              <li key={item._id} id={item._id} className="flex items-center gap-3 py-2 border-b border-edge-faint scroll-mt-28">
                 <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={14} className="flex-shrink-0 text-stone-400 mt-1" />
                 {item.url ? (
                   <a href={item.url} target="_blank" rel="noreferrer noopener" className={`font-serif text-stone-300 hover:text-white rounded-sm ${FOCUS}`}>{item.title}</a>
@@ -159,7 +159,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
         <Shelf id="shelf-abandoned" label="Abandoned" accent="border-stone-800" count={abandoned.length}>
           <ul className="space-y-2">
             {abandoned.map((item) => (
-              <li key={item._id} id={item._id} className="flex items-start gap-3 py-2 border-b border-white/5 scroll-mt-28">
+              <li key={item._id} id={item._id} className="flex items-start gap-3 py-2 border-b border-edge-faint scroll-mt-28">
                 <Icon name={MEDIA_ICONS[item.mediaType ?? ''] ?? MEDIA_ICON_FALLBACK} size={14} className="flex-shrink-0 text-stone-400 mt-1" />
                 <div>
                   <span className="font-serif text-stone-400 line-through decoration-stone-600">{item.title}</span>

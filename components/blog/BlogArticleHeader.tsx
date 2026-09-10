@@ -64,7 +64,7 @@ export function BlogArticleHeader({
   ]
 
   return (
-    <header className="w-full border-b border-white/5 pt-10 pb-10 md:pt-14 md:pb-12">
+    <header className="w-full border-b border-edge-faint pt-10 pb-10 md:pt-14 md:pb-12">
       {/* Mirrors the reading grid in [slug]/page.tsx so the header lines up with the prose
           column. Centring on the viewport instead leaves it ~130px right of the body text,
           because the grid reserves a 220px column for the table of contents. */}
@@ -93,7 +93,7 @@ export function BlogArticleHeader({
               </span>
             )}
             {categories.map((cat) => (
-              <span key={cat} className="font-sans text-xs px-3 py-1.5 rounded-full border border-white/10 text-stone-400">
+              <span key={cat} className="font-sans text-xs px-3 py-1.5 rounded-full border border-edge text-stone-400">
                 {cat}
               </span>
             ))}
@@ -131,7 +131,7 @@ export function BlogArticleHeader({
               sizes="(min-width: 768px) 36rem, 100vw"
               placeholder={lqip ? 'blur' : 'empty'}
               blurDataURL={lqip ?? undefined}
-              className="w-full h-auto rounded-lg border border-white/10"
+              className="w-full h-auto rounded-lg border border-edge"
             />
           </figure>
         )}

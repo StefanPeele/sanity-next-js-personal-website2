@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default function PostNotFound() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-stone-300 flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen bg-surface text-stone-300 flex flex-col items-center justify-center px-6">
 
       <div className="max-w-lg w-full text-center">
 
@@ -35,13 +35,13 @@ export default function PostNotFound() {
           </Link>
           <Link
             href="/"
-            className="meta-label px-5 py-3 border border-white/10 text-stone-400 hover:border-white/30 hover:text-white transition-colors"
+            className="meta-label px-5 py-3 border border-edge text-stone-400 hover:border-edge-strong hover:text-white transition-colors"
           >
             Home
           </Link>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-white/5">
+        <div className="mt-16 pt-8 border-t border-edge-faint">
           <p className="meta-label text-stone-400">
             ERROR_CODE: 404 · STATUS: POST_NOT_FOUND · ARCHIVE: STEFANPEELE.COM
           </p>

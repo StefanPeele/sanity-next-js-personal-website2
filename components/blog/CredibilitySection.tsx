@@ -108,7 +108,7 @@ export function CredibilitySection({
   const reviewBadge = reviewStatus ? REVIEW_STATUS_CONFIG[reviewStatus] : null
 
   return (
-    <section className="mt-16 pt-12 border-t border-white/[0.08] space-y-8" aria-label={heading}>
+    <section className="mt-16 pt-12 border-t border-edge space-y-8" aria-label={heading}>
       <h2 className="sr-only">{heading}</h2>
 
       {/* ── Metadata badges ────────────────────────────────────────── */}
@@ -125,12 +125,12 @@ export function CredibilitySection({
             </span>
           )}
           {maturity && (
-            <span className="meta-label px-3 py-1.5 rounded-sm border border-white/10 text-stone-400">
+            <span className="meta-label px-3 py-1.5 rounded-sm border border-edge text-stone-400">
               {lbl(labels.maturity, maturityIndicator, maturity.label)}
             </span>
           )}
           {load && (
-            <span className="meta-label px-3 py-1.5 rounded-sm border border-white/10 text-stone-400">
+            <span className="meta-label px-3 py-1.5 rounded-sm border border-edge text-stone-400">
               {lbl(labels.load, cognitiveLoad, load.label)}
             </span>
           )}
@@ -202,7 +202,7 @@ export function CredibilitySection({
                 href={response.url}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="flex items-start gap-4 p-4 rounded-lg border border-white/[0.08] hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.04] transition-all group"
+                className="flex items-start gap-4 p-4 rounded-lg border border-edge hover:border-edge-strong bg-surface-veil hover:bg-surface-fill transition-all group"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -256,7 +256,7 @@ export function CredibilitySection({
                 transition={{ duration: reduced ? 0 : 0.3 }}
                 className="overflow-hidden mt-4"
               >
-                <ol className="space-y-2 border-l border-white/[0.08] pl-4">
+                <ol className="space-y-2 border-l border-edge pl-4">
                   {changelog
                     .slice()
                     .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
@@ -278,7 +278,7 @@ export function CredibilitySection({
       )}
 
       {/* ── Correction link ───────────────────────────────────────── */}
-      <div className="pt-4 border-t border-white/5">
+      <div className="pt-4 border-t border-edge-faint">
         <a
           href={labels.correctionsUrl}
           target="_blank"

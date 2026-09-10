@@ -73,7 +73,7 @@ export default async function BlogPage() {
 
       <main id="content" className="relative max-w-7xl mx-auto px-6 pt-32 pb-24">
         {/* ─── HEADER ─────────────────────────────────────────────── */}
-        <header className="mb-12 border-b border-white/5 pb-8 flex flex-col md:flex-row justify-between items-end gap-6">
+        <header className="mb-12 border-b border-edge-faint pb-8 flex flex-col md:flex-row justify-between items-end gap-6">
           <div>
             <h1 className="text-5xl md:text-7xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
             {copy.header.lede && <p className="mt-4 max-w-2xl font-sans text-base text-stone-400 leading-relaxed">{copy.header.lede}</p>}
@@ -94,7 +94,7 @@ export default async function BlogPage() {
 
             <Link
               href={`/blog/${featuredPost.slug}`}
-              className={`block group mb-20 relative overflow-hidden rounded-lg border border-white/10 min-h-[480px] ${FOCUS}`}
+              className={`block group mb-20 relative overflow-hidden rounded-lg border border-edge min-h-[480px] ${FOCUS}`}
             >
               <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/70 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
 
@@ -128,7 +128,7 @@ export default async function BlogPage() {
                     </span>
                   )}
                   {featuredPost.categories?.filter(Boolean).map((cat) => (
-                    <span key={cat} className="font-sans text-xs px-3 py-1.5 rounded-full border border-white/20 text-stone-300 backdrop-blur-md bg-black/30">
+                    <span key={cat} className="font-sans text-xs px-3 py-1.5 rounded-full border border-edge-strong text-stone-300 backdrop-blur-md bg-black/30">
                       {cat}
                     </span>
                   ))}

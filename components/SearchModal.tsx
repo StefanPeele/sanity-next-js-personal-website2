@@ -179,7 +179,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
         </svg>
         <span className="hidden lg:inline">Search</span>
-        <kbd className="hidden lg:inline font-mono text-xs text-stone-400 border border-white/10 px-1.5 py-0.5 rounded group-hover:border-white/20 transition-colors">⌘K</kbd>
+        <kbd className="hidden lg:inline font-mono text-xs text-stone-400 border border-edge px-1.5 py-0.5 rounded group-hover:border-edge-strong transition-colors">⌘K</kbd>
       </button>
 
       <AnimatePresence>
@@ -202,11 +202,11 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={titleId}
-                className="bg-[#111] border border-white/10 rounded-xl overflow-hidden shadow-2xl"
+                className="bg-surface-raised border border-edge rounded-xl overflow-hidden shadow-2xl"
               >
                 <h2 id={titleId} className="sr-only">Search the site</h2>
 
-                <div className="flex items-center gap-3 px-4 py-4 border-b border-white/5">
+                <div className="flex items-center gap-3 px-4 py-4 border-b border-edge-faint">
                   <svg className="w-4 h-4 text-stone-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                   </svg>
@@ -264,7 +264,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                               aria-selected={isActive}
                               onClick={() => navigate(result.href, query)}
                               onMouseEnter={() => setActiveIdx(idx)}
-                              className={`w-full text-left px-4 py-3 flex flex-col gap-1 transition-colors border-b border-white/[0.04] last:border-0 ${FOCUS} ${isActive ? 'bg-white/5' : 'hover:bg-white/[0.03]'}`}
+                              className={`w-full text-left px-4 py-3 flex flex-col gap-1 transition-colors border-b border-edge-faint last:border-0 ${FOCUS} ${isActive ? 'bg-surface-fill' : 'hover:bg-surface-veil'}`}
                             >
                               <span className="flex items-center justify-between gap-4">
                                 <span className="flex items-center gap-2 min-w-0">
@@ -283,7 +283,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                   })}
 
                   {total > flat.length && (
-                    <p className="meta-label px-4 py-3 text-stone-400 border-t border-white/5">
+                    <p className="meta-label px-4 py-3 text-stone-400 border-t border-edge-faint">
                       Showing the top {flat.length} of {total} matches — refine your query to narrow down.
                     </p>
                   )}
@@ -305,7 +305,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                           <ul className="flex flex-wrap gap-2">
                             {recent.map((r) => (
                               <li key={r}>
-                                <button type="button" onClick={() => setQuery(r)} className={`font-mono text-xs text-stone-300 hover:text-white border border-white/10 hover:border-white/30 px-2.5 py-1 rounded-sm transition-colors ${FOCUS}`}>
+                                <button type="button" onClick={() => setQuery(r)} className={`font-mono text-xs text-stone-300 hover:text-white border border-edge hover:border-edge-strong px-2.5 py-1 rounded-sm transition-colors ${FOCUS}`}>
                                   {r}
                                 </button>
                               </li>
@@ -333,7 +333,7 @@ export function SearchModal({ quickLinks }: { quickLinks?: NavLink[] } = {}) {
                   )}
                 </div>
 
-                <div className="px-4 py-3 border-t border-white/5 flex items-center gap-4">
+                <div className="px-4 py-3 border-t border-edge-faint flex items-center gap-4">
                   <span className="meta-label text-stone-400">↑↓ navigate</span>
                   <span className="meta-label text-stone-400">↵ open</span>
                   <span className="meta-label text-stone-400">esc close</span>

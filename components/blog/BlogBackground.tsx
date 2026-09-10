@@ -5,7 +5,7 @@ export function BlogBackground() {
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 -z-20 pointer-events-none bg-[#0a0a0a]"
+      className="fixed inset-0 -z-20 pointer-events-none bg-surface"
       style={{
         backgroundImage:
           'radial-gradient(ellipse 80% 60% at 20% 0%, rgba(30,35,45,0.6) 0%, transparent 60%),' +

@@ -12,7 +12,7 @@ export function TldrBlock({ items, articleType, heading = 'TL;DR', sub = 'If you
   return (
     <aside
       aria-labelledby="tldr-heading"
-      className="mb-12 rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 md:p-6"
+      className="mb-12 rounded-xl border border-edge bg-surface-veil p-5 md:p-6"
       style={{ borderLeft: `3px solid ${accent}` }}
     >
       <div className="flex items-baseline justify-between gap-4 mb-4">

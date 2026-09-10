@@ -182,7 +182,7 @@ export function CustomPortableText({
         )
       },
       code: ({ children }) => (
-        <code className="font-mono text-[0.875em] text-stone-200 bg-white/5 border border-white/10 rounded px-1.5 py-0.5">
+        <code className="font-mono text-[0.875em] text-stone-200 bg-surface-fill border border-edge rounded px-1.5 py-0.5">
           {children}
         </code>
       ),
@@ -204,7 +204,7 @@ export function CustomPortableText({
     types: {
       image: ({ value: v }: { value: Image & { alt?: string; caption?: string; keepColor?: boolean } }) => (
         <figure
-          className="my-16 rounded-xl overflow-hidden border border-white/5 shadow-2xl bg-[#0a0a0a]"
+          className="my-16 rounded-xl overflow-hidden border border-edge-faint shadow-2xl bg-surface"
           {...(v?.keepColor === false ? { 'data-desaturate': '' } : {})}
         >
           <ImageBox
@@ -213,7 +213,7 @@ export function CustomPortableText({
             classesWrapper="relative aspect-[16/9] w-full h-auto"
           />
           {v?.caption && (
-            <figcaption className="meta-label px-4 py-3 text-stone-400 text-center border-t border-white/5">
+            <figcaption className="meta-label px-4 py-3 text-stone-400 text-center border-t border-edge-faint">
               {v.caption}
             </figcaption>
           )}

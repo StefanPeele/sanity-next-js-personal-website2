@@ -428,7 +428,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
 
       {settling && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3 pointer-events-none" aria-hidden="true">
-          <div className="w-6 h-6 border border-white/20 border-t-white/50 rounded-full animate-spin" />
+          <div className="w-6 h-6 border border-edge-strong border-t-edge-active rounded-full animate-spin" />
           <p className="meta-label text-stone-400">Mapping connections…</p>
         </div>
       )}
@@ -442,7 +442,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
             top: Math.max(mousePos.y - 50, 8),
           }}
         >
-          <div className="bg-[#111]/95 border border-white/15 rounded-xl p-4 w-56 backdrop-blur-xl shadow-2xl">
+          <div className="bg-[#111]/95 border border-edge rounded-xl p-4 w-56 backdrop-blur-xl shadow-2xl">
             <div className="flex items-center gap-2 mb-2.5">
               <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: hoveredNode.color }} />
               <span className="meta-label text-stone-400">
@@ -461,8 +461,8 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
       )}
 
       {/* Controls */}
-      <div className="absolute top-4 left-4 bg-[#0d0d0f]/90 border border-white/10 rounded-xl p-4 backdrop-blur-xl w-52 shadow-xl">
-        <div className="flex gap-4 mb-4 pb-3 border-b border-white/[0.08]">
+      <div className="absolute top-4 left-4 bg-[#0d0d0f]/90 border border-edge rounded-xl p-4 backdrop-blur-xl w-52 shadow-xl">
+        <div className="flex gap-4 mb-4 pb-3 border-b border-edge">
           <div>
             <div className="font-serif text-lg text-white font-bold">{model.nodes.length}</div>
             <div className="meta-label text-stone-400">{copy.nodesLabel}</div>
@@ -482,7 +482,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
               onClick={() => toggleFilter(key)}
               aria-pressed={filters[key]}
               className={`flex items-center justify-between w-full px-2 py-1.5 rounded-md transition-all ${FOCUS} ${
-                filters[key] ? 'bg-white/5 opacity-100' : 'bg-transparent opacity-40'
+                filters[key] ? 'bg-surface-fill opacity-100' : 'bg-transparent opacity-40'
               }`}
             >
               <span className="flex items-center gap-2">
@@ -501,7 +501,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={copy.searchPlaceholder}
-          className={`w-full bg-white/5 border border-white/10 rounded-md px-3 py-1.5 font-mono text-xs text-white placeholder:text-stone-500 focus:border-white/25 transition-colors ${FOCUS}`}
+          className={`w-full bg-surface-fill border border-edge rounded-md px-3 py-1.5 font-mono text-xs text-white placeholder:text-stone-500 focus:border-edge-strong transition-colors ${FOCUS}`}
         />
 
         <p className="meta-label text-stone-400 mt-3 leading-loose">
@@ -510,7 +510,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
       </div>
 
       {/* Legend */}
-      <details className="absolute bottom-4 left-4 bg-[#0d0d0f]/85 border border-white/[0.08] rounded-lg backdrop-blur-xl max-w-[220px]" open>
+      <details className="absolute bottom-4 left-4 bg-[#0d0d0f]/85 border border-edge rounded-lg backdrop-blur-xl max-w-[220px]" open>
         <summary className={`meta-label cursor-pointer px-3 py-2 text-stone-400 ${FOCUS} rounded-lg`}>
           {copy.legendHeading}
         </summary>
@@ -525,7 +525,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
               <span className="meta-label text-stone-400">{label}</span>
             </li>
           ))}
-          <li className="meta-label pt-1 mt-1 border-t border-white/[0.06] text-stone-400">
+          <li className="meta-label pt-1 mt-1 border-t border-edge-faint text-stone-400">
             {copy.linesNote}
           </li>
         </ul>
@@ -533,7 +533,7 @@ export function KnowledgeGraph({ data, copy = DEFAULT_KNOWLEDGE_PAGES.graph, lan
 
       {/* Keyboard / screen-reader alternative */}
       <div className="absolute bottom-4 right-4">
-        <details className="bg-[#0d0d0f]/90 border border-white/[0.08] rounded-lg backdrop-blur-xl max-w-xs">
+        <details className="bg-[#0d0d0f]/90 border border-edge rounded-lg backdrop-blur-xl max-w-xs">
           <summary className={`meta-label cursor-pointer px-3 py-2 text-stone-400 ${FOCUS} rounded-lg`}>
             {copy.nodeListLabel} ({listNodes.length})
           </summary>
@@ -595,7 +595,7 @@ export function GraphNeighborhood({ data, focusId, height = 260 }: { data: Graph
   const neighbours = model.nodes.filter((n) => n.id !== focusId)
 
   return (
-    <div className="relative rounded-xl border border-white/[0.08] overflow-hidden" style={{ background: '#0c0c0f' }}>
+    <div className="relative rounded-xl border border-edge overflow-hidden" style={{ background: '#0c0c0f' }}>
       <svg
         ref={svgRef}
         className="w-full"
@@ -606,12 +606,12 @@ export function GraphNeighborhood({ data, focusId, height = 260 }: { data: Graph
       <div className="meta-label absolute top-2 right-3 text-stone-400" aria-live="polite">
         {hovered ? `${hovered.type} · ${hovered.label}` : `${neighbours.length} connection${neighbours.length === 1 ? '' : 's'}`}
       </div>
-      <ul className="flex flex-wrap gap-2 p-3 border-t border-white/[0.06]" aria-label="Connected items">
+      <ul className="flex flex-wrap gap-2 p-3 border-t border-edge-faint" aria-label="Connected items">
         {neighbours.map((n) => (
           <li key={n.id}>
             <a
               href={n.url}
-              className={`flex items-center gap-1.5 font-mono text-xs text-stone-400 hover:text-white border border-white/10 hover:border-white/30 px-2 py-1 rounded-sm transition-colors ${FOCUS}`}
+              className={`flex items-center gap-1.5 font-mono text-xs text-stone-400 hover:text-white border border-edge hover:border-edge-strong px-2 py-1 rounded-sm transition-colors ${FOCUS}`}
             >
               <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: n.color }} aria-hidden="true" />
               {n.label}

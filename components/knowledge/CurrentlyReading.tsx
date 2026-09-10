@@ -34,7 +34,7 @@ export function CurrentlyReading({ items, title = 'Currently reading' }: { items
             return (
               <li key={item._id ?? `${item.title}-${i}`}>
                 <Link href={href} className={`group flex gap-3 rounded-sm ${FOCUS}`}>
-                  <span className="flex-shrink-0 w-9 h-12 rounded border border-white/10 bg-stone-900 overflow-hidden flex items-center justify-center">
+                  <span className="flex-shrink-0 w-9 h-12 rounded border border-edge bg-surface-raised overflow-hidden flex items-center justify-center">
                     {item.coverUrl ? (
                       <Image src={item.coverUrl} alt="" width={36} height={48} className="w-full h-full object-cover" />
                     ) : (
@@ -49,7 +49,7 @@ export function CurrentlyReading({ items, title = 'Currently reading' }: { items
                     {item.author && <span className="font-mono text-xs text-stone-400 block truncate">{item.author}</span>}
                     {typeof item.progressPercent === 'number' && (
                       <span className="flex items-center gap-2 mt-1.5">
-                        <span className="flex-1 h-0.5 bg-white/[0.08] rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${item.title} progress`}>
+                        <span className="flex-1 h-0.5 bg-surface-fill-strong rounded-full overflow-hidden" role="progressbar" aria-valuenow={item.progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${item.title} progress`}>
                           <span className="block h-full bg-emerald-500/70 rounded-full" style={{ width: `${Math.max(0, Math.min(100, item.progressPercent))}%` }} />
                         </span>
                         <span className="font-mono text-xs text-stone-400">{item.progressPercent}%</span>

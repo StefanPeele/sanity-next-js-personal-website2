@@ -49,7 +49,7 @@ export default async function LibraryPage() {
         }}
       />
       <main id="content" className="relative max-w-4xl mx-auto px-6 pt-32 pb-24">
-        <header className="mb-12 border-b border-white/5 pb-10">
+        <header className="mb-12 border-b border-edge-faint pb-10">
           <h1 className="text-5xl md:text-6xl font-serif font-bold tracking-tight text-white leading-none mb-4">{copy.header.title}</h1>
           <p className="text-stone-400 text-base leading-relaxed max-w-2xl">{copy.header.lede}</p>
           <dl className="flex flex-wrap gap-6 mt-6">
@@ -71,13 +71,13 @@ export default async function LibraryPage() {
         {items.length > 0 ? (
           <LibraryClient items={items} />
         ) : (
-          <div className="py-24 text-center border border-white/5 rounded-xl">
+          <div className="py-24 text-center border border-edge-faint rounded-xl">
             <p className="font-serif italic text-stone-400 text-lg mb-2">{copy.emptyState.title}</p>
             <p className="font-sans text-sm text-stone-400">{copy.emptyState.hint}</p>
           </div>
         )}
 
-<nav className="mt-16 pt-8 border-t border-white/5 flex flex-wrap gap-6" aria-label="Related sections">
+<nav className="mt-16 pt-8 border-t border-edge-faint flex flex-wrap gap-6" aria-label="Related sections">
           {copy.relatedNav.map((l) => (
             <Link key={navHref(l) + l.label} href={navHref(l)} className="font-sans text-sm text-stone-400 hover:text-white transition-colors">{l.label}</Link>
           ))}

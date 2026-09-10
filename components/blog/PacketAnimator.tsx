@@ -39,9 +39,9 @@ export function PacketAnimator({ value }: PacketAnimatorProps) {
   if (total === 0) return null
 
   return (
-    <div className="article-light-invert my-10 border border-white/10 rounded-lg overflow-hidden bg-[#0f0f0f]" data-no-toc>
+    <div className="article-light-invert my-10 border border-edge rounded-lg overflow-hidden bg-surface-raised" data-no-toc>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-edge-faint flex items-center justify-between">
         <span className="meta-label text-stone-400">
           Packet Journey
         </span>
@@ -115,14 +115,14 @@ export function PacketAnimator({ value }: PacketAnimatorProps) {
         <button
           onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
           disabled={currentStep === 0}
-          className="meta-label px-4 py-2 border border-white/10 text-stone-400 hover:border-white/30 hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+          className="meta-label px-4 py-2 border border-edge text-stone-400 hover:border-edge-strong hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
         >
           ← Back
         </button>
         <button
           onClick={() => setCurrentStep((s) => Math.min(total - 1, s + 1))}
           disabled={currentStep === total - 1}
-          className="meta-label px-4 py-2 border border-white/10 text-stone-400 hover:border-white/30 hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+          className="meta-label px-4 py-2 border border-edge text-stone-400 hover:border-edge-strong hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed"
         >
           Next →
         </button>

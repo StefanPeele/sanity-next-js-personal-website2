@@ -64,7 +64,7 @@ export function ArticleToc({ copy, menu, variant }: Props) {
   return (
     <div className="lg:hidden mb-8 flex items-start gap-3" data-print-hide>
       {headings.length > 0 ? (
-        <details className="flex-1 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3" open={headings.length <= 8} data-toc="mobile">
+        <details className="flex-1 rounded-xl border border-edge bg-surface-veil px-4 py-3" open={headings.length <= 8} data-toc="mobile">
           <summary className={`cursor-pointer section-label list-none flex items-center justify-between ${FOCUS} rounded-sm`}>
             {copy.toc.mobileTitle}
             <ChevronDown size={16} className="text-stone-400" aria-hidden="true" />
