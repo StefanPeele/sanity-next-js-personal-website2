@@ -491,24 +491,69 @@ The rule between sections fades into the background and reads as an accident.
 screenshots. Space is often the better answer — a rule that's too faint is worse than
 no rule.
 
+> **ANSWERED 2026-09-11 — replace with space.** §1.1 counted bordered blocks >200px on every
+> measured index. The split is exact: news-density sites run many (Verge 89, FT 51, Atlantic
+> 50, Defector 23, Guardian 23); every essay/magazine site runs almost none (Increment **0**,
+> Asterisk 2, Aeon 2, Ars 2, 404 Media 3, Quanta 4). We sit at 16, in the wrong camp.
+> Four options rendered at 1440/768/390 in `screenshots/divider-options/`; recommendation is
+> **D** — space, plus `.section-label` as a mono kicker to do the separating work the rule
+> was doing. Reject B (strengthening): louder without being clearer.
+
 ### Section headers
 
-"Featured" as a section header is currently **smaller than the post title beneath it**.
-That inverts the hierarchy.
+> **AMENDED 2026-09-11.** The premise — that a section header smaller than the title
+> beneath it inverts the hierarchy — is **not** what the measurements show, and the
+> genuine inversion is elsewhere.
 
-Per your 1.2 research, a kicker is *deliberately* small — but it works because it's
-tracked, weighted, and positioned as a deliberate signal, not because it's shrunk. Build
-it to the tradition.
+A small section label above a large headline is the *normal* arrangement: 404 Media, Ars,
+Defector, FT, Increment and NYT all do exactly this, at a constant 10–15px. **It is not an
+inversion, it is the convention.**
+
+The real inversion is at page level: **our `h1` renders at 72px above a 60px hero
+headline.** Of twelve reference sites, **none** renders its own section name larger than
+its lead story. Fixing that means bringing the h1 *down* to around 48px, which also creates
+the 60 / 48 / 24 ladder the page currently lacks (§1.1 measured our tiers as 72 / 60 / — /
+24, with nothing in the middle).
+
+Kickers are a **constant 10–15px**, never a ratio of the headline — §1.2 measured 404 Media
+holding 14.1px over both a 44px and a 26.5px headline. Tracking is mostly `normal`; only 3
+of 6 track at all. **Colour is the differentiator**, not size or tracking.
 
 ### The FEATURED badge specifically
 
-Rebuild it as a true newspaper kicker per 1.2:
-- Correct size ratio to the headline it accompanies
-- Correct weight, case, tracking
-- **Vertically centred in its container** — it currently sits at the top
-- Consistent with the typographic family of the rest of the card
-- It should read as *deliberately different* from the taxonomy pills, not as an
-  oversight
+> **AMENDED 2026-09-11.** This section previously said *"Rebuild it as a true newspaper
+> kicker per 1.2"*. §1.2 measured that this is a category error, and the correction is now
+> the instruction.
+
+**A kicker, a section label, a tag and a badge are four different forms**, measured across
+six publications:
+
+| | Purpose | Measured form | Clickable |
+| --- | --- | --- | --- |
+| **Kicker** | which section/theme the story belongs to | 10–15px, uppercase, **coloured**, no box, no border, above the headline, 2–23px gap | usually |
+| **Section label** | heading for a group of stories | much larger — Aeon 42px, Defector 47px, 404 Media 35px | sometimes |
+| **Tag** | taxonomy, many per item | pill with a **border**, sentence case, in a row with siblings | always |
+| **Badge / flag** | **status**, not taxonomy | small, often a **filled box** — FT "Premium", NYT "LIVE" | never |
+
+**"Featured" is a status, so it is a badge.** Its filled white box is the *correct* family.
+Rebuilding it as a kicker would make it read as the story's section, which it is not.
+
+The real defect is narrower: it sits **in the tag row, wearing tag geometry, beside two
+actual tags**. FT and NYT both place status flags in the *kicker position* — above the
+headline, on their own line — precisely so they are not read as taxonomy.
+
+**And it is on the page twice.** The section label above the hero reads `FEATURED`; the
+badge inside the hero reads `FEATURED`. Same word, 40px apart, in two typographic systems.
+A flag that repeats the heading directly above it carries no information.
+
+**Resolve both in one proposal.** The recommendation on the table (`PROPOSALS.md` §2.5) is
+subtraction: **drop the badge, keep the section label** — the hero's position already says
+"featured", which is what Aeon, Asterisk and Increment do. If the badge is kept instead,
+it moves above the headline and the *lane* becomes a separate coloured kicker, so that no
+word appears twice.
+
+The vertical-centring defect was fixed in Phase 0.2 (`b6c07c2`): measured 5px asymmetry
+→ 1px, matching both neighbouring pills.
 
 ## 2.6 The "AI-looking" problem
 
@@ -518,6 +563,23 @@ My diagnosis, which you should test rather than assume: every element on the car
 carries similar visual weight with similar spacing, so nothing leads. Editorial design
 uses sharp contrast — one thing large, one thing small, and deliberately nothing in
 between. Generated design defaults to everything being medium-sized and evenly spaced.
+
+> **TESTED 2026-09-11. The theory is right about the card and wrong about the page.**
+>
+> Page level: lead:body **5.14×**, the second most aggressive of thirteen measured pages.
+> Nothing about the page is timid.
+>
+> Card level: size spread **1.67×, the lowest of five measured cards** (404 Media 1.88,
+> Quanta 2.00, Defector 2.00, Ars 3.26), and title:excerpt **1.43×**, also lowest. The card
+> title is **w400**; three of four references use **w700**.
+>
+> **The page shouts and the card mumbles.** Two levers unused on the card — size spread and
+> weight. Defector is the counter-lesson: two sizes, 2.00× spread, because it carries **no
+> excerpt**. Contrast comes from removing the middle term, not adding steps.
+>
+> Four options rendered in `screenshots/card-options/`; recommendation is **C** — 24px w600
+> plus the pill restyled as a mono kicker. It must ship with 2.4's reading-time fix, because
+> a mono kicker makes "3 MIN" at the other end of the row read as a second kicker.
 
 **Required:**
 1. Measure the actual type sizes and spacing values on a post card. Chart them. Is the
@@ -535,6 +597,36 @@ between. Generated design defaults to everything being medium-sized and evenly s
 on every post. **Rework these fields rather than adding parallel ones.**
 
 ## 3.1 The statuses
+
+> **AMENDED 2026-09-11 — THIS PHASE IS SUBTRACTION BEFORE ADDITION.**
+>
+> **Read §1.4 of `EDITORIAL-RESEARCH.md` before touching the schema.** It changes what this
+> section should build.
+>
+> The schema already conflates the axes this brief warns about, and does it twice:
+>
+> ```
+> confidenceLevel     speculative | working-theory | confident | VERIFIED | PEER-REVIEWED
+> maturityIndicator   fresh | TESTED | PRODUCTION-PROVEN
+> reviewStatus        self-reviewed | seeking-review | community-reviewed | EXPERT-VERIFIED
+> ```
+>
+> "Peer reviewed" is the top of the **confidence** scale *and* the top of the **review**
+> scale — one real-world event, two vocabularies, both wearing the same star icon, in two
+> radio fields, so the author picks one encoding and the other silently says something else.
+> "Verified — confirmed in lab/production" restates "tested" / "production-proven".
+>
+> Every mature system keeps these axes separate and **none of them ranks "peer reviewed" as
+> a point on a confidence scale**: Gwern runs confidence / status / importance as three
+> independent fields; Devon Zuegel separates status from *effort*; Wikipedia holds the
+> quality grade apart from claim-level flags; arXiv makes no quality claim at all.
+>
+> **So: collapse the existing duplication first, then add.** Take `verified` and
+> `peer-reviewed` out of `confidenceLevel`, leaving it to mean only *how sure am I*. Any
+> status added before that is a fourth spelling of an event the schema already records twice.
+>
+> Note also that every option title in these fields is prefixed with an emoji, against
+> `CLAUDE.md`'s lucide-not-emoji rule. Studio-only, low priority, same rule.
 
 **Multiple statuses can apply to one post simultaneously.** A piece can be
 peer-reviewed AND still seeking review AND revised. Model this as independent flags,
@@ -625,6 +717,86 @@ visible revision history is more honest than a silent edit.
   (`_updatedAt`). Automatic will fire on typo fixes. Recommend one.
 - Connects to the `Revised` status in 3.1 — decide whether they're the same signal or
   two different ones
+
+---
+
+# PHASE 3B — Corrections in place
+
+**Promoted from 8.8 on 2026-09-11. Runs immediately after Phase 3, before Phase 4.**
+
+Numbered `3B` rather than renumbering Phases 4–10, because every cross-reference already
+written in `EDITORIAL-RESEARCH.md`, `PROPOSALS.md` and `OVERHAUL-PROGRESS.md` points at the
+existing numbers (§4.6, §5.1, §6.3, §7.1, §8.6 …). Renumbering would silently invalidate
+all of them. `3B` is unambiguous about ordering and breaks nothing.
+
+## 3B.1 Corrections as a first-class feature
+
+**This is the most original idea in this brief and I care about it more than the comment
+box itself.**
+
+When a comment identifies a real error, I want to correct **visibly** rather than
+silently editing the text.
+
+Model: Google Docs suggestion mode. The affected passage is marked in the text. The
+correction is visible. The person who caught it is credited.
+
+**Requirements:**
+- The original text remains visible or recoverable — a correction is not a deletion
+- The correction is attributed to whoever identified it
+- It's marked in place, at the passage, not just noted at the bottom
+- It integrates with the `Revised` status (3.1) and `Last updated` (3.7)
+- A reader can see the correction history of a piece
+- It must be authored by me in Studio, not applied automatically
+
+Design this properly. If something in this brief gets cut for scope, **cut the comment
+box before you cut this.** Comments exist everywhere. A blog that marks its own errors in
+place, with credit to whoever found them, is genuinely unusual and it fits the stated
+purpose of this site better than any other feature here.
+
+## 3B.2 What the research adds
+
+From §1.9, which should be read before building:
+
+**Journalism has settled the practice; the web implementation is the gap.**
+
+- **NYT: "there is no five-second rule."** Even an immediately corrected error is labelled.
+  The test is *substantive*, not *recent*. Paired with Gwern's "meaningful modification"
+  rule, that gives a workable line: **typography and links change silently; anything that
+  changes what a reader would believe gets a record.**
+- **The Washington Post separates updating for *events* from updating for *errors*.** The
+  `Revised` status in 3.1 currently collapses both. Journalism already has three words:
+  **correction** (it was wrong), **clarification** (it was misleading), **update** (it has
+  changed since). Use three, not one.
+- **Nobody has combined passage-level placement with external attribution.** Wikipedia's
+  `[citation needed]` is claim-level but unattributed; Hypothes.is is attributed but lives
+  in a layer the author does not control; Google Docs suggestions are in-place and
+  attributed but pre-publication; arXiv is permanent but document-level; GitHub's "mark as
+  answer" promotes a comment but the comment stays a comment. Every piece exists somewhere.
+
+**Shape, buildable on what already exists:**
+
+1. **Sanity** — a `corrections` array on `post`:
+   `{ _key, anchor, kind: correction | clarification | update, was, now, creditTo,
+   creditUrl?, date, sourceComment? }`.
+2. **Build time** — `applyCorrectionMarks` beside `applyGlossaryMarks`, the same
+   split-the-span transform, matching on `anchor`.
+3. **Render** — a quiet edge on the marked passage and a marker that opens the correction
+   with its attribution. Bound to `focus` as well as hover, `role="tooltip"`, dismiss on
+   `mouseleave` *and* `blur` *and* `Escape` (§1.8).
+4. **Article foot** — a corrections list in arXiv's shape: date, kind, what changed, who
+   caught it. Permanent and addressable.
+5. **Credit is the point.** *"Corrected 12 Sep 2026 — thanks to [name]"* is the line that
+   makes this worth building.
+
+**Two things to resist:**
+
+- **Do not show the original struck through in the body.** 8.8 asks that the original stay
+  "visible or recoverable" — the correction note satisfies that. Putting the wrong version
+  in the prose at full weight, first, teaches the error to a reader who came to learn the
+  thing.
+- **Do not auto-generate corrections from comments.** A comment claims something is wrong;
+  a correction admits it was. That promotion is the author's judgement, which is exactly why
+  GitHub makes a human press the button.
 
 ---
 
@@ -849,13 +1021,39 @@ Machine-generated "learn more" results must be **clearly labelled as machine-gen
 
 # PHASE 7 — Article layout
 
-## 7.1 The prose measure stays
+## 7.1 The prose measure — a candidate for widening
 
-The article body currently measures **65 characters per line at 576px** and that is
-correct — it sits essentially at the 66-character typographic optimum.
+> **AMENDED 2026-09-11. The original instruction here was wrong, and it was wrong because
+> of a bad number.** It read: *"The article body currently measures 65 characters per line
+> at 576px and that is correct … Do not widen the text column … This is non-negotiable."*
+>
+> Measured directly in §1.5 — real character count divided by real line count, median over
+> 25 paragraphs, one method across five long-form sites — the article measures **56
+> characters**, not 65. That is the **narrowest in the set** and it sits *below* the
+> classical 60–75 optimum:
+>
+> | Gwern | Aeon | Tufte CSS | Quanta | **Ours** |
+> | --- | --- | --- | --- | --- |
+> | 85 | 85 | **77** | 68 | **56** |
+>
+> Tufte CSS — the canonical authority for this exact layout — runs 77. Stefan said the
+> article read as collapsed into a narrow strip; that reading was right, and it was
+> overridden here with a figure that had not been measured.
+>
+> It also reopens a decision already taken: `SECTION-LOG` records the 40rem width being
+> rejected because *"standard now reads 65 … and 40rem would push it to 72."* At a true 56,
+> 40rem (640px) lands near **62** — inside the optimum rather than past it.
 
-**Do not widen the text column.** Widening prose hurts readability. This is
-non-negotiable and it is the one place where "wider" is the wrong instinct.
+**The measure is a candidate for widening.** When Phase 7 is reached:
+
+- Propose a target measure with a stated character count, not a pixel width.
+- **Render options** at 1440 / 768 / 390 — at minimum the current 36rem, 40rem, and one
+  wider — and measure the real CPL of each rather than predicting it.
+- Remember that CPL depends on font size as well as column width. The body is 19px by a
+  deliberate decision (D1); a wider column at 19px is not the same change as a narrower
+  column at 16px.
+- The 60–75 band is the target. Do not overshoot toward Gwern's 85 on the grounds that
+  Gwern does it — that page also carries margin notes that consume the excess width.
 
 ## 7.2 Widen the page
 
@@ -1013,29 +1211,25 @@ arrives at volume.
 
 Do not hand-wave this. It's the reason most personal sites abandon comments.
 
-## 8.8 Corrections as a first-class feature
+## 8.8 Corrections — MOVED
 
-**This is the most original idea in this brief and I care about it more than the comment
-box itself.**
-
-When a comment identifies a real error, I want to correct **visibly** rather than
-silently editing the text.
-
-Model: Google Docs suggestion mode. The affected passage is marked in the text. The
-correction is visible. The person who caught it is credited.
-
-**Requirements:**
-- The original text remains visible or recoverable — a correction is not a deletion
-- The correction is attributed to whoever identified it
-- It's marked in place, at the passage, not just noted at the bottom
-- It integrates with the `Revised` status (3.1) and `Last updated` (3.7)
-- A reader can see the correction history of a piece
-- It must be authored by me in Studio, not applied automatically
-
-Design this properly. If something in this brief gets cut for scope, **cut the comment
-box before you cut this.** Comments exist everywhere. A blog that marks its own errors in
-place, with credit to whoever found them, is genuinely unusual and it fits the stated
-purpose of this site better than any other feature here.
+> **MOVED 2026-09-11 to `PHASE 3B — Corrections in place`, which runs immediately after
+> Phase 3.** Nothing was cut; the whole section is there, with the research attached.
+>
+> Two findings inverted its cost. `lib/glossary.ts` **already implements the hard part** —
+> it runs on the server, rewrites the Portable Text block array, splits the matching span,
+> attaches a mark whose markDef carries the payload, and already refuses to mark inside
+> headings, code, links and sidenotes. A correction mark is that transform with a different
+> markDef. Meanwhile comments proper need a hosting decision this brief never made (§1.7:
+> Vercel cannot run a self-hosted comment service).
+>
+> So this is now among the *cheapest* items in the brief rather than the most expensive, and
+> it no longer depends on comments at all — a correction can credit someone who emailed.
+>
+> It also belongs beside Phase 3 rather than after Phase 8 on principle: §1.4's organising
+> finding is that **document-level status goes quiet, claim-level status goes inline.**
+> Phase 3 is the quiet end, 3B is the inline end. Built apart, they are the same idea built
+> twice.
 
 ---
 
@@ -1204,6 +1398,13 @@ at least one premise, and recording them has prevented repeat work.
 
 **Phase 1** next, and completely. Everything after depends on it. Do not shortcut the
 research to reach the building.
+
+**Then Phase 3, then PHASE 3B (corrections), then Phases 4 → 10.**
+
+> **3B was promoted out of 8.8 on 2026-09-11.** It is now one of the cheapest items rather
+> than the most expensive — `lib/glossary.ts` already implements the passage-marking
+> transform — and it shares a surface with Phase 3. Document-level status goes quiet
+> (Phase 3), claim-level status goes inline (3B). The rest of Phase 8 stays where it is.
 
 **Phases 2 → 10 in order.** The ordering is deliberate:
 - Legibility and hierarchy first because they're cheap and affect everything below
