@@ -35,6 +35,17 @@ const check = (ok, name, detail) => {
 }
 
 // Everything about the status filter row, read from the live DOM.
+// 4.4 folded the four chip rows behind one "Filters" disclosure, so the status row is not
+// in the DOM until it is opened. openFacets() below clicks it; reading without that measured
+// an empty row and reported seven failures against a working filter.
+const openFacets = async (page) => {
+  const btn = page.locator('button', { hasText: /^Filters/ })
+  if (await btn.count() && !(await page.locator('#blog-facets').count())) {
+    await btn.first().click()
+    await page.waitForTimeout(350)
+  }
+}
+
 const READ = () => {
   const row = document.querySelector('[aria-label="Filter by review status"]')
   const chips = row ? Array.from(row.querySelectorAll('button')).map((b) => ({
@@ -71,10 +82,15 @@ try {
   check(!pubR.rowExists, 'the status filter row is absent entirely', `${pubR.cardSlugs.length} published cards`)
   // Positive control: the OTHER filter rows must be there, or "absent" just means the page
   // did not render.
-  const otherRows = await pub.evaluate(() =>
-    Array.from(document.querySelectorAll('[role="group"][aria-label^="Filter by"], [role="group"][aria-label="Sort"]'))
-      .map((el) => el.getAttribute('aria-label')))
-  check(otherRows.length >= 2, 'positive control: the other filter rows DID render', otherRows.join(' | '))
+  // Positive control, rewritten for 4.4: there are no sibling chip rows to look for any
+  // more. What must be there is the search row, or "the status row is absent" would just
+  // mean the page failed to render.
+  const control = await pub.evaluate(() => ({
+    find: !!document.querySelector('#blog-find'),
+    cards: Array.from(document.querySelectorAll('a[href^="/blog/"]')).filter((a) => a.querySelector('h3')).length,
+  }))
+  check(control.find && control.cards > 0, 'positive control: the search row and the cards DID render',
+    `find=${control.find} cards=${control.cards}`)
   await pubCtx.close()
 
   // -- DRAFT: the row appears and works ----------------------------------------
@@ -85,6 +101,7 @@ try {
     { waitUntil: 'domcontentloaded', timeout: 60000 })
   await page.waitForLoadState('load').catch(() => {})
   await page.waitForTimeout(3200)
+  await openFacets(page)
   const r = await page.evaluate(READ)
 
   check(r.rowExists && r.rowVisible, 'the status filter row appears', `${r.chips.length} chips`)
@@ -110,6 +127,7 @@ try {
   const before = r.cardSlugs
   await page.goto(`${BASE}/blog?status=peer-reviewed`, { waitUntil: 'domcontentloaded', timeout: 60000 })
   await page.waitForTimeout(2500)
+  await openFacets(page)
   const onlyPeer = await page.evaluate(READ)
   check(onlyPeer.cardSlugs.length === 1 && onlyPeer.cardSlugs[0] === 'fixture-kitchen-sink',
     'status=peer-reviewed leaves exactly the one post that has it',
@@ -120,12 +138,14 @@ try {
 
   await page.goto(`${BASE}/blog?status=seeking-review`, { waitUntil: 'domcontentloaded', timeout: 60000 })
   await page.waitForTimeout(2500)
+  await openFacets(page)
   const seek = await page.evaluate(READ)
   check(seek.cardSlugs.length === 2, 'status=seeking-review leaves both fixtures', seek.cardSlugs.join(', '))
 
   // A status no post has must empty the list rather than be ignored.
   await page.goto(`${BASE}/blog?status=nonexistent-status`, { waitUntil: 'domcontentloaded', timeout: 60000 })
   await page.waitForTimeout(2500)
+  await openFacets(page)
   const none = await page.evaluate(READ)
   check(none.cardSlugs.length === 0, 'an unknown status filters to nothing rather than being ignored',
     `${none.cardSlugs.length} cards`)
@@ -134,6 +154,7 @@ try {
   console.log('\nD. it combines with the existing filters')
   await page.goto(`${BASE}/blog?status=seeking-review&lane=lab-notes`, { waitUntil: 'domcontentloaded', timeout: 60000 })
   await page.waitForTimeout(2500)
+  await openFacets(page)
   const combo = await page.evaluate(READ)
   check(combo.cardSlugs.length === 1 && combo.cardSlugs[0] === 'fixture-minimal',
     'status + lane intersect rather than one overriding the other', combo.cardSlugs.join(', '))

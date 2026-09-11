@@ -40,7 +40,7 @@ export const blogPageQuery = defineQuery(`
     statsLabels{ posts, series, latest },
     featured{ heading, readLabel },
     seriesRail{ ${strip} }, readingStrip{ ${strip} }, notesStrip{ ${strip} },
-    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount },
+    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount, findLabel, findPlaceholder, filtersLabel, seeAllLabel, riverHeading },
     planned{ enabled, heading, note, label, treatment, items[]{ _key, topic, lane } }
   }
 `)

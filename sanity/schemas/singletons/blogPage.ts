@@ -26,6 +26,9 @@ export default defineType({
       obj('sortLabels', 'Sort options', [str('newest'), str('oldest'), str('longest')]),
       str('allLabel', '"All" chip'), str('readLabel', 'Read label'), str('readAgainLabel', 'Read again label'),
       str('emptyState', 'Empty state'), str('clearLabel', 'Clear filters label'), str('postCount', 'Post count ({n})'),
+      str('findLabel', 'Search field label'), str('findPlaceholder', 'Search placeholder'),
+      str('filtersLabel', 'Filters button'), str('seeAllLabel', 'See all in a lane ({n})'),
+      str('riverHeading', 'River heading'),
     ]),
     obj('planned', 'Planned posts (placeholders)', [
       defineField({ name: 'enabled', title: 'Show planned placeholders', type: 'boolean' }),

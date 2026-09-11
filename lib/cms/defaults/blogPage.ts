@@ -24,6 +24,13 @@ export const DEFAULT_BLOG_PAGE = {
     emptyState: 'No posts match these filters yet.',
     clearLabel: 'Clear filters',
     postCount: '{n} posts',
+    // 4.1 / 4.4 / 4.5. The lane chip row is gone -- the sections are the lanes -- so
+    // `filterLabels.lane` is now only used for the active-filter heading.
+    findLabel: 'Find a post',
+    findPlaceholder: 'Find a post',
+    filtersLabel: 'Filters',
+    seeAllLabel: 'All {n} →',
+    riverHeading: 'Everything else',
   },
   // 4.2. Placeholder cards for posts that are planned but not written. `items` is EMPTY by
   // default on purpose -- shipping invented post titles would be fake content on a site
