@@ -23,8 +23,8 @@ Session count: 1
 | **1.7 Comment systems** | `9e43345` | n/a | self | |
 | **1.8 Hover previews** | `e2622cc` | n/a | self | |
 | **1.9 Corrections** | `43d45ce` | n/a | self | |
-| **3.1 Status fields: subtraction then flags** | `d91a555` | not yet deployed | self | `confidenceLevel` loses `verified`/`peer-reviewed`; `reviewStatus` becomes independent flags |
-| Section reading times (Phase 0.1 follow-up) | `76c3d55` | not yet deployed | **verifier-found** | TOC sections summed to more than the post |
+| **3.1 Status fields: subtraction then flags** | `d91a555` | deployed `13757d8` | verifier running | `confidenceLevel` loses `verified`/`peer-reviewed`; `reviewStatus` becomes independent flags |
+| Section reading times (Phase 0.1 follow-up) | `76c3d55` | **yes** — production, portfolio 4→1 and home lab 5→3 against headers of 2 and 3 | **verifier-found** | TOC sections summed to more than the post |
 | **2.1 Rename to Blog** | `1d0869b`, `8141a9f` | **yes** — h1 reads Blog, zero `>Writing<`, /writing redirects | self | 20 strings found, **14 renamed, 6 left as the activity**. Both halves: code defaults *and* the live Studio documents |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
