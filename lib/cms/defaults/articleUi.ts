@@ -31,7 +31,7 @@ export const DEFAULT_ARTICLE_UI = {
     spacingLabels: { lineHeight: 'Line height', letterSpacing: 'Letter spacing', wordSpacing: 'Word spacing', paraSpacing: 'Paragraph spacing' },
     scaleSteps: { less: 'Tighter', normal: 'Default', more: 'Looser' },
     shareLabels: { copyLink: 'Copy link', copyMarkdown: 'Copy as Markdown', print: 'Print', studyDeck: 'Download study deck', share: 'Share', copied: 'Copied' },
-    listenLabels: { play: 'Play', pause: 'Pause', resume: 'Resume', stop: 'Stop', unsupported: 'Read-aloud is not available in this browser.' },
+    listenLabels: { play: 'Play', pause: 'Pause', resume: 'Resume', stop: 'Stop', unsupported: 'Read-aloud is not available in this browser.', voice: 'Voice', speed: 'Speed', systemVoice: 'System default' },
     bookmarkLabels: { save: 'Save my place', saved: 'Place saved', resume: 'Go to saved place', clear: 'Clear' },
   },
   blocks: {

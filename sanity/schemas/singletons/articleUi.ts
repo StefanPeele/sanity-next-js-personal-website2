@@ -40,7 +40,7 @@ export default defineType({
       obj('spacingLabels', 'Spacing controls', ['lineHeight', 'letterSpacing', 'wordSpacing', 'paraSpacing'].map((n) => str(n))),
       obj('scaleSteps', 'Spacing step names', ['less', 'normal', 'more'].map((n) => str(n))),
       obj('shareLabels', 'Share and export', ['copyLink', 'copyMarkdown', 'print', 'studyDeck', 'share', 'copied'].map((n) => str(n))),
-      obj('listenLabels', 'Read aloud', ['play', 'pause', 'resume', 'stop', 'unsupported'].map((n) => str(n))),
+      obj('listenLabels', 'Read aloud', ['play', 'pause', 'resume', 'stop', 'unsupported', 'voice', 'speed', 'systemVoice'].map((n) => str(n))),
       obj('bookmarkLabels', 'Your place', ['save', 'saved', 'resume', 'clear'].map((n) => str(n))),
     ], { group: 'menu' }),
     obj('blocks', 'Block headings and labels', [

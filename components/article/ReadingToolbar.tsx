@@ -394,6 +394,38 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article' }: Read
             ) : (
               <p className="text-sm text-stone-400">{L.listenLabels.unsupported}</p>
             )}
+
+            {/* 5.2: voice selection and speed.
+                This renders only once the browser has produced a voice list. Chrome returns
+                an EMPTY array from getVoices() on the first call and fills it asynchronously,
+                which is why useReadAloud listens for `voiceschanged` instead of reading it
+                once -- without that this control is permanently empty on the browser most
+                people use. */}
+            {reader.supported && reader.voices.length > 0 && (
+              <div className="mt-3 space-y-2.5">
+                <label className="block">
+                  <span className="block font-sans text-xs text-stone-400 mb-1">{L.listenLabels.voice}</span>
+                  <select
+                    value={reader.voiceURI ?? ''}
+                    onChange={(e) => reader.setVoice(e.target.value || null)}
+                    className={`w-full bg-surface-fill border border-edge rounded-md px-2 py-1.5 font-sans text-sm text-stone-200 ${FOCUS}`}
+                  >
+                    <option value="">{L.listenLabels.systemVoice}</option>
+                    {reader.voices.map((v) => (
+                      <option key={v.voiceURI} value={v.voiceURI}>{v.name}</option>
+                    ))}
+                  </select>
+                </label>
+                <div>
+                  <span className="block font-sans text-xs text-stone-400 mb-1">{L.listenLabels.speed}</span>
+                  <div role="radiogroup" aria-label={L.listenLabels.speed} className="flex gap-1.5">
+                    {reader.rateSteps.map((r) => (
+                      <Chip key={r} active={reader.rate === r} onClick={() => reader.setRate(r)}>{r}&times;</Chip>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </Group>
 
           <Group label={L.groupLabels.position}>

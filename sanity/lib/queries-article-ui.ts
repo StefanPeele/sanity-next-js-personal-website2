@@ -17,7 +17,7 @@ export const articleUiQuery = defineQuery(`
       spacingLabels{ lineHeight, letterSpacing, wordSpacing, paraSpacing },
       scaleSteps{ less, normal, more },
       shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },
-      listenLabels{ play, pause, resume, stop, unsupported },
+      listenLabels{ play, pause, resume, stop, unsupported, voice, speed, systemVoice },
       bookmarkLabels{ save, saved, resume, clear }
     },
     blocks{
