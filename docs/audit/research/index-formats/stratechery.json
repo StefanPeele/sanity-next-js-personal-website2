@@ -1,0 +1,52 @@
+{
+  "name": "stratechery",
+  "url": "https://stratechery.com/",
+  "status": 403,
+  "data": {
+    "title": "Checking your browser...",
+    "bodyBg": "rgba(0, 0, 0, 0)",
+    "bodyColor": "rgb(17, 21, 22)",
+    "typeScale": [
+      {
+        "px": 32,
+        "count": 1,
+        "areaPct": 17344,
+        "face": "Helvetica Neue",
+        "weight": "500",
+        "sample": "Checking your browser"
+      },
+      {
+        "px": 16,
+        "count": 1,
+        "areaPct": 4418,
+        "face": "Helvetica Neue",
+        "weight": "400",
+        "sample": "This will only take a few seconds..."
+      }
+    ],
+    "distinctSizes": 2,
+    "headlines": [
+      {
+        "tag": "h1",
+        "size": 32,
+        "weight": "500",
+        "face": "Helvetica Neue",
+        "lh": null,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(17, 21, 22)",
+        "top": 338,
+        "w": 327,
+        "text": "Checking your browser"
+      }
+    ],
+    "kickers": [],
+    "hrCount": 0,
+    "borderedBlocks": 0,
+    "aboveFold": {
+      "textNodes": 2,
+      "links": 0,
+      "viewport": "1440x900"
+    }
+  }
+}

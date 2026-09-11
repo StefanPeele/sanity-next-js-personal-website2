@@ -1,0 +1,273 @@
+{
+  "name": "OURS-blog",
+  "url": "https://stefanpeele.com/blog",
+  "status": 200,
+  "data": {
+    "title": "Writing | Stefan Peele",
+    "bodyBg": "rgb(10, 10, 10)",
+    "bodyColor": "rgb(214, 211, 209)",
+    "typeScale": [
+      {
+        "px": 60,
+        "count": 1,
+        "areaPct": 132240,
+        "face": "Lora",
+        "weight": "700",
+        "sample": "The Field, The Moment, and What it Means for Us (Networking "
+      },
+      {
+        "px": 14,
+        "count": 31,
+        "areaPct": 128040,
+        "face": "Inter",
+        "weight": "400",
+        "sample": "Projects"
+      },
+      {
+        "px": 16,
+        "count": 14,
+        "areaPct": 67078,
+        "face": "Inter",
+        "weight": "400",
+        "sample": "Perspective pieces, deep dives, and field notes on network e"
+      },
+      {
+        "px": 16.8,
+        "count": 3,
+        "areaPct": 62062,
+        "face": "Lora",
+        "weight": "600",
+        "sample": "Featured"
+      },
+      {
+        "px": 20,
+        "count": 3,
+        "areaPct": 54363,
+        "face": "Lora",
+        "weight": "400",
+        "sample": "S.P."
+      },
+      {
+        "px": 72,
+        "count": 1,
+        "areaPct": 48384,
+        "face": "Lora",
+        "weight": "700",
+        "sample": "Writing"
+      },
+      {
+        "px": 18,
+        "count": 1,
+        "areaPct": 37632,
+        "face": "Inter",
+        "weight": "400",
+        "sample": "There are over a million unfilled network engineering roles "
+      },
+      {
+        "px": 12,
+        "count": 17,
+        "areaPct": 35633,
+        "face": "Inter",
+        "weight": "400",
+        "sample": "Skip to content"
+      },
+      {
+        "px": 48,
+        "count": 1,
+        "areaPct": 23536,
+        "face": "Lora",
+        "weight": "300",
+        "sample": "something lasting"
+      },
+      {
+        "px": 24,
+        "count": 2,
+        "areaPct": 19413,
+        "face": "Lora",
+        "weight": "400",
+        "sample": "All posts"
+      }
+    ],
+    "distinctSizes": 10,
+    "headlines": [
+      {
+        "tag": "h1",
+        "size": 72,
+        "weight": "700",
+        "face": "Lora",
+        "lh": 72,
+        "ls": "-1.8px",
+        "transform": "none",
+        "color": "rgb(255, 255, 255)",
+        "top": 128,
+        "w": 672,
+        "text": "Writing"
+      },
+      {
+        "tag": "h2",
+        "size": 60,
+        "weight": "700",
+        "face": "Lora",
+        "lh": 60,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(255, 255, 255)",
+        "top": 693,
+        "w": 1102,
+        "text": "The Field, The Moment, and What it Means for Us (Networking Industry)"
+      },
+      {
+        "tag": "h2",
+        "size": 60,
+        "weight": "700",
+        "face": "Lora",
+        "lh": 60,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(250, 250, 249)",
+        "top": 2001,
+        "w": 608,
+        "text": "Let's build something lasting together."
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Lora",
+        "lh": 32,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(255, 255, 255)",
+        "top": 1048,
+        "w": 99,
+        "text": "All posts"
+      },
+      {
+        "tag": "a",
+        "size": 20,
+        "weight": "400",
+        "face": "Lora",
+        "lh": 28,
+        "ls": "-0.5px",
+        "transform": "none",
+        "color": "rgb(255, 255, 255)",
+        "top": 16,
+        "w": 30,
+        "text": "S.P."
+      },
+      {
+        "tag": "h3",
+        "size": 20,
+        "weight": "400",
+        "face": "Lora",
+        "lh": 27.5,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(255, 255, 255)",
+        "top": 1641,
+        "w": 389,
+        "text": "Building My Physical Home Lab — Week 2: Documentation & Extensive Rese"
+      },
+      {
+        "tag": "h3",
+        "size": 20,
+        "weight": "400",
+        "face": "Lora",
+        "lh": 27.5,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(255, 255, 255)",
+        "top": 1641,
+        "w": 389,
+        "text": "The Creation of my Personal Portfolio Site!"
+      },
+      {
+        "tag": "h2",
+        "size": 16.8,
+        "weight": "600",
+        "face": "Lora",
+        "lh": 25.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(231, 229, 228)",
+        "top": 349,
+        "w": 1232,
+        "text": "Featured"
+      },
+      {
+        "tag": "h3",
+        "size": 16.8,
+        "weight": "600",
+        "face": "Lora",
+        "lh": 25.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(231, 229, 228)",
+        "top": 2331,
+        "w": 395,
+        "text": "Pages"
+      },
+      {
+        "tag": "h3",
+        "size": 16.8,
+        "weight": "600",
+        "face": "Lora",
+        "lh": 25.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(231, 229, 228)",
+        "top": 2331,
+        "w": 837,
+        "text": "Elsewhere"
+      },
+      {
+        "tag": "a",
+        "size": 16,
+        "weight": "400",
+        "face": "Inter",
+        "lh": 24,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(214, 211, 209)",
+        "top": 390,
+        "w": 1232,
+        "text": "FeaturedNetwork & InfrastructurePerspectiveThe Field, The Moment, and "
+      },
+      {
+        "tag": "a",
+        "size": 16,
+        "weight": "400",
+        "face": "Inter",
+        "lh": 24,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(214, 211, 209)",
+        "top": 1291,
+        "w": 389,
+        "text": "Read →Homelab3 minBuilding My Physical Home Lab — Week 2: Documentatio"
+      }
+    ],
+    "kickers": [
+      {
+        "text": "Featured",
+        "size": 12,
+        "weight": "400",
+        "ls": "1.44px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "face": "IBM Plex Mono",
+        "gapToHeadline": 16,
+        "headlineSize": 60,
+        "ratio": 0.2,
+        "headline": "The Field, The Moment, and What it Means for Us (N"
+      }
+    ],
+    "hrCount": 0,
+    "borderedBlocks": 16,
+    "aboveFold": {
+      "textNodes": 21,
+      "links": 9,
+      "viewport": "1440x900"
+    }
+  }
+}

@@ -1,0 +1,328 @@
+{
+  "name": "ft",
+  "url": "https://www.ft.com/",
+  "status": 200,
+  "data": {
+    "title": "Home - Financial Times",
+    "bodyBg": "rgba(0, 0, 0, 0)",
+    "bodyColor": "rgb(51, 48, 46)",
+    "typeScale": [
+      {
+        "px": 16,
+        "count": 148,
+        "areaPct": 565563,
+        "face": "metric 2 VF",
+        "weight": "400",
+        "sample": "Accessibility help"
+      },
+      {
+        "px": 20,
+        "count": 45,
+        "areaPct": 534909,
+        "face": "financier display VF",
+        "weight": "400",
+        "sample": "US rate rise fears ripple through global bond markets"
+      },
+      {
+        "px": 24,
+        "count": 20,
+        "areaPct": 314652,
+        "face": "financier display VF",
+        "weight": "397",
+        "sample": "Europe’s difficult choices on AI"
+      },
+      {
+        "px": 14,
+        "count": 67,
+        "areaPct": 266343,
+        "face": "metric 2 VF",
+        "weight": "400",
+        "sample": "Sign In"
+      },
+      {
+        "px": 28,
+        "count": 6,
+        "areaPct": 126011,
+        "face": "financier display VF",
+        "weight": "397",
+        "sample": "opinion content."
+      },
+      {
+        "px": 32,
+        "count": 7,
+        "areaPct": 104399,
+        "face": "financier display VF",
+        "weight": "242",
+        "sample": "Sale now live"
+      },
+      {
+        "px": 12,
+        "count": 53,
+        "areaPct": 83464,
+        "face": "metric 2 VF",
+        "weight": "600",
+        "sample": "S&P 500"
+      },
+      {
+        "px": 48,
+        "count": 1,
+        "areaPct": 54813,
+        "face": "financier display VF",
+        "weight": "397",
+        "sample": "Scott Bessent fails to break ‘fever’ in US bond market"
+      },
+      {
+        "px": 18,
+        "count": 5,
+        "areaPct": 50745,
+        "face": "financier display VF",
+        "weight": "400",
+        "sample": "Dorchester to sell Qatari sheikh’s car over unpaid £460,000 "
+      },
+      {
+        "px": 11.7,
+        "count": 2,
+        "areaPct": 2572,
+        "face": "metric 2 VF",
+        "weight": "400",
+        "sample": "FT"
+      },
+      {
+        "px": 10,
+        "count": 4,
+        "areaPct": 16,
+        "face": "Times New Roman",
+        "weight": "400",
+        "sample": "Open side navigation menu"
+      },
+      {
+        "px": 21,
+        "count": 1,
+        "areaPct": 4,
+        "face": "metric 2 VF",
+        "weight": "700",
+        "sample": "Useful links"
+      }
+    ],
+    "distinctSizes": 12,
+    "headlines": [
+      {
+        "tag": "h1",
+        "size": 32,
+        "weight": "400",
+        "face": "FinancierDisplayWeb",
+        "lh": 32,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(255, 255, 255)",
+        "top": 677,
+        "w": 490,
+        "text": "Sale now live"
+      },
+      {
+        "tag": "h1",
+        "size": 32,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(51, 48, 46)",
+        "top": 266,
+        "w": 2,
+        "text": "Financial Times Home"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(51, 48, 46)",
+        "top": 829,
+        "w": 1228,
+        "text": "TOP STORIES"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(51, 48, 46)",
+        "top": 1265,
+        "w": 1228,
+        "text": "spotlight"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(51, 48, 46)",
+        "top": 1708,
+        "w": 1228,
+        "text": "News"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(51, 48, 46)",
+        "top": 2973,
+        "w": 1228,
+        "text": "Opinion"
+      },
+      {
+        "tag": "a",
+        "size": 24,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(13, 118, 128)",
+        "top": 2973,
+        "w": 81,
+        "text": "Opinion"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(51, 48, 46)",
+        "top": 3741,
+        "w": 1228,
+        "text": "Companies"
+      },
+      {
+        "tag": "a",
+        "size": 24,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(13, 118, 128)",
+        "top": 3741,
+        "w": 110,
+        "text": "Companies"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(51, 48, 46)",
+        "top": 4388,
+        "w": 1228,
+        "text": "US News"
+      },
+      {
+        "tag": "a",
+        "size": 24,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(13, 118, 128)",
+        "top": 4388,
+        "w": 83,
+        "text": "US News"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Times New Roman",
+        "lh": null,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(51, 48, 46)",
+        "top": 4902,
+        "w": 1228,
+        "text": "Podcasts"
+      }
+    ],
+    "kickers": [
+      {
+        "text": "Home",
+        "size": 12,
+        "weight": "600",
+        "ls": "normal",
+        "transform": "uppercase",
+        "color": "rgb(10, 94, 102)",
+        "face": "metric 2 VF",
+        "gapToHeadline": 39,
+        "headlineSize": 48,
+        "ratio": 0.25,
+        "headline": "Scott Bessent fails to break ‘fever’ in US bond ma"
+      },
+      {
+        "text": "Exclusive",
+        "size": 14,
+        "weight": "400",
+        "ls": "normal",
+        "transform": "uppercase",
+        "color": "rgb(51, 48, 46)",
+        "face": "metric 2 VF",
+        "gapToHeadline": 37,
+        "headlineSize": 20,
+        "ratio": 0.7,
+        "headline": "HSBC finance chief Kaur to step down in latest res"
+      },
+      {
+        "text": "Premium",
+        "size": 14,
+        "weight": "400",
+        "ls": "normal",
+        "transform": "uppercase",
+        "color": "rgb(255, 255, 255)",
+        "face": "metric 2 VF",
+        "gapToHeadline": 26,
+        "headlineSize": 20,
+        "ratio": 0.7,
+        "headline": "Apple’s new chief Ternus unveils foldable iPhone f"
+      },
+      {
+        "text": "Exclusive",
+        "size": 14,
+        "weight": "400",
+        "ls": "normal",
+        "transform": "uppercase",
+        "color": "rgb(51, 48, 46)",
+        "face": "metric 2 VF",
+        "gapToHeadline": 26,
+        "headlineSize": 20,
+        "ratio": 0.7,
+        "headline": "Treasury yields jump as Bessent’s $6bn buyback pla"
+      }
+    ],
+    "hrCount": 0,
+    "borderedBlocks": 51,
+    "aboveFold": {
+      "textNodes": 64,
+      "links": 59,
+      "viewport": "1440x900"
+    }
+  }
+}

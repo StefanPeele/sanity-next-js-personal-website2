@@ -1,0 +1,301 @@
+{
+  "name": "arstechnica",
+  "url": "https://arstechnica.com/",
+  "status": 200,
+  "data": {
+    "title": "Ars Technica - Serving the Technologist since 1998. News, reviews, and analysis.",
+    "bodyBg": "rgb(233, 234, 237)",
+    "bodyColor": "rgb(35, 36, 40)",
+    "typeScale": [
+      {
+        "px": 24,
+        "count": 34,
+        "areaPct": 814806,
+        "face": "Faustina",
+        "weight": "700",
+        "sample": "Boy developed “toasted skin” condition from using a laptop e"
+      },
+      {
+        "px": 18,
+        "count": 32,
+        "areaPct": 542869,
+        "face": "Source Sans 3",
+        "weight": "400",
+        "sample": "Man with bipolar disorder sued OpenAI after surviving ChatGP"
+      },
+      {
+        "px": 16,
+        "count": 25,
+        "areaPct": 268009,
+        "face": "Source Sans 3",
+        "weight": "400",
+        "sample": "GPC Detected"
+      },
+      {
+        "px": 39.1,
+        "count": 2,
+        "areaPct": 136812,
+        "face": "Faustina",
+        "weight": "700",
+        "sample": "Man told ChatGPT he was feeling delusional. ChatGPT insisted"
+      },
+      {
+        "px": 20,
+        "count": 11,
+        "areaPct": 98718,
+        "face": "Faustina",
+        "weight": "700",
+        "sample": "Most Read"
+      },
+      {
+        "px": 12,
+        "count": 72,
+        "areaPct": 77766,
+        "face": "Exo 2",
+        "weight": "600",
+        "sample": "Ashley Belanger"
+      },
+      {
+        "px": 14,
+        "count": 16,
+        "areaPct": 16812,
+        "face": "Exo 2",
+        "weight": "600",
+        "sample": "Close"
+      }
+    ],
+    "distinctSizes": 7,
+    "headlines": [
+      {
+        "tag": "h2",
+        "size": 39.1,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 42,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(35, 36, 40)",
+        "top": 820,
+        "w": 576,
+        "text": "Man told ChatGPT he was feeling delusional. ChatGPT insisted he was Je"
+      },
+      {
+        "tag": "a",
+        "size": 39.1,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 42,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(233, 234, 237)",
+        "top": 816,
+        "w": 561,
+        "text": "Man told ChatGPT he was feeling delusional. ChatGPT insisted he was Je"
+      },
+      {
+        "tag": "h2",
+        "size": 39.1,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 42,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(35, 36, 40)",
+        "top": 1946,
+        "w": 536,
+        "text": "The complex corporate web behind a $3.2 billion AI data center"
+      },
+      {
+        "tag": "a",
+        "size": 39.1,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 42,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(233, 234, 237)",
+        "top": 1942,
+        "w": 468,
+        "text": "The complex corporate web behind a $3.2 billion AI data center"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 24,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(35, 36, 40)",
+        "top": 448,
+        "w": 413,
+        "text": "Boy developed “toasted skin” condition from using a laptop every day"
+      },
+      {
+        "tag": "a",
+        "size": 24,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 24,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(233, 234, 237)",
+        "top": 445,
+        "w": 405,
+        "text": "Boy developed “toasted skin” condition from using a laptop every day"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 24,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(35, 36, 40)",
+        "top": 564,
+        "w": 413,
+        "text": "LinkedIn beats “BrowserGate” lawsuits over scanning users’ Chrome exte"
+      },
+      {
+        "tag": "a",
+        "size": 24,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 24,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(233, 234, 237)",
+        "top": 561,
+        "w": 409,
+        "text": "LinkedIn beats “BrowserGate” lawsuits over scanning users’ Chrome exte"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 24,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(35, 36, 40)",
+        "top": 701,
+        "w": 413,
+        "text": "Europe will go it alone on Venus mission after NASA yanks radar instru"
+      },
+      {
+        "tag": "a",
+        "size": 24,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 24,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(233, 234, 237)",
+        "top": 698,
+        "w": 334,
+        "text": "Europe will go it alone on Venus mission after NASA yanks radar instru"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 24,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(35, 36, 40)",
+        "top": 838,
+        "w": 413,
+        "text": "Android can now securely migrate your logins between password managers"
+      },
+      {
+        "tag": "a",
+        "size": 24,
+        "weight": "700",
+        "face": "Faustina",
+        "lh": 24,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(233, 234, 237)",
+        "top": 835,
+        "w": 410,
+        "text": "Android can now securely migrate your logins between password managers"
+      }
+    ],
+    "kickers": [
+      {
+        "text": "“Wanna go dark for real?”",
+        "size": 14,
+        "weight": "600",
+        "ls": "normal",
+        "transform": "uppercase",
+        "color": "rgb(4, 204, 116)",
+        "face": "Exo 2",
+        "gapToHeadline": 10,
+        "headlineSize": 39.1,
+        "ratio": 0.358,
+        "headline": "Man told ChatGPT he was feeling delusional. ChatGP"
+      },
+      {
+        "text": "Beth Mole",
+        "size": 12,
+        "weight": "600",
+        "ls": "normal",
+        "transform": "uppercase",
+        "color": "rgb(137, 140, 155)",
+        "face": "Exo 2",
+        "gapToHeadline": 42,
+        "headlineSize": 24,
+        "ratio": 0.5,
+        "headline": "LinkedIn beats “BrowserGate” lawsuits over scannin"
+      },
+      {
+        "text": "Jon Brodkin",
+        "size": 12,
+        "weight": "600",
+        "ls": "normal",
+        "transform": "uppercase",
+        "color": "rgb(137, 140, 155)",
+        "face": "Exo 2",
+        "gapToHeadline": 39,
+        "headlineSize": 24,
+        "ratio": 0.5,
+        "headline": "Europe will go it alone on Venus mission after NAS"
+      },
+      {
+        "text": "Stephen Clark",
+        "size": 12,
+        "weight": "600",
+        "ls": "normal",
+        "transform": "uppercase",
+        "color": "rgb(137, 140, 155)",
+        "face": "Exo 2",
+        "gapToHeadline": 39,
+        "headlineSize": 24,
+        "ratio": 0.5,
+        "headline": "Android can now securely migrate your logins betwe"
+      },
+      {
+        "text": "Who’s the boss?",
+        "size": 14,
+        "weight": "600",
+        "ls": "normal",
+        "transform": "uppercase",
+        "color": "rgb(4, 204, 116)",
+        "face": "Exo 2",
+        "gapToHeadline": 10,
+        "headlineSize": 39.1,
+        "ratio": 0.358,
+        "headline": "The complex corporate web behind a $3.2 billion AI"
+      }
+    ],
+    "hrCount": 0,
+    "borderedBlocks": 2,
+    "aboveFold": {
+      "textNodes": 29,
+      "links": 24,
+      "viewport": "1440x900"
+    }
+  }
+}

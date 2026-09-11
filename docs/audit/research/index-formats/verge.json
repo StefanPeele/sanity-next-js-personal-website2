@@ -1,0 +1,448 @@
+{
+  "name": "verge",
+  "url": "https://www.theverge.com/",
+  "status": 200,
+  "data": {
+    "title": "The Verge",
+    "bodyBg": "rgb(255, 255, 255)",
+    "bodyColor": "rgb(19, 19, 19)",
+    "typeScale": [
+      {
+        "px": 16,
+        "count": 134,
+        "areaPct": 1343170,
+        "face": "fkRomanStandard",
+        "weight": "400",
+        "sample": "Cameras don’t need to be put in absolutely every product."
+      },
+      {
+        "px": 20,
+        "count": 42,
+        "areaPct": 633928,
+        "face": "polySans",
+        "weight": "700",
+        "sample": "Meta’s Muse AI works and creeps me out"
+      },
+      {
+        "px": 11,
+        "count": 255,
+        "areaPct": 329474,
+        "face": "polySans",
+        "weight": "400",
+        "sample": "Skip to main content"
+      },
+      {
+        "px": 18,
+        "count": 22,
+        "areaPct": 292864,
+        "face": "polySans",
+        "weight": "700",
+        "sample": "There aren’t AirPods with cameras yet and I hope it stays th"
+      },
+      {
+        "px": 24,
+        "count": 17,
+        "areaPct": 277377,
+        "face": "polySans",
+        "weight": "700",
+        "sample": "Android foldables have done most of this before, but rarely "
+      },
+      {
+        "px": 34,
+        "count": 3,
+        "areaPct": 143974,
+        "face": "polySans",
+        "weight": "700",
+        "sample": "Wolverine on the PS5 goes back to a simpler (and bloodier) s"
+      },
+      {
+        "px": 90,
+        "count": 1,
+        "areaPct": 140309,
+        "face": "manuka",
+        "weight": "900",
+        "sample": "The iPhone Duo’s hardware doesn’t look special, but its soft"
+      },
+      {
+        "px": 31,
+        "count": 2,
+        "areaPct": 117339,
+        "face": "polySans",
+        "weight": "300",
+        "sample": "The Clapper was a bad smart home gadget — and a viral sensat"
+      },
+      {
+        "px": 15,
+        "count": 10,
+        "areaPct": 115601,
+        "face": "polySans",
+        "weight": "700",
+        "sample": "Get iPhone 18 Pro on Us at T‑Mobile — America’s Best Network"
+      },
+      {
+        "px": 26,
+        "count": 4,
+        "areaPct": 112589,
+        "face": "polySans",
+        "weight": "700",
+        "sample": "The variable aperture isn’t the cool part of the iPhone 18 P"
+      },
+      {
+        "px": 13,
+        "count": 12,
+        "areaPct": 20052,
+        "face": "polySans",
+        "weight": "400",
+        "sample": "Do Not Sell or Share My Personal Data"
+      },
+      {
+        "px": 12,
+        "count": 3,
+        "areaPct": 11414,
+        "face": "polySansMono",
+        "weight": "600",
+        "sample": "David Pierce"
+      },
+      {
+        "px": 19,
+        "count": 6,
+        "areaPct": 8131,
+        "face": "polySans",
+        "weight": "300",
+        "sample": "Tech"
+      },
+      {
+        "px": 14,
+        "count": 3,
+        "areaPct": 3844,
+        "face": "polySansMono",
+        "weight": "300",
+        "sample": "The Kicker"
+      }
+    ],
+    "distinctSizes": 14,
+    "headlines": [
+      {
+        "tag": "a",
+        "size": 90,
+        "weight": "900",
+        "face": "manuka",
+        "lh": 72,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 881,
+        "w": 457,
+        "text": "The iPhone Duo’s hardware doesn’t look special, but its software might"
+      },
+      {
+        "tag": "a",
+        "size": 34,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 34,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 19086,
+        "w": 370,
+        "text": "Wolverine on the PS5 goes back to a simpler (and bloodier) style of ac"
+      },
+      {
+        "tag": "a",
+        "size": 34,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 34,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 20490,
+        "w": 369,
+        "text": "New standards for masculinity are stacked against men’s health"
+      },
+      {
+        "tag": "a",
+        "size": 34,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 34,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 20977,
+        "w": 351,
+        "text": "Why the current tech backlash feels different"
+      },
+      {
+        "tag": "a",
+        "size": 31,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 40.3,
+        "ls": "-0.31px",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 7500,
+        "w": 752,
+        "text": "The Clapper was a bad smart home gadget — and a viral sensation"
+      },
+      {
+        "tag": "a",
+        "size": 26,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 28.6,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 2565,
+        "w": 373,
+        "text": "The variable aperture isn’t the cool part of the iPhone 18 Pro’s camer"
+      },
+      {
+        "tag": "a",
+        "size": 26,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 28.6,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 3438,
+        "w": 311,
+        "text": "Worried Anthropic researchers warn that AI ‘could kill all humans’"
+      },
+      {
+        "tag": "a",
+        "size": 26,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 28.6,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 5287,
+        "w": 342,
+        "text": "LG TVs caught spying even when offline or on standby"
+      },
+      {
+        "tag": "a",
+        "size": 26,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 28.6,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 6314,
+        "w": 361,
+        "text": "Tesla Cybercab doesn’t have any manual controls — but it does have a v"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 26.4,
+        "ls": "0.24px",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 2094,
+        "w": 800,
+        "text": "Apple season / Catch up on all the news from Apple’s big event — and o"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 26.4,
+        "ls": "0.24px",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 2967,
+        "w": 800,
+        "text": "This week in AI / The biggest new stories from today’s biggest new tec"
+      },
+      {
+        "tag": "h2",
+        "size": 24,
+        "weight": "700",
+        "face": "polySans",
+        "lh": 26.4,
+        "ls": "0.24px",
+        "transform": "none",
+        "color": "rgb(19, 19, 19)",
+        "top": 4058,
+        "w": 800,
+        "text": "Most Popular"
+      }
+    ],
+    "kickers": [
+      {
+        "text": "Subscribe",
+        "size": 11,
+        "weight": "400",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(255, 255, 255)",
+        "face": "polySansMono",
+        "gapToHeadline": 15,
+        "headlineSize": 19,
+        "ratio": 0.579,
+        "headline": "Policy"
+      },
+      {
+        "text": "Andrew Webster",
+        "size": 11,
+        "weight": "400",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(82, 0, 255)",
+        "face": "polySans",
+        "gapToHeadline": 42,
+        "headlineSize": 20,
+        "ratio": 0.55,
+        "headline": "New standards for masculinity are stacked against "
+      },
+      {
+        "text": "First Look",
+        "size": 11,
+        "weight": "500",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(255, 255, 255)",
+        "face": "polySans",
+        "gapToHeadline": 4,
+        "headlineSize": 20,
+        "ratio": 0.55,
+        "headline": "Hands-on with the foldable iPhone Duo"
+      },
+      {
+        "text": "John Higgins",
+        "size": 11,
+        "weight": "400",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(82, 0, 255)",
+        "face": "polySans",
+        "gapToHeadline": 44,
+        "headlineSize": 18,
+        "ratio": 0.611,
+        "headline": "iPhone 18 Pro and Pro Max: Our first hands-on impr"
+      },
+      {
+        "text": "iPhone event",
+        "size": 11,
+        "weight": "500",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(255, 255, 255)",
+        "face": "polySans",
+        "gapToHeadline": 6,
+        "headlineSize": 18,
+        "ratio": 0.611,
+        "headline": "Apple iPhone Duo launch event: The 5 biggest annou"
+      },
+      {
+        "text": "Robert Hart",
+        "size": 11,
+        "weight": "400",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(82, 0, 255)",
+        "face": "polySans",
+        "gapToHeadline": 44,
+        "headlineSize": 18,
+        "ratio": 0.611,
+        "headline": "AI power users claim Anthropic duped them with sub"
+      },
+      {
+        "text": "Hayden Field",
+        "size": 11,
+        "weight": "400",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(82, 0, 255)",
+        "face": "polySans",
+        "gapToHeadline": 44,
+        "headlineSize": 18,
+        "ratio": 0.611,
+        "headline": "Meta bets on AI agent Muse to catch up in AI race"
+      },
+      {
+        "text": "Robert Hart",
+        "size": 11,
+        "weight": "400",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(82, 0, 255)",
+        "face": "polySans",
+        "gapToHeadline": 43,
+        "headlineSize": 20,
+        "ratio": 0.55,
+        "headline": "Hands-on with the foldable iPhone Duo"
+      },
+      {
+        "text": "Allison Johnson",
+        "size": 11,
+        "weight": "400",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(82, 0, 255)",
+        "face": "polySans",
+        "gapToHeadline": 46,
+        "headlineSize": 20,
+        "ratio": 0.55,
+        "headline": "The iPhone Duo is Apple’s first foldable"
+      },
+      {
+        "text": "Dominic Preston",
+        "size": 11,
+        "weight": "400",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(82, 0, 255)",
+        "face": "polySans",
+        "gapToHeadline": 46,
+        "headlineSize": 20,
+        "ratio": 0.55,
+        "headline": "iPhone 18 Pro and Pro Max: Our first hands-on impr"
+      },
+      {
+        "text": "Allison Johnson",
+        "size": 11,
+        "weight": "400",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(82, 0, 255)",
+        "face": "polySans",
+        "gapToHeadline": 46,
+        "headlineSize": 20,
+        "ratio": 0.55,
+        "headline": "The variable aperture isn’t the cool part of the i"
+      },
+      {
+        "text": "John Higgins",
+        "size": 11,
+        "weight": "400",
+        "ls": "1.1px",
+        "transform": "uppercase",
+        "color": "rgb(82, 0, 255)",
+        "face": "polySans",
+        "gapToHeadline": 44,
+        "headlineSize": 18,
+        "ratio": 0.611,
+        "headline": "Fox wants to take over your TV — and the tech insi"
+      }
+    ],
+    "hrCount": 0,
+    "borderedBlocks": 89,
+    "aboveFold": {
+      "textNodes": 21,
+      "links": 16,
+      "viewport": "1440x900"
+    }
+  }
+}

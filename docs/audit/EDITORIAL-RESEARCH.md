@@ -1,0 +1,216 @@
+# Editorial research — Phase 1
+
+Brief: `BLOG-OVERHAUL-BRIEF.md` Phase 1. Everything from Phase 2 on depends on this.
+
+## Method, and how much to trust each number
+
+Every figure in §1.1 and §1.2 is **measured, not remembered**. `docs/audit/measure-reference-site.mjs`
+loads each index page in Chromium at 1440×900 and reports computed styles: the type sizes
+actually in use ranked by page area, the headline tiers, kicker candidates with their
+size/tracking/colour/gap, separator counts, and above-the-fold density. Raw JSON and a
+screenshot per site are in `docs/audit/research/index-formats/`.
+
+Our own `/blog` was measured **with the same script against production**, so the comparison
+is like-for-like rather than one measured page against twelve remembered ones.
+
+**Three of the sixteen could not be measured.** They are recorded, not dropped:
+
+| Site | Status | Note |
+| --- | --- | --- |
+| Stratechery | **403** | Cloudflare interstitial ("Checking your browser"). The probe measured the interstitial, not the site |
+| The Economist | **403** | Bot-blocked outright |
+| WSJ | **401** | Paywall returns before any markup |
+
+For those three, and for everything in §1.3 onward, the source is stated inline. Where I am
+working from knowledge rather than measurement I say so — that distinction matters more than
+the finding.
+
+---
+
+## 1.1 Editorial index formats
+
+### The measured scale
+
+Sorted by the ratio of the largest headline to the dominant body size. This is the single
+number that captures "how hard does this page lead?"
+
+| Site | Lead px | Body px | **Lead:body** | Lead:second | Distinct sizes | Links above fold |
+| --- | --- | --- | --- | --- | --- | --- |
+| The Verge | 90 | 16 | **5.63×** | 2.65× | 14 | 16 |
+| **Ours `/blog`** | **72** | **14** | **5.14×** | **1.20×** | **10** | **9** |
+| Aeon | 72 | 16 | 4.50× | 1.71× | 13 | 30 |
+| Defector | 64 | 16 | 4.00× | 1.33× | 10 | 28 |
+| Quanta | 45 | 13 | 3.46× | 1.13× | 13 | 15 |
+| Increment | 50 | 16 | 3.13× | 1.19× | 11 | 27 |
+| 404 Media | 44 | 17.6 | 2.51× | 1.25× | 7 | 20 |
+| Ars Technica | 39 | 18 | 2.17× | 1.63× | 7 | 24 |
+| The Atlantic | 38 | 18 | 2.11× | 1.19× | 12 | 26 |
+| The Guardian | 42 | 20 | 2.10× | 1.50× | 9 | 35 |
+| Asterisk | 33 | 16 | 2.06× | 1.16× | 6 | 14 |
+| FT | 32 | 16 | 2.00× | 1.33× | 12 | 59 |
+| NYT | 18 | 14 | 1.29× | — | 11 | 29 |
+
+### What this kills
+
+**"We have too many type sizes" is false.** Ours renders **10 distinct sizes**. The
+reference median is 11, the range 6–14. We are mid-pack and on the low side. Size *count*
+is not the problem and the Phase 2.4 / spec (d) instinct to keep shrinking it has already
+gone as far as it usefully can.
+
+**"Nothing leads" is also false, as stated.** Our lead:body is 5.14× — the second most
+aggressive page in the set, behind only The Verge. We lead *harder* than Quanta, Increment,
+The Atlantic and the FT.
+
+### What the numbers actually show
+
+**The defect is the second tier, not the first.** Our lead:second ratio is **1.20×** — 72px
+page title, then a 60px story headline, and those two fight. Then the page falls off a
+cliff: the measured headline tiers are **72 / 60 / 24 / 20 / 16.8 / 16**. There is nothing
+between 60 and 24.
+
+Compare the sites that read as edited:
+
+| Site | Headline tiers measured |
+| --- | --- |
+| The Verge | 90 / 34 / 31 / 26 / 24 |
+| Defector | 64 / 48 / 47 / 40 / 24 |
+| Aeon | 72 / 42 / 32 / 20 / 18 |
+| 404 Media | 44 / 35 / 26.5 |
+| Quanta | 45 / 40 / 22 |
+| **Ours** | **72 / 60 / — / 24 / 20 / 16.8** |
+
+Every one of them has a populated middle. The Verge drops 90 → 34 in one step and then
+grades 34/31/26/24 — one shout and a smooth river. Aeon grades 72/42/32/20. We have two
+shouts and a river, and nothing in between to carry the eye from one to the other.
+
+**The page title is the problem element.** At 72px, "Writing" is *larger than the story it
+introduces*. Of the twelve reference sites, **none** renders its own section name larger
+than its lead story. That is a hierarchy inversion, and it is the most defensible single
+finding in this section.
+
+### Section demarcation — measured
+
+`<hr>` count across all thirteen measured sites: **zero. Every one.** Nobody uses a
+horizontal rule element. Separation is done with bordered blocks and space:
+
+| Camp | Sites | Bordered blocks >200px |
+| --- | --- | --- |
+| Rules-heavy (news density) | Verge 89, FT 51, Atlantic 50, Defector 23, Guardian 23 | many |
+| **Space-only (essay/magazine)** | **Increment 0, Asterisk 2, Aeon 2, Ars 2, 404 Media 3, Quanta 4** | almost none |
+| Ours | 16 | mid |
+
+This answers Phase 2.5's open question — "strengthen the dividers, or replace with space?" —
+**with evidence rather than taste.** The publications this site wants to resemble are all in
+the space-only camp. Increment, the closest analogue in the set (long technical essays,
+small volume, strong art direction), uses **zero** bordered blocks on its index. We use 16
+and are drifting toward the news camp while aspiring to the essay camp.
+
+**Recommendation for 2.5: replace, don't strengthen.** Grounded in 6 of 6 comparable sites.
+
+### Density
+
+Above-the-fold links: references run **14–59**, median ~26. Ours renders **9** — the lowest
+in the set by a wide margin, and Asterisk (14) is the nearest. Some of that is honest (we
+have three posts, they have hundreds) but some is layout: a 480px-min hero plus a 72px title
+plus a description block consumes the fold before any second item appears.
+
+### Thin sections
+
+Only partially answerable by measurement, since none of these sites *has* a thin section —
+that is itself the finding. What they do instead, from observation of the captures:
+
+- **Asterisk** runs an explicit "Coming Soon" block (measured, 21.6px bold) as a first-class
+  item rather than hiding the section. This is the closest prior art for Phase 4.2's
+  placeholder cards, and it is the only example in the set.
+- **Increment** organises by issue, so a thin section is a *complete* small issue rather than
+  a sparse large one. Relevant: our lanes could be framed the same way.
+- Everyone else simply has no thin sections to show.
+
+### Copyable vs not
+
+| Finding | Copyable into Next.js/Sanity? |
+| --- | --- |
+| Populated middle tier | **Yes** — pure CSS, no content needed |
+| Section name smaller than lead story | **Yes** — one class |
+| Space instead of rules | **Yes** |
+| Above-fold density | **No, not honestly** — that is content volume, not layout. Do not fake it |
+| Verge's 90px lead | Depends on art direction it has and we do not (full-bleed illustration per story) |
+
+---
+
+## 1.2 The newspaper kicker
+
+### The measurement kills the brief's own framing
+
+The brief asks for kicker size "**relative to** the headline it sits above (as a ratio, not
+an absolute)". Measured across five sites that use kickers, **that is backwards. Nobody sets
+a kicker as a ratio.** The kicker is a *fixed* size and the ratio is whatever falls out:
+
+| Site | Kicker px | Headline px it sat above | Resulting ratio |
+| --- | --- | --- | --- |
+| 404 Media | **14.1 (constant)** | 44.1 / 26.5 | 0.32 / 0.53 |
+| Defector | **12 (constant)** | 48 / 40 / 24 | 0.25 / 0.30 / 0.50 |
+| Increment | **14 (constant)** | 50 / 28 | 0.28 / 0.50 |
+| Ars Technica | **14 / 12** | 39.1 / 24 | 0.36 / 0.50 |
+| FT | **12 / 14** | 48 / 20 | 0.25 / 0.70 |
+| NYT | **10 / 11** | 22 / 18 | 0.46 / 0.61 |
+
+The kicker size never moves within a site. **Observed band: 10–15px, clustering at 12 and
+14.** The ratio range 0.25–0.70 is an artefact of the headline changing underneath it.
+
+So the spec for our kicker is **a constant 12–14px**, not a ratio.
+
+### Measured conventions
+
+| Property | What the measurements show |
+| --- | --- |
+| **Case** | Uppercase in 5 of 6. The Guardian is the exception — sentence case, coloured |
+| **Tracking** | **Mostly `normal`.** Only Increment (2.1px on 14px ≈ 0.15em), NYT (1px on 10px = 0.1em) and Defector (0.32px on 12px ≈ 0.027em) track at all. Heavy tracking is *not* the convention |
+| **Weight** | 400–800, split evenly. Not a differentiator |
+| **Gap to headline** | **2–23px.** Tight under big leads (Defector 2px under 48px, NYT 5px, 404 Media 9–12px), looser on cards (Defector 22px, Increment 23px) |
+| **Colour** | **This is the actual differentiator.** Defector `rgb(202,48,0)`, Ars `rgb(4,204,116)`, NYT LIVE `rgb(208,2,27)`, Guardian `rgb(199,0,0)` / `rgb(0,119,182)` per section, FT `rgb(10,94,102)` |
+| **Face** | **A different face from the headline, usually mono or grotesque against a serif.** 404 Media: Space Mono kicker / Space Grotesk headline. Defector: dm-mono / degular. Ars: Exo 2 / Faustina. Atlantic: Logic Monospace / AGaramondPro |
+| **Rule** | No accompanying rule on any measured site |
+| **Placement** | Above the headline in every case; inside the text block, not over the image |
+
+Our `.meta-label` is mono, 12px, 0.12em, uppercase — **already within the measured band on
+every axis except colour.** It is closest to NYT (10px/0.1em). The convention we are missing
+is the coloured, section-meaningful kicker.
+
+### The four things this site conflates
+
+The brief says these are four different things and asks what distinguishes them. Measured:
+
+| | Purpose | Form measured | Clickable |
+| --- | --- | --- | --- |
+| **Kicker** | Which section/theme this story belongs to | 10–15px, uppercase, **coloured**, no box, no border, above the headline, 2–23px gap | Usually yes |
+| **Section label** | Navigation-level heading for a group of stories | Much larger — Aeon 42px, Defector 47px, 404 Media 35px. A heading in its own right | Sometimes |
+| **Tag** | Taxonomy, many per item | Pill with a **border**, sentence case, in a row with siblings | Always |
+| **Badge / flag** | **Status**, not taxonomy | Small, often a **filled box**, high-contrast — FT "Premium" white-on-fill, NYT "LIVE" 11px w800 red | Never |
+
+**This reclassifies our FEATURED badge, and contradicts the plan in Phase 2.5.** "Featured"
+is a *status*, not a section — so by the measured taxonomy it is a **badge/flag**, and its
+current filled white box is the *correct* family. Rebuilding it "as a true newspaper kicker"
+would be a category error: it would then read as the story's section, which it is not.
+
+The real defect is narrower than the brief states: the flag is in the *tag row*, wearing the
+geometry of a tag, sitting beside two actual tags. FT and NYT both put their status flags in
+the **kicker position — above the headline, on their own line** — precisely so they are not
+confused with taxonomy.
+
+**Recommendation for 2.5, contradicting the brief:** keep "Featured" as a filled status flag,
+move it out of the tag row and into the kicker slot above the headline, and introduce a
+*separate*, coloured, mono kicker for the lane (Perspective / Deep dive / Lab notes) which is
+what the section-kicker tradition is actually for. Stefan should overrule this if he
+disagrees — it is a direct contradiction of a written instruction, flagged rather than
+silently applied.
+
+### Print vs web
+
+Not measurable with this harness — stated from knowledge, and should be treated as weaker
+than everything above. Print kickers ("eyebrows", "overlines") carry the department name and
+are frequently set in the same family as the headline at a smaller optical size, often with a
+rule beneath. The web versions measured above have **dropped the rule entirely** (0 of 6) and
+switched to colour as the distinguishing signal, because a 1px rule at screen resolution
+competes with the card borders around it. That drift — rule → colour — is the single most
+useful thing to carry over.

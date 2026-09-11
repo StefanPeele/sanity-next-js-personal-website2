@@ -1,0 +1,283 @@
+{
+  "name": "aeon",
+  "url": "https://aeon.co/",
+  "status": 200,
+  "data": {
+    "title": "Aeon | a world of ideas",
+    "bodyBg": "rgba(0, 0, 0, 0)",
+    "bodyColor": "rgb(0, 0, 0)",
+    "typeScale": [
+      {
+        "px": 16,
+        "count": 42,
+        "areaPct": 718838,
+        "face": "sansFont",
+        "weight": "400",
+        "sample": "Physicians reject palmistry as nonsense. But reading the cre"
+      },
+      {
+        "px": 28,
+        "count": 24,
+        "areaPct": 551485,
+        "face": "Aeon Serif Symbol",
+        "weight": "700",
+        "sample": "Our eloquent hands"
+      },
+      {
+        "px": 42,
+        "count": 5,
+        "areaPct": 153690,
+        "face": "sansFont",
+        "weight": "600",
+        "sample": "Philosophy"
+      },
+      {
+        "px": 14,
+        "count": 22,
+        "areaPct": 134493,
+        "face": "sansFont",
+        "weight": "400",
+        "sample": "MENU"
+      },
+      {
+        "px": 32,
+        "count": 4,
+        "areaPct": 109304,
+        "face": "sansFont",
+        "weight": "400",
+        "sample": "Essays"
+      },
+      {
+        "px": 13.5,
+        "count": 48,
+        "areaPct": 93390,
+        "face": "monoFont",
+        "weight": "400",
+        "sample": "essay"
+      },
+      {
+        "px": 72,
+        "count": 1,
+        "areaPct": 56843,
+        "face": "Aeon Serif Symbol",
+        "weight": "600",
+        "sample": "Medieval mental health"
+      },
+      {
+        "px": 20,
+        "count": 2,
+        "areaPct": 47322,
+        "face": "sansFont",
+        "weight": "400",
+        "sample": "Saffron and ostrich liver were prescribed but so were exerci"
+      },
+      {
+        "px": 12,
+        "count": 13,
+        "areaPct": 41993,
+        "face": "monoFont",
+        "weight": "400",
+        "sample": "essay"
+      },
+      {
+        "px": 22,
+        "count": 4,
+        "areaPct": 33252,
+        "face": "Aeon Serif Symbol",
+        "weight": "700",
+        "sample": "The fog of hunger"
+      },
+      {
+        "px": 18,
+        "count": 1,
+        "areaPct": 32832,
+        "face": "monoFont",
+        "weight": "400",
+        "sample": "Popular this month"
+      },
+      {
+        "px": 17,
+        "count": 2,
+        "areaPct": 3422,
+        "face": "monoFont",
+        "weight": "400",
+        "sample": "DONATE"
+      },
+      {
+        "px": 25.7,
+        "count": 2,
+        "areaPct": 482,
+        "face": "sansFont",
+        "weight": "400",
+        "sample": "EXCLUSIVE"
+      }
+    ],
+    "distinctSizes": 13,
+    "headlines": [
+      {
+        "tag": "h1",
+        "size": 72,
+        "weight": "600",
+        "face": "Aeon Serif Symbol",
+        "lh": 72,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(255, 255, 255)",
+        "top": 230,
+        "w": 789,
+        "text": "Medieval mental health"
+      },
+      {
+        "tag": "a",
+        "size": 42,
+        "weight": "600",
+        "face": "sansFont",
+        "lh": 50.4,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(12, 119, 109)",
+        "top": 76,
+        "w": 610,
+        "text": "Philosophy"
+      },
+      {
+        "tag": "a",
+        "size": 42,
+        "weight": "600",
+        "face": "sansFont",
+        "lh": 50.4,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(3, 90, 109)",
+        "top": 126,
+        "w": 610,
+        "text": "Science"
+      },
+      {
+        "tag": "a",
+        "size": 42,
+        "weight": "600",
+        "face": "sansFont",
+        "lh": 50.4,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(148, 11, 82)",
+        "top": 177,
+        "w": 610,
+        "text": "Psychology"
+      },
+      {
+        "tag": "a",
+        "size": 42,
+        "weight": "600",
+        "face": "sansFont",
+        "lh": 50.4,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(157, 18, 13)",
+        "top": 227,
+        "w": 610,
+        "text": "Society"
+      },
+      {
+        "tag": "a",
+        "size": 42,
+        "weight": "600",
+        "face": "sansFont",
+        "lh": 50.4,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(193, 110, 21)",
+        "top": 278,
+        "w": 610,
+        "text": "Culture"
+      },
+      {
+        "tag": "a",
+        "size": 32,
+        "weight": "400",
+        "face": "sansFont",
+        "lh": 44.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 76,
+        "w": 610,
+        "text": "Essays"
+      },
+      {
+        "tag": "a",
+        "size": 32,
+        "weight": "400",
+        "face": "sansFont",
+        "lh": 44.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 121,
+        "w": 610,
+        "text": "Videos"
+      },
+      {
+        "tag": "a",
+        "size": 32,
+        "weight": "400",
+        "face": "sansFont",
+        "lh": 44.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 210,
+        "w": 610,
+        "text": "Popular"
+      },
+      {
+        "tag": "a",
+        "size": 32,
+        "weight": "400",
+        "face": "sansFont",
+        "lh": 44.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 300,
+        "w": 610,
+        "text": "About"
+      },
+      {
+        "tag": "h2",
+        "size": 20,
+        "weight": "400",
+        "face": "sansFont",
+        "lh": 28,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(255, 255, 255)",
+        "top": 326,
+        "w": 480,
+        "text": "Saffron and ostrich liver were prescribed but so were exercise, garden"
+      },
+      {
+        "tag": "h2",
+        "size": 18,
+        "weight": "400",
+        "face": "monoFont",
+        "lh": 24,
+        "ls": "2px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "top": 2870,
+        "w": 1368,
+        "text": "Popular this month"
+      }
+    ],
+    "kickers": [],
+    "hrCount": 0,
+    "borderedBlocks": 2,
+    "aboveFold": {
+      "textNodes": 17,
+      "links": 30,
+      "viewport": "1440x900"
+    }
+  }
+}

@@ -1,0 +1,440 @@
+{
+  "name": "quanta",
+  "url": "https://www.quantamagazine.org/",
+  "status": 200,
+  "data": {
+    "title": "Science and Math News | Quanta Magazine",
+    "bodyBg": "rgba(0, 0, 0, 0)",
+    "bodyColor": "rgb(26, 26, 26)",
+    "typeScale": [
+      {
+        "px": 13,
+        "count": 13,
+        "areaPct": 325522,
+        "face": "Pangram",
+        "weight": "400",
+        "sample": "Hidden correspondences hint at a deeper structure to the mat"
+      },
+      {
+        "px": 22,
+        "count": 16,
+        "areaPct": 228492,
+        "face": "Noe Display",
+        "weight": "700",
+        "sample": "What Is Math’s Mysterious Langlands Program Really About?"
+      },
+      {
+        "px": 40,
+        "count": 2,
+        "areaPct": 168189,
+        "face": "Noe Display",
+        "weight": "700",
+        "sample": "‘Stunning’ Percolation Proof Solves Decades-Old Puzzle About"
+      },
+      {
+        "px": 16,
+        "count": 15,
+        "areaPct": 121922,
+        "face": "Pangram",
+        "weight": "600",
+        "sample": "We value your privacy"
+      },
+      {
+        "px": 15,
+        "count": 13,
+        "areaPct": 102016,
+        "face": "Pangram",
+        "weight": "500",
+        "sample": "More episodes"
+      },
+      {
+        "px": 18,
+        "count": 6,
+        "areaPct": 82155,
+        "face": "Noe Display",
+        "weight": "700",
+        "sample": "‘Reverse Mathematics’ Illuminates Why Hard Problems Are Hard"
+      },
+      {
+        "px": 45,
+        "count": 1,
+        "areaPct": 71820,
+        "face": "Noe Display",
+        "weight": "700",
+        "sample": "The Four-Color Theorem Gets a Rare New Proof"
+      },
+      {
+        "px": 10,
+        "count": 46,
+        "areaPct": 37458,
+        "face": "Pangram",
+        "weight": "700",
+        "sample": "Quanta Magazine"
+      },
+      {
+        "px": 35,
+        "count": 1,
+        "areaPct": 22566,
+        "face": "Noe Display",
+        "weight": "700",
+        "sample": "The Quanta Newsletter"
+      },
+      {
+        "px": 9,
+        "count": 23,
+        "areaPct": 22165,
+        "face": "Merriweather",
+        "weight": "400",
+        "sample": "Gregory Barber"
+      },
+      {
+        "px": 14,
+        "count": 2,
+        "areaPct": 6609,
+        "face": "Pangram",
+        "weight": "400",
+        "sample": "Privacy Policy"
+      },
+      {
+        "px": 12,
+        "count": 6,
+        "areaPct": 5582,
+        "face": "Pangram",
+        "weight": "400",
+        "sample": "About Quanta"
+      },
+      {
+        "px": 11.7,
+        "count": 2,
+        "areaPct": 3495,
+        "face": "Merriweather",
+        "weight": "400",
+        "sample": "Quanta Magazine"
+      }
+    ],
+    "distinctSizes": 13,
+    "headlines": [
+      {
+        "tag": "h3",
+        "size": 45,
+        "weight": "700",
+        "face": "Noe Display",
+        "lh": 47.3,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(26, 26, 26)",
+        "top": 680,
+        "w": 760,
+        "text": "The Four-Color Theorem Gets a Rare New Proof"
+      },
+      {
+        "tag": "h3",
+        "size": 40,
+        "weight": "700",
+        "face": "Noe Display",
+        "lh": 46,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(118, 118, 118)",
+        "top": 2841,
+        "w": 600,
+        "text": "‘Stunning’ Percolation Proof Solves Decades-Old Puzzle About Phase Tra"
+      },
+      {
+        "tag": "a",
+        "size": 40,
+        "weight": "700",
+        "face": "Noe Display",
+        "lh": 46,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(118, 118, 118)",
+        "top": 2838,
+        "w": 597,
+        "text": "‘Stunning’ Percolation Proof Solves Decades-Old Puzzle About Phase Tra"
+      },
+      {
+        "tag": "h3",
+        "size": 22,
+        "weight": "700",
+        "face": "Noe Display",
+        "lh": 30.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(26, 26, 26)",
+        "top": 1233,
+        "w": 360,
+        "text": "What Is Math’s Mysterious Langlands Program Really About?"
+      },
+      {
+        "tag": "h3",
+        "size": 22,
+        "weight": "700",
+        "face": "Noe Display",
+        "lh": 30.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(26, 26, 26)",
+        "top": 1233,
+        "w": 360,
+        "text": "AI Has Solved One of Math’s $1 Million Millennium Prize Problems"
+      },
+      {
+        "tag": "h3",
+        "size": 22,
+        "weight": "700",
+        "face": "Noe Display",
+        "lh": 30.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(26, 26, 26)",
+        "top": 1798,
+        "w": 360,
+        "text": "In an Age of AI, a Physicist Seeks What Endures"
+      },
+      {
+        "tag": "h3",
+        "size": 22,
+        "weight": "700",
+        "face": "Noe Display",
+        "lh": 30.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(26, 26, 26)",
+        "top": 1798,
+        "w": 360,
+        "text": "Genome Duplication Is a Radical Evolutionary Gamble"
+      },
+      {
+        "tag": "h3",
+        "size": 22,
+        "weight": "700",
+        "face": "Pangram",
+        "lh": 30.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(26, 26, 26)",
+        "top": 1220,
+        "w": 260,
+        "text": "Transformation"
+      },
+      {
+        "tag": "h3",
+        "size": 22,
+        "weight": "700",
+        "face": "Pangram",
+        "lh": 30.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(26, 26, 26)",
+        "top": 1708,
+        "w": 172,
+        "text": "Quanta Podcast"
+      },
+      {
+        "tag": "h3",
+        "size": 22,
+        "weight": "700",
+        "face": "Noe Display",
+        "lh": 30.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(26, 26, 26)",
+        "top": 3217,
+        "w": 360,
+        "text": "Does Computer Science Need Computers?"
+      },
+      {
+        "tag": "h3",
+        "size": 22,
+        "weight": "700",
+        "face": "Noe Display",
+        "lh": 30.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(26, 26, 26)",
+        "top": 3508,
+        "w": 360,
+        "text": "In Hilbert Space, All Things Are Quantumly Possible"
+      },
+      {
+        "tag": "h3",
+        "size": 22,
+        "weight": "700",
+        "face": "Noe Display",
+        "lh": 30.8,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(26, 26, 26)",
+        "top": 3798,
+        "w": 360,
+        "text": "A New Framework for How the Brain Compresses Our Noisy World"
+      }
+    ],
+    "kickers": [
+      {
+        "text": "graph theory",
+        "size": 10,
+        "weight": "600",
+        "ls": "3px",
+        "transform": "uppercase",
+        "color": "rgb(107, 107, 107)",
+        "face": "Pangram",
+        "gapToHeadline": 16,
+        "headlineSize": 45,
+        "ratio": 0.222,
+        "headline": "The Four-Color Theorem Gets a Rare New Proof"
+      },
+      {
+        "text": "Qualia",
+        "size": 10,
+        "weight": "600",
+        "ls": "3px",
+        "transform": "uppercase",
+        "color": "rgb(107, 107, 107)",
+        "face": "Pangram",
+        "gapToHeadline": 11,
+        "headlineSize": 22,
+        "ratio": 0.455,
+        "headline": "What Is Math’s Mysterious Langlands Program Really"
+      },
+      {
+        "text": "Natalie Wolchover",
+        "size": 9,
+        "weight": "400",
+        "ls": "1.8px",
+        "transform": "uppercase",
+        "color": "rgb(118, 118, 118)",
+        "face": "Merriweather",
+        "gapToHeadline": 13,
+        "headlineSize": 13,
+        "ratio": 0.692,
+        "headline": "Hidden correspondences hint at a deeper structure "
+      },
+      {
+        "text": "artificial intelligence",
+        "size": 10,
+        "weight": "600",
+        "ls": "3px",
+        "transform": "uppercase",
+        "color": "rgb(107, 107, 107)",
+        "face": "Pangram",
+        "gapToHeadline": 11,
+        "headlineSize": 22,
+        "ratio": 0.455,
+        "headline": "AI Has Solved One of Math’s $1 Million Millennium "
+      },
+      {
+        "text": "Konstantin Kakaes",
+        "size": 9,
+        "weight": "400",
+        "ls": "1.8px",
+        "transform": "uppercase",
+        "color": "rgb(118, 118, 118)",
+        "face": "Merriweather",
+        "gapToHeadline": 13,
+        "headlineSize": 13,
+        "ratio": 0.692,
+        "headline": "Mathematicians at OpenAI showed that the Navier-St"
+      },
+      {
+        "text": "Q&A",
+        "size": 10,
+        "weight": "600",
+        "ls": "3px",
+        "transform": "uppercase",
+        "color": "rgb(107, 107, 107)",
+        "face": "Pangram",
+        "gapToHeadline": 11,
+        "headlineSize": 22,
+        "ratio": 0.455,
+        "headline": "In an Age of AI, a Physicist Seeks What Endures"
+      },
+      {
+        "text": "Rebecca Boyle",
+        "size": 9,
+        "weight": "400",
+        "ls": "1.8px",
+        "transform": "uppercase",
+        "color": "rgb(118, 118, 118)",
+        "face": "Merriweather",
+        "gapToHeadline": 13,
+        "headlineSize": 13,
+        "ratio": 0.692,
+        "headline": "Sarah Demers, chair of the physics department at Y"
+      },
+      {
+        "text": "evolution",
+        "size": 10,
+        "weight": "600",
+        "ls": "3px",
+        "transform": "uppercase",
+        "color": "rgb(107, 107, 107)",
+        "face": "Pangram",
+        "gapToHeadline": 11,
+        "headlineSize": 22,
+        "ratio": 0.455,
+        "headline": "Genome Duplication Is a Radical Evolutionary Gambl"
+      },
+      {
+        "text": "Carrie Arnold",
+        "size": 9,
+        "weight": "400",
+        "ls": "1.8px",
+        "transform": "uppercase",
+        "color": "rgb(118, 118, 118)",
+        "face": "Merriweather",
+        "gapToHeadline": 13,
+        "headlineSize": 13,
+        "ratio": 0.692,
+        "headline": "By doubling their entire genome, organisms can evo"
+      },
+      {
+        "text": "Ben Brubaker",
+        "size": 9,
+        "weight": "400",
+        "ls": "1.8px",
+        "transform": "uppercase",
+        "color": "rgb(118, 118, 118)",
+        "face": "Merriweather",
+        "gapToHeadline": 13,
+        "headlineSize": 13,
+        "ratio": 0.692,
+        "headline": "Researchers have used metamathematical techniques "
+      },
+      {
+        "text": "APPLE",
+        "size": 10,
+        "weight": "800",
+        "ls": "1px",
+        "transform": "uppercase",
+        "color": "rgb(107, 107, 107)",
+        "face": "Pangram",
+        "gapToHeadline": 57,
+        "headlineSize": 15,
+        "ratio": 0.667,
+        "headline": "More episodes"
+      },
+      {
+        "text": "Qualia",
+        "size": 10,
+        "weight": "600",
+        "ls": "3px",
+        "transform": "uppercase",
+        "color": "rgb(107, 107, 107)",
+        "face": "Pangram",
+        "gapToHeadline": 11,
+        "headlineSize": 22,
+        "ratio": 0.455,
+        "headline": "Does Computer Science Need Computers?"
+      }
+    ],
+    "hrCount": 0,
+    "borderedBlocks": 4,
+    "aboveFold": {
+      "textNodes": 16,
+      "links": 15,
+      "viewport": "1440x900"
+    }
+  }
+}

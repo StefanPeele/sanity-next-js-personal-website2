@@ -1,0 +1,227 @@
+{
+  "name": "asterisk",
+  "url": "https://asteriskmag.com/",
+  "status": 200,
+  "data": {
+    "title": "Asterisk",
+    "bodyBg": "rgb(250, 248, 240)",
+    "bodyColor": "rgb(0, 0, 0)",
+    "typeScale": [
+      {
+        "px": 28.8,
+        "count": 28,
+        "areaPct": 371451,
+        "face": "Atlas Grotesk",
+        "weight": "700",
+        "sample": "The Destruction of the Scottish Canon"
+      },
+      {
+        "px": 16.2,
+        "count": 11,
+        "areaPct": 160447,
+        "face": "Atlas Grotesk",
+        "weight": "700",
+        "sample": "Sign up for our newsletter to get Asterisk’s latest intervie"
+      },
+      {
+        "px": 21.6,
+        "count": 2,
+        "areaPct": 32872,
+        "face": "Atlas Grotesk",
+        "weight": "700",
+        "sample": "Coming Soon"
+      },
+      {
+        "px": 14.6,
+        "count": 1,
+        "areaPct": 32832,
+        "face": "Atlas Grotesk",
+        "weight": "400",
+        "sample": "Robert Frank Hunter"
+      },
+      {
+        "px": 33.3,
+        "count": 6,
+        "areaPct": 32474,
+        "face": "Noe Standard",
+        "weight": "100",
+        "sample": "All Issues"
+      },
+      {
+        "px": 18,
+        "count": 2,
+        "areaPct": 12237,
+        "face": "Atlas Grotesk",
+        "weight": "700",
+        "sample": "New"
+      }
+    ],
+    "distinctSizes": 6,
+    "headlines": [
+      {
+        "tag": "a",
+        "size": 33.3,
+        "weight": "100",
+        "face": "Noe Standard",
+        "lh": null,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 90,
+        "w": 133,
+        "text": "All Issues"
+      },
+      {
+        "tag": "a",
+        "size": 33.3,
+        "weight": "100",
+        "face": "Noe Standard",
+        "lh": null,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 136,
+        "w": 180,
+        "text": "Contributors"
+      },
+      {
+        "tag": "a",
+        "size": 33.3,
+        "weight": "100",
+        "face": "Noe Standard",
+        "lh": null,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 182,
+        "w": 85,
+        "text": "About"
+      },
+      {
+        "tag": "a",
+        "size": 33.3,
+        "weight": "100",
+        "face": "Noe Standard",
+        "lh": null,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 228,
+        "w": 99,
+        "text": "Dagger"
+      },
+      {
+        "tag": "a",
+        "size": 33.3,
+        "weight": "100",
+        "face": "Noe Standard",
+        "lh": null,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 274,
+        "w": 71,
+        "text": "Shop"
+      },
+      {
+        "tag": "a",
+        "size": 33.3,
+        "weight": "100",
+        "face": "Noe Standard",
+        "lh": null,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 90,
+        "w": 137,
+        "text": "Subscribe"
+      },
+      {
+        "tag": "h2",
+        "size": 28.8,
+        "weight": "700",
+        "face": "Atlas Grotesk",
+        "lh": 34.6,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 896,
+        "w": 453,
+        "text": "The Destruction of the Scottish Canon"
+      },
+      {
+        "tag": "a",
+        "size": 28.8,
+        "weight": "700",
+        "face": "Atlas Grotesk",
+        "lh": 34.6,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 895,
+        "w": 447,
+        "text": "The Destruction of the Scottish Canon"
+      },
+      {
+        "tag": "h2",
+        "size": 28.8,
+        "weight": "700",
+        "face": "Atlas Grotesk",
+        "lh": 34.6,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 1061,
+        "w": 296,
+        "text": "All Work and No Play"
+      },
+      {
+        "tag": "a",
+        "size": 28.8,
+        "weight": "700",
+        "face": "Atlas Grotesk",
+        "lh": 34.6,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 1060,
+        "w": 296,
+        "text": "All Work and No Play"
+      },
+      {
+        "tag": "h2",
+        "size": 28.8,
+        "weight": "700",
+        "face": "Atlas Grotesk",
+        "lh": 34.6,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 1188,
+        "w": 188,
+        "text": "Rust and Boll"
+      },
+      {
+        "tag": "a",
+        "size": 28.8,
+        "weight": "700",
+        "face": "Atlas Grotesk",
+        "lh": 34.6,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 1187,
+        "w": 188,
+        "text": "Rust and Boll"
+      }
+    ],
+    "kickers": [],
+    "hrCount": 0,
+    "borderedBlocks": 2,
+    "aboveFold": {
+      "textNodes": 20,
+      "links": 14,
+      "viewport": "1440x900"
+    }
+  }
+}

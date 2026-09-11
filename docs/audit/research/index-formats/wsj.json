@@ -1,0 +1,21 @@
+{
+  "name": "wsj",
+  "url": "https://www.wsj.com/",
+  "status": 401,
+  "data": {
+    "title": "wsj.com",
+    "bodyBg": "rgba(0, 0, 0, 0)",
+    "bodyColor": "rgb(0, 0, 0)",
+    "typeScale": [],
+    "distinctSizes": 0,
+    "headlines": [],
+    "kickers": [],
+    "hrCount": 0,
+    "borderedBlocks": 0,
+    "aboveFold": {
+      "textNodes": 0,
+      "links": 0,
+      "viewport": "1440x900"
+    }
+  }
+}

@@ -1,0 +1,278 @@
+{
+  "name": "guardian",
+  "url": "https://www.theguardian.com/us",
+  "status": 200,
+  "data": {
+    "title": "Latest news, sport and opinion from the Guardian",
+    "bodyBg": "rgb(255, 255, 255)",
+    "bodyColor": "rgb(18, 18, 18)",
+    "typeScale": [
+      {
+        "px": 20,
+        "count": 99,
+        "areaPct": 1708246,
+        "face": "GH Guardian Headline",
+        "weight": "500",
+        "sample": "US supreme court again rejects Missouri maps drawn to boost "
+      },
+      {
+        "px": 17,
+        "count": 96,
+        "areaPct": 1126473,
+        "face": "GH Guardian Headline",
+        "weight": "500",
+        "sample": "Skip to main content"
+      },
+      {
+        "px": 14,
+        "count": 85,
+        "areaPct": 632418,
+        "face": "GuardianTextSans",
+        "weight": "400",
+        "sample": "Fund independent journalism with $15 per month"
+      },
+      {
+        "px": 15,
+        "count": 124,
+        "areaPct": 629657,
+        "face": "GuardianTextSans",
+        "weight": "400",
+        "sample": "US Open live"
+      },
+      {
+        "px": 24,
+        "count": 27,
+        "areaPct": 527434,
+        "face": "GH Guardian Headline",
+        "weight": "500",
+        "sample": "Support the Guardian"
+      },
+      {
+        "px": 28,
+        "count": 15,
+        "areaPct": 261008,
+        "face": "GH Guardian Headline",
+        "weight": "700",
+        "sample": "News"
+      },
+      {
+        "px": 42,
+        "count": 1,
+        "areaPct": 88348,
+        "face": "GH Guardian Headline",
+        "weight": "500",
+        "sample": "Your dog is bored. Here are the best tools, toys, and tips i"
+      },
+      {
+        "px": 16,
+        "count": 17,
+        "areaPct": 59599,
+        "face": "GuardianTextSans",
+        "weight": "400",
+        "sample": "Soccer with Jonathan Wilson:"
+      },
+      {
+        "px": 12,
+        "count": 49,
+        "areaPct": 55741,
+        "face": "GuardianTextSans",
+        "weight": "700",
+        "sample": "40m ago"
+      }
+    ],
+    "distinctSizes": 9,
+    "headlines": [
+      {
+        "tag": "h3",
+        "size": 42,
+        "weight": "500",
+        "face": "GH Guardian Headline",
+        "lh": 48.3,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(18, 18, 18)",
+        "top": 15962,
+        "w": 940,
+        "text": "DogsYour dog is bored. Here are the best tools, toys, and tips in the "
+      },
+      {
+        "tag": "h2",
+        "size": 28,
+        "weight": "700",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(18, 18, 18)",
+        "top": 664,
+        "w": 220,
+        "text": "News"
+      },
+      {
+        "tag": "h3",
+        "size": 28,
+        "weight": "500",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(18, 18, 18)",
+        "top": 672,
+        "w": 300,
+        "text": "US midterm electionsJD Vance pitches himself as Trump’s political heir"
+      },
+      {
+        "tag": "h3",
+        "size": 28,
+        "weight": "500",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(18, 18, 18)",
+        "top": 3164,
+        "w": 300,
+        "text": "CIA‘It was all hands on deck’: how the CIA responded to 9/11"
+      },
+      {
+        "tag": "h2",
+        "size": 28,
+        "weight": "700",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(18, 18, 18)",
+        "top": 4823,
+        "w": 220,
+        "text": "Features"
+      },
+      {
+        "tag": "h2",
+        "size": 28,
+        "weight": "700",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(199, 70, 0)",
+        "top": 6576,
+        "w": 220,
+        "text": "Opinion"
+      },
+      {
+        "tag": "h2",
+        "size": 28,
+        "weight": "700",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 119, 182)",
+        "top": 8025,
+        "w": 220,
+        "text": "Sports"
+      },
+      {
+        "tag": "h3",
+        "size": 28,
+        "weight": "500",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(18, 18, 18)",
+        "top": 8033,
+        "w": 300,
+        "text": "NFL49ers rout Rams behind Purdy’s three TDs before 100,000 in Melbourn"
+      },
+      {
+        "tag": "h2",
+        "size": 28,
+        "weight": "700",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(18, 18, 18)",
+        "top": 9839,
+        "w": 220,
+        "text": "More top stories"
+      },
+      {
+        "tag": "h3",
+        "size": 28,
+        "weight": "500",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(18, 18, 18)",
+        "top": 9847,
+        "w": 300,
+        "text": "US midterm elections 2026James Talarico accuses Ken Paxton of ‘ignorin"
+      },
+      {
+        "tag": "h2",
+        "size": 28,
+        "weight": "700",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(134, 109, 80)",
+        "top": 12624,
+        "w": 220,
+        "text": "Culture"
+      },
+      {
+        "tag": "h2",
+        "size": 28,
+        "weight": "700",
+        "face": "GH Guardian Headline",
+        "lh": 32.2,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(187, 59, 128)",
+        "top": 15347,
+        "w": 220,
+        "text": "Lifestyle"
+      }
+    ],
+    "kickers": [
+      {
+        "text": "CIA",
+        "size": 15,
+        "weight": "400",
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(199, 0, 0)",
+        "face": "GuardianTextSans",
+        "gapToHeadline": -2,
+        "headlineSize": 28,
+        "ratio": 0.536,
+        "headline": "‘It was all hands on deck’: how the CIA responded "
+      },
+      {
+        "text": "NFL",
+        "size": 15,
+        "weight": "400",
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 119, 182)",
+        "face": "GuardianTextSans",
+        "gapToHeadline": -2,
+        "headlineSize": 28,
+        "ratio": 0.536,
+        "headline": "49ers rout Rams behind Purdy’s three TDs before 10"
+      }
+    ],
+    "hrCount": 0,
+    "borderedBlocks": 23,
+    "aboveFold": {
+      "textNodes": 44,
+      "links": 35,
+      "viewport": "1440x900"
+    }
+  }
+}

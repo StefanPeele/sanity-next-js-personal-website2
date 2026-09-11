@@ -1,0 +1,354 @@
+{
+  "name": "theatlantic",
+  "url": "https://www.theatlantic.com/",
+  "status": 200,
+  "data": {
+    "title": "The Atlantic",
+    "bodyBg": "rgba(0, 0, 0, 0)",
+    "bodyColor": "rgb(0, 0, 0)",
+    "typeScale": [
+      {
+        "px": 32,
+        "count": 30,
+        "areaPct": 536553,
+        "face": "AGaramondPro",
+        "weight": "400",
+        "sample": "The Atlantic Games"
+      },
+      {
+        "px": 18,
+        "count": 37,
+        "areaPct": 422760,
+        "face": "AGaramondPro",
+        "weight": "400",
+        "sample": "What Bush Understood That Trump Doesn’t"
+      },
+      {
+        "px": 24,
+        "count": 20,
+        "areaPct": 243247,
+        "face": "AGaramondPro",
+        "weight": "400",
+        "sample": "Trump’s Weird Loyalty Pledge"
+      },
+      {
+        "px": 13,
+        "count": 79,
+        "areaPct": 207770,
+        "face": "Logic Monospace",
+        "weight": "500",
+        "sample": "Hillary Rodham Clinton"
+      },
+      {
+        "px": 14,
+        "count": 37,
+        "areaPct": 91252,
+        "face": "Logic Monospace",
+        "weight": "300",
+        "sample": "Popular"
+      },
+      {
+        "px": 12,
+        "count": 15,
+        "areaPct": 90048,
+        "face": "Logic Monospace",
+        "weight": "500",
+        "sample": "Play Today's Game"
+      },
+      {
+        "px": 16,
+        "count": 10,
+        "areaPct": 65561,
+        "face": "AGaramondPro",
+        "weight": "600",
+        "sample": "Humanizing the Clinical Trial Experience"
+      },
+      {
+        "px": 11,
+        "count": 23,
+        "areaPct": 50493,
+        "face": "Logic Monospace",
+        "weight": "300",
+        "sample": "Illustration by Akshita Chandra / The Atlantic"
+      },
+      {
+        "px": 26,
+        "count": 4,
+        "areaPct": 42240,
+        "face": "Atlantic Condensed",
+        "weight": "400",
+        "sample": "Bracket City"
+      },
+      {
+        "px": 38,
+        "count": 1,
+        "areaPct": 22297,
+        "face": "AGaramondPro",
+        "weight": "400",
+        "sample": "What the Aftermath of 9/11 Taught Me"
+      },
+      {
+        "px": 10,
+        "count": 10,
+        "areaPct": 22131,
+        "face": "Logic Monospace",
+        "weight": "300",
+        "sample": "Privacy Policy"
+      },
+      {
+        "px": 20,
+        "count": 1,
+        "areaPct": 17472,
+        "face": "AGaramondPro",
+        "weight": "400",
+        "sample": "Government should be about producing results for people."
+      }
+    ],
+    "distinctSizes": 12,
+    "headlines": [
+      {
+        "tag": "h3",
+        "size": 38,
+        "weight": "400",
+        "face": "AGaramondPro",
+        "lh": 44,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 704,
+        "w": 624,
+        "text": "What the Aftermath of 9/11 Taught Me"
+      },
+      {
+        "tag": "a",
+        "size": 38,
+        "weight": "400",
+        "face": "AGaramondPro",
+        "lh": 44,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 707,
+        "w": 587,
+        "text": "What the Aftermath of 9/11 Taught Me"
+      },
+      {
+        "tag": "h2",
+        "size": 32,
+        "weight": "400",
+        "face": "Atlantic Serif",
+        "lh": 32,
+        "ls": "1px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "top": 2494,
+        "w": 263,
+        "text": "The Atlantic Games"
+      },
+      {
+        "tag": "h2",
+        "size": 32,
+        "weight": "400",
+        "face": "Atlantic Serif",
+        "lh": 32,
+        "ls": "1px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "top": 2933,
+        "w": 624,
+        "text": "RECOMMENDED FOR YOU"
+      },
+      {
+        "tag": "a",
+        "size": 32,
+        "weight": "400",
+        "face": "Atlantic Serif",
+        "lh": 32,
+        "ls": "1px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "top": 2930,
+        "w": 299,
+        "text": "RECOMMENDED FOR YOU"
+      },
+      {
+        "tag": "h2",
+        "size": 32,
+        "weight": "400",
+        "face": "Atlantic Serif",
+        "lh": 32,
+        "ls": "1px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "top": 2933,
+        "w": 624,
+        "text": "ARCHIVE"
+      },
+      {
+        "tag": "a",
+        "size": 32,
+        "weight": "400",
+        "face": "Atlantic Serif",
+        "lh": 32,
+        "ls": "1px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "top": 2930,
+        "w": 108,
+        "text": "ARCHIVE"
+      },
+      {
+        "tag": "h2",
+        "size": 32,
+        "weight": "400",
+        "face": "Atlantic Serif",
+        "lh": 32,
+        "ls": "1px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "top": 3547,
+        "w": 126,
+        "text": "Magazine"
+      },
+      {
+        "tag": "h2",
+        "size": 32,
+        "weight": "400",
+        "face": "Atlantic Serif",
+        "lh": 32,
+        "ls": "1px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "top": 3845,
+        "w": 120,
+        "text": "Podcasts"
+      },
+      {
+        "tag": "h2",
+        "size": 32,
+        "weight": "400",
+        "face": "Atlantic Serif",
+        "lh": 32,
+        "ls": "1px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "top": 3547,
+        "w": 88,
+        "text": "Latest"
+      },
+      {
+        "tag": "h3",
+        "size": 32,
+        "weight": "400",
+        "face": "AGaramondPro",
+        "lh": 40,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 3620,
+        "w": 392,
+        "text": "Trump’s Weird Loyalty Pledge"
+      },
+      {
+        "tag": "a",
+        "size": 32,
+        "weight": "400",
+        "face": "AGaramondPro",
+        "lh": 40,
+        "ls": "normal",
+        "transform": "none",
+        "color": "rgb(0, 0, 0)",
+        "top": 3624,
+        "w": 371,
+        "text": "Trump’s Weird Loyalty Pledge"
+      }
+    ],
+    "kickers": [
+      {
+        "text": "Sponsor Content",
+        "size": 11,
+        "weight": "600",
+        "ls": "0.25px",
+        "transform": "uppercase",
+        "color": "rgb(101, 90, 222)",
+        "face": "Graphik",
+        "gapToHeadline": 6,
+        "headlineSize": 16,
+        "ratio": 0.688,
+        "headline": "Humanizing the Clinical Trial Experience"
+      },
+      {
+        "text": "Rainesford Stauffer",
+        "size": 13,
+        "weight": "500",
+        "ls": "0.5px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "face": "Logic Monospace",
+        "gapToHeadline": 56,
+        "headlineSize": 24,
+        "ratio": 0.542,
+        "headline": "The Myopia Generation"
+      },
+      {
+        "text": "David A. Graham",
+        "size": 13,
+        "weight": "500",
+        "ls": "0.5px",
+        "transform": "uppercase",
+        "color": "rgb(0, 0, 0)",
+        "face": "Logic Monospace",
+        "gapToHeadline": 59,
+        "headlineSize": 32,
+        "ratio": 0.406,
+        "headline": "What Makes Tennis One of the Greatest Games"
+      },
+      {
+        "text": "September 10, 2026",
+        "size": 13,
+        "weight": "500",
+        "ls": "0.5px",
+        "transform": "uppercase",
+        "color": "rgb(94, 106, 116)",
+        "face": "Logic Monospace",
+        "gapToHeadline": 45,
+        "headlineSize": 32,
+        "ratio": 0.406,
+        "headline": "What Makes Tennis One of the Greatest Games"
+      },
+      {
+        "text": "September 10, 2026",
+        "size": 13,
+        "weight": "500",
+        "ls": "0.5px",
+        "transform": "uppercase",
+        "color": "rgb(94, 106, 116)",
+        "face": "Logic Monospace",
+        "gapToHeadline": 58,
+        "headlineSize": 32,
+        "ratio": 0.406,
+        "headline": "What Bush Understood That Trump Doesn’t"
+      },
+      {
+        "text": "September 10, 2026",
+        "size": 13,
+        "weight": "500",
+        "ls": "0.5px",
+        "transform": "uppercase",
+        "color": "rgb(94, 106, 116)",
+        "face": "Logic Monospace",
+        "gapToHeadline": 58,
+        "headlineSize": 32,
+        "ratio": 0.406,
+        "headline": "The Los Angeles Rams Are Trying to Defeat Time"
+      }
+    ],
+    "hrCount": 0,
+    "borderedBlocks": 50,
+    "aboveFold": {
+      "textNodes": 27,
+      "links": 26,
+      "viewport": "1440x900"
+    }
+  }
+}
