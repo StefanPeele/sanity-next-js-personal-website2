@@ -89,18 +89,20 @@ can show its measurement is wrong. Log both. A disagreement is a finding either 
     identical. State `perspective` explicitly; `raw` shows drafts and published together.
 19. **Stopping a background build does not reap its children.**
 
-21. **A transitioned focus ring reads as a different ring if sampled too early.** At a
+### Found during the retroactive verification, 2026-09-11
+
+20. **A transitioned focus ring reads as a different ring if sampled too early.** At a
     150ms settle, five phantom "non-standard" ring colours appeared; they resolved to the
     standard amber over ~2.5s. **Settle ~320ms before reading focus styles.**
-22. **`body.textContent` includes `<script>` contents** and so inherits trap 10 — the RSC
+21. **`body.textContent` includes `<script>` contents** and so inherits trap 10 — the RSC
     payload carries `min-h-[48px]`, read as "2 min". Only `innerText` is clean.
-23. **The object `sanityFetch` returns is frozen.** Assigning to it crashes the build worker
+22. **The object `sanityFetch` returns is frozen.** Assigning to it crashes the build worker
     with `code: 3221226505` during "Collecting page data" — an access violation that looks
     nothing like its cause.
 
 ### The one that matters most
 
-20. **Disproving one instance is not disproving the claim.** Every trap above is a false
+23. **Disproving one instance is not disproving the claim.** Every trap above is a false
     positive. This one is a **false negative**: a real two-source bug was *closed* on this
     project because one spot check looked sensible, and it stayed live for months.
     **When the claim is "these two agree", measure BOTH, on the SAME object, and compare
