@@ -47,6 +47,13 @@ const config: NextConfig = {
     // Matches the behavior of `sanity dev` which sets styled-components to use the fastest way of inserting CSS rules in both dev and production.
     SC_DISABLE_SPEEDY: 'false',
   },
+  // The section is called Blog and lives at /blog; it was labelled "Writing" in the nav
+  // until Phase 2.1. /writing has always 404'd, so this catches a URL a reader might
+  // TYPE after seeing the old label, not any existing inbound link. 'writing' is also in
+  // RESERVED_SLUGS so a page document cannot claim it and shadow this.
+  async redirects() {
+    return [{ source: '/writing', destination: '/blog', permanent: true }]
+  },
   async headers() {
     return [
       {

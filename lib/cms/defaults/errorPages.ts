@@ -8,7 +8,7 @@ export const DEFAULT_ERROR_PAGES = {
     hint: 'Check the address, or start from one of these.',
     primaryCta: { label: 'Home', kind: 'internal', path: '/' } as NavLink,
     links: [
-      { label: 'Writing', kind: 'internal', path: '/blog' },
+      { label: 'Blog', kind: 'internal', path: '/blog' },
       { label: 'Projects', kind: 'internal', path: '/projects' },
     ] as NavLink[],
   },
@@ -22,7 +22,7 @@ export const DEFAULT_ERROR_PAGES = {
   offline: {
     title: 'You are offline',
     body: 'This article is not saved on this device yet. The last articles you opened are kept for offline reading.',
-    ctaLabel: 'Back to writing',
+    ctaLabel: 'Back to the blog',
     ctaHref: '/blog',
   },
 }

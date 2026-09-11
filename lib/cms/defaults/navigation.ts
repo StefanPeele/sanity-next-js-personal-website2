@@ -16,7 +16,7 @@ export const DEFAULT_NAVIGATION = {
   drawerFooterLine: 'Stefan Peele · Newark, NJ',
   primary: [
     { label: 'Projects', kind: 'internal', path: '/projects', description: 'Case studies and infrastructure work' },
-    { label: 'Writing', kind: 'internal', path: '/blog', description: 'Essays, deep dives, field notes' },
+    { label: 'Blog', kind: 'internal', path: '/blog', description: 'Essays, deep dives, field notes' },
     { label: 'Garden', kind: 'internal', path: '/garden', description: 'Notes in progress' },
     { label: 'Library', kind: 'internal', path: '/library', description: 'What I read' },
     { label: 'Photography', kind: 'internal', path: '/photography', description: 'Galleries' },

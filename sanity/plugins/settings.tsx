@@ -58,7 +58,7 @@ export const pageStructure = (singletons: DocumentDefinition[]): StructureResolv
         .child(S.list().title(title).items(types.map((t) => S.documentTypeListItem(t))))
 
     const groups: [string, string[]][] = [
-      ['Writing', ['post', 'series', 'glossaryTerm']],
+      ['Blog', ['post', 'series', 'glossaryTerm']],
       ['Knowledge', ['note', 'tag', 'mediaItem']],
       ['Work', ['project', 'experience', 'skill', 'certification', 'education', 'page']],
       ['Photography', ['gallery', 'category', 'testimonial']],

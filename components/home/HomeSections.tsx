@@ -194,7 +194,7 @@ export function WritingSection({ s, ctx }: { s: S<'homeWriting'>; ctx: HomeConte
   if (!featured && recents.length === 0) return null
   return (
     <section className="w-full max-w-6xl mx-auto py-20 px-6 md:px-12 border-t border-white/5" aria-labelledby="writing-heading">
-      <SectionHeading id="writing-heading" cta={{ label: 'All writing', href: '/blog' }}>{s.heading}</SectionHeading>
+      <SectionHeading id="writing-heading" cta={{ label: 'All posts', href: '/blog' }}>{s.heading}</SectionHeading>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {featured && featured.slug && (
           <Link href={`/blog/${featured.slug}`} className={`lg:col-span-7 group block relative rounded-xl overflow-hidden bg-[#111] border border-white/5 hover:border-white/20 transition-colors duration-500 ${FOCUS}`}>

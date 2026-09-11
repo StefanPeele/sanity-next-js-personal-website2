@@ -2,9 +2,9 @@
 
 export const DEFAULT_BLOG_PAGE = {
   header: {
-    title: 'Writing',
+    title: 'Blog',
     lede: 'Perspective pieces, deep dives, and field notes on network engineering, infrastructure, and the work of learning it.',
-    metaTitle: 'Writing',
+    metaTitle: 'Blog',
     metaDescription: 'Perspective pieces, concept deep dives, and field notes on network engineering, infrastructure, and the work of learning it.',
   },
   statsLabels: { posts: 'posts', series: 'series', latest: 'Latest' },

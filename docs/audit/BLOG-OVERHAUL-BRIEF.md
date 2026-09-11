@@ -70,6 +70,12 @@ around a wrong premise; name it.
   silently attach and fabricate failures on routes your change never touched. This
   has cost you two false debugging sessions. Always confirm the server you're
   testing is the one you just built.
+- **A Sanity content change plus `npm run build` is NOT enough.** Next keeps a persistent
+  data cache at `.next/cache/fetch-cache` that survives a rebuild, so a build can serve the
+  pre-change content and look exactly like a failed patch. Confirmed in Phase 2.1: the
+  dataset returned "Blog" on both `api` and `apicdn` while the rebuilt page still rendered
+  "Writing". This is why the verification rule above says `rm -rf .next && npm run build`.
+  Check the dataset before concluding a content patch failed.
 - **Stopping a background build does not reap its children.** An orphaned worker
   held 591MB and turned a 26-second build into 17.4 minutes. Check for orphans
   before blaming the build.

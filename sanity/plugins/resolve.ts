@@ -38,7 +38,7 @@ export const locations = {
     select: {title: 'title', slug: 'slug.current'},
     resolve: (doc) => ({ locations: [{ title: doc?.title || 'Untitled', href: resolveHref('series', doc?.slug)! }] }),
   }),
-  blogPage: defineLocations({ message: 'Edits here change the Writing page', tone: 'positive', locations: [{ title: 'Writing', href: resolveHref('blogPage')! }] }),
+  blogPage: defineLocations({ message: 'Edits here change the Blog page', tone: 'positive', locations: [{ title: 'Blog', href: resolveHref('blogPage')! }] }),
   servicesPage: defineLocations({ message: 'Edits here change the Services page', tone: 'positive', locations: [{ title: 'Services', href: resolveHref('servicesPage')! }] }),
   personalPages: defineLocations({ message: 'Projects, resume, contact, now, uses and photography pages', tone: 'caution' }),
   navigation: defineLocations({ message: 'Used in the header, footer and search on every page', tone: 'caution' }),

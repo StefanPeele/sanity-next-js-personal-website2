@@ -122,8 +122,8 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical: SITE.url,
       types: {
-        'application/rss+xml': [{ url: absoluteUrl('/blog/feed.xml'), title: `${SITE.name} — Writing (RSS)` }],
-        'application/feed+json': [{ url: absoluteUrl('/blog/feed.json'), title: `${SITE.name} — Writing (JSON Feed)` }],
+        'application/rss+xml': [{ url: absoluteUrl('/blog/feed.xml'), title: `${SITE.name} — Blog (RSS)` }],
+        'application/feed+json': [{ url: absoluteUrl('/blog/feed.json'), title: `${SITE.name} — Blog (JSON Feed)` }],
       },
     },
     robots: {

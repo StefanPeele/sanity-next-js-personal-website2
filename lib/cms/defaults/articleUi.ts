@@ -3,7 +3,7 @@ import type { VocabEntry } from './taxonomy'
 
 export const DEFAULT_ARTICLE_UI = {
   header: {
-    backLabel: 'Writing',
+    backLabel: 'Blog',
     readTimeLabel: '{n} min read',
     sourcesLabel: '{n} sources',
     cardsLabel: '{n} key terms',

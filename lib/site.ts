@@ -67,7 +67,7 @@ export function absoluteUrl(path = '/') {
  * must never be served at one of these, or its prerender overwrites the real route.
  */
 export const RESERVED_SLUGS = new Set<string>([
-  'blog', 'garden', 'graph', 'library', 'glossary', 'paths', 'review',
+  'blog', 'writing', 'garden', 'graph', 'library', 'glossary', 'paths', 'review',
   'projects', 'resume', 'photography', 'services', 'contact', 'now', 'uses', 'delivery',
   'studio', 'api', 'offline', 'sitemap.xml', 'robots.txt', 'manifest.webmanifest', 'humans.txt', 'sw.js',
 ])
