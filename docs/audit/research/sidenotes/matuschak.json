@@ -1,0 +1,16 @@
+{
+  "name": "matuschak",
+  "url": "https://notes.andymatuschak.org/Evergreen_notes",
+  "status": 200,
+  "data": {
+    "measureWidth": 265,
+    "measureLeft": 32,
+    "charsPerLine": 67,
+    "bodySize": 17,
+    "paragraphCount": 46,
+    "viewport": "1440x900",
+    "sidenotes": [],
+    "sidenoteCount": 0,
+    "supMarkers": 0
+  }
+}

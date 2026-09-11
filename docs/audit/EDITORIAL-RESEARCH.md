@@ -450,3 +450,127 @@ index; Wikipedia sorts by grade only inside WikiProject worklists, which readers
 No consumer-facing site in the set filters by epistemic status. Phase 3.5 would be inventing
 this, not adopting it — which is fine, but it should be built knowing there is no prior art
 to lean on and no reader expectation to meet.
+
+---
+
+## 1.5 Sidenotes and marginalia
+
+Measured with `docs/audit/measure-sidenotes.mjs` at 1440 and 390. Raw JSON in
+`docs/audit/research/sidenotes/`.
+
+### Geometry
+
+| Site | Prose measure | Body | Sidenote width | **Ratio to measure** | Sidenote font | Mechanism |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Tufte CSS** | 693px | 21px | **347px** | **0.50×** | 16.5px (0.79× body) | `float: right` |
+| **Gwern** | 895px | 19px | 154–338px | 0.17–0.38× | 20px (1.05× body) | inline, plus popups |
+| **Andy Matuschak** | 265px | 17px | — | — | — | **no sidenotes at all** |
+| Ours (the TOC, not a sidenote) | 576px | 19px | 220px | 0.38× | 16px | `hidden lg:block` |
+
+**Tufte's 0.50× is the cleanest number to copy**, and it comes with a matching type step:
+the sidenote sits at **0.79× the body size** — smaller, but nowhere near a micro-label. Our
+instinct would be to set sidenotes at 12–14px against a 19px body (0.63–0.74×); Tufte says
+go higher, about 15px.
+
+**Gwern is not a model to copy here.** 168 note elements on one page, of which only 23
+render as visible margin notes — the other **145 are `visibility: hidden; position:
+absolute`**, waiting to be shown as hover popups. That is a popup system with a marginal
+fallback, not a marginal system.
+
+**Matuschak is a different paradigm, not a variant.** Zero sidenotes. The sliding panes
+*are* the notes: each pane runs a 265px measure and a note opens as a new pane beside the
+one you were reading. Copyable only if the whole reading surface is rebuilt around panes,
+which is not what Phase 6 proposes.
+
+### The mobile fallback, measured
+
+At 390px:
+
+| Site | Notes total | Still visible | Hidden | Toggle controls |
+| --- | --- | --- | --- | --- |
+| **Tufte CSS** | 10 | **3** (6–7px wide, `inline-block`) | **7** (`display: none`) | **14** |
+| **Gwern** | 168 | 23 | 145 (`visibility: hidden`, absolute) | 3 |
+
+The three "visible" Tufte elements at 6–7px wide are the **markers**, not the notes. Tufte
+CSS's mobile fallback is the **pure-CSS checkbox hack**: the note is `display: none`, the
+marker is a `<label>` bound to a hidden checkbox, and `:checked` reveals it inline. Fourteen
+toggle controls for ten notes confirms it. **No JavaScript.**
+
+This is the most copyable finding in §1.5. It answers Phase 6.4's "collapse/expand inline,
+or footnote-style at the bottom" with a working, JS-free implementation that degrades to a
+plain checkbox for keyboard and screen-reader users.
+
+Gwern's counts are **identical at both widths** (23 shown / 145 hidden); its margin notes
+merely narrow (154→136px) and its font steps down (20→18px). It does not have a mobile
+fallback so much as a layout that survives narrowing.
+
+### What happens when the anchor scrolls out of view
+
+The brief asks this specifically. **None of the three solves it, because none of them has
+to:**
+
+- **Tufte** floats the note next to its anchor, so it scrolls away with the anchor. No
+  sticky behaviour, no fade.
+- **Gwern** hides the note by default and summons it at the cursor, so the anchor is
+  necessarily on screen when the note appears.
+- **Matuschak** puts the note in its own pane, which stays until dismissed.
+
+**There is no prior art for a sticky sidenote in this set.** Phase 6.3 asks what should
+happen; the honest answer is that the successful implementations avoid the problem rather
+than solving it. Inventing sticky behaviour would be novel, and novel here reads as clever
+rather than edited.
+
+### Two anchors close together
+
+Tufte's `float: right` resolves this automatically — consecutive floated notes stack down
+the margin in document order and never overlap. That is the entire benefit of float over
+absolute positioning, and it is why Tufte CSS still uses a technique CSS has largely moved
+past. **An absolutely-positioned implementation has to solve collision manually; the floated
+one gets it free.**
+
+### Numbering, and the three kinds of marginal note
+
+Tufte CSS renders 3 `sup` markers against 10 notes, because it distinguishes:
+
+- **Sidenote** — numbered, tied to a specific point; the margin equivalent of a footnote
+- **Margin note** — *unnumbered*, an aside that simply sits beside the text
+- **Citation** — numbered, references a source
+
+Gwern's page carries **210 superscript markers** against 168 note elements — overwhelmingly
+citation-driven.
+
+**Phase 6 should decide which of the three it is building.** The brief describes authored
+notes "anchored to specific passages" that "expand on the text beside them" — that is
+Tufte's *sidenote*, numbered. The glossary integration in 6.2 is a fourth thing: a
+definition is not an aside, and conflating them produces a margin full of vocabulary where
+the reader expects commentary.
+
+### Found while measuring: our prose measure is 56 characters, not 65
+
+Real character count divided by real line count, median over 25 paragraphs per page, one
+method across all sites:
+
+| Site | Median CPL | Range | Column | Font / line-height |
+| --- | --- | --- | --- | --- |
+| Gwern | 85 | 52–103 | 895px | 19 / 30 |
+| Aeon | 85 | 40–91 | 361px | 16 / 26 |
+| Tufte CSS | 77 | 60–134 | 693px | 21 / 30 |
+| Quanta | 68 | 55–123 | 1085px | 14 / 26.3 |
+| **Ours** | **56** | **51–61** | **576px** | **19 / 32.3** |
+
+**Ours is the narrowest in the set and sits below the classical 60–75 optimum.** Tufte — the
+canonical authority for this exact layout — runs 77.
+
+This matters because **Phase 7.1 instructs: "the prose measure stays near the typographic
+optimum — it's currently 65 characters and that is correct. Do NOT widen the text column."**
+That instruction rests on a 65-character figure. Measured directly it is 56.
+
+It also reopens a decision already made: `SECTION-LOG` records that the proposal's 40rem
+width was rejected because "standard now reads 65 … and 40rem would push it to 72." If the
+true figure is 56, then 40rem (640px) lands near **62** — inside the optimum rather than
+past it.
+
+**Not acting on this.** It is Phase 7 work, it contradicts an explicit written instruction,
+and one method disagreeing with an earlier one is exactly the situation where I have been
+wrong before. Recorded so Phase 7 starts from a measured number, and so the earlier
+rejection can be re-examined with its premise corrected.

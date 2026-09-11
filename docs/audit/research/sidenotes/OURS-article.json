@@ -1,0 +1,31 @@
+{
+  "name": "OURS-article",
+  "url": "https://stefanpeele.com/blog/the-field-the-moment-and-what-it-means-for-us-networking-industry",
+  "status": 200,
+  "data": {
+    "measureWidth": 575,
+    "measureLeft": 298,
+    "charsPerLine": 57,
+    "bodySize": 19,
+    "paragraphCount": 58,
+    "viewport": "1440x900",
+    "sidenotes": [
+      {
+        "selector": "aside",
+        "cls": "hidden lg:block",
+        "width": 220,
+        "left": 1052,
+        "fontSize": 16,
+        "lineHeight": 24,
+        "color": "rgb(214, 211, 209)",
+        "float": "none",
+        "position": "static",
+        "side": "right",
+        "ratioToMeasure": 0.38,
+        "text": "ContentsReading optionsReading options"
+      }
+    ],
+    "sidenoteCount": 1,
+    "supMarkers": 0
+  }
+}
