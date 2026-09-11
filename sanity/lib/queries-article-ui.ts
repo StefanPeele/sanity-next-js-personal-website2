@@ -9,11 +9,13 @@ export const articleUiQuery = defineQuery(`
     toc{ title, mobileTitle, minutesSuffix },
     readerMenu{
       buttonLabel, closeLabel,
-      groupLabels{ theme, textSize, width, accessibility, share, listen, position, toolbar },
+      groupLabels{ theme, textSize, width, accessibility, spacing, share, listen, position, toolbar },
       toolbarLabels{ hide, hideHint, restore },
       themeLabels{ archive, slate, paper, terminal },
       widthLabels{ narrow, standard, wide },
-      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },
+      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset, linkUnderline, bigFocus, muteColour },
+      spacingLabels{ lineHeight, letterSpacing, wordSpacing, paraSpacing },
+      scaleSteps{ less, normal, more },
       shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },
       listenLabels{ play, pause, resume, stop, unsupported },
       bookmarkLabels{ save, saved, resume, clear }

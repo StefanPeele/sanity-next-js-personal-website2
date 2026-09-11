@@ -23,9 +23,12 @@
 [data-article] p {
   /* 1.85 was set against 15px prose. At 19px it computes to a 35px line box, loose enough
      that the paragraph stops reading as one block. 1.70 gives 32px, between Linear (1.60)
-     and Maggie Appleton (2.00). */
-  line-height: 1.7;
-  letter-spacing: 0.01em;
+     and Maggie Appleton (2.00).
+     5.2: the reader can scale it. The fallbacks are the values above, so the prose renders
+     correctly before hydration and for anyone with JS off. */
+  line-height: calc(1.7 * var(--a11y-lh, 1));
+  letter-spacing: var(--a11y-ls, 0.01em);
+  word-spacing: var(--a11y-ws, 0em);
   /* Lets long technical nouns break rather than leaving a ragged hole in the line. */
   hyphens: auto;
 }
@@ -36,7 +39,7 @@
    box meant paragraphs did not visually separate. (0,2,1) here wins it back. */
 [data-article] p:not(:last-child) {
   /* 1.5em matches the measured field: Craig Mod 30px on 20px, Maggie Appleton 33px on 22px. */
-  margin-bottom: 1.5em;
+  margin-bottom: calc(1.5em * var(--a11y-ps, 1));
 }
 
 /* Reading width — set on <main id="content"> by the toolbar.
@@ -707,4 +710,43 @@ body.theme-paper footer .border-edge-strong { border-color: rgb(255 255 255 / 0.
 }
 @media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
   .reading-toolbar { transition: none; }
+}
+
+/* ── 5.2's expanded reading controls ──────────────────────────────────────────
+   The four SCALES are consumed above, on the prose rules, via --a11y-lh / -ls / -ws / -ps.
+   These are the three new TOGGLES. */
+
+/* List items follow the prose, or a scaled paragraph sits beside an unscaled bullet. */
+[data-article] li {
+  line-height: calc(1.7 * var(--a11y-lh, 1));
+  letter-spacing: var(--a11y-ls, 0.01em);
+  word-spacing: var(--a11y-ws, 0em);
+}
+
+/* Always underline links. The site's default is an ink-bleed underline that grows on hover,
+   which is a lovely effect and invisible at rest -- so a reader who needs links to be
+   findable without hovering every candidate cannot use it. This turns it solid and static. */
+body.a11y-link-underline [data-article] .article-link {
+  background-image: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+/* A bigger focus ring. The default is a 2px outline at 2px offset, which is fine for most
+   people and thin for anyone tracking focus across a page at low vision. Deliberately
+   !important: FOCUS in lib/ui.ts is spelled as utilities on every control, so a rule that
+   did not outrank them would silently do nothing on all of them. */
+body.a11y-big-focus *:focus-visible {
+  outline-width: 4px !important;
+  outline-offset: 3px !important;
+}
+
+/* "Colour filters" in the brief. This is DESATURATION, not a colour-blindness simulation:
+   a simulation shows a sighted person what someone else sees and helps that someone else
+   not at all. Reducing saturation helps readers with visual stress, for whom saturated
+   colour on a bright ground is tiring. Scoped to the prose so the site's own chrome and the
+   reading toolbar keep their meaning. */
+[data-article-root].a11y-mute-colour [data-article] {
+  filter: saturate(0.4);
 }

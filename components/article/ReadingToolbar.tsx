@@ -7,7 +7,7 @@ import { useArticle, useArticleOptional } from '@/components/article/ArticleProv
 import { useReadAloud } from '@/components/article/useReadAloud'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 import { clearBookmark, readBookmark, writeBookmark } from '@/lib/articleStorage'
-import { ARTICLE_THEMES, ARTICLE_WIDTHS, FONT_SIZES, THEME_OPTIONS } from '@/lib/articleThemeStyles'
+import { ARTICLE_THEMES, ARTICLE_WIDTHS, FONT_SIZES, READING_SCALES, READING_SCALE_KEYS, THEME_OPTIONS } from '@/lib/articleThemeStyles'
 import { FOCUS, buttonClass } from '@/lib/ui'
 // components/article/ReadingToolbar.tsx — Phase 5.
 //
@@ -342,11 +342,33 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article' }: Read
 
           )}
 
+          {/* 5.2's four SCALES. They are separated from the toggles because they are not
+              toggles: forcing line height into on/off gives a reader one clumsy jump. Three
+              steps each, and the step that is the site's own default is marked, so nobody has
+              to guess which one is "normal". */}
+          <Group label={L.groupLabels.spacing}>
+            {READING_SCALE_KEYS.map((k) => (
+              <div key={k} className="flex items-center justify-between gap-3 py-1.5">
+                <span className="font-sans text-sm text-stone-300">{L.spacingLabels[k]}</span>
+                <div role="radiogroup" aria-label={L.spacingLabels[k]} className="flex gap-1.5 shrink-0">
+                  {READING_SCALES[k].values.map((_, i) => (
+                    <Chip key={i} active={settings[k] === i} onClick={() => setSetting(k, i)}>
+                      {i === 0 ? L.scaleSteps.less : i === 1 ? L.scaleSteps.normal : L.scaleSteps.more}
+                    </Chip>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </Group>
+
           <Group label={L.groupLabels.accessibility}>
             <Switch label={L.a11yLabels.dyslexia} checked={settings.dyslexia} onChange={() => setSetting('dyslexia', !settings.dyslexia)} />
             <Switch label={L.a11yLabels.highContrast} checked={settings.highContrast} onChange={() => setSetting('highContrast', !settings.highContrast)} />
             <Switch label={L.a11yLabels.reducedMotion} checked={settings.reducedMotion} onChange={() => setSetting('reducedMotion', !settings.reducedMotion)} />
             <Switch label={L.a11yLabels.ruler} checked={settings.ruler} onChange={() => setSetting('ruler', !settings.ruler)} />
+            <Switch label={L.a11yLabels.linkUnderline} checked={settings.linkUnderline} onChange={() => setSetting('linkUnderline', !settings.linkUnderline)} />
+            <Switch label={L.a11yLabels.bigFocus} checked={settings.bigFocus} onChange={() => setSetting('bigFocus', !settings.bigFocus)} />
+            <Switch label={L.a11yLabels.muteColour} checked={settings.muteColour} onChange={() => setSetting('muteColour', !settings.muteColour)} />
             <Row label={L.a11yLabels.reset} onClick={resetA11y} />
           </Group>
 

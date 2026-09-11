@@ -59,6 +59,17 @@ const bodyA = [
   // match so the "passage not found" path is exercised on a real render.
   para('The standard Ethernet MTU is 1500 bytes on this link. Spanning tree converges in about 30 seconds with the default timers, and the switch fabric is rated for 176 Gbps.'),
 
+  // An inline LINK. The kitchen sink claims to exercise every block type and never had one,
+  // so nothing could verify the article-link treatment or 5.2's "always underline links".
+  {
+    ...block('normal', [
+      span('Body copy with '),
+      span('an inline link', ['lk-1']),
+      span(' in the middle of it, so the ink-bleed underline and the accessibility override can both be measured.'),
+    ]),
+    markDefs: [{ _type: 'link', _key: 'lk-1', href: 'https://www.rfc-editor.org/rfc/rfc826' }],
+  },
+
   block('h3', [span('Heading three')]),
   para('A third level, for subsections inside a section.'),
 

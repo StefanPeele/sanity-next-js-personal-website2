@@ -6,8 +6,8 @@ import {
 import { useReducedMotion } from 'framer-motion'
 import { slugify } from '@/lib/reading'
 import {
-  ARTICLE_THEMES, DEFAULT_FONT_SIZE_INDEX, FONT_SIZES, isArticleTheme, isArticleWidth,
-  isLightTheme, type ArticleTheme, type ArticleWidth,
+  ARTICLE_THEMES, DEFAULT_FONT_SIZE_INDEX, FONT_SIZES, READING_SCALES, READING_SCALE_KEYS,
+  clampScale, isArticleTheme, isArticleWidth, isLightTheme, type ArticleTheme, type ArticleWidth,
 } from '@/lib/articleThemeStyles'
 // components/article/ArticleProvider.tsx
 // Single source of truth for everything the article navigators share:
@@ -34,6 +34,15 @@ export interface ArticleSettings {
   highContrast: boolean
   reducedMotion: boolean
   ruler: boolean
+  // 5.2's expanded set. The four scales are indexes into READING_SCALES; the three new
+  // booleans are toggles. "Animation off" is not here because `reducedMotion` already is.
+  lineHeight: number
+  letterSpacing: number
+  wordSpacing: number
+  paraSpacing: number
+  linkUnderline: boolean
+  bigFocus: boolean
+  muteColour: boolean
 }
 
 const DEFAULT_SETTINGS: ArticleSettings = {
@@ -48,6 +57,13 @@ const DEFAULT_SETTINGS: ArticleSettings = {
   highContrast: false,
   reducedMotion: false,
   ruler: false,
+  lineHeight: READING_SCALES.lineHeight.initial,
+  letterSpacing: READING_SCALES.letterSpacing.initial,
+  wordSpacing: READING_SCALES.wordSpacing.initial,
+  paraSpacing: READING_SCALES.paraSpacing.initial,
+  linkUnderline: false,
+  bigFocus: false,
+  muteColour: false,
 }
 
 const STORAGE = {
@@ -58,6 +74,13 @@ const STORAGE = {
   highContrast: 'sp_high_contrast',
   reducedMotion: 'sp_reduced_motion',
   ruler: 'sp_reading_ruler',
+  lineHeight: 'sp_line_height',
+  letterSpacing: 'sp_letter_spacing',
+  wordSpacing: 'sp_word_spacing',
+  paraSpacing: 'sp_para_spacing',
+  linkUnderline: 'sp_link_underline',
+  bigFocus: 'sp_big_focus',
+  muteColour: 'sp_mute_colour',
 } as const
 
 interface ArticleContextValue {
@@ -110,6 +133,13 @@ function readStoredSettings(fallbackTheme?: string | null): ArticleSettings {
       theme: isArticleTheme(theme) ? theme : DEFAULT_SETTINGS.theme,
       fontSize: Number.isFinite(fs) && fs >= 0 && fs < FONT_SIZES.length ? Math.floor(fs) : DEFAULT_SETTINGS.fontSize,
       width: isArticleWidth(width) ? width : DEFAULT_SETTINGS.width,
+      lineHeight: clampScale('lineHeight', localStorage.getItem(STORAGE.lineHeight)),
+      letterSpacing: clampScale('letterSpacing', localStorage.getItem(STORAGE.letterSpacing)),
+      wordSpacing: clampScale('wordSpacing', localStorage.getItem(STORAGE.wordSpacing)),
+      paraSpacing: clampScale('paraSpacing', localStorage.getItem(STORAGE.paraSpacing)),
+      linkUnderline: localStorage.getItem(STORAGE.linkUnderline) === 'true',
+      bigFocus: localStorage.getItem(STORAGE.bigFocus) === 'true',
+      muteColour: localStorage.getItem(STORAGE.muteColour) === 'true',
       dyslexia: localStorage.getItem(STORAGE.dyslexia) === 'true',
       highContrast: localStorage.getItem(STORAGE.highContrast) === 'true',
       reducedMotion: localStorage.getItem(STORAGE.reducedMotion) === 'true',
@@ -298,6 +328,12 @@ export function ArticleProvider({
     const body = document.body
     body.classList.remove(...ARTICLE_THEMES.map((t) => `theme-${t}`))
     body.classList.add(`theme-${settings.theme}`)
+    // The focus ring and the link underline are PAGE concerns, not prose concerns. The navbar,
+    // the footer and the reading toolbar all sit outside [data-article-root], so a reader who
+    // asks for a larger focus ring and then tabs into the nav would get the default one --
+    // measured, and exactly what the first version did.
+    body.classList.toggle('a11y-big-focus', settings.bigFocus)
+    body.classList.toggle('a11y-link-underline', settings.linkUnderline)
     if (themeRoot) {
       themeRoot.classList.remove(...ARTICLE_THEMES.map((t) => `theme-${t}`))
       themeRoot.classList.add(`theme-${settings.theme}`)
@@ -305,6 +341,15 @@ export function ArticleProvider({
       themeRoot.classList.toggle('a11y-high-contrast', settings.highContrast)
       themeRoot.classList.toggle('a11y-reduced-motion', settings.reducedMotion)
       themeRoot.classList.toggle('a11y-reading-ruler', settings.ruler)
+      themeRoot.classList.toggle('a11y-link-underline', settings.linkUnderline)
+      themeRoot.classList.toggle('a11y-big-focus', settings.bigFocus)
+      themeRoot.classList.toggle('a11y-mute-colour', settings.muteColour)
+      // The four scales are custom properties rather than a class per step: eleven classes
+      // for four controls, and the prose rules would each need to know about all of them.
+      READING_SCALE_KEYS.forEach((k) => {
+        const scale = READING_SCALES[k]
+        themeRoot.style.setProperty(scale.prop, scale.values[settings[k] as number] ?? scale.values[scale.initial])
+      })
     }
     if (main) main.dataset.width = settings.width
     html.classList.toggle('sp-reduced-motion', settings.reducedMotion)
@@ -322,11 +367,19 @@ export function ArticleProvider({
       localStorage.setItem(STORAGE.highContrast, String(settings.highContrast))
       localStorage.setItem(STORAGE.reducedMotion, String(settings.reducedMotion))
       localStorage.setItem(STORAGE.ruler, String(settings.ruler))
+      localStorage.setItem(STORAGE.lineHeight, String(settings.lineHeight))
+      localStorage.setItem(STORAGE.letterSpacing, String(settings.letterSpacing))
+      localStorage.setItem(STORAGE.wordSpacing, String(settings.wordSpacing))
+      localStorage.setItem(STORAGE.paraSpacing, String(settings.paraSpacing))
+      localStorage.setItem(STORAGE.linkUnderline, String(settings.linkUnderline))
+      localStorage.setItem(STORAGE.bigFocus, String(settings.bigFocus))
+      localStorage.setItem(STORAGE.muteColour, String(settings.muteColour))
     } catch { /* private mode */ }
     return () => {
       html.classList.remove('sp-reduced-motion')
       // Leave no theme behind on a route that has no article to theme.
       document.body.classList.remove(...ARTICLE_THEMES.map((t) => `theme-${t}`))
+      document.body.classList.remove('a11y-big-focus', 'a11y-link-underline')
       html.style.colorScheme = 'dark'
     }
   }, [settings, hydrated])
@@ -336,7 +389,24 @@ export function ArticleProvider({
   }, [])
 
   const resetA11y = useCallback(() => {
-    setSettings((prev) => ({ ...prev, dyslexia: false, highContrast: false, reducedMotion: false, ruler: false }))
+    // Every accessibility setting, including 5.2's additions. A Reset that leaves three of
+    // ten controls where they were is worse than no Reset: the reader believes they are back
+    // at the default and they are not. The scales go back to their own initial index, which
+    // is not always 0 — line height defaults to the middle step.
+    setSettings((prev) => ({
+      ...prev,
+      dyslexia: false,
+      highContrast: false,
+      reducedMotion: false,
+      ruler: false,
+      linkUnderline: false,
+      bigFocus: false,
+      muteColour: false,
+      lineHeight: READING_SCALES.lineHeight.initial,
+      letterSpacing: READING_SCALES.letterSpacing.initial,
+      wordSpacing: READING_SCALES.wordSpacing.initial,
+      paraSpacing: READING_SCALES.paraSpacing.initial,
+    }))
   }, [])
 
   const reducedMotion = !!osReducedMotion || settings.reducedMotion

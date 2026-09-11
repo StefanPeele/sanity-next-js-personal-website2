@@ -80,3 +80,44 @@ export function isArticleTheme(v: unknown): v is ArticleTheme {
 export function isArticleWidth(v: unknown): v is ArticleWidth {
   return typeof v === 'string' && (ARTICLE_WIDTHS as readonly string[]).includes(v)
 }
+
+/* ── The expanded reading controls (5.2) ──────────────────────────────────────
+   The brief asks for "more than the current four" accessibility toggles and names the
+   candidates: line height, letter spacing, word spacing, paragraph spacing, link
+   underlining, focus ring size, animation off, colour filters.
+
+   Four of those are SCALES, not toggles, and forcing them into on/off would either give a
+   reader one clumsy jump or nothing. They are stored as an index and written to a CSS custom
+   property, so the prose rules read one variable instead of the stylesheet growing a class
+   per step.
+
+   "Animation off" already exists as `reducedMotion`, so it is not duplicated here. */
+
+export interface ReadingScale {
+  /** CSS values by index. Index 0 is always the site's own default. */
+  values: readonly string[]
+  /** Which index a reader starts on. */
+  initial: number
+  /** The custom property the provider writes. */
+  prop: string
+}
+
+export const READING_SCALES = {
+  /** Multiplier on the prose line-height of 1.7 -> 1.50 / 1.70 / 1.96. */
+  lineHeight:    { values: ['0.88', '1', '1.15'], initial: 1, prop: '--a11y-lh' },
+  /** Replaces the base 0.01em outright rather than adding to it. */
+  letterSpacing: { values: ['0.01em', '0.04em', '0.08em'], initial: 0, prop: '--a11y-ls' },
+  wordSpacing:   { values: ['0em', '0.1em', '0.2em'], initial: 0, prop: '--a11y-ws' },
+  /** Multiplier on the 1.5em paragraph gap -> 1.50 / 2.18 / 2.85em. */
+  paraSpacing:   { values: ['1', '1.45', '1.9'], initial: 0, prop: '--a11y-ps' },
+} as const satisfies Record<string, ReadingScale>
+
+export type ReadingScaleKey = keyof typeof READING_SCALES
+export const READING_SCALE_KEYS = Object.keys(READING_SCALES) as ReadingScaleKey[]
+
+/** Clamp a stored index back into range — old values survive a table that shrank. */
+export function clampScale(key: ReadingScaleKey, v: unknown): number {
+  const n = typeof v === 'number' ? v : Number(v)
+  const max = READING_SCALES[key].values.length - 1
+  return Number.isFinite(n) && n >= 0 && n <= max ? Math.floor(n) : READING_SCALES[key].initial
+}
