@@ -25,6 +25,7 @@ import { DEFAULT_ARTICLE_UI } from '@/lib/cms/defaults/articleUi'
 import { SITE, absoluteUrl, articleTypeMeta } from '@/lib/site'
 import { formatDate } from '@/lib/dates'
 import { readingTime } from '@/lib/reading'
+import { reviewerDisplay, reviewerSummary } from '@/lib/reviewers'
 import { applyGlossaryMarks } from '@/lib/glossary'
 import { articleToMarkdown, buildStudyDeck, collectQuizzes, countStudyCards } from '@/lib/anki'
 import { notFound } from 'next/navigation'
@@ -77,6 +78,12 @@ export default async function BlogPostPage({ params }: Props) {
   // Reading time comes from the query's wordCount, the same field the cards read.
   // This page used to recount locally, which is how /blog said 17 min and this page
   // said 18 for the same post. One number, one source. See wordCountField.
+  // Redact on the SERVER. CredibilitySection and ArticleToc are client components, so
+  // anything handed to them is serialized into the RSC payload -- an anonymous reviewer's
+  // real name would be readable in view-source even though no pixel shows it.
+  const reviewerDisplays = (post.reviewers ?? []).map(reviewerDisplay)
+  const reviewedBy = reviewerSummary(post.reviewers ?? [])
+
   const wordCount = post.wordCount ?? 0
   const readTime = readingTime(wordCount)
   const publishDate = formatDate(post.publishedAt, 'long', 'Unpublished')
@@ -220,7 +227,7 @@ export default async function BlogPostPage({ params }: Props) {
                 heading={B.credibilityHeading}
                 labels={ui.credibility}
                 reviewStatus={post.reviewStatus}
-                reviewers={(post.reviewers ?? []).map((r) => ({ ...r, name: r.name ?? 'Reviewer', role: r.role ?? undefined, organization: r.organization ?? undefined, quote: r.quote ?? undefined, date: r.date ?? undefined, linkedIn: r.linkedIn ?? undefined }))}
+                reviewers={reviewerDisplays}
                 changelog={(post.changelog ?? []).map((c) => ({ _key: c._key, date: c.date ?? '', description: c.description ?? '' }))}
                 responsesFromField={(post.responsesFromField ?? []).map((r) => ({ ...r, title: r.title ?? '', url: r.url ?? '#', author: r.author ?? undefined, platform: r.platform ?? undefined, summary: r.summary ?? undefined, date: r.date ?? undefined }))}
                 confidenceLevel={post.confidenceLevel ?? undefined}
@@ -238,7 +245,7 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </main>
 
-          <ArticleToc copy={ui} menu={menu} variant="sidebar" />
+          <ArticleToc copy={ui} menu={menu} variant="sidebar" reviewedBy={reviewedBy} />
         </div>
       </div>
     </ArticleProvider>

@@ -23,7 +23,7 @@ export const articleUiQuery = defineQuery(`
     },
     credibility{
       "maturity": maturity[]{ ${v} }, "load": load[]{ ${v} },
-      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl
+      reviewersHeading, reviewedByLabel, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl
     },
     seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }
   }

@@ -376,7 +376,7 @@ export const postBySlugQuery = defineQuery(`
       }
     },
     seriesOrder,
-    reviewers[] { _key, name, role, organization, quote, date, linkedIn },
+    reviewers[] { _key, name, role, organization, quote, date, linkedIn, anonymous },
     changelog[]  { _key, date, description },
     responsesFromField[] { _key, title, url, author, platform, summary, date },
     sources[] { _key, title, url, author, type, description },

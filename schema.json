@@ -3702,6 +3702,13 @@
               },
               "optional": true
             },
+            "reviewedByLabel": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
             "responsesHeading": {
               "type": "objectAttribute",
               "value": {
@@ -9263,6 +9270,13 @@
           "of": {
             "type": "object",
             "attributes": {
+              "anonymous": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "boolean"
+                },
+                "optional": true
+              },
               "name": {
                 "type": "objectAttribute",
                 "value": {

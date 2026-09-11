@@ -51,7 +51,7 @@ export default defineType({
     ], { group: 'blocks' }),
     obj('credibility', 'Credibility labels', [
       vocab('maturity', 'Maturity'), vocab('load', 'Cognitive load'),
-      str('reviewersHeading', 'Reviewers heading'), str('responsesHeading', 'Responses heading'), str('changelogHeading', 'Revision history heading'),
+      str('reviewersHeading', 'Reviewers heading'), str('reviewedByLabel', '"Peer reviewed by" label'), str('responsesHeading', 'Responses heading'), str('changelogHeading', 'Revision history heading'),
       str('correctionsLabel', 'Corrections link label'),
       defineField({ name: 'correctionsUrl', title: 'Corrections link URL', type: 'url' }),
     ], { group: 'credibility' }),

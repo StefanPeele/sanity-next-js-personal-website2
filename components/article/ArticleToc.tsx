@@ -9,7 +9,14 @@ import { ChevronDown } from 'lucide-react'
 // Desktop: sticky sidebar (rendered by the page in the right column).
 // Mobile: a <details> list under the header. Both carry the reader menu button.
 
-type Props = { copy: ArticleUiCopy; menu: ReaderMenuProps; variant: 'sidebar' | 'mobile' }
+type Props = {
+  copy: ArticleUiCopy
+  menu: ReaderMenuProps
+  variant: 'sidebar' | 'mobile'
+  /** Pre-redacted on the server by reviewerSummary(). Never the raw reviewer objects --
+      this is a client component, so anything passed here reaches the RSC payload. */
+  reviewedBy?: string | null
+}
 
 function TocList({ copy }: { copy: ArticleUiCopy }) {
   const { headings, activeId, scrollTo } = useArticle()
@@ -35,7 +42,7 @@ function TocList({ copy }: { copy: ArticleUiCopy }) {
   )
 }
 
-export function ArticleToc({ copy, menu, variant }: Props) {
+export function ArticleToc({ copy, menu, variant, reviewedBy }: Props) {
   const { headings } = useArticle()
 
   if (variant === 'sidebar') {
@@ -56,6 +63,15 @@ export function ArticleToc({ copy, menu, variant }: Props) {
               <TocList copy={copy} />
             </div>
           ) : null}
+          {/* Document-level status, kept quiet: §1.4 found that the largest article-quality
+              system in existence (Wikipedia) hides its grade from readers entirely and
+              surfaces only claim-level marks. This is the detail tier from 3.3 -- the
+              header carries the badge, this carries who. */}
+          {reviewedBy && (
+            <p className="mt-5 pt-4 border-t border-edge-faint shrink-0 font-sans text-xs text-stone-400 leading-relaxed">
+              {copy.credibility.reviewedByLabel}: <span className="text-stone-300">{reviewedBy}</span>
+            </p>
+          )}
         </div>
       </aside>
     )

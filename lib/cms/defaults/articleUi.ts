@@ -49,6 +49,7 @@ export const DEFAULT_ARTICLE_UI = {
       { key: 'reference', label: 'Reference' },
     ] as VocabEntry[],
     reviewersHeading: 'Reviewed by',
+    reviewedByLabel: 'Peer reviewed by',
     responsesHeading: 'Responses from the field',
     changelogHeading: 'Revision history',
     correctionsLabel: 'Found an error? Suggest a correction',

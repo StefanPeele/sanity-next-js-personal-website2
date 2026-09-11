@@ -3,20 +3,18 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatDate } from '@/lib/dates'
+import type { ReviewerDisplay } from '@/lib/reviewers'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 import { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 import { FOCUS, QUIET_LINK } from '@/lib/ui'
 // components/blog/CredibilitySection.tsx
 
-interface Reviewer {
-  _key: string
-  name: string
-  role?: string
-  organization?: string
-  quote?: string
-  date?: string
-  linkedIn?: string
-}
+// This component receives ALREADY-REDACTED reviewers. It is a client component, so
+// whatever it is given is serialized into the RSC payload and readable in view-source --
+// redacting at render time here would hide an anonymous reviewer's name from the page
+// while still shipping it to the browser. The page calls reviewerDisplay() on the server
+// and only the result crosses the boundary. Do not change this back to ReviewerInput.
+type Reviewer = ReviewerDisplay
 
 interface ChangelogEntry {
   _key: string
@@ -156,45 +154,52 @@ export function CredibilitySection({
         <div>
           <h3 className="section-label mb-6">{labels.reviewersHeading}</h3>
           <div className="space-y-6">
-            {reviewers.map((reviewer) => (
+            {/* Every field here is already redacted -- an anonymous reviewer arrives with
+                name, initial, organization and linkedIn nulled on the SERVER, so they are
+                absent from the RSC payload as well as from the page. */}
+            {reviewers.map((r) => (
               <div
-                key={reviewer._key}
+                key={r.key}
                 className="p-5 rounded-xl border border-emerald-500/20 bg-emerald-950/[0.08]"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="font-mono text-xs text-emerald-400 font-bold">
-                      {reviewer.name.charAt(0)}
+                    <span className="font-mono text-xs text-emerald-400 font-bold" aria-hidden={r.initial ? undefined : true}>
+                      {/* No initial for an anonymous reviewer -- a single letter narrows a
+                          search far more than it looks like it does. */}
+                      {r.initial ?? '·'}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 flex-wrap mb-1">
-                      {reviewer.linkedIn ? (
+                      {r.linkedIn ? (
                         <a
-                          href={reviewer.linkedIn}
+                          href={r.linkedIn}
                           target="_blank"
                           rel="noreferrer"
                           className={`font-serif text-white hover:text-emerald-300 transition-colors font-semibold rounded-sm ${FOCUS}`}
                         >
-                          {reviewer.name} ↗
+                          {r.label} ↗
                         </a>
                       ) : (
-                        <span className="font-serif text-white font-semibold">{reviewer.name}</span>
-                      )}
-                      {reviewer.role && (
-                        <span className="meta-label text-stone-400">
-                          {reviewer.role}{reviewer.organization ? ` · ${reviewer.organization}` : ''}
+                        <span className={`font-serif font-semibold ${r.anonymous ? 'text-stone-200 italic' : 'text-white'}`}>
+                          {r.anonymous ? `Reviewed by ${r.label}` : r.label}
                         </span>
                       )}
-                      {reviewer.date && (
+                      {r.role && (
+                        <span className="meta-label text-stone-400">
+                          {r.role}{r.organization ? ` · ${r.organization}` : ''}
+                        </span>
+                      )}
+                      {r.date && (
                         <span className="font-mono text-xs text-stone-400 ml-auto">
-                          {formatDate(reviewer.date, 'month')}
+                          {formatDate(r.date, 'month')}
                         </span>
                       )}
                     </div>
-                    {reviewer.quote && (
+                    {r.quote && (
                       <blockquote className="font-serif italic text-stone-400 text-sm leading-relaxed mt-2 border-l border-emerald-500/30 pl-3">
-                        "{reviewer.quote}"
+                        "{r.quote}"
                       </blockquote>
                     )}
                   </div>

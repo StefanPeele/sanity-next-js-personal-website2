@@ -529,16 +529,46 @@ export default defineType({
           type: 'object',
           name: 'reviewer',
           fields: [
-            defineField({ name: 'name', title: 'Full Name', type: 'string', validation: (r) => r.required() }),
-            defineField({ name: 'role', title: 'Role / Title', type: 'string', description: 'e.g. "Junior Network Admin" or "Senior Infrastructure Engineer"' }),
+            // Anonymity is all-or-nothing. When this is on, the site renders the ROLE and
+            // nothing else -- no name, no initial, no organization, no LinkedIn. A LinkedIn
+            // URL is the name, and a small employer plus a job title identifies a person
+            // just as well. See lib/reviewers.ts, which is the only place that decides this.
+            defineField({
+              name: 'anonymous', title: 'Review anonymously', type: 'boolean',
+              initialValue: false,
+              description: 'Renders "Reviewed by a network engineer" instead of their name. Their name, organization and LinkedIn are not published. Requires a Role below.',
+            }),
+            defineField({
+              name: 'name', title: 'Full Name', type: 'string',
+              // Required unless anonymous -- an anonymous reviewer may have no name stored
+              // at all, which is the safest way to hold one.
+              validation: (r) => r.custom((v, ctx) => {
+                const parent = ctx.parent as { anonymous?: boolean } | undefined
+                if (parent?.anonymous) return true
+                return v ? true : 'Required unless the review is anonymous'
+              }),
+            }),
+            defineField({
+              name: 'role', title: 'Role / Title', type: 'string',
+              description: 'e.g. "Junior Network Admin" or "Senior Infrastructure Engineer". Required for an anonymous review, because it is the only thing published.',
+              validation: (r) => r.custom((v, ctx) => {
+                const parent = ctx.parent as { anonymous?: boolean } | undefined
+                if (!parent?.anonymous) return true
+                return v ? true : 'Required for an anonymous review -- it is all the reader sees'
+              }),
+            }),
             defineField({ name: 'organization', title: 'Organization', type: 'string', description: 'e.g. "QuickCopper MSP" or "ShowFab"' }),
             defineField({ name: 'quote', title: 'Review Quote', type: 'text', rows: 3, description: 'Their direct words about this post\'s accuracy. Keep it specific — "The STP section is accurate and the failure scenario matches what I\'ve seen in production." is far stronger than "Good post."' }),
             defineField({ name: 'date', title: 'Review Date', type: 'date' }),
             defineField({ name: 'linkedIn', title: 'LinkedIn URL (optional)', type: 'url' }),
           ],
           preview: {
-            select: { title: 'name', subtitle: 'role' },
-            prepare({ title, subtitle }) { return { title, subtitle } },
+            select: { title: 'name', subtitle: 'role', anonymous: 'anonymous' },
+            prepare({ title, subtitle, anonymous }) {
+              return anonymous
+                ? { title: subtitle ? `Anonymous — ${subtitle}` : 'Anonymous reviewer', subtitle: 'Name not published' }
+                : { title, subtitle }
+            },
           },
         },
       ],
