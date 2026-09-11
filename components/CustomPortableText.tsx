@@ -23,7 +23,11 @@ import { FOCUS } from '@/lib/ui'
 
 type AnyBlock = PortableTextBlock & { _key: string; _type: string; style?: string; children?: Array<{ text?: string }>; title?: string }
 
-const HEADING_STYLES = new Set(['h2', 'h3', 'h4'])
+// Every heading style the Studio offers, not a subset. This set is what decides which
+// blocks get an id, an anchor and a TOC entry -- it held only h2/h3/h4, so h1, h5 and h6
+// were rendered but unreachable. That is why one post shipped with seven <h5> elements,
+// no ids, and an entirely empty Contents column.
+const HEADING_STYLES = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
 
 /** Precompute ids + section word counts so SSR markup already carries them. */
 function buildHeadingMeta(blocks: AnyBlock[]): Map<string, { id: string; words: number }> {
@@ -147,6 +151,29 @@ export function CustomPortableText({
             {children}
             {p.id && <HeadingAnchor id={p.id} />}
           </h4>
+        )
+      },
+      // h5 and h6 had NO renderer, so Portable Text fell back to a bare tag with no id,
+      // no anchor and no TOC entry. Measured on production: /blog/the-field… renders seven
+      // <h5> elements with no id and an entirely empty Contents column, plus an H1→H5
+      // heading-level skip. The Studio offers H1–H6 by default; the pipeline handled two of
+      // them. Found by the verifier while checking something else.
+      h5: ({ children, value: v }) => {
+        const p = headingProps(v?._key)
+        return (
+          <h5 {...p} className="group mt-8 mb-3 font-serif text-[19px] md:text-[20px] font-semibold text-stone-200 leading-snug scroll-mt-28">
+            {children}
+            {p.id && <HeadingAnchor id={p.id} />}
+          </h5>
+        )
+      },
+      h6: ({ children, value: v }) => {
+        const p = headingProps(v?._key)
+        return (
+          <h6 {...p} className="group mt-6 mb-2 font-sans text-[17px] font-semibold text-stone-200 leading-snug scroll-mt-28">
+            {children}
+            {p.id && <HeadingAnchor id={p.id} />}
+          </h6>
         )
       },
       blockquote: ({ children }) => (

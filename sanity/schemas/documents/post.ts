@@ -545,7 +545,9 @@ export default defineType({
               validation: (r) => r.custom((v, ctx) => {
                 const parent = ctx.parent as { anonymous?: boolean } | undefined
                 if (parent?.anonymous) return true
-                return v ? true : 'Required unless the review is anonymous'
+                // .trim(): reviewerDisplay trims, so validation must too, or "   " passes here
+                // and renders as "Reviewer". Found by the verifier.
+                return typeof v === 'string' && v.trim() ? true : 'Required unless the review is anonymous'
               }),
             }),
             defineField({
@@ -554,7 +556,7 @@ export default defineType({
               validation: (r) => r.custom((v, ctx) => {
                 const parent = ctx.parent as { anonymous?: boolean } | undefined
                 if (!parent?.anonymous) return true
-                return v ? true : 'Required for an anonymous review -- it is all the reader sees'
+                return typeof v === 'string' && v.trim() ? true : 'Required for an anonymous review -- it is all the reader sees'
               }),
             }),
             defineField({ name: 'organization', title: 'Organization', type: 'string', description: 'e.g. "QuickCopper MSP" or "ShowFab"' }),

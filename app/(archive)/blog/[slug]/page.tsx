@@ -173,7 +173,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         <div className="relative max-w-6xl mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12 mt-12 md:mt-16">
           <main id="content" className="max-w-[36rem] mx-auto w-full transition-[max-width] duration-300" data-width="standard">
-            <ArticleToc copy={ui} menu={menu} variant="mobile" />
+            <ArticleToc copy={ui} menu={menu} variant="mobile" reviewedBy={reviewedBy} />
 
             {post.series && <SeriesBanner series={post.series} currentSlug={slug} seriesOrder={post.seriesOrder} labels={ui.seriesBanner} />}
 

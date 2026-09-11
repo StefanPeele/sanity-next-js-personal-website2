@@ -121,7 +121,10 @@ function collectHeadings(root: HTMLElement): { headings: ArticleHeading[]; els: 
   const taken = new Set<string>()
   const els: HTMLElement[] = []
   const headings: ArticleHeading[] = []
-  root.querySelectorAll<HTMLElement>('h2, h3').forEach((el) => {
+  // h2..h6, not h2..h3. The Studio offers every level and authors use them: one post
+  // is written entirely in h5 and had a completely empty Contents column because of this.
+  // H2 stays level 2; everything below indents as level 3.
+  root.querySelectorAll<HTMLElement>('h2, h3, h4, h5, h6').forEach((el) => {
     if (el.closest('[data-no-toc]')) return
     let id = el.id
     if (!id) {

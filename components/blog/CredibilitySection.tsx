@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatDate } from '@/lib/dates'
+import { enumKey, enumKeys } from '@/lib/stega'
 import type { ReviewerDisplay } from '@/lib/reviewers'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 import { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
@@ -112,11 +113,15 @@ export function CredibilitySection({
 
   if (!hasCredibilityContent) return null
 
-  const confidence = confidenceLevel ? CONFIDENCE_CONFIG[confidenceLevel] : null
-  const maturity   = maturityIndicator ? MATURITY_CONFIG[maturityIndicator] : null
-  const load       = cognitiveLoad ? LOAD_CONFIG[cognitiveLoad] : null
+  // enumKey, not the raw value. In draft mode Sanity encodes the field's source path into
+  // the string as zero-width characters, so CONFIDENCE_CONFIG['working-theory\u200B…'] is
+  // undefined and the badge silently vanishes in Presentation. See lib/stega.ts.
+  const confidence = CONFIDENCE_CONFIG[enumKey(confidenceLevel) ?? ''] ?? null
+  const maturity   = MATURITY_CONFIG[enumKey(maturityIndicator) ?? ''] ?? null
+  const load       = LOAD_CONFIG[enumKey(cognitiveLoad) ?? ''] ?? null
+  const flags = enumKeys(reviewStatus)
   const reviewBadges = REVIEW_FLAG_ORDER
-    .filter((f) => (reviewStatus ?? []).includes(f))
+    .filter((f) => flags.includes(f))
     .map((f) => ({ key: f, ...REVIEW_STATUS_CONFIG[f] }))
 
   return (
@@ -164,9 +169,12 @@ export function CredibilitySection({
               >
                 <div className="flex items-start gap-4">
                   <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="font-mono text-xs text-emerald-400 font-bold" aria-hidden={r.initial ? undefined : true}>
-                      {/* No initial for an anonymous reviewer -- a single letter narrows a
-                          search far more than it looks like it does. */}
+                    {/* aria-hidden either way. The avatar is decorative: the initial
+                        duplicates the name beside it, and a screen reader announcing
+                        "P Publicly Named Reviewer" is noise. No initial at all for an
+                        anonymous reviewer -- a single letter narrows a search far more
+                        than it looks like it does. */}
+                    <span className="font-mono text-xs text-emerald-400 font-bold" aria-hidden="true">
                       {r.initial ?? '·'}
                     </span>
                   </div>

@@ -86,6 +86,13 @@ export function ArticleToc({ copy, menu, variant, reviewedBy }: Props) {
             <ChevronDown size={16} className="text-stone-400" aria-hidden="true" />
           </summary>
           <div className="mt-3"><TocList copy={copy} /></div>
+          {/* The same detail the sidebar carries. Without this the Contents surface
+              differs between breakpoints -- found by the verifier. */}
+          {reviewedBy && (
+            <p className="mt-4 pt-3 border-t border-edge-faint font-sans text-xs text-stone-400 leading-relaxed">
+              {copy.credibility.reviewedByLabel}: <span className="text-stone-300">{reviewedBy}</span>
+            </p>
+          )}
         </details>
       ) : <div className="flex-1" />}
       <ReaderMenu {...menu} />

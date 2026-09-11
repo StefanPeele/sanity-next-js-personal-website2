@@ -1,4 +1,5 @@
 import { Icon } from '@/lib/cms/icons'
+import { enumKey } from '@/lib/stega'
 // components/blog/FailureNote.tsx
 
 interface FailureNoteProps {
@@ -45,7 +46,7 @@ const CONFIG = {
 
 export function FailureNote({ value }: FailureNoteProps) {
   const { label = 'failed', content } = value
-  const config = CONFIG[label] ?? CONFIG.failed
+  const config = CONFIG[enumKey(label) as keyof typeof CONFIG] ?? CONFIG.failed
 
   return (
     <div className={`my-8 rounded-xl border ${config.border} ${config.bg} overflow-hidden`}>

@@ -6,6 +6,7 @@ import { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from '@/lib/cms/defaults/artic
 import type { VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { heroImageUrl } from '@/components/article/heroImage'
 import { FOCUS } from '@/lib/ui'
+import { enumKeys } from '@/lib/stega'
 // components/blog/BlogArticleHeader.tsx
 // Text-first article header, left-aligned to the prose measure.
 //
@@ -55,7 +56,8 @@ export function BlogArticleHeader({
   // goes QUIET -- Wikipedia hides its article grade from readers entirely. The full set
   // renders in CredibilitySection further down the page. Peer review outranks the
   // invitation to review, because it is a fact rather than a request.
-  const flags = reviewStatus ?? []
+  // enumKeys, not the raw array -- see lib/stega.ts.
+  const flags = enumKeys(reviewStatus)
   const reviewBadge = flags.includes('peer-reviewed')
     ? { label: labels.reviewBadges.peerReviewed, className: 'text-emerald-400 border-emerald-500/30' }
     : flags.includes('seeking-review')

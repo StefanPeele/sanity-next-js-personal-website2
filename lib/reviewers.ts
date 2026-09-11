@@ -34,12 +34,31 @@ export interface ReviewerDisplay {
   anonymous: boolean
 }
 
-const VOWELS = new Set(['a', 'e', 'i', 'o', 'u'])
+// "a" vs "an" depends on SOUND, not spelling, and a first-letter test gets a networking
+// site wrong in exactly the cases it will meet: "a SRE", "a RF engineer", "a MSP
+// technician" all read as consonants on the page and start with a vowel letter, while
+// "an hour" is the reverse. Found by the verifier, which fuzzed it.
+const VOWEL_LETTERS = new Set(['a', 'e', 'i', 'o', 'u'])
+// Letters whose NAME begins with a vowel sound, for initialisms: F "ef", H "aitch",
+// L "el", M "em", N "en", R "ar", S "es", X "ex".
+const VOWEL_SOUNDING_CONSONANTS = new Set(['f', 'h', 'l', 'm', 'n', 'r', 's', 'x'])
+// Words that start with a vowel letter but a consonant sound.
+const CONSONANT_SOUNDING_VOWEL_WORDS = /^(u[bcdgklmnprstz]|eu|one|once)/i
+// Words that start with a consonant letter but a vowel sound.
+const VOWEL_SOUNDING_CONSONANT_WORDS = /^(hour|honest|honou?r|heir)/i
 
-/** "a network engineer" / "an infrastructure engineer". */
+/** "a network engineer" / "an infrastructure engineer" / "an SRE" / "a user". */
 export function withArticle(role: string): string {
-  const first = role.trim()[0]?.toLowerCase()
-  return `${first && VOWELS.has(first) ? 'an' : 'a'} ${role.trim()}`
+  const word = role.trim()
+  const first = word[0]?.toLowerCase() ?? ''
+  // An initialism -- two or more capitals, or a single capital followed by a non-letter.
+  const isInitialism = /^[A-Z]{2,}/.test(word) || /^[A-Z](?![a-z])/.test(word)
+  let vowelSound: boolean
+  if (isInitialism) vowelSound = VOWEL_LETTERS.has(first) || VOWEL_SOUNDING_CONSONANTS.has(first)
+  else if (VOWEL_SOUNDING_CONSONANT_WORDS.test(word)) vowelSound = true
+  else if (CONSONANT_SOUNDING_VOWEL_WORDS.test(word)) vowelSound = false
+  else vowelSound = VOWEL_LETTERS.has(first)
+  return `${vowelSound ? 'an' : 'a'} ${word}`
 }
 
 const FALLBACK_ROLE = 'professional in the field'

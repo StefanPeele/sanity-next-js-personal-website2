@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 import { downloadTextFile } from '@/lib/anki'
 import { Icon } from '@/lib/cms/icons'
+import { enumKey } from '@/lib/stega'
 import { FOCUS, buttonClass } from '@/lib/ui'
 
 // ══════════════════════════════════════════════════════════════════
@@ -89,7 +90,7 @@ interface WhatEngineersUseProps {
 }
 
 export function WhatEngineersUse({ value }: WhatEngineersUseProps) {
-  const env = value.environment ? ENV_CONFIG[value.environment] : null
+  const env = ENV_CONFIG[enumKey(value.environment) ?? ''] ?? null
 
   return (
     <div className="my-8 rounded-xl overflow-hidden border border-stone-600/30 bg-stone-950/30">

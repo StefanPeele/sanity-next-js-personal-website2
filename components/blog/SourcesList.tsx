@@ -1,5 +1,6 @@
 import { Icon, type IconName } from '@/lib/cms/icons'
 import { FOCUS } from '@/lib/ui'
+import { enumKey } from '@/lib/stega'
 // components/blog/SourcesList.tsx
 
 interface Source {
@@ -43,7 +44,7 @@ export function SourcesList({ sources, heading = 'Sources' }: SourcesListProps &
       {/* Source list */}
       <ol className="space-y-4">
         {sources.map((source, i) => {
-          const config = TYPE_CONFIG[source.type ?? 'other'] ?? TYPE_CONFIG.other
+          const config = TYPE_CONFIG[enumKey(source.type) ?? 'other'] ?? TYPE_CONFIG.other
 
           return (
             <li
