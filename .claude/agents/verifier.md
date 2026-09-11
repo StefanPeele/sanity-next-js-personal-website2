@@ -116,6 +116,17 @@ Check this list before you trust a number.
 18. Stopping a background build does not reap its children; an orphan turned a 26-second
     build into 17.4 minutes.
 
+21. **A transitioned focus ring reads as a different ring if you sample it too early.**
+    The ring animates. At a 150ms settle a probe saw five phantom "non-standard" colours
+    (`rgb(253,226,155)`, `rgb(254,237,194)` …); one sampled over 2.5s resolved to the
+    standard `rgb(251,191,36)`. **Settle ~320ms before reading focus styles.**
+22. **`body.textContent` is not a safe substitute for `innerText`.** It includes `<script>`
+    contents, so it inherits trap 10 — the RSC payload carries `min-h-[48px]`, which a
+    `/\d+ min/` match reads as "2 min". Every article page produces phantom 2s that way.
+23. **The object `sanityFetch` returns is frozen.** Assigning to it crashes the Next build
+    worker with `exited with code: 3221226505` during "Collecting page data" — a Windows
+    access violation that looks nothing like a frozen-object error.
+
 **The one that matters most**
 
 19. **Disproving one instance is not disproving the claim — and confirming one instance is
