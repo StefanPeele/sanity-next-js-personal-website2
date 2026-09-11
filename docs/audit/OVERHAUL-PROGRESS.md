@@ -1,7 +1,7 @@
 # Blog Overhaul — Progress
 
-Last updated: 2026-09-11T03:05Z
-Current phase: **Phase 2 in progress — 2.1 shipped, 2.2/2.3 proposed, 2.4 next.**
+Last updated: 2026-09-11T04:05Z
+Current phase: **Phase 2 complete** — 2.1 shipped and live; 2.2–2.6 proposed, with options rendered where the brief asked. **Phase 3 is next and not started.**
 Session count: 1
 
 ## Shipped
@@ -39,6 +39,11 @@ been applied — Phase 1 is research only.
 | --- | --- | --- |
 | **2.2 description** | `PROPOSALS.md` | Three drafts. **A now, C after Phase 3** — C advertises the status system and should not promise what does not exist yet. Also: the current lede hardcodes the lane names and breaks when 4.3 renames them |
 | **2.3 critique invitation** | `PROPOSALS.md` | **Inline note under the lede**, not a tooltip or panel. An invitation that must be discovered is not one, and §1.8 found no good touch equivalent for hover |
+| **2.4 meta scale** | `PROPOSALS.md` | **Keep the 12px floor** — 12px is inside the measured 10–15px kicker band. Unify reading time on 14px sans sentence case; move filter labels to `.meta-label`; the arrow is already correct on the card, wrong only on the hero |
+| **2.5 dividers** | `PROPOSALS.md` + `screenshots/divider-options/` | **Option D** — space instead of rules, with `.section-label` as a mono kicker. Reject B (louder, not clearer) |
+| **2.5 duplicate word** | `PROPOSALS.md` | **"Featured" is on the page twice** — section label and badge. Drop the badge; position already says it |
+| **2.5 h1** | `PROPOSALS.md` | 72px → 48px so the hero becomes the largest thing. **Not rendered** — needs its own options round |
+| **2.6 the diagnosis** | `PROPOSALS.md` + `screenshots/card-options/` | **The theory is right about the card, wrong about the page.** Card spread 1.67× is the lowest of five; title is w400 against w700 at three of four. **Option C**: 24px w600 + kicker. Must ship with the reading-time fix |
 | **2.5 dividers** | §1.1 | **Replace with space, don't strengthen.** 6 of 6 comparable essay sites use near-zero rules; we use 16 bordered blocks |
 | **2.5 FEATURED** | §1.2 | **Contradicts the brief.** Keep it a filled status *flag*, move it above the headline into the kicker slot, and add a *separate* coloured mono kicker for the lane |
 | **2.6 diagnosis** | §1.1 | The problem is the **second tier**, not uniformity. Tiers are 72/60/—/24; every edited site has a populated middle. The 72px page title is larger than the story it introduces |
@@ -85,6 +90,8 @@ been applied — Phase 1 is research only.
 | 1.2 "Featured becomes a kicker" | It is a status flag — a different form from a kicker | Measured the four forms |
 | 1.5 / 7.1 "the measure is 65 characters" | **56**, the narrowest of five long-form sites | Real chars ÷ real lines, 25 paragraphs, one method across sites |
 | 1.7 "comment labels have little prior art" | Conventional Comments is a published standard with seven | Search |
+| 2.6 "nothing leads" (the brief's theory) | **Right about the card, wrong about the page.** Page lead:body 5.14× is 2nd highest of 13; card spread 1.67× is lowest of 5 | Measured a card on ours and four references |
+| 2.4 my own claim that "Read →" is a literal glyph | True on the **hero** only. The card already uses a lucide `ArrowRight` with a hover translate | Read the card markup after writing the note |
 | 2.1 my own grep | Missed **6 of 20** strings because the pattern required quotes tight around the word — including the RSS feed title, the OG image and the JSON-LD name, all user-visible | Re-grepped without the quote assumption |
 
 ## Deferred / out of scope
