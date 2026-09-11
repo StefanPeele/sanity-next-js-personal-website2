@@ -58,6 +58,17 @@ around a wrong premise; name it.
   which added the reading-time agreement test; it was 33 when this brief was written. If it
   reports any other number, investigate before proceeding — do not re-run until it
   agrees. A suite that silently skips tests is worse than one that fails.
+- **Independently verified by the `verifier` subagent** before `OVERHAUL-PROGRESS.md` marks
+  an item done. Invoke it for anything that ships code or changes a rendered number; skip it
+  for pure documentation commits, where it is overhead without benefit.
+  **Give it the CLAIM, never the implementation** — knowing how a thing was built biases how
+  it gets tested, and that is the failure mode this project keeps producing. It designs its
+  own measurement and must not reuse the harness that produced the original number.
+  **If the verifier disagrees with your own result, the verifier's result stands** until you
+  can show its measurement is wrong. Log both — a disagreement is a finding either way.
+  Definition: `.claude/agents/verifier.md`. The same checklist and trap list live in
+  `.claude/skills/verification-protocol/SKILL.md` so the protocol survives into sessions
+  that do not use the subagent.
 - Verify **live on production** after every deploy, not just locally. Poll until the
   deploy is actually serving your commit; `/api/health` reports the live commit hash.
 

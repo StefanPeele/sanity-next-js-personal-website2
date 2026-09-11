@@ -6,24 +6,24 @@ Session count: 1
 
 ## Shipped
 
-| Item | Commit | Verified live | Notes |
-| --- | --- | --- | --- |
-| Brief installed in the repo | `33859fb` | n/a | 1226 lines, survives a context reset |
-| 0.1 Reading time — one source of truth | `2724d3e` | **yes** — agreement test passes against stefanpeele.com | Suite is now **34**, not 33 |
-| 0.2 FEATURED badge alignment | `b6c07c2` | **yes** | Text asymmetry 5px → 1px, box unchanged at 30px |
-| 0.3 `(TESTING)` prefix removed | Sanity txn `mIRMU65sT5gw12rzV1sPip` | yes — dataset re-read | Draft only; published was already clean |
-| 0.4 `--` → em dash | same transaction | yes — dataset re-read | Published document patched directly |
-| 0.5 `/graph` 8px labels logged | `b6c07c2` | n/a | See *Deferred* |
-| **1.1 Editorial index formats** | `b3e5352` | n/a | 13 sites measured live, 3 recorded as blocked |
-| **1.2 The newspaper kicker** | `b3e5352` | n/a | |
-| **1.3 Metadata treatment** | `942c2c3` | n/a | |
-| **1.4 Epistemic status** | `c0bad17` | n/a | |
-| **1.5 Sidenotes** | `9b59bc0` | n/a | |
-| **1.6 Reading toolbars** | `e50cfc6` | n/a | |
-| **1.7 Comment systems** | `9e43345` | n/a | |
-| **1.8 Hover previews** | `e2622cc` | n/a | |
-| **1.9 Corrections** | `43d45ce` | n/a | |
-| **2.1 Rename to Blog** | `1d0869b`, `8141a9f` | **yes** — h1 reads Blog, zero `>Writing<`, /writing redirects | 20 strings found, **14 renamed, 6 left as the activity**. Both halves: code defaults *and* the live Studio documents |
+| Item | Commit | Verified live | **Verified by** | Notes |
+| --- | --- | --- | --- | --- |
+| Brief installed in the repo | `33859fb` | n/a | self | 1226 lines, survives a context reset |
+| 0.1 Reading time — one source of truth | `2724d3e` | **yes** — agreement test passes against stefanpeele.com | self | Suite is now **34**, not 33 |
+| 0.2 FEATURED badge alignment | `b6c07c2` | **yes** | self | Text asymmetry 5px → 1px, box unchanged at 30px |
+| 0.3 `(TESTING)` prefix removed | Sanity txn `mIRMU65sT5gw12rzV1sPip` | yes — dataset re-read | self | Draft only; published was already clean |
+| 0.4 `--` → em dash | same transaction | yes — dataset re-read | self | Published document patched directly |
+| 0.5 `/graph` 8px labels logged | `b6c07c2` | n/a | self | See *Deferred* |
+| **1.1 Editorial index formats** | `b3e5352` | n/a | self | 13 sites measured live, 3 recorded as blocked |
+| **1.2 The newspaper kicker** | `b3e5352` | n/a | self | |
+| **1.3 Metadata treatment** | `942c2c3` | n/a | self | |
+| **1.4 Epistemic status** | `c0bad17` | n/a | self | |
+| **1.5 Sidenotes** | `9b59bc0` | n/a | self | |
+| **1.6 Reading toolbars** | `e50cfc6` | n/a | self | |
+| **1.7 Comment systems** | `9e43345` | n/a | self | |
+| **1.8 Hover previews** | `e2622cc` | n/a | self | |
+| **1.9 Corrections** | `43d45ce` | n/a | self | |
+| **2.1 Rename to Blog** | `1d0869b`, `8141a9f` | **yes** — h1 reads Blog, zero `>Writing<`, /writing redirects | self | 20 strings found, **14 renamed, 6 left as the activity**. Both halves: code defaults *and* the live Studio documents |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:
