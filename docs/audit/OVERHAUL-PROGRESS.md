@@ -1,7 +1,7 @@
 # Blog Overhaul — Progress
 
-Last updated: 2026-09-11T05:30Z
-Current phase: **Phase 3 in progress — 3.1 shipped. Verification infrastructure built and retroactively tested.** Phase 2 complete — 2.1 shipped and live; 2.2–2.6 proposed, with options rendered where the brief asked. **Phase 3 is next and not started.**
+Last updated: 2026-09-11T07:15Z
+Current phase: **Phase 3 in progress — 3.1 and 3.2 shipped. Verification infrastructure built and retroactively tested.** Phase 2 complete — 2.1 shipped and live; 2.2–2.6 proposed, with options rendered where the brief asked. **Phase 3 is next and not started.**
 Session count: 1
 
 ## Shipped
@@ -23,6 +23,7 @@ Session count: 1
 | **1.7 Comment systems** | `9e43345` | n/a | self | |
 | **1.8 Hover previews** | `e2622cc` | n/a | self | |
 | **1.9 Corrections** | `43d45ce` | n/a | self | |
+| **3.2 Reviewer attribution + anonymity** | `aeb4f6f` | not yet deployed | verifier running | Redaction happens on the **server**; the client components never receive the name. Suite now **40** |
 | **3.1 Status fields: subtraction then flags** | `d91a555` | deployed `13757d8` | **verifier — PASS** (a)(b)(c). It also found the duplicate `<h1>` below | `confidenceLevel` loses `verified`/`peer-reviewed`; `reviewStatus` becomes independent flags |
 | Duplicate `<h1>` in body copy | `365e97e` | not yet deployed | **verifier-found** | `CustomPortableText` rendered a body "Heading 1" as a real `<h1>`. Suite is now **35** |
 | Section reading times (Phase 0.1 follow-up) | `76c3d55` | **yes** — production, portfolio 4→1 and home lab 5→3 against headers of 2 and 3 | **verifier-found** | TOC sections summed to more than the post |
