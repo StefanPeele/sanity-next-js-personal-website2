@@ -1,7 +1,6 @@
 'use client'
 
 import { useArticle } from '@/components/article/ArticleProvider'
-import { ReaderMenu, type ReaderMenuProps } from '@/components/article/ReaderMenu'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 import { FOCUS } from '@/lib/ui'
 import { ChevronDown } from 'lucide-react'
@@ -11,7 +10,6 @@ import { ChevronDown } from 'lucide-react'
 
 type Props = {
   copy: ArticleUiCopy
-  menu: ReaderMenuProps
   variant: 'sidebar' | 'mobile'
   /** Pre-redacted on the server by reviewerSummary(). Never the raw reviewer objects --
       this is a client component, so anything passed here reaches the RSC payload. */
@@ -81,7 +79,7 @@ function TocList({ copy }: { copy: ArticleUiCopy }) {
   )
 }
 
-export function ArticleToc({ copy, menu, variant, reviewedBy, sources = [] }: Props) {
+export function ArticleToc({ copy, variant, reviewedBy, sources = [] }: Props) {
   const { headings } = useArticle()
 
   if (variant === 'sidebar') {
@@ -91,11 +89,11 @@ export function ArticleToc({ copy, menu, variant, reviewedBy, sources = [] }: Pr
             overflow-x compute to `auto` as well, which clipped the ReaderMenu's absolutely
             positioned panel — it rendered but 18 of its 24 controls were not hit-testable. */}
         <div className="sticky top-24 max-h-[calc(100vh-7rem)] flex flex-col">
-          {/* flex-wrap: "Contents" plus the "Reading options" chip exceed the 220px sidebar
-              column, which truncated the chip's label. It now drops to its own line instead. */}
+          {/* The "Reading options" chip used to sit here and no longer does -- Phase 5 moved
+              it to the fixed rail. flex-wrap is kept because the heading still shares the row
+              when a future control lands in it. */}
           <div className="flex flex-wrap items-center justify-between gap-2 mb-4 shrink-0">
             <h2 className="section-label min-w-0">{copy.toc.title}</h2>
-            <ReaderMenu {...menu} />
           </div>
           {headings.length > 0 ? (
             <div className="overflow-y-auto min-h-0 pr-2">
@@ -120,15 +118,25 @@ export function ArticleToc({ copy, menu, variant, reviewedBy, sources = [] }: Pr
     )
   }
 
+  // Nothing to show is nothing to render. This used to be an empty flex row holding a
+  // spacer beside the reader-menu chip; Phase 5 moved that chip to the fixed rail, so the
+  // row would otherwise be 8px of margin around nothing.
+  //
+  // The condition is deliberately wider than `headings.length`: a post with sources but no
+  // headings rendered NO mobile Contents at all, so the 3.6 sources block was desktop-only
+  // for it -- the exact breakpoint asymmetry the verifier caught once already with
+  // reviewedBy.
+  if (!headings.length && !sources.length && !reviewedBy) return null
+
   return (
-    <div className="lg:hidden mb-8 flex items-start gap-3" data-print-hide>
-      {headings.length > 0 ? (
-        <details className="flex-1 rounded-xl border border-edge bg-surface-veil px-4 py-3" open={headings.length <= 8} data-toc="mobile">
+    <div className="lg:hidden mb-8" data-print-hide>
+      {(
+        <details className="rounded-xl border border-edge bg-surface-veil px-4 py-3" open={headings.length > 0 && headings.length <= 8} data-toc="mobile">
           <summary className={`cursor-pointer section-label list-none flex items-center justify-between ${FOCUS} rounded-sm`}>
             {copy.toc.mobileTitle}
             <ChevronDown size={16} className="text-stone-400" aria-hidden="true" />
           </summary>
-          <div className="mt-3"><TocList copy={copy} /></div>
+          {headings.length > 0 && <div className="mt-3"><TocList copy={copy} /></div>}
           {/* The same detail the sidebar carries. Without this the Contents surface
               differs between breakpoints -- found by the verifier. */}
           {reviewedBy && (
@@ -140,8 +148,7 @@ export function ArticleToc({ copy, menu, variant, reviewedBy, sources = [] }: Pr
               exactly that when reviewedBy shipped to the sidebar only. */}
           <SourcesBlock copy={copy} sources={sources} className="mt-4 pt-3 border-t border-edge-faint" />
         </details>
-      ) : <div className="flex-1" />}
-      <ReaderMenu {...menu} />
+      )}
     </div>
   )
 }

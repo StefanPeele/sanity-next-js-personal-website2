@@ -9,8 +9,9 @@ export const articleUiQuery = defineQuery(`
     toc{ title, mobileTitle, minutesSuffix },
     readerMenu{
       buttonLabel, closeLabel,
-      groupLabels{ theme, textSize, width, accessibility, share, listen, position },
-      themeLabels{ archive, terminal },
+      groupLabels{ theme, textSize, width, accessibility, share, listen, position, toolbar },
+      toolbarLabels{ hide, hideHint, restore },
+      themeLabels{ archive, slate, paper, terminal },
       widthLabels{ narrow, standard, wide },
       a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },
       shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },

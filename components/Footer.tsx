@@ -3,6 +3,7 @@ import { ArrowUpRight, BookOpen, Mail, Rss } from 'lucide-react'
 import { FaGithub, FaInstagram, FaLinkedin, FaTrello } from 'react-icons/fa'
 import { FaBluesky } from 'react-icons/fa6'
 import { NewsletterForm } from '@/components/NewsletterForm'
+import { ToolbarRestore } from '@/components/article/ToolbarRestore'
 import { DEFAULT_NAVIGATION, navHref, type NavigationData } from '@/lib/cms/defaults/navigation'
 import type { SiteSettings } from '@/lib/cms/loaders'
 import { SITE } from '@/lib/site'
@@ -104,6 +105,9 @@ export default function Footer({ settings, nav = DEFAULT_NAVIGATION }: { setting
           <span className="p-locality sr-only">{settings.location.city}, {settings.location.region}</span>
         </p>
       </div>
+      {/* Phase 5.3. Renders nothing unless the reader has dismissed the reading toolbar,
+          which is what makes "dismissible entirely" recoverable without leaving a stub. */}
+      <div className="max-w-6xl mx-auto px-6 pb-6"><ToolbarRestore label="Reading controls" /></div>
     </footer>
   )
 }

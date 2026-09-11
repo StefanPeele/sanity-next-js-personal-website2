@@ -98,6 +98,35 @@ test.describe('article page', () => {
     await expect(page.locator('[data-toc="mobile"]')).toBeHidden()
     // None of the removed floating widgets are present.
     await expect(page.locator('[data-floating-toolbar], .sp-cursor, .sp-crt-overlay')).toHaveCount(0)
+
+    // Phase 5: the reading toolbar is a FIXED rail portalled to <body>, and it has to stay
+    // that way. app/template.tsx wraps every page in `motion-safe:animate-page-enter`, whose
+    // keyframe is `both` and so holds `transform: translateY(0)` forever; any transform makes
+    // that element a containing block for fixed descendants, and the rail would resolve
+    // against a div as tall as the document and scroll away with the page. Rendering it
+    // inside the tree instead of portalling it is a one-line regression that looks fine until
+    // you scroll, so it is asserted here rather than only in docs/audit/measure-toolbar.mjs.
+    const rail = page.locator('.reading-toolbar')
+    await expect(rail).toHaveCount(1)
+    await expect(rail).toHaveCSS('position', 'fixed')
+    expect(await rail.evaluate((el) => el.parentElement === document.body)).toBe(true)
+    expect(await rail.evaluate((el) => {
+      let n = el.parentElement
+      while (n && n !== document.documentElement) {
+        if (getComputedStyle(n).transform !== 'none') return String(n.className)
+        n = n.parentElement
+      }
+      return null
+    })).toBeNull()
+
+    const railBefore = await rail.boundingBox()
+    await page.evaluate(() => window.scrollTo(0, 1200))
+    await page.waitForTimeout(350)
+    const railAfter = await rail.boundingBox()
+    expect(await page.evaluate(() => window.scrollY), 'positive control: the page scrolled').toBeGreaterThan(600)
+    expect(Math.abs((railAfter?.y ?? 0) - (railBefore?.y ?? 0)),
+      'the toolbar moved when the page scrolled — it is not escaping the transformed wrapper').toBeLessThanOrEqual(2)
+    await page.evaluate(() => window.scrollTo(0, 0))
   })
 
   test('reader menu opens and closes with Escape', async ({ page, request }) => {

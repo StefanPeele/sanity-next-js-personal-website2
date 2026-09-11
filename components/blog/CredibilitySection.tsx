@@ -253,7 +253,12 @@ export function CredibilitySection({
                     .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
                     .map((entry) => (
                       <li key={entry._key} className="flex items-start gap-4">
-                        <span className="font-mono text-xs text-stone-600 flex-shrink-0 mt-0.5 w-24">
+                        {/* stone-400, not stone-600: this is a DATE, which a reader reads.
+                            CLAUDE.md puts the floor for readable text at stone-400 and lets
+                            only decorative marks go darker. It measured ~2.4:1 on the archive
+                            ground. It does not render on any published post today (none has a
+                            changelog), which is why no capture ever showed it. */}
+                        <span className="font-mono text-xs text-stone-400 flex-shrink-0 mt-0.5 w-24">
                           {formatDate(entry.date, 'short')}
                         </span>
                         <span className="font-mono text-xs text-stone-400 leading-relaxed">

@@ -137,6 +137,14 @@
   transition: opacity 120ms ease;
 }
 
+/* Hidden below 1024px, which is WIDER than "mobile" and is deliberate. A verifier measured
+   the cutoff and reported it as 640-1000px also being disabled, correctly: the rule is
+   "only at lg and above", not "only above 390". Two reasons, and they are about the layout
+   rather than the input device: below lg the card grid is one or two columns, so a 300px
+   panel beside a card has nowhere to go without covering the card next to it; and every
+   viewport in that range on real hardware is a tablet or a phone, where there is no hover to
+   trigger it anyway. A laptop windowed to 900px loses the preview and keeps the card, which
+   carries the same title, excerpt and status mark. */
 @media (max-width: 1023px) {
   .post-preview { display: none; }
 }

@@ -32,8 +32,9 @@ export default defineType({
     obj('toc', 'Contents', [str('title', 'Sidebar title'), str('mobileTitle', 'Mobile title'), str('minutesSuffix', 'Minutes suffix')], { group: 'header' }),
     obj('readerMenu', 'Reading options menu', [
       str('buttonLabel', 'Button label'), str('closeLabel', 'Close button label'),
-      obj('groupLabels', 'Group labels', ['theme', 'textSize', 'width', 'accessibility', 'share', 'listen', 'position'].map((n) => str(n))),
-      obj('themeLabels', 'Theme names', ['archive', 'terminal'].map((n) => str(n))),
+      obj('groupLabels', 'Group labels', ['theme', 'textSize', 'width', 'accessibility', 'share', 'listen', 'position', 'toolbar'].map((n) => str(n))),
+      obj('toolbarLabels', 'Toolbar itself', ['hide', 'hideHint', 'restore'].map((n) => str(n))),
+      obj('themeLabels', 'Theme names', ['archive', 'slate', 'paper', 'terminal'].map((n) => str(n))),
       obj('widthLabels', 'Width names', ['narrow', 'standard', 'wide'].map((n) => str(n))),
       obj('a11yLabels', 'Accessibility toggles', ['dyslexia', 'highContrast', 'reducedMotion', 'ruler', 'reset'].map((n) => str(n))),
       obj('shareLabels', 'Share and export', ['copyLink', 'copyMarkdown', 'print', 'studyDeck', 'share', 'copied'].map((n) => str(n))),

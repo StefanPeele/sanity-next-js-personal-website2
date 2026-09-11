@@ -10,6 +10,7 @@ import { NewsletterForm } from '@/components/NewsletterForm'
 import { ArticleProvider } from '@/components/article/ArticleProvider'
 import { ArticleToc } from '@/components/article/ArticleToc'
 import { ReadingProgressBar } from '@/components/article/ReadingProgressBar'
+import { ReadingToolbar } from '@/components/article/ReadingToolbar'
 import { heroImageUrl } from '@/components/article/heroImage'
 import { SourcesList } from '@/components/blog/SourcesList'
 import { CorrectionsList } from '@/components/blog/CorrectionsList'
@@ -164,7 +165,7 @@ export default async function BlogPostPage({ params }: Props) {
     ],
   }
 
-  const menu = { copy: ui.readerMenu, markdown, deck }
+  const toolbar = { copy: ui.readerMenu, markdown, deck }
 
   return (
     <ArticleProvider slug={slug} title={title} totalWords={wordCount} initialTheme={post.recommendedTheme}>
@@ -177,6 +178,9 @@ export default async function BlogPostPage({ params }: Props) {
       <div data-article-root className="relative min-h-screen text-stone-300 selection:bg-stone-500/30 pb-32">
         <JsonLd data={jsonLd} />
         <ReadingProgressBar color={lane?.color} />
+        {/* Phase 5. Rendered ONCE, here, rather than twice inside the two TOC variants --
+            it is a fixed rail now, so two of them would be two rails stacked on each other. */}
+        <ReadingToolbar {...toolbar} variant="article" />
 
         <BlogArticleHeader
           title={title}
@@ -198,7 +202,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         <div className="relative max-w-6xl mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12 mt-12 md:mt-16">
           <main id="content" className="max-w-[36rem] mx-auto w-full transition-[max-width] duration-300" data-width="standard">
-            <ArticleToc copy={ui} menu={menu} variant="mobile" reviewedBy={reviewedBy} sources={sourceTitles} />
+            <ArticleToc copy={ui} variant="mobile" reviewedBy={reviewedBy} sources={sourceTitles} />
 
             {post.series && <SeriesBanner series={post.series} currentSlug={slug} seriesOrder={post.seriesOrder} labels={ui.seriesBanner} />}
 
@@ -275,7 +279,7 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </main>
 
-          <ArticleToc copy={ui} menu={menu} variant="sidebar" reviewedBy={reviewedBy} sources={sourceTitles} />
+          <ArticleToc copy={ui} variant="sidebar" reviewedBy={reviewedBy} sources={sourceTitles} />
         </div>
       </div>
     </ArticleProvider>

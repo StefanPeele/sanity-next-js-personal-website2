@@ -6,7 +6,8 @@ import {
 import { useReducedMotion } from 'framer-motion'
 import { slugify } from '@/lib/reading'
 import {
-  ARTICLE_THEMES, FONT_SIZES, isArticleTheme, isArticleWidth, type ArticleTheme, type ArticleWidth,
+  ARTICLE_THEMES, DEFAULT_FONT_SIZE_INDEX, FONT_SIZES, isArticleTheme, isArticleWidth,
+  isLightTheme, type ArticleTheme, type ArticleWidth,
 } from '@/lib/articleThemeStyles'
 // components/article/ArticleProvider.tsx
 // Single source of truth for everything the article navigators share:
@@ -37,9 +38,11 @@ export interface ArticleSettings {
 
 const DEFAULT_SETTINGS: ArticleSettings = {
   theme: 'archive',
-  // Index into FONT_SIZES: 2 = 'L' = 1.1875rem = 19px. The pre-hydration value in
-  // styles/article.css must stay equal to FONT_SIZES[this] or the prose resizes on load.
-  fontSize: 2,
+  // Index into FONT_SIZES. 5.2 widened that table from four steps to seven, so 19px moved
+  // from index 2 to index 4 -- the VALUE is unchanged, only its position. The pre-hydration
+  // value in styles/article.css must stay equal to FONT_SIZES[this] or the prose resizes on
+  // load, and it is 1.1875rem, which is still what index 4 holds.
+  fontSize: DEFAULT_FONT_SIZE_INDEX,
   width: 'standard',
   dyslexia: false,
   highContrast: false,
@@ -282,6 +285,19 @@ export function ArticleProvider({
     if (article) {
       article.style.setProperty('--article-fs', FONT_SIZES[settings.fontSize]?.value ?? FONT_SIZES[1].value)
     }
+    // The theme also goes on <body>, not only on [data-article-root].
+    //
+    // The article root does NOT contain the navbar, the footer, or the reading toolbar --
+    // the toolbar is portalled to <body> precisely so it escapes a transformed ancestor. On
+    // a light theme that left the site logo at pure white on cream (~1.1:1, invisible) and
+    // the toolbar as a dark blob on a pale page. Measured, not noticed by eye.
+    //
+    // On <body> rather than <html> so it cannot outlive the route: the cleanup below removes
+    // it when the provider unmounts, and a reader who picks Light and then navigates to a
+    // page with no article would otherwise keep a half-applied theme.
+    const body = document.body
+    body.classList.remove(...ARTICLE_THEMES.map((t) => `theme-${t}`))
+    body.classList.add(`theme-${settings.theme}`)
     if (themeRoot) {
       themeRoot.classList.remove(...ARTICLE_THEMES.map((t) => `theme-${t}`))
       themeRoot.classList.add(`theme-${settings.theme}`)
@@ -292,6 +308,12 @@ export function ArticleProvider({
     }
     if (main) main.dataset.width = settings.width
     html.classList.toggle('sp-reduced-motion', settings.reducedMotion)
+    // 5.2's light mode needs the ROOT to say so. `html { color-scheme: dark }` in
+    // styles/index.css is what makes the scrollbar, form controls and the browser's own
+    // focus rings dark; leaving it on a cream page gives a dark scrollbar down the side of a
+    // light article and white-on-white text in a <select>. This is the one part of a theme
+    // that cannot live in a class on [data-article-root].
+    html.style.colorScheme = isLightTheme(settings.theme) ? 'light' : 'dark'
     try {
       localStorage.setItem(STORAGE.theme, settings.theme)
       localStorage.setItem(STORAGE.fontSize, String(settings.fontSize))
@@ -301,7 +323,12 @@ export function ArticleProvider({
       localStorage.setItem(STORAGE.reducedMotion, String(settings.reducedMotion))
       localStorage.setItem(STORAGE.ruler, String(settings.ruler))
     } catch { /* private mode */ }
-    return () => { html.classList.remove('sp-reduced-motion') }
+    return () => {
+      html.classList.remove('sp-reduced-motion')
+      // Leave no theme behind on a route that has no article to theme.
+      document.body.classList.remove(...ARTICLE_THEMES.map((t) => `theme-${t}`))
+      html.style.colorScheme = 'dark'
+    }
   }, [settings, hydrated])
 
   const setSetting = useCallback(<K extends keyof ArticleSettings>(key: K, value: ArticleSettings[K]) => {

@@ -1,21 +1,57 @@
 'use client'
 
 import { useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Check, Pause, Play, Settings2, Square, X } from 'lucide-react'
-import { useArticle } from '@/components/article/ArticleProvider'
+import { useArticle, useArticleOptional } from '@/components/article/ArticleProvider'
 import { useReadAloud } from '@/components/article/useReadAloud'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 import { clearBookmark, readBookmark, writeBookmark } from '@/lib/articleStorage'
 import { ARTICLE_THEMES, ARTICLE_WIDTHS, FONT_SIZES, THEME_OPTIONS } from '@/lib/articleThemeStyles'
 import { FOCUS, buttonClass } from '@/lib/ui'
-// components/article/ReaderMenu.tsx — the one reader-settings control.
-// Popover with theme, text size, width, accessibility, share/export, read-aloud, saved place.
+// components/article/ReadingToolbar.tsx — Phase 5.
+//
+// This was ReaderMenu, a chip sitting in the table-of-contents row. The CONTROLS are
+// unchanged and deliberately so: theme, size, width, accessibility, share/export,
+// read-aloud and saved place all worked, and rewriting working controls to move them is how
+// you lose the accessibility work that decisions/README.md called "the best-built thing in
+// the section". What changed is the shell around them.
+//
+// 5.4 POSITION — a fixed rail on the right edge, vertically centred, OUTSIDE the reading
+// measure. The prose column is max-w-[36rem] inside a max-w-6xl container, so at 1440 there
+// is ~530px to the right of it; the rail lives there and can never overlap prose.
+//
+// At narrow widths there is no margin to live in, and 5.4 asks which of "fit within the
+// available space" or "force the layout to make room" applies. It FITS: the collapsed
+// control docks to the bottom-right corner as a floating circle, and expanding opens the
+// same bottom sheet the old menu already used. Forcing the layout to make room would take
+// 56px of a 390px viewport away from the prose permanently to serve a control that is shut
+// most of the time -- paying always for something used occasionally.
+//
+// 5.3 COLLAPSED BY DEFAULT, and both states are real. Collapsed is a 44px circle; expanded
+// is the panel. It remembers which, per reader, across pages and sessions.
+//
+// 5.3 RETREATING — it fades while the reader is actually reading. `idle` is set after
+// SETTLE_MS of no pointer movement and no scrolling; any pointer move, any focus, or
+// opening it brings it back. It never fades while open, and never when a keyboard user has
+// focus inside it.
+//
+// 5.3 DISMISSIBLE ENTIRELY — "Hide the toolbar" removes it completely and persistently. It
+// is recoverable from the footer link rather than from a stub left on the page, because a
+// stub is exactly the chrome the reader just asked to be rid of.
 
-export type ReaderMenuProps = {
+export type ReadingToolbarProps = {
   copy: ArticleUiCopy['readerMenu']
   markdown: string
   deck?: { filename: string; tsv: string }
+  /** 5.1. `index` hides the article-only controls; the physical control is the same. */
+  variant?: 'article' | 'index'
 }
+
+/** Persisted so the collapsed/expanded choice and the dismissal survive a reload. */
+const TOOLBAR_STORAGE = { open: 'sp_toolbar_open', hidden: 'sp_toolbar_hidden' }
+/** Milliseconds of no pointer movement and no scrolling before the rail fades back. */
+const SETTLE_MS = 2600
 
 function Group({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -76,10 +112,28 @@ function RulerLine() {
   return <div aria-hidden="true" className="pointer-events-none fixed left-0 right-0 z-[1000] h-8 bg-amber-300/[0.07] border-y border-amber-300/20" style={{ top: y - 16 }} />
 }
 
-export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
+/**
+ * The toolbar reads every one of its settings from ArticleProvider, so without one there is
+ * nothing for it to control. `useArticle()` THROWS in that case, which would turn a wiring
+ * mistake into a blank page.
+ *
+ * This wrapper is the whole guard: one hook, and an early return before the inner component's
+ * hooks run, so the rules of hooks hold. It matters because `variant="index"` is built and
+ * not yet wired — /blog has no provider, and the remaining half of 5.1 is to give it one.
+ * Until then, rendering it there degrades to nothing instead of to a white screen.
+ */
+export function ReadingToolbar(props: ReadingToolbarProps) {
+  const ctx = useArticleOptional()
+  if (!ctx) return null
+  return <ReadingToolbarInner {...props} />
+}
+
+function ReadingToolbarInner({ copy, markdown, deck, variant = 'article' }: ReadingToolbarProps) {
   const { slug, progress, settings, setSetting, resetA11y, scrollTo, headings } = useArticle()
   const reader = useReadAloud()
   const [open, setOpen] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const [idle, setIdle] = useState(false)
   const [copied, setCopied] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
   const [hasBookmark, setHasBookmark] = useState(false)
@@ -91,6 +145,48 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate from localStorage after mount (avoids a server/client mismatch)
     setHasBookmark(!!readBookmark(slug))
   }, [slug])
+
+  // 5.3 state memory. Read after mount, never during render: the server has no localStorage
+  // and a mismatch here would flash the panel open on every load.
+  useEffect(() => {
+    try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate from localStorage after mount
+      setHidden(localStorage.getItem(TOOLBAR_STORAGE.hidden) === 'true')
+      setOpen(localStorage.getItem(TOOLBAR_STORAGE.open) === 'true')
+    } catch { /* private mode: the defaults are correct */ }
+  }, [])
+
+  useEffect(() => {
+    try { localStorage.setItem(TOOLBAR_STORAGE.open, String(open)) } catch { /* ignore */ }
+  }, [open])
+
+  // 5.3 "aware and retreating". Fades only while SHUT -- a panel that dimmed itself under
+  // the reader's own cursor would be the opposite of helpful -- and any pointer movement,
+  // scroll or focus brings it straight back.
+  useEffect(() => {
+    // Clearing the retreat when the panel opens is the point of the effect, not a cascading
+    // render. The directive has to sit on the line IMMEDIATELY above the code -- a two-line
+    // comment between them points it at the comment instead, which is how this warning came
+    // back twice.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (open || hidden) { setIdle(false); return }
+    let t = 0
+    const wake = () => {
+      setIdle(false)
+      window.clearTimeout(t)
+      t = window.setTimeout(() => setIdle(true), SETTLE_MS)
+    }
+    wake()
+    window.addEventListener('pointermove', wake, { passive: true })
+    window.addEventListener('scroll', wake, { passive: true })
+    window.addEventListener('focusin', wake)
+    return () => {
+      window.clearTimeout(t)
+      window.removeEventListener('pointermove', wake)
+      window.removeEventListener('scroll', wake)
+      window.removeEventListener('focusin', wake)
+    }
+  }, [open, hidden])
 
   useEffect(() => {
     if (!open) return
@@ -126,11 +222,40 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
     setOpen(false)
   }
   const clearPlace = () => { clearBookmark(slug); setHasBookmark(false) }
+  const hideToolbar = () => {
+    setOpen(false)
+    setHidden(true)
+    try { localStorage.setItem(TOOLBAR_STORAGE.hidden, 'true') } catch { /* ignore */ }
+  }
 
   const L = copy
+  const isArticle = variant === 'article'
 
-  return (
-    <div className="relative shrink-0" data-print-hide>
+  // PORTALLED TO document.body, and this is not optional.
+  //
+  // app/template.tsx wraps EVERY page in `<div className="motion-safe:animate-page-enter">`,
+  // and that keyframe is declared `both`, so it holds its final `transform: translateY(0)`
+  // forever. A transform -- even an identity one -- makes the element a containing block for
+  // every `position: fixed` descendant. Left in the tree, this rail would resolve `top: 50%`
+  // against a div as tall as the whole document and scroll away with the page, and it would
+  // do it ONLY for readers who have not asked for reduced motion, because `motion-safe:`
+  // means the transform is absent for the ones who have. A bug that appears for most readers
+  // and not for the ones most likely to report it.
+  const [mounted, setMounted] = useState(false)
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setMounted(true) }, [])
+
+  if (!mounted) return null
+
+  // The ruler is the reader's setting, not the toolbar's, so it survives dismissal.
+  if (hidden) return createPortal(<>{settings.ruler && <RulerLine />}</>, document.body)
+
+  return createPortal((
+    <div
+      className={`reading-toolbar${idle ? ' is-idle' : ''}`}
+      data-toolbar={variant}
+      data-print-hide
+    >
       <button
         ref={buttonRef}
         type="button"
@@ -138,11 +263,10 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
         aria-expanded={open}
         aria-controls={`${id}-panel`}
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex items-center gap-2 px-3 py-2 rounded-full border border-edge text-sm font-sans text-stone-300 hover:text-white hover:border-edge-strong transition-colors ${FOCUS}`}
+        className={`reading-toolbar-trigger ${FOCUS}`}
       >
-        <Settings2 size={14} aria-hidden />
-        <span className="hidden sm:inline">{L.buttonLabel}</span>
-        <span className="sm:hidden sr-only">{L.buttonLabel}</span>
+        <Settings2 size={18} aria-hidden />
+        <span className="sr-only">{L.buttonLabel}</span>
       </button>
 
       {settings.ruler && <RulerLine />}
@@ -155,6 +279,17 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
         />
       )}
       {open && (
+        // POSITIONING and ANIMATION must not share an element. `.reader-menu-panel` runs a
+        // keyframe declared `both` whose final frame sets `transform: scale(1)` at lg -- which
+        // REPLACES any Tailwind translate on the same element. The panel was centred with
+        // `-translate-y-1/2`, the animation wiped it, and the panel hung from top:50%
+        // downward with its last group ~280px below the fold and unreachable. Measured, not
+        // guessed: the harness could not click "Hide the toolbar".
+        //
+        // This anchor does the positioning and nothing else; the panel keeps the animation.
+        // Below lg the anchor is `display: contents`, so the panel's own bottom-sheet
+        // positioning applies untouched.
+        <div className="reader-menu-anchor">
         <div
           ref={panelRef}
           id={`${id}-panel`}
@@ -163,7 +298,13 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
           aria-label={L.buttonLabel}
           // Below lg the panel is a bottom sheet: anchored as a dropdown it opened ~240px past
           // the fold at 390 and half its controls were unreachable. At lg it is a dropdown again.
-          className="reader-menu-panel fixed inset-x-4 bottom-4 max-h-[75vh] lg:absolute lg:inset-x-auto lg:bottom-auto lg:right-0 lg:top-full lg:mt-2 lg:w-80 lg:max-h-[70vh] overflow-y-auto z-[1002] rounded-xl border border-edge bg-surface-raised shadow-2xl p-4 text-stone-200"
+          // Below lg the panel is a bottom sheet: anchored as a dropdown it opened ~240px past
+          // the fold at 390 and half its controls were unreachable. At lg it is ABSOLUTE --
+          // positioned against the rail, which is itself fixed and so is its containing
+          // block -- and sits to the rail's LEFT, opening into the margin rather than off the
+          // right edge. `lg:absolute` is load-bearing: left as `fixed`, `right-full` resolves
+          // against the VIEWPORT and puts the panel entirely off the left of the screen.
+          className="reader-menu-panel fixed inset-x-4 bottom-4 max-h-[75vh] lg:static lg:inset-auto lg:w-80 lg:max-h-[80vh] overflow-y-auto z-[1002] rounded-xl border border-edge bg-surface-raised shadow-2xl p-4 text-stone-200"
         >
           <div className="flex items-center justify-between mb-1">
             <span className="section-label">{L.buttonLabel}</span>
@@ -187,11 +328,19 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
             </div>
           </Group>
 
+          {/* 5.1. Theme, text size and accessibility apply everywhere and stay. Width,
+              share, read-aloud and saved place are all about an article BODY -- on the index
+              they would be controls for something that is not on the page. Same physical
+              toolbar, fewer groups, which is why the transition does not read as one control
+              being swapped for another. */}
+          {isArticle && (
           <Group label={L.groupLabels.width}>
             <div role="radiogroup" aria-label={L.groupLabels.width} className="flex gap-2">
               {ARTICLE_WIDTHS.map((w) => <Chip key={w} active={settings.width === w} onClick={() => setSetting('width', w)}>{L.widthLabels[w]}</Chip>)}
             </div>
           </Group>
+
+          )}
 
           <Group label={L.groupLabels.accessibility}>
             <Switch label={L.a11yLabels.dyslexia} checked={settings.dyslexia} onChange={() => setSetting('dyslexia', !settings.dyslexia)} />
@@ -201,6 +350,7 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
             <Row label={L.a11yLabels.reset} onClick={resetA11y} />
           </Group>
 
+          {isArticle && (<>
           <Group label={L.groupLabels.share}>
             <Row label={copied === 'link' ? L.shareLabels.copied : L.shareLabels.copyLink} onClick={copyLink} done={copied === 'link'} />
             <Row label={copied === 'md' ? L.shareLabels.copied : L.shareLabels.copyMarkdown} onClick={copyMd} done={copied === 'md'} />
@@ -231,8 +381,18 @@ export function ReaderMenu({ copy, markdown, deck }: ReaderMenuProps) {
             {headings.length > 0 && <p className="sr-only">{headings.length} sections</p>}
             <button type="button" className="sr-only" onClick={() => scrollTo(headings[0]?.id ?? '')}>Top</button>
           </Group>
+          </>)}
+
+          {/* 5.3: dismissible ENTIRELY. Last, and quiet, because it is a decision rather
+              than a setting — and recoverable from the footer, not from a stub left behind
+              on the page. A stub is the chrome the reader just asked to be rid of. */}
+          <Group label={L.groupLabels.toolbar}>
+            <Row label={L.toolbarLabels.hide} onClick={hideToolbar} />
+            <p className="font-sans text-xs text-stone-400 leading-relaxed pt-1">{L.toolbarLabels.hideHint}</p>
+          </Group>
+        </div>
         </div>
       )}
     </div>
-  )
+  ), document.body)
 }

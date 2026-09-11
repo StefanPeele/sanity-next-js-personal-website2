@@ -55,3 +55,7 @@ playwright-report/
 /verify-*.mjs
 /verify-*.json
 /_*.mjs
+
+# Verifier subagents write scratch here. One of these was swept into a commit by a
+# `git add -A` (c473f5e) and had to be removed again.
+tmp-verify/

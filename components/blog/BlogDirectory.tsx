@@ -14,6 +14,7 @@ import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPag
 import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { Icon } from '@/lib/cms/icons'
 import { auraProps, effectiveReviewStatus, REVIEW_STATUS, reviewFlags, revisionState } from '@/lib/status'
+import { enumKey, enumKeys } from '@/lib/stega'
 import { PostPreview } from '@/components/blog/PostPreview'
 import { PlaceholderCards } from '@/components/blog/PlaceholderCards'
 import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
@@ -83,6 +84,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
   // a chosen lane or status.
   const [q, setQ] = useState('')
   const [facetsOpen, setFacetsOpen] = useState(false)
+  const filtersButtonRef = useRef<HTMLButtonElement>(null)
   const [readPosts, setReadPosts] = useState<Set<string>>(new Set())
   const [mounted, setMounted] = useState(false)
   const archiveRef = useRef<HTMLDivElement>(null)
@@ -129,8 +131,16 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
     const map = new Map<string, { title: string; count: number }>()
     posts.forEach((p) => (p.tags ?? []).forEach((t) => {
       if (!t?.slug) return
-      const cur = map.get(t.slug)
-      map.set(t.slug, { title: t.title ?? t.slug, count: (cur?.count ?? 0) + 1 })
+      // The SLUG is a key -- it goes into the URL and is compared against ?tag=. In draft
+      // mode Sanity encodes the source path into every string as zero-width characters, so
+      // the raw slug would put invisible characters in the address bar and make the
+      // comparison below depend on both sides having been encoded identically. The TITLE is
+      // left alone on purpose: it is displayed, stega is invisible, and keeping it is what
+      // makes the chip click-to-editable in Presentation.
+      const key = enumKey(t.slug)
+      if (!key) return
+      const cur = map.get(key)
+      map.set(key, { title: t.title ?? key, count: (cur?.count ?? 0) + 1 })
     }))
     return [...map.entries()].map(([slug, v]) => ({ slug, ...v })).sort((a, b) => b.count - a.count || a.title.localeCompare(b.title))
   }, [posts])
@@ -139,9 +149,12 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
   const filtered = useMemo(() => {
     let list = posts
-    if (active) list = list.filter((p) => p.categories?.includes(active))
+    // Same reason: `active` comes from the URL and is clean, while p.categories carries
+    // stega in draft mode, so a raw includes() never matches and the category filter
+    // silently returns nothing.
+    if (active) list = list.filter((p) => enumKeys(p.categories).includes(active))
     if (lane) list = list.filter((p) => p.articleType === lane)
-    if (tag) list = list.filter((p) => (p.tags ?? []).some((t) => t?.slug === tag))
+    if (tag) list = list.filter((p) => (p.tags ?? []).some((t) => enumKey(t?.slug) === tag))
     if (status) list = list.filter((p) => (statusById.get(p._id) ?? []).includes(status))
     if (needle) {
       list = list.filter((p) => `${p.title ?? ''} ${p.excerpt ?? ''} ${(p.categories ?? []).join(' ')}`
@@ -158,6 +171,23 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
   const activeCount = [active, lane, tag, status].filter(Boolean).length
   const hasFacets = categories.length > 0 || allTags.length > 0 || statusFacets.length > 0
   const resetAll = useCallback(() => { setQ(''); clearAll() }, [clearAll])
+
+  // Escape closes the facets. Found by a verifier: the disclosure opened and nothing shut
+  // it but a second click on the same button. It is not a focus trap -- Tab still escapes --
+  // but every other expandable thing on this site closes on Escape, and a reader who learns
+  // the gesture once expects it everywhere.
+  useEffect(() => {
+    if (!facetsOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      setFacetsOpen(false)
+      // Return focus to the control that opened it, or the reader is left at the top of the
+      // document with no idea where their place went.
+      filtersButtonRef.current?.focus()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [facetsOpen])
 
   /* ── 4.1 / 4.5: what changes between 3 posts and 50 ──────────────────────────
      Under SECTION_MIN the page is ONE grid. Three lane sections holding one card each is
@@ -480,6 +510,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           />
           {hasFacets && (
             <button
+              ref={filtersButtonRef}
               type="button"
               onClick={() => setFacetsOpen((o) => !o)}
               aria-expanded={facetsOpen}
