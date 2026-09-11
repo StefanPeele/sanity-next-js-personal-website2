@@ -121,7 +121,12 @@ export default async function BlogPage() {
 
               <div className="relative z-20 pt-64 pb-12 px-8 md:px-16 flex flex-col justify-end h-full">
                 <div className="flex gap-3 mb-4 flex-wrap">
-                  <span className="meta-label bg-white text-black px-3 py-1 rounded-sm">Featured</span>
+                  {/* Phase 0.2, alignment only -- the kicker rebuild is Phase 2.5.
+                      As a flex item this span stretches to the row's 30px, set by the
+                      taller pills beside it, but its 18px line box stayed at the top of
+                      the stretched box: 4px above, 8px below. inline-flex + items-center
+                      centres the line without changing any box size. */}
+                  <span className="meta-label inline-flex items-center bg-white text-black px-3 py-1 rounded-sm">Featured</span>
                   {featuredMeta && (
                     <span className="font-sans text-xs px-3 py-1.5 rounded-full border backdrop-blur-md" style={{ color: featuredMeta.color, borderColor: `${featuredMeta.color}66`, backgroundColor: featuredMeta.bg }}>
                       {featuredMeta.label}
