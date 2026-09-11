@@ -116,3 +116,82 @@ copy and that feature ship together or not at all.
 
 **Not building it yet** — it is a proposal per the brief, and its second clause depends on
 Phase 8.8 existing.
+
+---
+
+## 2.4 Meta type scale — the audit, before changing anything
+
+The brief asks for the full list of blog-surface text nodes under 14px with proposed sizes,
+**before** any change. Measured against production at 1440 across `/blog`, a full article,
+and `/blog/series` — walking text nodes, recording the rendered shape of each.
+
+**31 nodes below 14px. Every one of them is exactly 12px — nothing is below the floor.**
+They fall into three shapes:
+
+| # | Shape | Count | What it actually is |
+| --- | --- | --- | --- |
+| 1 | **12px Inter, sentence case, normal tracking** | **15** | Taxonomy pills ("Network & Infrastructure", "Perspective"), filter-row labels ("Type", "Topic", "Sort"), the photo-credit badge |
+| 2 | **12px IBM Plex Mono, uppercase, 1.44px** (`.meta-label`) | **12** | Skip link, "Search", ⌘K, "Featured", the card reading times |
+| 3 | 12px IBM Plex Mono, sentence case, normal | 4 | Newsletter fine print |
+
+### Where the brief and the measured evidence disagree
+
+The brief sets **"minimum 14px for all meta: dates, reading time, 'Read →', counts,
+kickers."** §1.2 measured the kicker band across six publications as **10–15px, clustering
+at 12 and 14** — NYT at 10–11, Defector and FT at 12, 404 Media / Increment / Ars at 14.
+
+So **12px is inside the professional band, not below it.** A blanket 14px floor is
+defensible as *the top* of that band, but it is not what the evidence requires, and it
+would put our kicker larger than Defector's and NYT's.
+
+Where the evidence is unambiguous is not size at all:
+
+- **Shape 1 has three different jobs wearing one costume.** A taxonomy pill, a filter-row
+  label, and a photo credit all render 12px Inter sentence case. §1.2 established that a
+  tag, a section label and a badge are three different forms. This is the same conflation
+  as the FEATURED badge, one level down.
+- **Reading time still disagrees with itself** (§1.3): 14px Inter sentence case on the hero,
+  12px mono uppercase on the cards, and the cards drop the word "read". That is a defect at
+  any size, and fixing the size without fixing the split would leave it.
+
+### Proposed sizes
+
+| Element | Now | Proposed | Reason |
+| --- | --- | --- | --- |
+| Card reading time | 12px mono upper, "3 min" | **14px sans sentence, "3 min read"** | Matches the hero, which is already correct. §1.3: the two coherent positions are NYT-chrome or Aeon-content; ours should pick one, and sentence-case sans is the content position |
+| Hero reading time | 14px sans, "18 min read" | **unchanged** | Already the target |
+| Date | 14px sans | unchanged | Already ≥14 |
+| Post count / "Latest" | 14px sans | unchanged | Already ≥14 |
+| "Read →" | 14px sans | **keep 14px, change the arrow** — see below | Size is fine; the glyph is the defect |
+| Taxonomy pills | 12px sans | **13px sans** *(or 12px kept)* | Low confidence. 12px is inside the measured band; 13px is not a Tailwind step and would reintroduce a bracketed size that `dab10fe` just removed. **Recommend leaving at 12px** and fixing the *role* confusion instead |
+| Filter-row labels ("Type", "Topic", "Sort") | 12px sans | **`.meta-label` at 12px** | These are micro-labels, not content. Giving them the mono label face separates them from the pills they sit beside, which is the actual problem |
+| Kicker (when 2.5 builds it) | — | **12px mono, coloured** | §1.2's measured band, and `.meta-label` already matches it on every axis except colour |
+| Newsletter fine print | 12px mono | unchanged | Fine print is fine print |
+| Skip link | 12px mono | unchanged | Raised from 11px in `dab10fe` |
+
+### The "Read →" arrow
+
+The brief says it "currently looks like a stray glyph" and asks for a button treatment. Two
+observations before that becomes a button:
+
+1. The arrow is a literal `→` appended in JSX — one of the 42 typographic arrows that
+   commit `8f266cb` deliberately left, having established they are *not* emoji and so not
+   covered by the icon rule. The spacing complaint is real: `{label} →` puts a normal space
+   between word and glyph, so the arrow sits at text baseline with no optical adjustment.
+2. **A button treatment may be wrong here.** `buttonClass()` exists and would take it, but
+   §1.1 measured that the essay-camp sites use no button on an index card — the whole card
+   is the target. Adding a button inside a card that is already a link creates a nested
+   interactive target, which is both an accessibility problem and a duplicate.
+
+**Recommendation: not a button.** Keep it a text affordance, give the arrow
+`ml-1 inline-block transition-transform group-hover:translate-x-0.5` so it moves with the
+hover the card already has, and set the gap in CSS rather than as a literal space.
+
+### What I would change, in one sentence
+
+**Nothing about the floor — 12px is correct and inside the professional band. Unify reading
+time on 14px sans sentence case, move the filter-row labels onto `.meta-label` so they stop
+impersonating taxonomy pills, and fix the arrow's spacing rather than making it a button.**
+
+Not applied — the brief says report first, and two of these depend on 2.5's decisions about
+the pills and the kicker.

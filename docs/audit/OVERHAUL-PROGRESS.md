@@ -1,7 +1,7 @@
 # Blog Overhaul — Progress
 
-Last updated: 2026-09-11T02:10Z
-Current phase: **Phase 1 complete. Phase 2 starting.**
+Last updated: 2026-09-11T03:05Z
+Current phase: **Phase 2 in progress — 2.1 shipped, 2.2/2.3 proposed, 2.4 next.**
 Session count: 1
 
 ## Shipped
@@ -23,6 +23,7 @@ Session count: 1
 | **1.7 Comment systems** | `9e43345` | n/a | |
 | **1.8 Hover previews** | `e2622cc` | n/a | |
 | **1.9 Corrections** | `43d45ce` | n/a | |
+| **2.1 Rename to Blog** | `1d0869b`, `8141a9f` | **yes** — h1 reads Blog, zero `>Writing<`, /writing redirects | 20 strings found, **14 renamed, 6 left as the activity**. Both halves: code defaults *and* the live Studio documents |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:
@@ -36,6 +37,8 @@ been applied — Phase 1 is research only.
 
 | Item | Where | What I recommend |
 | --- | --- | --- |
+| **2.2 description** | `PROPOSALS.md` | Three drafts. **A now, C after Phase 3** — C advertises the status system and should not promise what does not exist yet. Also: the current lede hardcodes the lane names and breaks when 4.3 renames them |
+| **2.3 critique invitation** | `PROPOSALS.md` | **Inline note under the lede**, not a tooltip or panel. An invitation that must be discovered is not one, and §1.8 found no good touch equivalent for hover |
 | **2.5 dividers** | §1.1 | **Replace with space, don't strengthen.** 6 of 6 comparable essay sites use near-zero rules; we use 16 bordered blocks |
 | **2.5 FEATURED** | §1.2 | **Contradicts the brief.** Keep it a filled status *flag*, move it above the headline into the kicker slot, and add a *separate* coloured mono kicker for the lane |
 | **2.6 diagnosis** | §1.1 | The problem is the **second tier**, not uniformity. Tiers are 72/60/—/24; every edited site has a populated middle. The 72px page title is larger than the story it introduces |
@@ -82,6 +85,7 @@ been applied — Phase 1 is research only.
 | 1.2 "Featured becomes a kicker" | It is a status flag — a different form from a kicker | Measured the four forms |
 | 1.5 / 7.1 "the measure is 65 characters" | **56**, the narrowest of five long-form sites | Real chars ÷ real lines, 25 paragraphs, one method across sites |
 | 1.7 "comment labels have little prior art" | Conventional Comments is a published standard with seven | Search |
+| 2.1 my own grep | Missed **6 of 20** strings because the pattern required quotes tight around the word — including the RSS feed title, the OG image and the JSON-LD name, all user-visible | Re-grepped without the quote assumption |
 
 ## Deferred / out of scope
 
@@ -104,3 +108,8 @@ been applied — Phase 1 is research only.
   served CSS chunk hash against `.next/static/chunks/*.css`.
 - **Stopping a background build does not reap its children** — an orphan turned a 26s build
   into 17.4 minutes.
+- **A Sanity patch plus `npm run build` is not enough.** `.next/cache/fetch-cache` survives a
+  rebuild, so the page can render pre-change content while the dataset already returns the
+  new value on both `api` and `apicdn`. It looks exactly like a failed patch.
+- **Kill the server BEFORE `rm -rf .next`.** Rebuilding underneath a live `next start`
+  produces *"MIME type ('text/plain') is not executable"* and four false failures.
