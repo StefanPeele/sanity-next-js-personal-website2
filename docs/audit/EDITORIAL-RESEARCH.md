@@ -876,3 +876,139 @@ prefer below-right of the cursor, flip vertically when the popup would cross the
 bottom, and clamp horizontally to the viewport with a margin. `@floating-ui` implements
 exactly this and is the library to reach for rather than hand-rolling — but that is a
 Phase 4 implementation decision, not a research finding.
+
+---
+
+## 1.9 Correction mechanisms
+
+The brief says this has the least prior art and is the most original item. That is half
+right: **the practice is well established, the web implementation is not.**
+
+### What journalism has settled
+
+| Principle | Source |
+| --- | --- |
+| **"There is no five-second rule."** Even an error corrected immediately must be labelled as a correction | NYT policy |
+| **Updating for events and updating for errors are different things** and need different notices — a correction, a clarification, or an editor's note | Washington Post policy |
+| Placement is either a **"trashline" / advisory line at the top** of the article, or a **note at the bottom** | Varies by outlet |
+| **Placement measurably changes perceived importance and credibility** | Page Center, Penn State |
+| Practice is genuinely inconsistent — "some publications change a mistake without acknowledgment; others mark every jot and tittle" | Poynter |
+| A corrections policy needs three parts: the approach to accuracy, how requests are handled, how corrections are expressed and delivered | Journalism style guides |
+
+Two of these bear directly on the brief.
+
+**"No five-second rule" is the rule to adopt**, and it is stricter than instinct. The
+temptation on a personal blog is to silently fix a typo-grade error and only announce
+substantive ones. The journalism standard is that *substantive* is the test, not *recent* —
+and Gwern's "meaningful modification" rule from §1.4 is the same idea from the other
+direction. Together they give a workable line: **typography and links change silently;
+anything that changes what a reader would believe gets a record.**
+
+**The Washington Post distinction matters for Phase 3.1's "Revised" status.** "Revised"
+currently collapses two different events: *I was wrong and fixed it* and *the world moved
+and I updated*. Those deserve different words and different weight. The journalism
+vocabulary already exists — **correction** (it was wrong), **clarification** (it was
+misleading), **update** (it has changed since). Three, not one.
+
+### What nobody has solved on the web
+
+The in-place, attributed correction the brief describes — the affected passage marked, the
+correction and its credit visible at the point of the error — **has no mainstream
+implementation.** The nearest relatives:
+
+| System | What it does | What it is missing |
+| --- | --- | --- |
+| **Wikipedia** `[citation needed]` | Claim-level, inline, at the sentence | Not attributed to a person, and it flags a gap rather than recording a fix |
+| **Hypothes.is** | Layered annotation over any page, attributed | Lives in a separate layer the author does not control and most readers never enable |
+| **Google Docs suggestions** | In-place, attributed, accept/reject | Pre-publication. Nothing survives into the published artefact |
+| **arXiv versions** | Attributed to the authors, permanent | Document-level, not passage-level. No diff |
+| **GitHub Discussions "mark as answer"** | Promotes a comment to prominence | The comment stays a comment; it never enters the document |
+| **Newspaper corrections** | Attributed to the publication, permanent | Almost always appended at top or bottom, **not at the passage** |
+
+So the brief is right about the gap, and it is a narrower gap than "corrections": every
+piece exists somewhere, and **nobody has combined passage-level placement with external
+attribution in a published document.**
+
+### It is buildable here, and most of it already exists
+
+The critical finding, and it is in this repository rather than in the research:
+**`lib/glossary.ts` already implements exactly the hard part.**
+
+Its header describes the mechanism: *"The matcher runs on the server (in the article page)
+and rewrites the block array: the first prose occurrence of each term (or alias) is split
+into its own span carrying a `glossary` mark whose markDef holds the definition.
+CustomPortableText renders that mark as `<GlossaryTerm>`."*
+
+That is server-side, build-time, passage-level annotation of Portable Text, already written,
+already shipped, already handling the awkward cases — it refuses to mark inside headings,
+code, links or existing sidenotes. **A correction mark is the same transform with a
+different markDef and a different renderer.**
+
+A concrete shape for Phase 8.8, buildable on what exists:
+
+1. **Sanity**: a `corrections` array on `post`, each entry
+   `{ _key, anchor (the exact original text), kind: correction | clarification | update,
+   was, now, creditTo, creditUrl?, date, sourceComment? }`.
+2. **Build time**: an `applyCorrectionMarks` beside `applyGlossaryMarks`, same split-the-span
+   technique, matching on `anchor`.
+3. **Render**: the marked passage carries a quiet edge — not strikethrough, which implies
+   the text is still wrong on the page — and a marker that opens the correction with its
+   attribution. On touch and keyboard, the same `focus`-bound behaviour §1.8 settled.
+4. **Article foot**: a corrections list in arXiv's shape — date, kind, what changed, who
+   caught it. Permanent, addressable.
+5. **Credit is the point.** "Corrected 12 Sep 2026 — thanks to *name*" is the line that makes
+   this worth building. It is the difference between a site that admits errors and a site
+   that makes catching them feel welcome.
+
+**Two things to resist**, both of which would make it worse:
+
+- **Do not show the original text struck through in the body.** The reader is there to learn
+  the thing; showing them the wrong version at full weight, first, teaches the error. Put
+  the "was" in the correction note, not in the prose.
+- **Do not auto-generate corrections from comments.** A comment is a claim that something is
+  wrong; a correction is an admission that it was. The promotion from one to the other is a
+  judgement, and it is the author's. GitHub's "mark as answer" is the right interaction
+  model precisely because a human performs it.
+
+### Where this leaves Phase 8
+
+Stefan's own note says that if anything is cut for scope, the comment box should go before
+the corrections feature. **The research supports that, and more strongly than expected.**
+
+Corrections do not require comments. A correction can be credited to someone who emailed,
+or to a reader who mentioned it in passing, or to nobody. The Sanity array, the mark
+transform and the renderer are perhaps a day of work and depend on nothing that is not
+already in this repository. Comments — identity, verification, storage, moderation, spam,
+threading, deletion semantics — are the large, ongoing commitment, and §1.7 shows they also
+carry a hosting decision the brief has not yet made.
+
+**Recommendation: build 8.8 first and independently, not as a feature of the comment
+system.** It is the original idea, it is the cheap one, and it is the one that does not need
+a decision about where comments live.
+
+---
+
+## Phase 1 closing — what the research changed
+
+Nine sub-sections, thirteen sites measured live, five fetched sources, three that blocked
+the probe and are recorded as blocked.
+
+**Premises killed:**
+
+1. "Too many type sizes" — we render 10; the reference median is 11.
+2. "Nothing leads" — our lead:body is 5.14×, second highest measured.
+3. Kicker size "as a ratio" — every publication uses a *constant* 10–15px.
+4. "Featured becomes a kicker" — it is a status flag, a different form.
+5. "Reading time is currently 65 characters"— the measure is **56**.
+6. "Fact-checked and peer-reviewed are different guarantees" — true, and the distinction is
+   **level** (claim vs document), which reorganises Phases 3 and 8.
+7. Our own schema conflates confidence with review, twice, before any new field is added.
+
+**Things with no prior art, which should be built knowing it:** status-as-filter (3.5), the
+sticky sidenote (6.3), the context-aware toolbar (5.1), and the in-place attributed
+correction (8.8) — the last being the one worth the novelty.
+
+**The organising principle the phase produced:** *document-level status goes quiet;
+claim-level status goes inline.* It came from Wikipedia's decision to hide article grades
+from readers while showing `[citation needed]` at the sentence, and it splits the brief's
+Phase 3 and Phase 8.8 along a defensible line.
