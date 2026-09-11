@@ -15,23 +15,27 @@ stale — the point of this file is that it is useful at any moment, not only at
   independent verifier; the one FAIL was trap 16, disproved by `probe-tag-facet.mjs`.
 - **Phase 5 — complete.** 5.5/5.6 `c473f5e`, 5.1–5.4 `e6181e5`, expanded controls `8373d6b`,
   read-aloud voice and speed `1eb1ab0`, index toolbar and density `eb558ee`.
-- **Phase 6 — complete except 6.5's "Learn more".** Design `0d2fa42`, margin notes `c93c366`,
-  glossary unification `871d652`.
+- **Phase 6 — complete.** Design `0d2fa42`, margin notes `c93c366`, glossary unification
+  `871d652`, Learn more `ac62224`.
+- **Phase 7 — 7.1 proposed and measured** (`a18c40a`), not shipped. 7.2–7.6 remain.
 
 Everything above is committed and pushed. `git status` is clean.
 
 ## The single next action
 
-**Phase 7 — article layout.** Read `docs/audit/BLOG-OVERHAUL-BRIEF.md` §7 first; §7.1 was
-amended (the measure is **56** characters, not 65 — the original instruction was wrong and
-why is recorded in OVERHAUL-PROGRESS).
+**Phase 7.2 — widen everything around the prose**, and ship 7.1 with it.
 
-The one Phase 6 item left is **6.5's "Learn more"**: the expansion window is built,
-focus-trapped and verified, but its model-backed action is not. `app/actions/ask.ts` is the
-pattern to copy — `@anthropic-ai/sdk`, gated on `ANTHROPIC_API_KEY`, rate-limited per IP. Two
-constraints from the design in `PROPOSALS.md`: it must be labelled machine-generated **in the
-panel**, and it must return titles and authors to look up rather than hyperlinks, because a
-model asked for links invents them and verifying one means a fetch the CSP forbids.
+They are one change: the prose column is bounded by `main#content`, so the measure cannot
+widen until the surrounding column does. §7.1's proposal is already measured and written up
+in `PROPOSALS.md` — narrow **51ch**, standard **56ch**, wide **64ch**, which hold 59.6 / 67.1
+/ 73.3 characters per line at *every* reader text size.
+
+Two things that must be true for `ch` to work, both measured and both easy to get wrong:
+`--article-fs` is only a **variable** on `[data-article]` (the size is applied per block by a
+`text-[length:…]` utility), so the element carrying the `ch` width needs `font-size:
+var(--article-fs)` or the unit resolves against the inherited 16px and scales with nothing.
+
+`docs/audit/measure-prose-width.mjs` re-runs the whole comparison in one command.
 
 ## What is already true and should not be re-derived
 
@@ -66,7 +70,8 @@ Run with a server on `127.0.0.1:3000` serving the build you mean (check the CSS 
 | `scripts/seed-fixture-posts.mjs --apply` | Re-seeds the two draft fixtures and proves they are invisible to the published perspective |
 | `scripts/migrate-lab-notes.mjs` | The 4.3 rename, dry-run by default |
 | `docs/audit/measure-reading-controls.mjs` | 22: four spacing scales at three steps each, measured on the rendered prose, plus three toggles and Reset |
-| `docs/audit/measure-sidenotes-margin.mjs` | 28: margin placement, the three 6.3 edge cases, the 6.5 window's focus trap, both 6.4 mobile options. **Not** `measure-sidenotes.mjs`, which is Phase 1.5 research on other sites |
+| `docs/audit/measure-prose-width.mjs` | Real CPL for every candidate width × three text sizes × three breakpoints. Prints a table and writes `prose-width.json` |
+| `docs/audit/measure-sidenotes-margin.mjs` | 30: margin placement, the three 6.3 edge cases, the 6.5 window's focus trap, both 6.4 mobile options. **Not** `measure-sidenotes.mjs`, which is Phase 1.5 research on other sites |
 
 Suite: `npx playwright test` — **114 passing** across both projects.
 
