@@ -13,32 +13,25 @@ stale — the point of this file is that it is useful at any moment, not only at
   independent verifier.
 - **Phase 4 — complete.** 4.2/4.3/4.6 `7451e60`, 4.1/4.4/4.5 `0fabe5b`. Verified 8/9 by an
   independent verifier; the one FAIL was trap 16, disproved by `probe-tag-facet.mjs`.
-- **Phase 5 — partly done.** 5.5 and 5.6 `c473f5e`. 5.1–5.4 `e6181e5`: the reading toolbar
-  and four themes including a light mode.
-  **What remains in Phase 5:**
-  - **5.1's index half.** `ReadingToolbar` takes `variant="index"` and it is built, but
-    nothing renders it: `/blog` has no `ArticleProvider`, and `useArticle()` throws without
-    one. The component returns `null` rather than crashing, so wiring it is additive. The
-    index variant also wants a **density** control, which does not exist yet.
-  - **5.2's expanded accessibility set.** Currently four toggles. The brief asks for line
-    height, letter spacing, word spacing, paragraph spacing, link underlining, focus-ring
-    size, animation off and colour filters. Deliberately NOT added to the old menu first —
-    that menu is now the toolbar, so they go straight into it.
-  - **5.2's read-aloud voice selection and speed.** `useReadAloud` exposes play/pause/stop
-    only.
+- **Phase 5 — complete.** 5.5/5.6 `c473f5e`, 5.1–5.4 `e6181e5`, expanded controls `8373d6b`,
+  read-aloud voice and speed `1eb1ab0`, index toolbar and density `eb558ee`.
+- **Phase 6 — complete except 6.5's "Learn more".** Design `0d2fa42`, margin notes `c93c366`,
+  glossary unification `871d652`.
 
 Everything above is committed and pushed. `git status` is clean.
 
 ## The single next action
 
-**Phase 5.2 — the expanded accessibility set**, into `components/article/ReadingToolbar.tsx`.
+**Phase 7 — article layout.** Read `docs/audit/BLOG-OVERHAUL-BRIEF.md` §7 first; §7.1 was
+amended (the measure is **56** characters, not 65 — the original instruction was wrong and
+why is recorded in OVERHAUL-PROGRESS).
 
-Add the settings to `ArticleSettings` in `ArticleProvider.tsx` (type, default, storage key,
-and the line in the apply-effect that writes them to the DOM), express the four spacing ones
-as CSS custom properties on `[data-article-root]` consumed by the prose rules in
-`styles/article.css`, and render them in the toolbar's Accessibility group. `measure-themes.mjs`
-is the model for verifying them: composite the layers, walk text nodes, and check a positive
-control so "nothing changed" cannot pass for "it works".
+The one Phase 6 item left is **6.5's "Learn more"**: the expansion window is built,
+focus-trapped and verified, but its model-backed action is not. `app/actions/ask.ts` is the
+pattern to copy — `@anthropic-ai/sdk`, gated on `ANTHROPIC_API_KEY`, rate-limited per IP. Two
+constraints from the design in `PROPOSALS.md`: it must be labelled machine-generated **in the
+panel**, and it must return titles and authors to look up rather than hyperlinks, because a
+model asked for links invents them and verifying one means a fetch the CSP forbids.
 
 ## What is already true and should not be re-derived
 
@@ -72,6 +65,8 @@ Run with a server on `127.0.0.1:3000` serving the build you mean (check the CSS 
 | `scripts/seed-scale-fixtures.mjs --apply` | 47 draft-only posts so the 50-post state can be seen. `--delete` after |
 | `scripts/seed-fixture-posts.mjs --apply` | Re-seeds the two draft fixtures and proves they are invisible to the published perspective |
 | `scripts/migrate-lab-notes.mjs` | The 4.3 rename, dry-run by default |
+| `docs/audit/measure-reading-controls.mjs` | 22: four spacing scales at three steps each, measured on the rendered prose, plus three toggles and Reset |
+| `docs/audit/measure-sidenotes-margin.mjs` | 28: margin placement, the three 6.3 edge cases, the 6.5 window's focus trap, both 6.4 mobile options. **Not** `measure-sidenotes.mjs`, which is Phase 1.5 research on other sites |
 
 Suite: `npx playwright test` — **114 passing** across both projects.
 
@@ -100,6 +95,15 @@ Suite: `npx playwright test` — **114 passing** across both projects.
   most links and headings. Walk text nodes.
 - **A local sonner toast docks bottom-right** and intercepts clicks there. It is a local
   artifact, but the collision it exposes is real.
+- **`position: sticky` is bounded by its PARENT's box.** Wrapping a sticky element's parent
+  in anything content-height silently removes its travel — it just scrolls away, and looks
+  entirely normal in a screenshot.
+- **An estimated height is not a layout.** Notes positioned by an estimated height overlapped;
+  invisible in a screenshot, but a click could not reach a covered control. Paint, measure,
+  correct.
+- **A Sanity string used to build a MATCHER must be stega-cleaned**, not just one used as a
+  lookup key. The glossary built a regex from an encoded term and matched nothing in every
+  draft preview since it shipped.
 
 ## Standing instructions from Stefan
 
