@@ -574,3 +574,85 @@ past it.
 and one method disagreeing with an earlier one is exactly the situation where I have been
 wrong before. Recorded so Phase 7 starts from a measured number, and so the earlier
 rejection can be re-examined with its premise corrected.
+
+---
+
+## 1.6 Reading toolbars
+
+Two were measurable in a browser (Medium, ours). The rest are apps behind authentication or
+browser chrome that no probe can reach, so their control sets come from vendor documentation
+— **stated as documentation, not measurement.**
+
+### Measured
+
+| | Persistent bars at 1440 | At 390 | Controls | What the controls are |
+| --- | --- | --- | --- | --- |
+| **Medium** (signed out) | 1 — sticky top, 1440×57, z 500 | 1 — 390×98 | 5 | Sign up · search · Get the app · Sign up · user menu |
+| **Ours** | 2 — fixed navbar 1440×61 z 999, **plus** sticky 220×87 at x=1052 holding "Reading options" | **1 — the navbar only** | 3 + 1 | Search · search · menu · Reading options |
+
+Two things fall out of that table.
+
+**Medium's signed-out web reader offers no reading controls whatsoever.** Every control in
+its persistent bar is account or marketing. Text size, theme and width live in the native
+app. Medium is therefore *not* prior art for a web reading toolbar, despite being the
+obvious name to reach for.
+
+**Our reader menu is desktop-only.** At 1440 it rides in the sticky TOC rail at x=1052. At
+390 that rail is `hidden lg:block`, and the probe finds no persistent element carrying it.
+Phase 5.4 asks "at 390 it must fit the margin or force the margin to accommodate it —
+propose which". The measurement says the current answer is **neither: it leaves.** That is
+worth knowing before designing the replacement, because the mobile case is not a
+degradation of the desktop case today, it is an absence.
+
+### Firefox Reader View — the most complete reference
+
+From Mozilla's own support documentation:
+
+| Control | Options |
+| --- | --- |
+| Text size | − / + stepper |
+| **Font family** | **Serif · Sans-serif · Monospace** |
+| **Font weight** | **Light · Regular · Bold** |
+| Line height | adjustable |
+| Content width | adjustable |
+| **Theme** | **Auto · Light · Dark · Sepia · Contrast · Gray**, plus a custom theme |
+| Narrate (read aloud) | **Shown only if the OS has TTS for the article's language** |
+| Advanced | character spacing · word spacing · text alignment |
+
+**Position: a toolbar on the left edge**, opened by a "Text and Layouts" button.
+
+Three things here matter for Phase 5:
+
+1. **The left-edge vertical toolbar is Firefox's actual solution**, which is direct support
+   for the vertical glass toolbar Phase 5 describes — this is not an invention.
+2. **Six themes, not two.** Phase 5.2 asks for "more than two, including a light mode";
+   Firefox's Auto/Light/Dark/Sepia/Contrast/Gray is the set to borrow from, and **Auto**
+   (follow the OS) is the one our current two-theme set is missing entirely.
+3. **Font family is a control Phase 5.2 does not list**, and Firefox treats it as
+   first-class alongside size. Given this site already loads a serif, a sans and a mono, and
+   a dyslexia face, exposing family costs nothing.
+
+And one implementation rule worth copying exactly: **Narrate only appears when the platform
+can actually do it.** Our read-aloud should test `speechSynthesis.getVoices()` for a
+matching language and hide the control otherwise, rather than offering a button that does
+nothing.
+
+### Not measurable, stated as knowledge
+
+Instapaper, Readwise Reader, Kindle for Web, Apple Books, Pocket and Safari Reader all sit
+behind sign-in or inside browser chrome. From use rather than measurement, the pattern they
+share with Firefox: **a small persistent affordance at a screen edge that expands into a
+panel, never a bar that occupies reading width.** Their control sets are subsets of the
+Firefox list above, most commonly size + theme + width, with typeface less often exposed.
+
+I have not verified these individually and they should not be quoted as measurements. The
+Firefox set is the one with a citable source, and it is a superset, so it is the safe
+reference.
+
+### Context-awareness
+
+Phase 5.1 wants one toolbar whose contents change between the index and an article.
+**No prior art found in any reader examined.** Every reading toolbar in this set exists only
+on a reading surface; none of them has an index-page mode, because none of these products
+has an index page in the same sense. This is a genuine invention rather than an adoption,
+and — like Phase 3.5 and the sticky sidenote — it should be built knowing that.
