@@ -23,7 +23,8 @@ Session count: 1
 | **1.7 Comment systems** | `9e43345` | n/a | self | |
 | **1.8 Hover previews** | `e2622cc` | n/a | self | |
 | **1.9 Corrections** | `43d45ce` | n/a | self | |
-| **3.1 Status fields: subtraction then flags** | `d91a555` | deployed `13757d8` | verifier running | `confidenceLevel` loses `verified`/`peer-reviewed`; `reviewStatus` becomes independent flags |
+| **3.1 Status fields: subtraction then flags** | `d91a555` | deployed `13757d8` | **verifier — PASS** (a)(b)(c). It also found the duplicate `<h1>` below | `confidenceLevel` loses `verified`/`peer-reviewed`; `reviewStatus` becomes independent flags |
+| Duplicate `<h1>` in body copy | `365e97e` | not yet deployed | **verifier-found** | `CustomPortableText` rendered a body "Heading 1" as a real `<h1>`. Suite is now **35** |
 | Section reading times (Phase 0.1 follow-up) | `76c3d55` | **yes** — production, portfolio 4→1 and home lab 5→3 against headers of 2 and 3 | **verifier-found** | TOC sections summed to more than the post |
 | **2.1 Rename to Blog** | `1d0869b`, `8141a9f` | **yes** — h1 reads Blog, zero `>Writing<`, /writing redirects | self | 20 strings found, **14 renamed, 6 left as the activity**. Both halves: code defaults *and* the live Studio documents |
 
@@ -91,6 +92,37 @@ and there were three. **The claim I wrote was too narrow, and so is its regressi
   build worker with `exited with code: 3221226505` during "Collecting page data" — a
   Windows access violation that looks nothing like a frozen-object error. Reverting fixed it
   immediately.
+
+### Second verifier run — Phase 3.1
+
+**PASS on all three parts.** `confidenceLevel` offers exactly the three values; `reviewStatus`
+is an array of exactly the five; every status is null on all four documents and nothing
+renders.
+
+Three false positives it avoided and reported, any of which would have been a wrong FAIL:
+
+- A raw-HTML grep hits `production-proven` once per page — it is inside the **RSC flight
+  payload's label lookup table**, not a rendered badge. The DOM check showed nothing rendered.
+- `confident`, `light` and `heavy` appear in body prose ("the technology you're most confident
+  in", "Museum Placard Lightbox"). It printed ±70 characters of context around each to confirm.
+- It used `perspective=raw`. The default perspective would have missed the one draft and
+  under-counted n by one.
+
+It also noted that `schema.json` **drops `options.list`**, so the option set is not recoverable
+from the build artifact — it executed the built config instead. Worth knowing before anyone
+tries to verify an enum from `schema.json` alone.
+
+**One incidental fact it got wrong:** it reported the local HEAD as `c4ca8c9` when it was
+`45924ec`. Its substantive measurements were against `schema.json`, the built config and
+production, all current, so the verdict stands. The lesson is that a verdict should rest on the
+measurement, not on the narrative around it — including the verifier's own.
+
+**And it found a second defect outside its claim** (fixed, `365e97e`): the portfolio post
+rendered **two `<h1>` elements**. `CustomPortableText` rendered a body "Heading 1" block as a
+real `<h1>`, competing with the article title — and that style was also the only one without
+heading props, so it had no id, no anchor, and never appeared in the TOC. The test gap that
+let it through: the article tests open only `firstPostSlug`, and the portfolio post was not
+first. Now every post is tested.
 
 ### Honest limits
 
