@@ -568,3 +568,74 @@ Not the generation. **The field, the label and the suppression rules** — schem
 hand. That ships the reader-facing half with zero API cost and zero failure modes, and it
 means the generation step, when it lands, is a webhook that fills in a field whose every
 consumer already works.
+
+---
+
+# Phase 6 — Sidenotes. The design, before the build.
+
+Written 2026-09-11, against the code as it stands rather than from the brief alone.
+
+## What already exists, measured not assumed
+
+| 6.x | Status today |
+| --- | --- |
+| **6.1 Authoring** | **Done.** A `sidenote` markDef on Portable Text, authored in Studio by selecting a phrase — exactly the mechanism the brief guesses at. `CustomPortableText` renders it as `<SideNote>`. |
+| **6.2 Glossary** | Half done, and **the half that exists is already the brief's "hybrid"** — see below. |
+| **6.3 Placement** | **Not the margin.** It is a tooltip anchored `bottom-full` above the phrase, `pointer-events: none`, `hidden lg:group-hover:block`. None of 6.3's three questions has an answer today. |
+| **6.4 Mobile** | One of the two options is built: click toggles an inline expansion at the anchor. The footnote-style alternative is not. |
+| **6.5 Expansion** | Not built. |
+
+## 6.2 — the recommendation: **hybrid, and it is already written**
+
+`lib/glossary.ts` marks **the first prose occurrence of each term per article**, case-insensitively, longest term first, and never inside a heading, a code span, a link, another glossary mark or a sidenote. That is precisely the brief's third option:
+
+> *Hybrid: first occurrence per article is automatic, subsequent ones are not.*
+
+So the decision 6.2 asks for has effectively been made and shipped; what is missing is that glossary marks and sidenotes are **two different components with two different treatments** — a dotted amber underline with a hover card versus a dashed underline with a `※` and a tooltip. A reader meets two annotation systems and has to learn both.
+
+**Recommendation: keep the hybrid matching exactly as it is, and unify the PRESENTATION.** One margin column, two sources:
+
+- a **hand-authored** note is the author talking about this passage;
+- a **glossary-derived** note is a definition that happens to apply here.
+
+They differ by a label and a colour, not by a mechanism. That answers "without me doing the work twice": the glossary is authored once in its own document type and surfaces automatically; sidenotes are authored only where the author has something to say that the glossary does not already say.
+
+**The opt-in option is rejected** with a reason: it makes every glossary term a second authoring decision, and the brief itself says this choice "materially affects how much work authoring becomes". Automatic-everywhere is rejected for the reason the brief gives — noise and repetition — which the first-occurrence rule already solves.
+
+**One gap in the current matcher, worth fixing while here:** it skips headings, code, links and sidenotes, but not **proper nouns**. "The Field" as a title and "the field" as a concept are the same string to it.
+
+## 6.3 — placement, with the three edge cases answered
+
+**The column.** Sidenotes go in the **right margin, shared with the TOC**, not replacing it. The TOC is sticky and short; sidenotes are anchored and sparse. Measured from `decisions/README.md`: at 1440 the prose ends at x=874 and the viewport is 1440, so there are ~530px to its right, of which the TOC occupies 220. A 260px sidenote column fits beside it.
+
+**When they would collide, the sidenote wins the space and the TOC yields** — the TOC is navigation a reader consults deliberately and can reopen; a sidenote is about the sentence they are reading right now.
+
+**Anchor scrolls out of view → the note scrolls away with it.** Not stick, not fade. A sidenote is a comment on one passage; a note that outlives its passage is a note pointing at nothing, and "stick" turns the margin into a second, laggy reading column. This also makes the rule trivial to reason about: the note is positioned at its anchor's offset, full stop.
+
+**Two anchors close enough to overlap → the later note is pushed down.** A simple top-to-bottom pass: each note is placed at `max(anchorTop, previousNoteBottom + gap)`. This is what Tufte CSS and gwern.net both do. It means a dense cluster drifts below its anchors, which is the lesser harm — the alternative is notes overlapping, where neither is readable.
+
+**A note longer than the space available → it truncates with a "more" affordance that opens 6.5's window.** Not a scrolling margin box: a scroll region in the margin is a second scrollable thing on the page and readers do not find it. Cap at roughly 12 lines.
+
+## 6.4 — mobile, both designed, one recommended
+
+At 390px there is no margin, so:
+
+- **Option A — inline collapse/expand at the anchor.** What exists today. The reader stays in place; the note appears where they are looking; the paragraph reflows.
+- **Option B — footnote style.** A numbered marker at the anchor, all notes collected at the foot of the article.
+
+**Recommendation: A.** B is the better *print* convention and the worse *screen* one — it costs a round trip away from the sentence and back, on the device where losing your place is easiest. A's one real cost is that the paragraph reflows under the reader's thumb, which is mitigated by expanding **below** the current line rather than at the tapped word.
+
+Both will be rendered at 390 before this is settled, because the brief asks for both and because a reflow is the kind of thing that reads differently than it describes.
+
+## 6.5 — the expansion window
+
+The margin text is the complete note; the window holds what will not fit.
+
+- Opens on click of the note (or its "more" affordance), **centred and focused**, over a scrim.
+- **Focus-trapped while open**, returns focus to the note on close, closes on `Escape` and on scrim click — the same contract the correction card and the reading toolbar already use, so it is a third instance of one pattern rather than a new one.
+- Respects `prefers-reduced-motion`: no scale-in, opacity only.
+- Carries a **"Learn more"** action that asks a model for further reading.
+
+**"Learn more" is subject to 5.6's rules, not new ones.** It is machine-generated text on a blog about epistemic honesty, so: clearly labelled in the panel itself and not in a tooltip; never styled as prose; never cached into content where it could later be mistaken for authored text. Unlike a summary it is *generated on demand* — it is a reader's action, not a property of the post — so it needs no field and no webhook, and it must never be stored as one.
+
+**The honest risk to state now:** a model surfacing "further reading and links on the term" can produce links that do not exist. Any URL it returns must be presented as a suggestion to search for, not as a link to click, unless it can be verified — and verifying it means fetching it, which the CSP forbids from the browser. The safe version returns *titles and authors to look up*, not hyperlinks.
