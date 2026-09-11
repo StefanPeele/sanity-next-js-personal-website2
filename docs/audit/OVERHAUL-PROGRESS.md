@@ -1,6 +1,6 @@
 # Blog Overhaul — Progress
 
-Last updated: 2026-09-11T00:30Z
+Last updated: 2026-09-11T00:25Z
 Current phase: 0 complete; Phase 1 (research) not started
 Session count: 1
 
@@ -9,14 +9,22 @@ Session count: 1
 | Item | Commit | Verified live | Notes |
 | --- | --- | --- | --- |
 | Brief installed in the repo | `33859fb` | n/a | `docs/audit/BLOG-OVERHAUL-BRIEF.md`, 1226 lines, so it survives a context reset |
-| 0.1 Reading time — one source of truth | `2724d3e` | **not yet deployed** | Card and article both read one GROQ `wordCount`. Regression test added; suite is now **34**, not 33 |
-| 0.2 FEATURED badge alignment | this commit | **not yet deployed** | Text asymmetry 5px → 1px, matching both neighbouring pills. Box height unchanged at 30px |
+| 0.1 Reading time — one source of truth | `2724d3e` | **yes** — agreement test passes against stefanpeele.com | Card and article both read one GROQ `wordCount`. Regression test added; suite is now **34**, not 33 |
+| 0.2 FEATURED badge alignment | `b6c07c2` | **yes** — deployed in `b6c07c2` | Text asymmetry 5px → 1px, matching both neighbouring pills. Box height unchanged at 30px |
 | 0.3 `(TESTING)` prefix removed | Sanity mutation `mIRMU65sT5gw12rzV1sPip` | yes — dataset re-read | Draft only; the published document was already clean |
 | 0.4 `--` → em dash in the home lab title | same transaction | yes — dataset re-read | Published document patched directly |
-| 0.5 `/graph` 8px labels logged | this commit | n/a | See *Deferred* below |
+| 0.5 `/graph` 8px labels logged | `b6c07c2` | n/a | See *Deferred* below |
 
-**Not yet pushed or deployed.** Everything above is committed locally on `main`. Nothing
-in this session has been verified on production, because nothing has been pushed.
+**Pushed and live.** `/api/health` reported `4f68644` before the push and **`b6c07c2`** at
+04:19:52Z, about two minutes after. Verified against production, not just locally: the
+reading-time agreement test passes with `PLAYWRIGHT_BASE_URL=https://stefanpeele.com`,
+`/blog` serves the em dash in the home lab title, and the string "TESTING" appears zero
+times on the page.
+
+That push carried **eight** commits, not two — the five SPECS commits from earlier in the
+session (`5370ca9` … `dab10fe`) had never been pushed either, so the 12px floor, the
+palette tokens, the D5 theme scope, the button primitive and the type scale all went live
+in the same deploy.
 
 ## Proposed, awaiting Stefan
 
