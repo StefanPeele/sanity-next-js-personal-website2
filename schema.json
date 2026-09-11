@@ -3028,6 +3028,13 @@
                       "type": "string"
                     },
                     "optional": true
+                  },
+                  "status": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    },
+                    "optional": true
                   }
                 }
               },

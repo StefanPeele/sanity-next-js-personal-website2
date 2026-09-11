@@ -14,7 +14,9 @@ export const DEFAULT_BLOG_PAGE = {
   notesStrip: { enabled: true, heading: 'Recently tended notes', ctaLabel: 'Garden', ctaHref: '/garden' },
   list: {
     heading: 'All posts',
-    filterLabels: { lane: 'Type', category: 'Topic', tag: 'Tag', sort: 'Sort' },
+    // `status` (3.5) is the epistemic filter. Its row only renders when at least one post
+    // actually carries a status, so it stays invisible until the vocabulary is in use.
+    filterLabels: { lane: 'Type', category: 'Topic', tag: 'Tag', sort: 'Sort', status: 'Checked' },
     sortLabels: { newest: 'Newest', oldest: 'Oldest', longest: 'Longest' },
     allLabel: 'All',
     readLabel: 'Read',

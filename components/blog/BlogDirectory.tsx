@@ -13,7 +13,7 @@ import type { BlogIndexQueryResult } from '@/sanity.types'
 import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPage'
 import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { Icon } from '@/lib/cms/icons'
-import { auraProps, effectiveReviewStatus, materialRevision, reviewFlags } from '@/lib/status'
+import { auraProps, effectiveReviewStatus, materialRevision, REVIEW_STATUS, reviewFlags } from '@/lib/status'
 import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
 import { ArrowRight } from 'lucide-react'
 // components/blog/BlogDirectory.tsx
@@ -70,6 +70,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
   const lane = searchParams.get('lane')
   const tag = searchParams.get('tag')
   const sort = (searchParams.get('sort') as Sort | null) ?? 'newest'
+  const status = searchParams.get('status')
 
   const [readPosts, setReadPosts] = useState<Set<string>>(new Set())
   const [mounted, setMounted] = useState(false)
@@ -94,6 +95,25 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
   const clearAll = useCallback(() => router.replace(pathname, { scroll: false }), [router, pathname])
 
+  // 3.5. Computed once here rather than in the render map, so the chip counts, the filter
+  // and the mark on each card are provably the same values. `revised` is derived, so this
+  // has to go through effectiveReviewStatus -- reading post.reviewStatus raw would filter
+  // out posts whose only status is a revision.
+  const statusById = useMemo(() => {
+    const m = new Map<string, string[]>()
+    posts.forEach((p) => m.set(p._id, effectiveReviewStatus(p.reviewStatus, materialRevision(p.lastRevised, p.publishedAt))))
+    return m
+  }, [posts])
+
+  // One facet per status actually present, in REVIEW_FLAG_ORDER, with counts. An empty
+  // result hides the whole row: no published post carries a status yet, and a filter bar
+  // offering nothing to filter by is worse than no filter bar.
+  const statusFacets = useMemo(() => {
+    const counts = new Map<string, number>()
+    statusById.forEach((keys) => keys.forEach((k) => counts.set(k, (counts.get(k) ?? 0) + 1)))
+    return reviewFlags([...counts.keys()]).map((f) => ({ ...f, count: counts.get(f.key) ?? 0 }))
+  }, [statusById])
+
   const allTags = useMemo(() => {
     const map = new Map<string, { title: string; count: number }>()
     posts.forEach((p) => (p.tags ?? []).forEach((t) => {
@@ -109,15 +129,21 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
     if (active) list = list.filter((p) => p.categories?.includes(active))
     if (lane) list = list.filter((p) => p.articleType === lane)
     if (tag) list = list.filter((p) => (p.tags ?? []).some((t) => t?.slug === tag))
+    if (status) list = list.filter((p) => (statusById.get(p._id) ?? []).includes(status))
     const byDate = (a: DirectoryPost, b: DirectoryPost) => (b.publishedAt ?? '').localeCompare(a.publishedAt ?? '')
     if (sort === 'oldest') list = [...list].sort((a, b) => byDate(b, a))
     else if (sort === 'longest') list = [...list].sort((a, b) => (b.wordCount ?? 0) - (a.wordCount ?? 0))
     else list = [...list].sort(byDate)
     return list
-  }, [posts, active, lane, tag, sort])
+  }, [posts, active, lane, tag, sort, status, statusById])
 
-  const anyFilter = Boolean(active || lane || tag)
-  const activeLabel = [active, lane && articleTypeMeta(lane)?.label, tag && `#${allTags.find((t) => t.slug === tag)?.title ?? tag}`].filter(Boolean).join(' · ')
+  const anyFilter = Boolean(active || lane || tag || status)
+  const activeLabel = [
+    active,
+    lane && articleTypeMeta(lane)?.label,
+    tag && `#${allTags.find((t) => t.slug === tag)?.title ?? tag}`,
+    status && REVIEW_STATUS[status]?.label,
+  ].filter(Boolean).join(' · ')
 
   return (
     <>
@@ -260,6 +286,35 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           </div>
         )}
 
+        {/* 3.5. Deliberately the LAST filter before sort: it is the narrowest question a
+            reader asks, and putting it above Topic would imply status matters more than
+            subject. Phase 4 may move it; the state is a plain URL param, so relocating it
+            is a render change, not a rewrite. */}
+        {statusFacets.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by review status">
+            <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.status}</span>
+            <button type="button" onClick={() => setParam('status', null)} aria-pressed={status === null} className={chip(status === null)}>{L.allLabel}</button>
+            {statusFacets.map((f) => {
+              const on = status === f.key
+              return (
+                <button
+                  key={f.key}
+                  type="button"
+                  onClick={() => setParam('status', on ? null : f.key)}
+                  aria-pressed={on}
+                  className={`${chip(on)} inline-flex items-center gap-1.5`}
+                >
+                  {/* The same icon the card's mark uses. A filter that looked different from
+                      the thing it filters would be a third vocabulary. */}
+                  <Icon name={f.icon} size={14} className={on ? undefined : f.color} aria-hidden />
+                  {f.label}
+                  <span className="opacity-60 text-xs">{f.count}</span>
+                </button>
+              )
+            })}
+          </div>
+        )}
+
         <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Sort">
           <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.sort}</span>
           {(['newest', 'oldest', 'longest'] as Sort[]).map((s) => (
@@ -279,10 +334,10 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           const meta = articleTypeMeta(post.articleType)
           // null for a post with no status, which is most of them -- no data-aura is
           // emitted and the tile renders exactly as it did before 3.4.
-          // 3.7: `revised` is derived from the changelog, not selected, so every surface
-          // must read it through effectiveReviewStatus or the card and the article disagree.
-          const status = effectiveReviewStatus(post.reviewStatus, materialRevision(post.lastRevised, post.publishedAt))
-          const aura = auraProps(status)
+          // The same values the filter chips counted -- not a second computation, and not
+          // named `status`, which is the filter's URL param in this scope.
+          const postStatus = statusById.get(post._id) ?? []
+          const aura = auraProps(postStatus)
 
           return (
             <Link
@@ -359,7 +414,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                         and greyscale printing. Colour is only the second cue. 14px, which
                         is 3.3's floor. At most two, so a heavily-flagged post does not turn
                         its card into a badge rack. */}
-                    {reviewFlags(status, 2).map((f) => (
+                    {reviewFlags(postStatus, 2).map((f) => (
                       <span key={f.key} className={`inline-flex items-center ${f.color}`} title={f.label}>
                         <Icon name={f.icon} size={14} aria-hidden />
                         <span className="sr-only">{f.label}</span>

@@ -21,7 +21,7 @@ export default defineType({
     obj('notesStrip', 'Recently tended strip', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),
     obj('list', 'Post list', [
       str('heading', 'Heading'),
-      obj('filterLabels', 'Filter labels', [str('lane', 'Type'), str('category', 'Topic'), str('tag', 'Tag'), str('sort', 'Sort')]),
+      obj('filterLabels', 'Filter labels', [str('lane', 'Type'), str('category', 'Topic'), str('tag', 'Tag'), str('sort', 'Sort'), str('status', 'Status filter')]),
       obj('sortLabels', 'Sort options', [str('newest'), str('oldest'), str('longest')]),
       str('allLabel', '"All" chip'), str('readLabel', 'Read label'), str('readAgainLabel', 'Read again label'),
       str('emptyState', 'Empty state'), str('clearLabel', 'Clear filters label'), str('postCount', 'Post count ({n})'),
