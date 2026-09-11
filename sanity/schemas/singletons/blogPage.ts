@@ -1,6 +1,7 @@
 import { BookIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
 import { DEFAULT_BLOG_PAGE } from '@/lib/cms/defaults/blogPage'
+import { DEFAULT_TAXONOMY } from '@/lib/cms/defaults/taxonomy'
 // sanity/schemas/singletons/blogPage.ts — the /blog index.
 
 const str = (name: string, title = name) => defineField({ name, title, type: 'string' })
@@ -25,6 +26,38 @@ export default defineType({
       obj('sortLabels', 'Sort options', [str('newest'), str('oldest'), str('longest')]),
       str('allLabel', '"All" chip'), str('readLabel', 'Read label'), str('readAgainLabel', 'Read again label'),
       str('emptyState', 'Empty state'), str('clearLabel', 'Clear filters label'), str('postCount', 'Post count ({n})'),
+    ]),
+    obj('planned', 'Planned posts (placeholders)', [
+      defineField({ name: 'enabled', title: 'Show planned placeholders', type: 'boolean' }),
+      str('heading', 'Heading'),
+      str('note', 'Note under the heading'),
+      str('label', 'Label on each card'),
+      defineField({
+        name: 'treatment',
+        title: 'Visual treatment',
+        type: 'string',
+        options: { list: [{ title: 'Dark / empty', value: 'dark' }, { title: 'Glassy / translucent', value: 'glass' }], layout: 'radio' },
+      }),
+      defineField({
+        name: 'items',
+        title: 'Planned topics',
+        type: 'array',
+        description: 'One per planned post. The topic shows on the card, so this doubles as a visible roadmap — the point is that you can see the shape of the finished page before the content exists. Delete an entry when the post is published.',
+        of: [{
+          type: 'object',
+          name: 'plannedPost',
+          fields: [
+            defineField({ name: 'topic', title: 'Intended topic', type: 'string', validation: (r) => r.required() }),
+            defineField({
+              name: 'lane',
+              title: 'Lane',
+              type: 'string',
+              options: { list: DEFAULT_TAXONOMY.articleLanes.map((l) => ({ title: l.label, value: l.key })) },
+            }),
+          ],
+          preview: { select: { title: 'topic', subtitle: 'lane' } },
+        }],
+      }),
     ]),
   ],
   preview: { prepare: () => ({ title: 'Blog index' }) },

@@ -1,6 +1,7 @@
 'use client'
 
 import { useId, useMemo, useState } from 'react'
+import { enumKey } from '@/lib/stega'
 import { FOCUS } from '@/lib/ui'
 // components/CodeBlock.tsx
 // Code block from the Sanity code type: filename tab, copy button, line-number
@@ -78,7 +79,15 @@ export function CodeBlock({ value }: { value: CodeValue }) {
   const [numbers, setNumbers] = useState(true)
   const id = useId()
 
-  const code = value?.code ?? value?.text ?? ''
+  // stegaClean FIRST, before tokenising. In draft mode Sanity embeds a source map into the
+  // string as zero-width characters; the tokeniser then scatters those across hundreds of
+  // per-token spans, and the visual-editing overlay tries to decode each fragment. Measured
+  // on the draft fixture: 313 zero-width-only text nodes and 86 console errors reading
+  // "Failed to decode stega for string: ... is not valid JSON" -- all of them from this one
+  // component, none from any other draft page. Cleaning here also keeps the payload out of
+  // what the copy button puts on the clipboard, which was pasting invisible characters into
+  // whatever terminal the reader pasted into.
+  const code = enumKey(value?.code ?? value?.text ?? '') ?? ''
   const language = (value?.language ?? '').toLowerCase()
   const highlighted = useMemo(() => new Set(value?.highlightedLines ?? []), [value?.highlightedLines])
   const lines = useMemo(() => code.replace(/\n$/, '').split('\n').map((l) => tokenizeLine(l, language)), [code, language])

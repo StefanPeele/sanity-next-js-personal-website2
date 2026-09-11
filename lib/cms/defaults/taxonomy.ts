@@ -18,8 +18,15 @@ export const DEFAULT_TAXONOMY = {
   articleLanes: [
     { key: 'perspective',       label: 'Perspective',       short: 'Perspective', color: '#a78bfa', description: 'Opinion and analysis on where the field is going.' },
     { key: 'concept-deep-dive', label: 'Deep dive',         short: 'Deep dive',   color: '#fbbf24', description: 'One idea, explained until it clicks.' },
-    { key: 'field-notes',       label: 'Field notes',       short: 'Field notes', color: '#34d399', description: 'What actually happened in the lab or on the job.' },
-    { key: 'transmission',      label: 'Update',            short: 'Update',      color: '#60a5fa', description: 'Short signals, announcements, and news.' },
+    // 4.3. Was `field-notes` / "Field notes", which sounds generated. "Lab Notes" over the
+    // brief's alternate "Notebook Notes": it is shorter, it says where the work happened
+    // rather than where it was written down, and "Notebook Notes" repeats itself. It also
+    // matches what the posts actually are -- the home lab series.
+    { key: 'lab-notes',         label: 'Lab Notes',         short: 'Lab Notes',   color: '#34d399', description: 'What actually happened in the lab or on the job.' },
+    // `transmission` ("Update") is GONE. 4.3 lists the taxonomy as exactly Perspective,
+    // Deep dive and Lab Notes plus whatever is added in Studio, and zero posts used it --
+    // measured against the dataset, published and drafts, before removing it. It also
+    // collided with 3B's `updated` revision word, so two different things read "Update".
   ] as VocabEntry[],
   noteStatuses: [
     { key: 'seedling',  label: 'Seedling',  short: 'Raw idea, possibly wrong',          color: '#78716c', banner: 'This is an early-stage thought. It may be incomplete or wrong.' },

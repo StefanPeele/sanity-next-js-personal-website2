@@ -14,6 +14,8 @@ import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPag
 import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { Icon } from '@/lib/cms/icons'
 import { auraProps, effectiveReviewStatus, REVIEW_STATUS, reviewFlags, revisionState } from '@/lib/status'
+import { PostPreview } from '@/components/blog/PostPreview'
+import { PlaceholderCards } from '@/components/blog/PlaceholderCards'
 import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
 import { ArrowRight } from 'lucide-react'
 // components/blog/BlogDirectory.tsx
@@ -67,7 +69,12 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
   const searchParams = useSearchParams()
 
   const active = searchParams.get('category')
-  const lane = searchParams.get('lane')
+  // 4.3 renamed `field-notes` to `lab-notes`. Any link already shared with the old key --
+  // or bookmarked, or sitting in someone's RSS reader -- keeps working. One line is cheaper
+  // than a dead filter.
+  const LANE_ALIASES: Record<string, string> = { 'field-notes': 'lab-notes' }
+  const rawLane = searchParams.get('lane')
+  const lane = rawLane ? (LANE_ALIASES[rawLane] ?? rawLane) : null
   const tag = searchParams.get('tag')
   const sort = (searchParams.get('sort') as Sort | null) ?? 'newest'
   const status = searchParams.get('status')
@@ -340,11 +347,23 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           const aura = auraProps(postStatus)
 
           return (
+            <PostPreview
+              key={post._id}
+              data={{
+                title: post.title ?? 'Untitled',
+                excerpt: post.excerpt,
+                imageUrl: post.imageUrl,
+                lane: meta ? { label: meta.short, color: meta.color } : null,
+                minutes,
+                // 3.3's fifth surface: the SAME call the card mark uses, so the preview and
+                // the card can never show a different status for the same post.
+                status: postStatus,
+              }}
+            >
             <Link
               href={`/blog/${post.slug}`}
-              key={post._id}
               onClick={() => post.slug && markPostRead(post.slug)}
-              className={`group flex flex-col space-y-4 transition-all duration-300 rounded-lg ${FOCUS} ${isRead ? 'opacity-60 hover:opacity-100' : 'opacity-100'}`}
+              className={`group flex flex-col h-full space-y-4 transition-all duration-300 rounded-lg ${FOCUS} ${isRead ? 'opacity-60 hover:opacity-100' : 'opacity-100'}`}
             >
               <div
                 className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-edge relative"
@@ -436,6 +455,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                 </div>
               </div>
             </Link>
+            </PostPreview>
           )
         }) : (
           <div className="col-span-3 py-20 text-center">
@@ -448,6 +468,19 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           </div>
         )}
       </div>
+      {/* 4.2. After the real posts, not among them: mixing planned and published in one
+          grid would make a reader check each card to see which is which. */}
+      {copy.planned?.enabled && (
+        <PlaceholderCards
+          heading={copy.planned.heading}
+          note={copy.planned.note}
+          label={copy.planned.label}
+          treatment={copy.planned.treatment}
+          items={copy.planned.items ?? []}
+          lanes={lanes}
+        />
+      )}
+
     </>
   )
 }

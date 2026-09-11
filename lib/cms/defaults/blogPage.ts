@@ -3,9 +3,9 @@
 export const DEFAULT_BLOG_PAGE = {
   header: {
     title: 'Blog',
-    lede: 'Perspective pieces, deep dives, and field notes on network engineering, infrastructure, and the work of learning it.',
+    lede: 'Perspective pieces, deep dives, and lab notes on network engineering, infrastructure, and the work of learning it.',
     metaTitle: 'Blog',
-    metaDescription: 'Perspective pieces, concept deep dives, and field notes on network engineering, infrastructure, and the work of learning it.',
+    metaDescription: 'Perspective pieces, concept deep dives, and lab notes on network engineering, infrastructure, and the work of learning it.',
   },
   statsLabels: { posts: 'posts', series: 'series', latest: 'Latest' },
   featured: { heading: 'Featured', readLabel: 'Read' },
@@ -24,6 +24,19 @@ export const DEFAULT_BLOG_PAGE = {
     emptyState: 'No posts match these filters yet.',
     clearLabel: 'Clear filters',
     postCount: '{n} posts',
+  },
+  // 4.2. Placeholder cards for posts that are planned but not written. `items` is EMPTY by
+  // default on purpose -- shipping invented post titles would be fake content on a site
+  // whose whole subject is not doing that. Add real planned topics in Studio and they
+  // appear; delete an entry when the post lands and it disappears. That is the "trivially
+  // removable" requirement, and it needs no code change.
+  planned: {
+    enabled: true,
+    heading: 'Planned',
+    note: 'Written up next. These are the gaps I already know about.',
+    label: 'Not written yet',
+    treatment: 'dark' as 'dark' | 'glass',
+    items: [] as Array<{ _key?: string; topic: string; lane?: string | null }>,
   },
 }
 

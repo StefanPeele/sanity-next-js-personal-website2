@@ -114,3 +114,61 @@
   [data-aura] { box-shadow: none; }
   [data-aura]::before { display: none; }
 }
+
+/* ── The hover preview (4.6) ──────────────────────────────────────────────────
+   Positioned inline by the component (it measures the card against the viewport at open
+   time and flips sides), so only the look lives here.
+
+   `pointer-events: none` is deliberate and load-bearing: the panel must never intercept a
+   click meant for the card underneath or beside it. The brief's framing is "a convenience,
+   not a takeover", and a preview that can swallow a click is a takeover.
+
+   Hidden below lg. There is no hover on a touchscreen, and at narrow widths a 300px panel
+   beside a full-width card has nowhere to go. */
+.post-preview {
+  position: absolute;
+  z-index: 50;
+  padding: 0.75rem;
+  border: 1px solid var(--edge-strong, rgba(255, 255, 255, 0.16));
+  border-radius: 0.6rem;
+  background: #14141a;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+@media (max-width: 1023px) {
+  .post-preview { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-preview { transition: none; }
+}
+
+/* ── Planned-post placeholders (4.2) ──────────────────────────────────────────
+   Two treatments, both of which must read as "not written yet" and never as broken. The
+   difference is what the empty tile is made of:
+
+     dark   an inset well. It reads as a hole in the page -- something absent.
+     glass  a translucent pane with a faint sheen. It reads as something forming.
+
+   Both keep a dashed edge, which is the part that does the work: a dashed border is the
+   one convention a reader already parses as "placeholder" without being told. The solid
+   cards beside them never use one. */
+
+.placeholder-card .placeholder-tile {
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+}
+.placeholder-card[data-treatment='dark'] .placeholder-tile {
+  background: #0d0d11;
+  box-shadow: inset 0 2px 14px rgba(0, 0, 0, 0.7);
+}
+.placeholder-card[data-treatment='glass'] .placeholder-tile {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.012) 55%, rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Dimmer than a real card at rest, and NOT interactive -- no hover state, because there is
+   nothing to click. A hover response would promise something. */
+.placeholder-card { opacity: 0.72; }

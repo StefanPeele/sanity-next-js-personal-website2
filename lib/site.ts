@@ -35,7 +35,15 @@ export const PRIMARY_NAV = DEFAULT_NAVIGATION.primary.map((l) => ({ name: l.labe
 /** @deprecated Read navigation from getNavigation() (lib/cms/loaders). */
 export const SECONDARY_NAV = DEFAULT_NAVIGATION.secondary.map((l) => ({ name: l.label, href: l.path ?? '/' }))
 
-export type ArticleType = 'perspective' | 'concept-deep-dive' | 'field-notes' | 'transmission'
+/**
+ * 4.3: `field-notes` -> `lab-notes`, and `transmission` removed.
+ *
+ * Derived from the defaults rather than retyped. `articleLanes` is cast to `VocabEntry[]`,
+ * so this resolves to `string` rather than a closed union — which is the honest type: the
+ * brief's taxonomy is "these three, plus anything I add in Studio", and a closed union would
+ * claim a completeness the data does not have.
+ */
+export type ArticleType = (typeof DEFAULT_TAXONOMY.articleLanes)[number]['key']
 type LaneMeta = { label: string; short: string; color: string; bg: string; description: string }
 
 function laneFromVocab(v: VocabEntry): LaneMeta {

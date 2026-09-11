@@ -530,6 +530,19 @@ export type BlogPage = {
     clearLabel?: string
     postCount?: string
   }
+  planned?: {
+    enabled?: boolean
+    heading?: string
+    note?: string
+    label?: string
+    treatment?: 'dark' | 'glass'
+    items?: Array<{
+      topic?: string
+      lane?: 'perspective' | 'concept-deep-dive' | 'lab-notes'
+      _type: 'plannedPost'
+      _key: string
+    }>
+  }
 }
 
 export type ArticleUi = {
@@ -1530,7 +1543,7 @@ export type Post = {
     _type: 'source'
     _key: string
   }>
-  articleType?: 'perspective' | 'concept-deep-dive' | 'field-notes' | 'transmission'
+  articleType?: 'perspective' | 'concept-deep-dive' | 'lab-notes'
   series?: SeriesReference
   seriesOrder?: number
   recommendedTheme?: 'archive' | 'terminal'
@@ -2376,7 +2389,7 @@ export type ArticleUiQueryResult = {
 
 // Source: sanity/lib/queries-article-ui.ts
 // Variable: blogPageQuery
-// Query: *[_type == "blogPage"][0]{    header{ title, lede, metaTitle, metaDescription },    statsLabels{ posts, series, latest },    featured{ heading, readLabel },    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }  }
+// Query: *[_type == "blogPage"][0]{    header{ title, lede, metaTitle, metaDescription },    statsLabels{ posts, series, latest },    featured{ heading, readLabel },    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount },    planned{ enabled, heading, note, label, treatment, items[]{ _key, topic, lane } }  }
 export type BlogPageQueryResult = {
   header: {
     title: string | null
@@ -2431,6 +2444,18 @@ export type BlogPageQueryResult = {
     emptyState: string | null
     clearLabel: string | null
     postCount: string | null
+  } | null
+  planned: {
+    enabled: boolean | null
+    heading: string | null
+    note: string | null
+    label: string | null
+    treatment: 'dark' | 'glass' | null
+    items: Array<{
+      _key: string
+      topic: string | null
+      lane: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
+    }> | null
   } | null
 } | null
 
@@ -2791,7 +2816,7 @@ export type ArticleTextQueryResult = {
 export type ArticleOgQueryResult = {
   title: string | null
   excerpt: string | null
-  articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+  articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
   publishedAt: string | null
   categories: Array<string | null> | null
   mainImageUrl: string | null
@@ -3928,7 +3953,7 @@ export type HomeIntelQueryResult = {
       title: string | null
       slug: string | null
     }> | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
     reviewStatus: Array<string> | null
     lastRevised: null | string
     correctionKinds: Array<'clarification' | 'correction' | 'update' | null> | null
@@ -3952,7 +3977,7 @@ export type HomeIntelQueryResult = {
       title: string | null
       slug: string | null
     }> | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
     reviewStatus: Array<string> | null
     lastRevised: null | string
     correctionKinds: Array<'clarification' | 'correction' | 'update' | null> | null
@@ -4495,7 +4520,7 @@ export type BlogIndexQueryResult = {
       title: string | null
       slug: string | null
     }> | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
     reviewStatus: Array<string> | null
     lastRevised: null | string
     correctionKinds: Array<'clarification' | 'correction' | 'update' | null> | null
@@ -4519,7 +4544,7 @@ export type BlogIndexQueryResult = {
       title: string | null
       slug: string | null
     }> | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
     reviewStatus: Array<string> | null
     lastRevised: null | string
     correctionKinds: Array<'clarification' | 'correction' | 'update' | null> | null
@@ -4658,7 +4683,7 @@ export type PostBySlugQueryResult = {
   wordCount: number | 0
   categories: Array<string | null> | null
   tags: Array<null> | null
-  articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+  articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
   confidenceLevel: 'confident' | 'speculative' | 'working-theory' | null
   maturityIndicator: 'fresh' | 'production-proven' | 'tested' | null
   cognitiveLoad: 'dense' | 'light' | 'reference' | 'technical' | null
@@ -4683,19 +4708,19 @@ export type PostBySlugQueryResult = {
     title: string | null
     slug: string | null
     excerpt: string | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
   } | null
   readNextGoBroader: {
     title: string | null
     slug: string | null
     excerpt: string | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
   } | null
   readNextApplyThis: {
     title: string | null
     slug: string | null
     excerpt: string | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
   } | null
   series: {
     _id: string
@@ -4781,7 +4806,7 @@ export type PostBySlugQueryResult = {
       _id: string
       title: string | null
       slug: string | null
-      articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+      articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
     }>
     library: Array<{
       _id: string
@@ -4818,7 +4843,7 @@ export type SearchIndexQueryResult = {
     slug: string | null
     excerpt: string | null
     publishedAt: string | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
     categories: Array<string | null> | null
     text: string
   }>
@@ -4944,7 +4969,7 @@ export type FeedQueryResult = Array<{
         _key: string
       }
   > | null
-  articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+  articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
   reviewStatus: Array<string> | null
   lastRevised: null | string
   correctionKinds: Array<'clarification' | 'correction' | 'update' | null> | null
@@ -4975,7 +5000,7 @@ export type SeriesBySlugQueryResult = {
       title: string | null
       slug: string | null
     }> | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
     reviewStatus: Array<string> | null
     lastRevised: null | string
     correctionKinds: Array<'clarification' | 'correction' | 'update' | null> | null
@@ -5268,7 +5293,7 @@ export type GraphQueryResult = {
     _id: string
     title: string | null
     slug: string | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
     excerpt: string | null
     prerequisiteIds: Array<string | null> | null
     readDeeperId: string | null
@@ -5385,7 +5410,7 @@ export type NowQueryResult = {
       title: string | null
       slug: string | null
     }> | null
-    articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
+    articleType: 'concept-deep-dive' | 'lab-notes' | 'perspective' | null
     reviewStatus: Array<string> | null
     lastRevised: null | string
     correctionKinds: Array<'clarification' | 'correction' | 'update' | null> | null
@@ -5426,7 +5451,7 @@ export type NowQueryResult = {
 declare module '@sanity/client' {
   interface SanityQueries {
     '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, revisedLabels{ corrected, clarified, updated }, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },\n    toc{ title, mobileTitle, minutesSuffix },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, share, listen, position },\n      themeLabels{ archive, terminal },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported },\n      bookmarkLabels{ save, saved, resume, clear }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent\n    },\n    credibility{\n      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, reviewedByLabel, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
-    '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },\n    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }\n  }\n': BlogPageQueryResult
+    '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },\n    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount },\n    planned{ enabled, heading, note, label, treatment, items[]{ _key, topic, lane } }\n  }\n': BlogPageQueryResult
     '\n  *[_type == "knowledgePages"][0]{\n    garden{ header{ title, lede, metaTitle, metaDescription }, stats{ notes, evergreen, tags }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n      note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },\n    library{ header{ title, lede, metaTitle, metaDescription }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) }, filterLabels{ type, status, all, clear } },\n    glossary{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, termsCount },\n    series{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },\n    graph{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },\n      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },\n      linesNote, nodeListLabel, openHint, ariaSummary },\n    osi{ header{ title, lede, metaTitle, metaDescription }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }\n  }\n': KnowledgePagesQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, body, tldr, excerpt\n  }\n': ArticleTextQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, excerpt, articleType, publishedAt,\n    "categories": categories[]->title,\n    "mainImageUrl": mainImage.asset->url,\n    // Words, not characters \u2014 see the note in queries.ts. length() on a string counts characters.\n    "wordCount": length(string::split(pt::text(body), " ")),\n    "series": series->{ title },\n    seriesOrder\n  }\n': ArticleOgQueryResult

@@ -38,7 +38,7 @@ function confirmationEmailHtml(confirmUrl: string, unsubscribeUrl: string): stri
     <h1 style="font-family:Georgia,serif;font-size:28px;color:#fff;margin:0 0 12px 0;">One more step.</h1>
     <p style="font-size:14px;color:#a8a29e;margin:0 0 28px 0;line-height:1.6;">
       Confirm that you want new writing from Stefan Peele — network engineering deep dives,
-      field notes and the occasional photo essay. No more than a few emails a month.
+      lab notes and the occasional photo essay. No more than a few emails a month.
     </p>
     <p style="margin:0 0 28px 0;">
       <a href="${escapeHtml(confirmUrl)}" style="display:inline-block;background:#fff;color:#0a0a0a;text-decoration:none;font-size:11px;letter-spacing:0.3em;text-transform:uppercase;padding:14px 24px;">Confirm subscription</a>

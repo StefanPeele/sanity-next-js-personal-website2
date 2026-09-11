@@ -132,7 +132,7 @@ try {
 
   // -- combines with another filter --------------------------------------------
   console.log('\nD. it combines with the existing filters')
-  await page.goto(`${BASE}/blog?status=seeking-review&lane=field-notes`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+  await page.goto(`${BASE}/blog?status=seeking-review&lane=lab-notes`, { waitUntil: 'domcontentloaded', timeout: 60000 })
   await page.waitForTimeout(2500)
   const combo = await page.evaluate(READ)
   check(combo.cardSlugs.length === 1 && combo.cardSlugs[0] === 'fixture-minimal',

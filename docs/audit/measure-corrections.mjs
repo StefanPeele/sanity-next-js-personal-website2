@@ -147,7 +147,7 @@ try {
   check(r.entries.length === 4, 'all four corrections are listed, anchored or not', `${r.entries.length}`)
   check(r.entries.every((e) => /^correction-\d+$/.test(e.id)), 'each is addressable by id',
     r.entries.map((e) => e.id).join(','))
-  const unanchored = r.entries.filter((e) => /passage not found/i.test(e.text))
+  const unanchored = r.entries.filter((e) => /not marked in the text/i.test(e.text))
   check(unanchored.length === 1, 'the one broken anchor SAYS SO rather than vanishing silently',
     `${unanchored.length} flagged`)
   check(r.entries.filter((e) => /thanks to/i.test(e.text)).length === 3, 'three entries carry a credit line',

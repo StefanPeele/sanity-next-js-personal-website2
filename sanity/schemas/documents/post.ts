@@ -1,5 +1,6 @@
 import { defineField, defineType } from 'sanity'
 import { REVIEW_STATUS, SELECTABLE_FLAGS, reviewFlags, type SelectableFlag } from '../../../lib/status'
+import { DEFAULT_TAXONOMY } from '../../../lib/cms/defaults/taxonomy'
 // sanity/schemas/documents/post.ts
 
 /** What each review flag means, for the Studio picker only. The LABELS come from
@@ -259,16 +260,17 @@ export default defineType({
       description: `
         PERSPECTIVE — Industry-level thinking. No lab screenshots. No configs. These posts establish who you are beyond the technical work. Rarest and highest-leverage.
         CONCEPT DEEP DIVE — Protocol and concept breakdowns with interactive components. Written for people who want to actually understand something, not just pass a test.
-        FIELD NOTES — Hands-on lab documentation. Always cite what failed, not just what worked. That's what makes lab posts worth reading.
-        TRANSMISSION — Guest perspectives, interviews, or content from industry professionals you've connected with.
+        LAB NOTES — Hands-on lab documentation. Always cite what failed, not just what worked. That's what makes lab posts worth reading.
       `,
       options: {
-        list: [
-          { title: 'Perspective', value: 'perspective' },
-          { title: 'Deep dive', value: 'concept-deep-dive' },
-          { title: 'Field notes', value: 'field-notes' },
-          { title: 'Update', value: 'transmission' },
-        ],
+        // 4.3. Derived from DEFAULT_TAXONOMY, the same table lib/site.ts and the filter row
+        // read, so the picker cannot drift from the lanes the site renders -- the failure
+        // the verifier found in the review-status picker, in a second place.
+        //
+        // KNOWN LIMIT: a lane added to the Taxonomy singleton in Studio does NOT appear here
+        // until it is also added to lib/cms/defaults/taxonomy.ts. A schema options list is
+        // static; it cannot read a document. Said out loud rather than discovered later.
+        list: DEFAULT_TAXONOMY.articleLanes.map((l) => ({ title: l.label, value: l.key })),
         layout: 'radio',
       },
       validation: (rule) => rule.required().error('Article type is required — it determines how the post is displayed and marketed.'),
@@ -706,13 +708,9 @@ export default defineType({
   preview: {
     select: { title: 'title', articleType: 'articleType', reviewStatus: 'reviewStatus', media: 'mainImage' },
     prepare({ title, articleType, reviewStatus, media }) {
-      const typeIcons: Record<string, string> = {
-        'perspective': '🔭',
-        'concept-deep-dive': '⚡',
-        'field-notes': '🔧',
-        'transmission': '📡',
-      }
-      const icon = typeIcons[articleType] ?? '📝'
+      // The lane's own label, from the one taxonomy table. This replaced a fourth hardcoded
+      // map -- emoji keyed on lane, still listing `transmission` and the old `field-notes`.
+      const lane = DEFAULT_TAXONOMY.articleLanes.find((l) => l.key === articleType)?.short
       // Reads lib/status.ts, the one status vocabulary, rather than keeping a second table
       // here. The map this replaced had drifted badly: it still listed 'expert-verified'
       // (removed from the schema), had no entry for fact-checked, open-to-comment or
@@ -722,7 +720,7 @@ export default defineType({
       // verifier against the claim "there is exactly one status vocabulary".
       const status = reviewFlags(reviewStatus).map((f) => f.label).join(' · ')
       return {
-        title: `${icon} ${title}`,
+        title: lane ? `${lane} — ${title}` : title,
         subtitle: status || articleType,
         media,
       }

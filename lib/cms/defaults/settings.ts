@@ -33,7 +33,7 @@ export const DEFAULT_SETTINGS = {
   },
   newsletter: {
     heading: 'New writing, straight to your inbox.',
-    blurb: 'Network engineering deep dives, field notes and the occasional photo essay. A few emails a month, never more.',
+    blurb: 'Network engineering deep dives, lab notes and the occasional photo essay. A few emails a month, never more.',
     placeholder: 'you@example.com',
     buttonLabel: 'Subscribe',
     successMessage: 'Check your inbox to confirm.',

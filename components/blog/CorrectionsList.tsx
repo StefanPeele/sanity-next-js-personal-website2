@@ -49,10 +49,18 @@ export function CorrectionsList({ corrections, heading = 'Corrections' }: { corr
                   <span className="meta-label text-stone-300">{meta.label}</span>
                   {when && <span className="font-mono text-xs text-stone-400">{when}</span>}
                   {!c.anchored && c.anchor && (
-                    // Said out loud rather than hidden. An anchor that no longer matches
-                    // means the passage was edited after the correction was written, and a
-                    // reader looking for the marker in the prose will not find one.
-                    <span className="font-mono text-xs text-amber-400/80">passage not found in the text</span>
+                    // Said out loud rather than hidden. Two causes produce this and the
+                    // author's fix is the same for both: the passage was edited after the
+                    // correction was written, OR it sits inside a link, sidenote, glossary
+                    // term, code span or heading, all of which the marker deliberately skips.
+                    // The wording covers both rather than asserting the first and being
+                    // wrong half the time.
+                    <span
+                      className="font-mono text-xs text-amber-400/80"
+                      title="The anchor text was not marked in the body. Either the passage has been edited since, or it sits inside a link, sidenote, glossary term, code span or heading, which are never marked."
+                    >
+                      not marked in the text
+                    </span>
                   )}
                 </div>
 

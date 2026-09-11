@@ -366,7 +366,9 @@ html.sp-reduced-motion *::after {
   font-size: 0.7em;
   line-height: 1;
   vertical-align: super;
-  margin-left: 0.15em;
+  /* 0.25em, not 0.15: the marker is a bordered chip, not a bare footnote numeral, so its
+     box needs a little air or it reads as fused to the preceding word ("Gbps[c3]."). */
+  margin-left: 0.25em;
   padding: 0.15em 0.3em;
   color: rgb(251, 113, 133);
   background: rgba(251, 113, 133, 0.12);

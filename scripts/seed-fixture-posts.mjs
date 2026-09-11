@@ -199,7 +199,7 @@ const FIXTURES = [
     slug: { _type: 'slug', current: 'fixture-minimal' },
     excerpt: 'A short draft fixture with no cover image.',
     publishedAt: '2026-09-11',
-    articleType: 'field-notes',
+    articleType: 'lab-notes',
     confidenceLevel: 'speculative',
     reviewStatus: ['seeking-review'],
     body: bodyB,

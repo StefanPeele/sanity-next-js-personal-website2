@@ -23,13 +23,17 @@ Session count: 1
 | **1.7 Comment systems** | `9e43345` | n/a | self | |
 | **1.8 Hover previews** | `e2622cc` | n/a | self | |
 | **1.9 Corrections** | `43d45ce` | n/a | self | |
-| **3.2 Reviewer attribution + anonymity** | `aeb4f6f` | not yet deployed | verifier running | Redaction happens on the **server**; the client components never receive the name. Suite now **40** |
+| **3.2 Reviewer attribution + anonymity** | `aeb4f6f` | **draft fixture, 41/41** — incl. anon name absent from the RSC payload, not just from the pixels | fixture harness | Redaction happens on the **server**; the client components never receive the name. Suite now **40** |
 | **3.1 Status fields: subtraction then flags** | `d91a555` | deployed `13757d8` | **verifier — PASS** (a)(b)(c). It also found the duplicate `<h1>` below | `confidenceLevel` loses `verified`/`peer-reviewed`; `reviewStatus` becomes independent flags |
 | Duplicate `<h1>` in body copy | `365e97e` | not yet deployed | **verifier-found** | `CustomPortableText` rendered a body "Heading 1" as a real `<h1>`. Suite is now **35** |
 | Section reading times (Phase 0.1 follow-up) | `76c3d55` | **yes** — production, portfolio 4→1 and home lab 5→3 against headers of 2 and 3 | **verifier-found** | TOC sections summed to more than the post |
 | **2.1 Rename to Blog** | `1d0869b`, `8141a9f` | **yes** — h1 reads Blog, zero `>Writing<`, /writing redirects | self | 20 strings found, **14 renamed, 6 left as the activity**. Both halves: code defaults *and* the live Studio documents |
 | **3.3 Status on five surfaces** | `c010b18` | **draft mode, local** — kitchen-sink 2 marks, minimal 1, both 14px + `sr-only` label | **verifier — 6 PASS, 2 FAIL, 1 UNVERIFIABLE.** Both FAILs real, both now fixed | `lib/status.ts` is the one table. Card 2 / header 1 / Contents all / feed plain text. Distinction carried by icon SHAPE so greyscale survives |
 | **3.4 The status aura** | `41e45f8` | **23/23** local, draft mode, `measure-aura.mjs` | self + 9 frames for you to pick | Edge glow on the card tile: gradient ring on the border line + inset falloff + a tight outer shadow. Three intensities to pick from, captured at 1440/768/390. Caps at **two** colours — the same two the card's marks show |
+| **4.2 Placeholder cards** | `PENDING4` | **25/25** — `measure-preview-placeholders.mjs` | self + both treatments captured | Not links and not focusable, so inert *by construction*. Ships with **zero items** — real planned topics go in Studio |
+| **4.3 Lab Notes** | `PENDING4` | **yes** — heading reads "Lab Notes · Seeking peer review" | self + migration proves itself | `field-notes` to `lab-notes` in code, schema, picker and **4 live Studio strings**. `transmission` removed (0 posts used it) |
+| **4.6 Hover preview** | `PENDING4` | **28/28**, incl. the edge-flip and the keyboard path | self | Also closes **3.3's fifth surface**: the preview's marks are `["Peer reviewed","Fact checked"]`, identical to the card's |
+| **CodeBlock stega fix** | `PENDING4` | **86 console errors to 0** on the draft fixture | verifier-found, outside the claim | The tokeniser shredded the stega payload across per-token spans: 313 orphaned zero-width text nodes |
 | **3B Corrections in place** | `952452f` | **27/27** — `measure-corrections.mjs`, draft mode, plus 13 transform unit tests | self | Passage marked in place with credit, permanent list at the foot, **three words not one** (correction / clarification / update). A broken anchor says so instead of vanishing |
 | **3.5 Status as a filter** | `fc65349` | **15/15** — `measure-status-filter.mjs`, both states | self | Row is **absent entirely** on published, where no post carries a status. Appears in draft with per-status counts, combines with lane/topic/tag, and offers the *derived* `revised` too |
 | **3.6 Sources in the Contents column** | `41e45f8` | **yes** — "2 sources", closed, 2 links, both anchors resolve, at 1440 **and** 390 | self | Column shows count + linked titles, anchored to `#source-N` in the existing body list. One canonical rendering, two volumes |
@@ -171,10 +175,16 @@ ever matched a post carrying exactly one of its three known values. Fixed by rea
 derived from `REVIEW_FLAG_ORDER` too**, so the option an author picks and the badge a reader
 sees cannot drift apart again.
 
-**Part 5 — the honest answer.** My claim asserted a surface that isn't built. The brief's
-3.3 table lists a hover preview, but no link-preview popover exists on the site and none is
-specified anywhere in the brief. 3.3 is **four surfaces of five**, and the fifth is blocked
-on a feature nobody has scoped. Flagged to Stefan below.
+**Part 5 — the honest answer, and a correction to it.** My claim asserted a surface that
+isn't built: no link-preview popover exists on the site, which the verifier confirmed by
+exhaustive search and by hovering a card and counting DOM nodes (327 before, 327 after).
+That part of the FAIL stands — 3.3 ships as **four surfaces of five**.
+
+What I wrote next was wrong. I recorded that the hover preview is "not specified anywhere in
+the brief". **It is — §4.6, a full sub-item with its own requirements** (delay in and out,
+edge-aware positioning, a keyboard equivalent, touch behaviour, reduced motion). So the fifth
+surface is not blocked on an unscoped feature; it is scheduled, and 3.3 completes when 4.6
+ships. Found by reading Phase 4 rather than by anyone catching it.
 
 **Part 4 — closed a different way.** Rather than publish a status-bearing post to
 production, the pure transform was split out of `lib/feed.ts` into `lib/feedItems.ts` (which
@@ -298,6 +308,14 @@ enough is systematically early**, which is worth knowing for how future briefs a
 | 3B where the revision word appears | On the **date line** ("Corrected 1 September 2026"), not in the badge row | The badge row carries the strongest REVIEW claim, and review and revision are different axes. Crowding both into one badge means one of them is dropped — and it would be the correction | `BlogArticleHeader` |
 | 3B the original wording | Quoted under "It said:", never struck through in the prose | 8.8 asks the original stay "visible or recoverable" — the note satisfies that. Putting the wrong version back in the body at full weight, first, teaches the error to a reader who came to learn the thing | `CorrectionMark` / `CorrectionsList` |
 | 3B a broken anchor | Renders at the foot **with "passage not found in the text"** | An author who corrects the passage and then pastes the OLD wording into the anchor gets a correction with no in-place marker, which looks identical to one that never had an anchor. Silent either way unless it is said out loud | `unanchoredCorrections()` |
+| 4.3 which name | **Lab Notes**, over the brief's alternate "Notebook Notes" | Shorter; says where the work happened rather than where it was written down; "Notebook Notes" repeats itself; and it matches what the posts actually are | `lib/cms/defaults/taxonomy.ts` |
+| 4.3 the `transmission` lane | **Removed.** 4.3 lists the taxonomy as exactly three lanes | Zero posts used it, measured across published and drafts before removing rather than assumed. It also collided with 3B's `updated`, so two unrelated things read "Update" | Re-add the entry to the defaults table |
+| 4.3 old URLs | `?lane=field-notes` still resolves, aliased to `lab-notes` | A shared link, a bookmark or a saved filter should not become dead because a label changed. One line | `LANE_ALIASES` in `BlogDirectory` |
+| 4.2 "clickable but inert" vs "announced as a placeholder" | Built as a plain `<li>` — **no link, no button, nothing focusable** | The two requirements only conflict if you build a control. A non-control is inert *because* it is not a control, and is announced as text. A disabled `<a>` would be worse on both counts | `PlaceholderCards.tsx` |
+| 4.2 "must not be indexed" | `data-nosnippet`, plus nothing worth mistaking for an article | Honest limit, stated rather than discovered: `data-nosnippet` suppresses snippets, it does **not** deindex, and no per-element noindex exists. The real mitigation is that a placeholder carries a topic and the word "planned" — never a fabricated excerpt or date | — |
+| 4.2 default content | Ships with **zero** planned items | Inventing plausible post titles would be fake content on a site whose whole subject is not doing that. The two in the screenshots were written into the singleton by the harness and removed again, verified by re-read | Add real ones in Studio |
+| 4.6 touch behaviour | **Deliberately absent on touch** | Every substitute is worse: long-press collides with text selection and the OS menu, tap-to-preview steals the tap that should open the post. On touch the card already *is* the preview, so nothing is lost | — |
+| 4.6 delays | 350ms in, 180ms out | 350 is long enough that a pointer crossing the grid opens nothing (measured: 0 panels at 150ms, still 0 after leaving early) and short enough to feel deliberate | `OPEN_DELAY` / `CLOSE_DELAY` |
 | 3B numbering | Oldest first, and stable | A number that moves when a new correction is added breaks any link a reader has already shared | `numberCorrections()` |
 | 3.7 is `Revised` the same signal | **Yes.** Derived from the changelog and **removed from the Studio options list** | Two independently settable sources for one fact will disagree. A post could claim it was revised while showing no record of what changed. Cost: a post with a hand-set `revised` and no changelog loses the badge — correctly, because there is no evidence for it | `effectiveReviewStatus()`; re-add the enum value to overrule |
 
@@ -319,6 +337,9 @@ enough is systematically early**, which is worth knowing for how future briefs a
 | 2.6 "nothing leads" (the brief's theory) | **Right about the card, wrong about the page.** Page lead:body 5.14× is 2nd highest of 13; card spread 1.67× is lowest of 5 | Measured a card on ours and four references |
 | 2.4 my own claim that "Read →" is a literal glyph | True on the **hero** only. The card already uses a lucide `ArrowRight` with a hover translate | Read the card markup after writing the note |
 | My 3.3 claim that a hover preview exists | It does not exist anywhere in the codebase. I asserted a surface from the brief's table without checking it was built | Verifier: exhaustive static search + a hover that added 0 DOM nodes |
+| My migration's own word-boundary regex | The escape arrived as a literal **BACKSPACE character (0x08)** through the heredoc, so the pattern matched nothing. It reported a clean, confident **0** against 4 real hits | A substring check on the same 56 documents found all four |
+| The same script's replacement function | Broken the same way, and would have written the values back **unchanged** | The dry run printed `before -> after` and the two were identical. The preview is what caught it |
+| My own note that the hover preview is "not in the brief" | **It is — §4.6**, with delay, edge-aware positioning, a keyboard equivalent, touch behaviour and reduced motion all specified. 3.3's fifth surface is scheduled, not unscoped | Read Phase 4 |
 | My own aura probe, first run | **11 false failures against a working implementation.** It matched `/kitchen/i` against the card title; the fixture is called "A deliberately long fixture title". Keyed on the slug instead | Re-ran after reading the row dump, which showed the aura present and correct |
 | My aura CSS's reduced-motion block | Dead code. `styles/index.css` already sets `transition-duration: 0.01ms !important` site-wide, which beats it. Removed, with the reason written where the rule was | Probe reported `1e-05s`, not `0s` |
 | My 3.7 first cut | Rendered "Updated September 1" under "Published September 11" — an update older than the publication | The draft fixture, whose changelog predates its `publishedAt`. Now guarded by `materialRevision()` |
