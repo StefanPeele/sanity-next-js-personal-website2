@@ -98,6 +98,18 @@ try {
     await p2.waitForTimeout(3800)
     const big = await p2.evaluate(READ)
     if (name === '1440') {
+      // PRECONDITION, checked loudly. Without the scale fixtures the draft page has five
+      // posts, which is below SECTION_MIN, so it correctly renders no sections and no river
+      // -- and this harness then reports three failures against working behaviour. That is
+      // exactly what happened once; the fixtures had been deleted by an earlier run.
+      const total = parseInt((big.countText || '').replace(/\D+/g, ''), 10) || 0
+      if (total < 12) {
+        console.log(`  SKIPPED — only ${total} posts in draft mode. This section needs the`)
+        console.log('  scale fixtures: node scripts/seed-scale-fixtures.mjs --apply')
+        console.log('  (and --delete afterwards). Nothing below was measured.')
+        await c.close()
+        break
+      }
       console.log(`  ${JSON.stringify({ count: big.countText, sections: big.sections.map((s) => `${s.key}:${s.cards}/${s.seeAll}`), river: big.riverRows })}`)
       check(big.sections.length === 3, 'one section per lane', `${big.sections.length}`)
       check(big.sections.every((s) => s.cards <= 6), 'each section shows at most 6', big.sections.map((s) => s.cards).join(','))

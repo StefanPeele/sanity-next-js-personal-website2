@@ -597,7 +597,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           {/* 4.5 SECONDARY. Two cards at card size, directly under the lead, so the top of
               the page carries three weights rather than one wall. */}
           {secondary.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14">
+            <div className="blog-grid grid grid-cols-1 md:grid-cols-2 gap-8 mb-14">
               {secondary.map(renderCard)}
             </div>
           )}
@@ -615,7 +615,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                   {L.seeAllLabel.replace('{n}', String(s.total))}
                 </button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="blog-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {s.posts.map(renderCard)}
               </div>
             </section>
@@ -633,7 +633,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           )}
         </>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="blog-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filtered.map(renderCard)}
         </div>
       )}

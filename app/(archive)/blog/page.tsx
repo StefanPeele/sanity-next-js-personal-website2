@@ -5,14 +5,17 @@ import type { Metadata } from 'next'
 import { sanityFetch } from '@/sanity/lib/live'
 import { blogIndexQuery } from '@/sanity/lib/queries'
 import { BlogDirectory } from '@/components/blog/BlogDirectory'
+import { ArticleProvider } from '@/components/article/ArticleProvider'
+import { ReadingToolbar } from '@/components/article/ReadingToolbar'
 import { PostCardSkeleton } from '@/components/blog/PostCardSkeleton'
 import { JsonLd } from '@/components/JsonLd'
 import { formatDate } from '@/lib/dates'
 import { readingTime } from '@/lib/reading'
 import { absoluteUrl, articleTypeMeta, SITE } from '@/lib/site'
 import { getCopy, getTaxonomy } from '@/lib/cms/loaders'
-import { blogPageQuery } from '@/sanity/lib/queries-article-ui'
+import { articleUiQuery, blogPageQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_BLOG_PAGE } from '@/lib/cms/defaults/blogPage'
+import { DEFAULT_ARTICLE_UI } from '@/lib/cms/defaults/articleUi'
 import { FOCUS } from '@/lib/ui'
 // app/(archive)/blog/page.tsx
 // Supports ?category= ?lane= ?tag= ?sort= (handled client-side in BlogDirectory).
@@ -23,7 +26,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function BlogPage() {
-  const [{ data }, copy, taxonomy] = await Promise.all([sanityFetch({ query: blogIndexQuery }), getCopy(blogPageQuery, DEFAULT_BLOG_PAGE), getTaxonomy()])
+  // articleUi is fetched here too: 5.1's toolbar is the same component on both surfaces, so
+  // it reads the same Studio copy on both. Its article-only groups are not rendered here.
+  const [{ data }, copy, taxonomy, ui] = await Promise.all([
+    sanityFetch({ query: blogIndexQuery }),
+    getCopy(blogPageQuery, DEFAULT_BLOG_PAGE),
+    getTaxonomy(),
+    getCopy(articleUiQuery, DEFAULT_ARTICLE_UI),
+  ])
   const featuredPost = data?.featuredPost ?? null
   // `posts` now contains every post; drop the one shown in the featured slot.
   const posts = (data?.posts ?? []).filter((p) => p.slug && p.title && p._id !== featuredPost?._id)
@@ -42,7 +52,13 @@ export default async function BlogPage() {
   const allPosts = [featuredPost, ...posts].filter((p): p is NonNullable<typeof p> => Boolean(p))
 
   return (
-    <div className="relative min-h-screen text-stone-300 selection:bg-stone-500/30">
+    // 5.1. The index gets the SAME toolbar as an article, which means it needs the provider
+    // the toolbar reads its settings from, and `data-article-root` for the theme class to
+    // land on. The provider's article props are omitted: there is no slug, no title and no
+    // word count here, and nothing that would use them is rendered.
+    <ArticleProvider>
+    <div data-article-root className="relative min-h-screen text-stone-300 selection:bg-stone-500/30">
+      <ReadingToolbar copy={ui.readerMenu} markdown="" variant="index" />
       <JsonLd
         data={[
           {
@@ -177,5 +193,6 @@ export default async function BlogPage() {
         </Suspense>
       </main>
     </div>
+    </ArticleProvider>
   )
 }

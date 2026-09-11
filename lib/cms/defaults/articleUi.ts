@@ -21,7 +21,7 @@ export const DEFAULT_ARTICLE_UI = {
   readerMenu: {
     buttonLabel: 'Reading options',
     closeLabel: 'Close',
-    groupLabels: { theme: 'Theme', textSize: 'Text size', width: 'Width', accessibility: 'Accessibility', spacing: 'Spacing', share: 'Share and export', listen: 'Read aloud', position: 'Your place', toolbar: 'This toolbar' },
+    groupLabels: { theme: 'Theme', textSize: 'Text size', width: 'Width', accessibility: 'Accessibility', spacing: 'Spacing', density: 'Density', share: 'Share and export', listen: 'Read aloud', position: 'Your place', toolbar: 'This toolbar' },
     toolbarLabels: { hide: 'Hide the toolbar', hideHint: 'It stays hidden until you bring it back from the footer.', restore: 'Reading controls' },
     themeLabels: { archive: 'Dark', slate: 'Dim', paper: 'Light', terminal: 'Green' },
     widthLabels: { narrow: 'Narrow', standard: 'Standard', wide: 'Wide' },
@@ -30,6 +30,7 @@ export const DEFAULT_ARTICLE_UI = {
     // line height and the left column is the default for the other three.
     spacingLabels: { lineHeight: 'Line height', letterSpacing: 'Letter spacing', wordSpacing: 'Word spacing', paraSpacing: 'Paragraph spacing' },
     scaleSteps: { less: 'Tighter', normal: 'Default', more: 'Looser' },
+    densityLabels: { comfortable: 'Comfortable', compact: 'Compact' },
     shareLabels: { copyLink: 'Copy link', copyMarkdown: 'Copy as Markdown', print: 'Print', studyDeck: 'Download study deck', share: 'Share', copied: 'Copied' },
     listenLabels: { play: 'Play', pause: 'Pause', resume: 'Resume', stop: 'Stop', unsupported: 'Read-aloud is not available in this browser.', voice: 'Voice', speed: 'Speed', systemVoice: 'System default' },
     bookmarkLabels: { save: 'Save my place', saved: 'Place saved', resume: 'Go to saved place', clear: 'Clear' },

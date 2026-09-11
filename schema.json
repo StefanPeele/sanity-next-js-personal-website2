@@ -3479,6 +3479,13 @@
                     },
                     "optional": true
                   },
+                  "density": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    },
+                    "optional": true
+                  },
                   "share": {
                     "type": "objectAttribute",
                     "value": {
@@ -3730,6 +3737,29 @@
                     "optional": true
                   },
                   "more": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    },
+                    "optional": true
+                  }
+                }
+              },
+              "optional": true
+            },
+            "densityLabels": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "object",
+                "attributes": {
+                  "comfortable": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    },
+                    "optional": true
+                  },
+                  "compact": {
                     "type": "objectAttribute",
                     "value": {
                       "type": "string"

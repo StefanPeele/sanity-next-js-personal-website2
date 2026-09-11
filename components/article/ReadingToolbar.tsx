@@ -342,6 +342,22 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article' }: Read
 
           )}
 
+          {/* 5.1's index-only control. Density is about a GRID of cards, so it is meaningless
+              inside an article, exactly as width is meaningless on the index. Same toolbar,
+              different contents — which is what makes the transition between the two read as
+              one control changing rather than two controls swapping. */}
+          {!isArticle && (
+            <Group label={L.groupLabels.density}>
+              <div role="radiogroup" aria-label={L.groupLabels.density} className="flex gap-2">
+                {(['comfortable', 'compact'] as const).map((d) => (
+                  <Chip key={d} active={settings.density === d} onClick={() => setSetting('density', d)}>
+                    {L.densityLabels[d]}
+                  </Chip>
+                ))}
+              </div>
+            </Group>
+          )}
+
           {/* 5.2's four SCALES. They are separated from the toggles because they are not
               toggles: forcing line height into on/off gives a reader one clumsy jump. Three
               steps each, and the step that is the site's own default is marked, so nobody has

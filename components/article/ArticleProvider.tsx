@@ -43,6 +43,8 @@ export interface ArticleSettings {
   linkUnderline: boolean
   bigFocus: boolean
   muteColour: boolean
+  /** 5.1's index-only control: how tightly the card grid packs. */
+  density: 'comfortable' | 'compact'
 }
 
 const DEFAULT_SETTINGS: ArticleSettings = {
@@ -64,6 +66,7 @@ const DEFAULT_SETTINGS: ArticleSettings = {
   linkUnderline: false,
   bigFocus: false,
   muteColour: false,
+  density: 'comfortable',
 }
 
 const STORAGE = {
@@ -81,6 +84,7 @@ const STORAGE = {
   linkUnderline: 'sp_link_underline',
   bigFocus: 'sp_big_focus',
   muteColour: 'sp_mute_colour',
+  density: 'sp_density',
 } as const
 
 interface ArticleContextValue {
@@ -140,6 +144,7 @@ function readStoredSettings(fallbackTheme?: string | null): ArticleSettings {
       linkUnderline: localStorage.getItem(STORAGE.linkUnderline) === 'true',
       bigFocus: localStorage.getItem(STORAGE.bigFocus) === 'true',
       muteColour: localStorage.getItem(STORAGE.muteColour) === 'true',
+      density: localStorage.getItem(STORAGE.density) === 'compact' ? 'compact' : 'comfortable',
       dyslexia: localStorage.getItem(STORAGE.dyslexia) === 'true',
       highContrast: localStorage.getItem(STORAGE.highContrast) === 'true',
       reducedMotion: localStorage.getItem(STORAGE.reducedMotion) === 'true',
@@ -194,12 +199,27 @@ function collectHeadings(root: HTMLElement): { headings: ArticleHeading[]; els: 
   return { headings, els }
 }
 
+/**
+ * 5.1 asks for the SAME toolbar on `/blog` and inside an article, and the toolbar reads every
+ * one of its settings from here. So the index needs this provider too — and the three props
+ * below are article facts the index does not have.
+ *
+ * They are optional rather than required. On the index `slug` is empty, `headings` collects
+ * nothing (there is no `[data-article]` to walk), and the bookmark controls are never
+ * rendered, because the toolbar's `variant="index"` gates that whole group out. Nothing
+ * article-shaped is reachable there, so nothing article-shaped needs a value.
+ *
+ * THE CLEANER SHAPE, recorded rather than done: the reader SETTINGS half of this file is not
+ * article-specific and wants to be its own `ReaderSettingsProvider`, with this one composing
+ * it. That is a refactor of the most load-bearing client component on the site, and it buys
+ * a better name rather than a better page. Logged in OVERHAUL-PROGRESS as a follow-up.
+ */
 export function ArticleProvider({
-  slug, title, totalWords, initialTheme, children,
+  slug = '', title = '', totalWords = 0, initialTheme, children,
 }: {
-  slug: string
-  title: string
-  totalWords: number
+  slug?: string
+  title?: string
+  totalWords?: number
   /** From post.recommendedTheme; used only when the reader has no saved theme. */
   initialTheme?: string | null
   children: ReactNode
@@ -352,6 +372,8 @@ export function ArticleProvider({
       })
     }
     if (main) main.dataset.width = settings.width
+    // The index reads this off the container; the article has no grid to pack.
+    document.body.dataset.density = settings.density
     html.classList.toggle('sp-reduced-motion', settings.reducedMotion)
     // 5.2's light mode needs the ROOT to say so. `html { color-scheme: dark }` in
     // styles/index.css is what makes the scrollbar, form controls and the browser's own
@@ -374,6 +396,7 @@ export function ArticleProvider({
       localStorage.setItem(STORAGE.linkUnderline, String(settings.linkUnderline))
       localStorage.setItem(STORAGE.bigFocus, String(settings.bigFocus))
       localStorage.setItem(STORAGE.muteColour, String(settings.muteColour))
+      localStorage.setItem(STORAGE.density, settings.density)
     } catch { /* private mode */ }
     return () => {
       html.classList.remove('sp-reduced-motion')
