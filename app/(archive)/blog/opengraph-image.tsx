@@ -51,7 +51,7 @@ export default function OGImage() {
               paddingLeft: '16px',
             }}
           >
-            Writing
+            Blog
           </div>
 
           {/* Title */}

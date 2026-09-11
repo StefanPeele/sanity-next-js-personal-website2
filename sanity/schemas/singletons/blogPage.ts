@@ -8,7 +8,7 @@ const obj = (name: string, title: string, fields: ReturnType<typeof defineField>
 
 export default defineType({
   name: 'blogPage',
-  title: 'Writing index',
+  title: 'Blog index',
   type: 'document',
   icon: BookIcon,
   initialValue: DEFAULT_BLOG_PAGE,
@@ -27,5 +27,5 @@ export default defineType({
       str('emptyState', 'Empty state'), str('clearLabel', 'Clear filters label'), str('postCount', 'Post count ({n})'),
     ]),
   ],
-  preview: { prepare: () => ({ title: 'Writing index' }) },
+  preview: { prepare: () => ({ title: 'Blog index' }) },
 })

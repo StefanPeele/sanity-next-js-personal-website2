@@ -64,7 +64,7 @@ export default async function BlogPage() {
           {
             '@context': 'https://schema.org',
             '@type': 'CollectionPage',
-            name: 'Writing archive',
+            name: 'Blog archive',
             url: absoluteUrl('/blog'),
             mainEntity: { '@type': 'ItemList', numberOfItems: totalCount },
           },

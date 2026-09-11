@@ -21,7 +21,7 @@ export type FeedItem = {
 }
 
 export const FEED_META = {
-  title: `${SITE.name} — Writing`,
+  title: `${SITE.name} — Blog`,
   description: 'Network engineering, infrastructure, and field notes from Stefan Peele.',
   homePage: absoluteUrl('/blog'),
   rss: absoluteUrl('/blog/feed.xml'),

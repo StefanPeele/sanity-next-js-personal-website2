@@ -76,6 +76,11 @@ around a wrong premise; name it.
   dataset returned "Blog" on both `api` and `apicdn` while the rebuilt page still rendered
   "Writing". This is why the verification rule above says `rm -rf .next && npm run build`.
   Check the dataset before concluding a content patch failed.
+- **Kill the server BEFORE `rm -rf .next`, not after.** Rebuilding underneath a running
+  `next start` leaves it serving a manifest whose chunks no longer exist. The signature is
+  distinctive: *"Refused to execute script ... because its MIME type ('text/plain') is not
+  executable"* — a 404 body being served where JS was expected. It cost four false failures
+  in Phase 2.1, including a CSP violation on routes the change never touched.
 - **Stopping a background build does not reap its children.** An orphaned worker
   held 591MB and turned a 26-second build into 17.4 minutes. Check for orphans
   before blaming the build.

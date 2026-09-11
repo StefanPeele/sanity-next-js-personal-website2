@@ -33,7 +33,7 @@ const SITE_ORDER = [
 ]
 const SITE_TITLES: Record<string, string> = {
   settings: 'Identity & SEO', navigation: 'Navigation', home: 'Home',
-  blogPage: 'Writing index', knowledgePages: 'Knowledge pages', personalPages: 'Pages', servicesPage: 'Services page',
+  blogPage: 'Blog index', knowledgePages: 'Knowledge pages', personalPages: 'Pages', servicesPage: 'Services page',
   articleUi: 'Article UI', taxonomy: 'Taxonomy', errorPages: 'Error pages',
 }
 
