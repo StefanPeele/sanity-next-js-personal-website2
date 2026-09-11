@@ -639,3 +639,80 @@ The margin text is the complete note; the window holds what will not fit.
 **"Learn more" is subject to 5.6's rules, not new ones.** It is machine-generated text on a blog about epistemic honesty, so: clearly labelled in the panel itself and not in a tooltip; never styled as prose; never cached into content where it could later be mistaken for authored text. Unlike a summary it is *generated on demand* — it is a reader's action, not a property of the post — so it needs no field and no webhook, and it must never be stored as one.
 
 **The honest risk to state now:** a model surfacing "further reading and links on the term" can produce links that do not exist. Any URL it returns must be presented as a suggestion to search for, not as a link to click, unless it can be verified — and verifying it means fetching it, which the CSP forbids from the browser. The safe version returns *titles and authors to look up*, not hyperlinks.
+
+---
+
+# Phase 7.1 — the prose measure. Measured, not predicted.
+
+`docs/audit/measure-prose-width.mjs`, run 2026-09-11. Method is §1.5's, so these numbers are
+comparable with the five reference sites: **real characters ÷ real lines**, per paragraph,
+median over 58 qualifying paragraphs. Lines are counted from client rects rather than
+height ÷ line-height, because a paragraph carrying a sidenote or a correction has boxes of
+differing heights and the division is wrong exactly where the markup is interesting.
+
+## First: the amendment was right
+
+| | CPL at 19px |
+| --- | --- |
+| **Current, 36rem** | **57.2** |
+
+The brief's original instruction asserted 65 and forbade widening. It is 57.2. Against Gwern 85, Aeon 85, Tufte CSS 77 and Quanta 68, ours is the narrowest measured and sits below the classical 60–75 optimum.
+
+## The fixed widths, and why none of them is the answer
+
+| Candidate | 15px | **19px (default)** | 21px |
+| --- | --- | --- | --- |
+| 36rem — current | 71.2 | **57.2** | 52.2 |
+| 40rem | 79.8 | **63.3** | 57.5 |
+| 44rem | 86.0 | **69.6** | 63.2 |
+| 48rem | 94.0 | **73.3** | 69.3 |
+
+**No fixed width keeps a reader inside the band.** 44rem is a well-judged 69.6 at the default and 86 — past Gwern — for anyone who makes the text smaller. Phase 5.2 gave the reader seven text sizes, and a column chosen for one of them is the wrong column for the other six. A reader who shrinks the text is not asking for longer lines; they get them anyway.
+
+This is the interaction the brief points at in its own third bullet, and it rules out answering 7.1 with a pixel width at all.
+
+## The answer: `ch`, and one thing that has to be true for it to work
+
+7.1 asks for *"a target measure with a stated character count, not a pixel width."* CSS has exactly that unit: `ch` is the advance width of `0` in the current font, so a column set in `ch` scales **with** the reader's text size.
+
+It does not work by itself, and the measurement said so before I could assume otherwise:
+
+| 66ch on `#content` | 15px | 19px | 21px |
+| --- | --- | --- | --- |
+| CPL | 82.7 | 65.8 | 59.3 |
+
+That swings as widely as a rem width, because **`ch` resolves against the font size of the element it is written on** — and `--article-fs` is only a *variable* on `[data-article]`. The size is applied per block by a `text-[length:var(--article-fs)]` utility in `CustomPortableText`, so the container itself sits at the inherited 16px and its `ch` is a constant number of pixels.
+
+Give the container `font-size: var(--article-fs)` and it holds:
+
+| | 15px | 19px | 21px |
+| --- | --- | --- | --- |
+| 60ch, container sized | **70.3** | **70.3** | **70.3** |
+
+Same characters per line for every reader. The pixel width moves — 568 → 719 → 795 — which is the point.
+
+## The proposal
+
+The Width control already offers three settings. Express all three in `ch`, measured rather than extrapolated from the 60ch result:
+
+| Setting | Today | Proposed | CPL at 15 / 19 / 21px |
+| --- | --- | --- | --- |
+| Narrow | 34rem | **51ch** | 59.6 / 59.6 / 59.6 |
+| **Standard** | 36rem | **56ch** | **67.1 / 67.1 / 67.1** |
+| Wide | 44rem | **64ch** | 73.3 / 73.3 / 72.3 |
+
+Standard moves from 57.2 to **67.1** — squarely mid-band, and stable across every text size. Narrow sits just under the 60 floor, which is what "narrow" should mean. Wide reaches the top of the band without approaching Gwern's 85, which the brief explicitly warns against.
+
+**Frames:** `docs/audit/screenshots/measure/width-*-1440.jpg`, raw numbers in `prose-width.json`.
+
+## Three things this does not fix, stated rather than discovered later
+
+**At 390px, widening changes nothing.** Every candidate measured **34.1 CPL** — the column is viewport-bound at 342px, so the max-width never binds. To reach 60 CPL at 390px the body would have to drop to roughly 11px, which is far below the 12px floor Phase 1 set. Mobile is physically constrained and no width setting will move it.
+
+**Wide clamps at the largest text size.** 64ch at 21px wants 836px and gets it only because the container allows exactly that; a wider container or a larger step would clamp and lose the guarantee. 56ch has room to spare at every size, which is a second reason it is the default rather than 64ch.
+
+**7.1 cannot ship without 7.2.** The prose is bounded by `main#content`, so a wider prose column requires the surrounding column to widen first. That is 7.2's subject, and the two should land together — which is why this is a proposal with frames rather than a commit.
+
+## Consequence for the reader's Width control
+
+`ch` makes the three settings mean something they do not mean today. Right now Width changes the pixel column and therefore the CPL, and Text size *also* changes the CPL — two controls with one effect, pulling against each other. After this, Text size changes **only** the size and Width changes **only** the measure. That is a better contract than the one being replaced, and it is the real argument for `ch` over picking a better rem.
