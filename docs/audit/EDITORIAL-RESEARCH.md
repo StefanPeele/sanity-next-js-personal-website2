@@ -656,3 +656,142 @@ Phase 5.1 wants one toolbar whose contents change between the index and an artic
 on a reading surface; none of them has an index-page mode, because none of these products
 has an index page in the same sense. This is a genuine invention rather than an adoption,
 and — like Phase 3.5 and the sticky sidenote — it should be built knowing that.
+
+---
+
+## 1.7 Comment systems
+
+Remark42's own documentation was fetched directly. The rest is vendor documentation and
+use, labelled as such. Nothing here is a live measurement — a comment system cannot be
+probed from outside without an account.
+
+### Identity models
+
+The brief has already chosen email-verified, so the useful question is narrower: **which
+systems support it without also forcing a third-party login?**
+
+| System | Identity options | Email-only without OAuth? |
+| --- | --- | --- |
+| **Remark42** | Apple · Facebook · GitHub · Google · Microsoft · Yandex · Patreon · Discord · **email** · Telegram · **anonymous** · custom OAuth2 | **Yes — documented explicitly: "OAuth2 is optional when email or anonymous login is enabled"** |
+| Giscus | GitHub account, mandatory | No — and already rejected |
+| Commento / Commento++ | email+password, OAuth, anonymous | Yes |
+| Isso | Optional name and email, **no verification at all** | Not applicable — it verifies nothing |
+| Cusdis | Anonymous by default, no login | Not applicable |
+| Hyvor Talk | Hosted, own accounts plus SSO | Paid service |
+| Disqus | Disqus account or guest | Yes, but the cost is trackers and ads |
+
+**Remark42 matches the brief's requirement exactly**, and it is the only self-hosted option
+here that treats email verification as a first-class login rather than an unverified
+optional field. Isso and Cusdis are attractive for their simplicity, but neither verifies
+anything, which removes the one thing the brief wants email *for*: "it gives you something
+to ban if someone abuses it."
+
+Resource cost from its installation docs: **~80MiB RAM, CPU "typically under 0.1%",
+file-based storage, "under 200MB for a 5-year-old installation."**
+
+### Typed comments — prior art the brief assumed did not exist
+
+Phase 8.2 proposes labels (question, correction, addition, disagreement). There is real,
+adopted prior art.
+
+**Conventional Comments** (conventionalcomments.org) is a published standard for code review
+that prefixes every comment with a label from a fixed set — `praise`, `nitpick`,
+`suggestion`, `issue`, `question`, `thought`, `chore` — optionally decorated `(blocking)` or
+`(non-blocking)`. The rationale is exactly the brief's: the label tells a reader what the
+comment is *for* before they read it, which defuses the tone ambiguity that makes written
+critique land badly.
+
+Two things to take:
+
+1. **Keep the set small and fixed.** The standard ships seven labels and resists growth.
+   Four is a good size; the temptation will be to add more.
+2. **`praise` earns its place.** It is the one label that exists to make the others
+   survivable — a comment stream that can only be critical reads as hostile. Worth
+   considering as a fifth, and it costs nothing.
+
+**GitHub Discussions** adds a complementary mechanism: a category can accept answers, and a
+comment can be **marked as the answer**, which highlights it and lifts it to prominence.
+That is precisely what Phase 8.8 needs — a comment being *promoted into the document's own
+record* rather than staying in a list underneath it.
+
+**LessWrong has no comment-level typing**; its tagging applies to posts only. Outside code
+review the space is genuinely thin, which makes 8.2 more original than the brief claims and
+8.8 more original still.
+
+### Threading
+
+One level, already chosen, and the research does not argue against it. Conventional Comments
+operates in review threads that are shallow by convention. Hacker News permits deep nesting
+and survives it through progressive indentation, collapsing, moderators and volume — none of
+which this site has or wants. **No change recommended.**
+
+### Moderation posture
+
+| Site | Posture |
+| --- | --- |
+| Hacker News | Post-hoc, plus automated ranking and user flagging |
+| Metafilter | Post-hoc, **$5 paid signup as the spam filter**, active human moderators |
+| LessWrong | Post-hoc, karma-gated privileges |
+| Stratechery | Comments restricted to paying subscribers — payment *is* the identity check |
+| Substack | Post-hoc, author-controlled, optionally subscriber-gated |
+
+**The pattern across all five: a small cost to comment does more work than moderation does.**
+Metafilter's $5 and Stratechery's subscription are spam filters wearing business models.
+Email verification is the same idea at the lowest price — it costs a round trip instead of
+money, which is the right trade for a personal site.
+
+### Spam
+
+The brief is right that this is the underestimated part. Email verification stops drive-by
+bots but not the two things that will actually arrive: **bots that can receive email**
+(cheap, common — verification raises cost, it does not eliminate it) and **link spam from
+humans**, which no identity check touches.
+
+In order of value per unit of work, and noting what this repo already has:
+
+- **A honeypot field.** Already implemented in `NewsletterForm` and the server actions.
+  Free, removes the unsophisticated majority.
+- **Rate limiting per IP.** Already implemented in `lib/security.ts`. Free.
+- **Hold the first comment from a new address**, then auto-approve that address afterwards.
+  Post-hoc moderation with a single pre-approval gate at the point where it costs least.
+- **Link count as a signal.** A first comment containing two or more links is the highest
+  precision spam heuristic available without a third-party service.
+
+Akismet and equivalents exist but add a third-party dependency and a per-site cost, against
+this site's standing preference.
+
+### Deleted comments
+
+Phase 8.5 wants author removal and self-removal visibly distinct. Prior art:
+
+- **Reddit** distinguishes `[removed]` (by a moderator) from `[deleted]` (by the author) —
+  **exactly the distinction the brief asks for, with wording readers already recognise.**
+- **Hacker News** shows `[flagged]` / `[dead]`, retaining text for users who opt to see it.
+- **Metafilter** removes the text and leaves a moderator note explaining why.
+
+**Recommendation:** adopt Reddit's distinction, since readers know it, but in plainer words —
+"Removed by Stefan" and "Deleted by the commenter". The brief's proposed "Deleted by Author"
+is ambiguous in exactly the wrong way: on a personal blog, "Author" reads as either the
+post's author or the comment's.
+
+### Self-hosted vs service — and the constraint the brief misses
+
+| | Self-hosted (Remark42) | Service (Hyvor, Disqus) |
+| --- | --- | --- |
+| Money | A container beside the app, ~80MiB RAM | Monthly, or free with ads and trackers |
+| Maintenance | Upgrades, backups, an SMTP sender, one more thing that fails at 3am | None |
+| Data ownership | Total | Theirs |
+| **Deploy fit** | **Poor** — needs a persistent process and a writable volume | Drop-in |
+
+**Deploy fit is the real constraint and the brief does not mention it.** This site is
+Vercel-only by standing decision. Remark42 needs a long-running process with a writable
+disk; Vercel provides neither. Self-hosting means adopting a second host — a larger change
+than "add comments".
+
+The alternative that fits the stack already: **store comments in Sanity and verify email
+with Resend via a signed token** — the same pattern `app/api/subscribe/confirm` already
+implements for the newsletter. It reuses a flow this codebase has built and tested, adds no
+host, and keeps the data in the CMS everything else reads from.
+
+**Recommendation for 8.6: Sanity plus Resend, not a self-hosted service.** Comments become a
+new document type and a reuse of the existing token pattern.
