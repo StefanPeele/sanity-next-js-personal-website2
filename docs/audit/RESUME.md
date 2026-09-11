@@ -1,72 +1,91 @@
 # Resume state
 
-Written: 2026-09-11T04:05Z
-Why the session ended: **stopped at the Phase 2 boundary.** This is short of the runner's three
-conditions — not every phase is done, nothing is blocked, and context is not exhausted. Said
-plainly rather than dressed up as a blocker: Phase 2 is finished, every proposal is committed,
-and Phase 3 opens a schema change that is better started fresh than at the tail of a very long
-session. One word resumes it.
+Written: 2026-09-11T06:00Z
+Why the session ended: **still running at the time of writing.** Kept current so it is never
+stale.
 
 ## Exactly where I stopped
 
-**Phase 0: complete, deployed, verified live** (`2724d3e`, `b6c07c2`, Sanity txn
-`mIRMU65sT5gw12rzV1sPip`).
-
-**Phase 1: complete.** All nine sub-sections in `docs/audit/EDITORIAL-RESEARCH.md` (1014
-lines). Thirteen sites measured live, three recorded as blocked, five sources fetched.
-Reusable harnesses committed: `measure-reference-site.mjs`, `measure-metadata.mjs`,
-`measure-sidenotes.mjs`, `capture-change.mjs`.
-
-**Phase 2: complete.**
-
-- **2.1 shipped and verified live** (`1d0869b`, `8141a9f`) — the section is called Blog, in
-  code *and* in the Studio documents.
-- **2.4, 2.5, 2.6 proposed**, with options rendered for 2.5 and 2.6. Phase 2 is complete.
+- **Phase 0** — complete, deployed, verified live.
+- **Phase 1** — complete. `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Thirteen sites
+  measured live, three recorded as blocked. Harnesses: `measure-reference-site.mjs`,
+  `measure-metadata.mjs`, `measure-sidenotes.mjs`, `measure-cards.mjs`, `capture-change.mjs`.
+- **Phase 2** — complete. 2.1 shipped and live (`1d0869b`, `8141a9f`); 2.2–2.6 proposed in
+  `PROPOSALS.md`, with options rendered for 2.5 and 2.6.
+- **Verification infrastructure** — built and retroactively tested. See below.
+- **Phase 3** — **3.1 shipped** (`d91a555`). 3.2–3.7 not started.
+- **Phase 3B** (corrections, promoted out of 8.8) — not started.
 
 ## The single next action
 
-**Phase 3.1** — rework the epistemic-status fields. The research is done and the
-recommendation is in `PROPOSALS.md` via `EDITORIAL-RESEARCH.md` §1.4: **subtract before
-adding.** Take `verified` and `peer-reviewed` out of `confidenceLevel`, because they
-duplicate `maturityIndicator` and `reviewStatus` and encode the same event twice under two
-vocabularies.
+**Verify the Phase 3.1 deploy, then Phase 3.2.**
 
-**Read §1.4 before touching the schema.** It changes what 3.1 should build, and the change
-touches the content model, so it wants a fresh session rather than the end of a long one.
+3.1 changed the content model, so before building on it, give a verifier this claim — and
+not the schema:
+
+> `confidenceLevel` offers exactly speculative / working-theory / confident, and
+> `reviewStatus` is a multi-select offering peer-reviewed / fact-checked / seeking-review /
+> open-to-comment / revised. No post currently renders any status badge, because every
+> status is unset.
+
+Then 3.2 (reviewer attribution) and 3.3 (where status appears). 3.3 should follow §1.4's
+principle: **document-level status goes quiet.**
+
+**Phase 3B is the one to be careful with** — a Portable Text mark transform landing
+immediately after a schema change, both touching how a post is authored and rendered. Build
+it on `lib/glossary.ts`'s existing `applyGlossaryMarks`, which already refuses to mark
+inside headings, code, links and sidenotes.
 
 ## What is half-done and needs care
 
-Nothing is half-done. Working tree clean, everything pushed, 34/34 green.
+Nothing is half-done. Working tree clean, everything pushed, `npm run check` exits 0 with
+zero warnings, 34/34 Playwright.
 
-Two things a fresh session must know:
+Things a fresh session must know:
 
-- **The suite is 34 tests.** The brief's §1 says so.
-- **`wordCountField` in `sanity/lib/queries.ts` is load-bearing** and the comment above it
+- **The suite is 34 tests.**
+- **`wordCountField` in `sanity/lib/queries.ts` is load-bearing** — the comment above it
   explains why the obvious simplification is wrong.
+- **`.claude/agents/verifier.md` now exists** and, unlike this session, will be available as
+  a named subagent from startup. Agent definitions register at session start, which is why
+  the retroactive checks here ran as general-purpose agents with its instructions inlined.
+- **Every status field is null on all four posts**, so nothing status-related renders yet.
+  Visual verification of the badges is deliberately deferred: the only way to screenshot
+  them is to assert a status that is not true, and putting "peer reviewed" on a live post
+  for a screenshot is not acceptable.
 
-## What I learned tonight that is not yet in the docs
+## Verification infrastructure, and what it found
 
-All of it *is* in the docs now — `EDITORIAL-RESEARCH.md` for findings, the brief's §1 for
-hazards, `OVERHAUL-PROGRESS.md` for premises killed. The three worth repeating here:
+Brief §1 now requires independent verification before an item is marked done, and states
+that **the verifier's result stands over mine** until I can show its measurement is wrong.
 
-1. **A Sanity patch plus `npm run build` is not enough.** `.next/cache/fetch-cache` survives
-   a rebuild and will serve pre-change content while the dataset already returns the new
-   value on both `api` and `apicdn`. It looks exactly like a failed patch.
-2. **Kill the server BEFORE `rm -rf .next`.** Rebuilding under a live `next start` gives
-   *"MIME type ('text/plain') is not executable"* and false failures on untouched routes.
-   Third appearance of the stale-server family in this project.
-3. **My own greps keep being too narrow.** Phase 2.1's first pattern required quotes tight
-   around the word and missed six strings, three of them user-visible — the RSS feed title,
-   the OG image, and the JSON-LD name.
+Retroactive run against three shipped claims from Phases 0–2, all **PASS** — but the useful
+part is that **two ran their own controls**: one injected `outline:none` and correctly
+reported 25/25 tab stops failing; the other injected eight font-size cases and correctly
+separated the four visible from the four hidden. A verifier that has never demonstrated it
+can detect failure is indistinguishable from one that cannot.
 
-## The standing disagreements with the brief, all flagged not acted on
+**It found a real defect outside its claim.** The article TOC's per-section reading times
+summed to more than the post — 4 against a 2-minute header, 5 against 3. Phase 0.1 claimed
+one source of truth and there were three. Fixed in `76c3d55`.
 
-| Brief says | Measured | Where |
+Three new artifacts logged: **#21** transitioned focus rings read as different rings if
+sampled under ~320ms; **#22** `body.textContent` includes `<script>` contents and inherits
+the Tailwind-class trap, so only `innerText` is safe; **#23** the object `sanityFetch`
+returns is frozen, and mutating it crashes the build worker with a Windows access violation
+that looks nothing like the cause.
+
+## The standing disagreements with the brief
+
+All now folded into the brief itself rather than living only here — see the **AMENDED**
+blocks in §2.5, §2.6, §3.1 and §7.1, and the `PHASE 3B` promotion in §13.
+
+| Brief said | Measured | Where |
 | --- | --- | --- |
 | "Featured becomes a true newspaper kicker" | It is a status *flag*; kicker/label/tag/badge are four forms | §1.2 |
 | Kicker size "as a ratio" | Constant 10–15px everywhere | §1.2 |
 | 14px floor for all meta including kickers | 12px is inside the measured 10–15px band | 2.4 |
-| "Read →" gets a button treatment | Essay-camp sites put no button on a card; nesting one inside a card-link is a duplicate target | 2.4 |
-| Prose measure "is currently 65 characters and that is correct" | **56** — the narrowest of five long-form sites | §1.5 |
+| "Read →" gets a button treatment | The card's arrow is already correct; only the hero's is a literal glyph | 2.4 |
+| Measure "is currently 65 characters and that is correct" | **56** — narrowest of five long-form sites | §1.5 |
 | Comment labels have little prior art | Conventional Comments is a published standard | §1.7 |
-| 8.8 as part of the comment system | Build it first and independently; `lib/glossary.ts` already does the hard part | §1.9 |
+| 8.8 as part of the comment system | Promoted to Phase 3B | §1.9 |
