@@ -303,3 +303,103 @@ more visible, not less.
 **Not applied.** All four options are rendered and committed; the change itself is one line
 of Tailwind on the `h3` plus a pill restyle, and it should land together with the
 reading-time fix rather than alone.
+
+---
+
+## 2.5 Hierarchy on the index
+
+### Dividers — rendered, and the evidence already decided it
+
+§1.1 counted bordered blocks >200px wide on every measured index. Two camps, and they map
+exactly onto publication type:
+
+| Camp | Sites | Count |
+| --- | --- | --- |
+| News density | Verge 89, FT 51, Atlantic 50, Defector 23, Guardian 23 | many |
+| **Essay / magazine** | **Increment 0, Asterisk 2, Aeon 2, Ars 2, 404 Media 3, Quanta 4** | ~0 |
+| Ours | — | 16 |
+
+Every site this one wants to resemble is in the second camp. Rendered anyway, because the
+brief asks for both options shown rather than argued:
+`docs/audit/render-divider-options.mjs`, captured at 1440 / 768 / 390 in
+`docs/audit/screenshots/divider-options/`.
+
+| Option | What it does | Bordered blocks in `<main>` |
+| --- | --- | --- |
+| **A** baseline | — | 7 |
+| **B** strengthen | `--edge-faint` 5% → 14% | 7 (louder, not fewer) |
+| **C** space only | section rules removed, 5rem margins instead | **4** |
+| **D** space + label | C, plus `.section-label` as a 12px mono kicker | **4** |
+
+**Recommendation: D.** C is the evidence-backed change; D adds the thing that makes it
+work. Once the rule under the header is gone, *something* has to mark where a section
+starts — and §1.2 measured that the answer at every comparable site is a small mono label,
+not a line. D moves the work from a border to a word.
+
+B is the option to reject explicitly: it makes the page louder without making it clearer,
+and it moves us further from the camp we are trying to join.
+
+### "Featured" is on the page twice
+
+Found in the render, not looked for. With D applied it is unmissable:
+
+- The **section label** above the hero reads `FEATURED`.
+- The **badge inside the hero card** also reads `FEATURED`.
+
+Same word, 40px apart, in two different typographic systems — a 12px mono label and a 12px
+mono uppercase white-filled box. §1.2 established that a status flag is a legitimate form,
+but a flag that repeats the section heading directly above it is carrying no information.
+
+**Three ways out, in the order I would try them:**
+
+1. **Drop the badge, keep the section label.** The hero's position already says "featured";
+   the label above it already says so in words. This is the cheapest and it is what Aeon,
+   Asterisk and Increment do — the lead story is identified by placement, not by a sticker.
+2. **Drop the section label, keep the badge.** Works, but it wastes the section label slot
+   that D just made useful.
+3. **Keep both and make them different things** — label stays `Featured`, badge becomes the
+   *lane* (`Perspective`), coloured. This is the §1.2 recommendation applied: a flag for
+   status, a kicker for section, never the same word twice.
+
+**I would do 1.** It is subtraction, it is what the reference set does, and it removes an
+element rather than restyling one.
+
+### Featured and Latest are different things
+
+The brief is right that these are different and that both belong above the fold. Two
+constraints the measurement adds:
+
+- **§1.1: our fold is the emptiest in the set** — 9 links above it against a median of 26,
+  the lowest of thirteen. There is room for a second tier; the problem is not crowding.
+- **§1.1: our tiers are 72 / 60 / — / 24.** A "Latest" strip placed above the fold has to
+  live in the missing middle, which is precisely the gap that makes the page read as
+  unedited. This is the same finding as 2.6 from the other end.
+
+**Proposed structure**, which fills the middle rather than adding a fourth shout:
+
+```
+Blog                      h1, currently 72px -> 48px   (see below)
+lede + critique invite
+FEATURED                  12px mono kicker (option D)
+  <hero>                  headline 60px  -- now the largest thing on the page
+LATEST                    12px mono kicker
+  <3 cards in a row>      headline 24px w600 (2.6 option C)
+```
+
+**The h1 has to come down.** §1.1 measured that of twelve reference sites, **none** renders
+its own section name larger than its lead story; ours renders "Blog" at 72px above a 60px
+story headline. Dropping the h1 to 48px makes the hero the largest thing on the page and
+creates the tier ladder 60 / 48 / 24 that the page currently lacks.
+
+That is a change to `text-5xl md:text-7xl` on `blog/page.tsx` — but it is **not rendered
+yet**, and it is a bigger aesthetic call than the card change, so it belongs in its own
+round of options rather than being folded in here.
+
+### What is ready to ship from 2.5, and what is not
+
+| Item | State |
+| --- | --- |
+| Dividers → space + mono section labels (D) | **Rendered, recommended, not applied** |
+| Drop the duplicate FEATURED badge | **Recommended, not applied** — subtraction, one line |
+| h1 72px → 48px | **Not rendered.** Needs its own options round |
+| Latest strip as a real second tier | **Not designed.** Depends on the h1 decision |
