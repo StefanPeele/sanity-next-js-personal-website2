@@ -11,6 +11,7 @@ import { ArticleProvider } from '@/components/article/ArticleProvider'
 import { ArticleToc } from '@/components/article/ArticleToc'
 import { ReadingProgressBar } from '@/components/article/ReadingProgressBar'
 import { ReadingToolbar } from '@/components/article/ReadingToolbar'
+import { MarginNotes } from '@/components/article/MarginNotes'
 import { heroImageUrl } from '@/components/article/heroImage'
 import { SourcesList } from '@/components/blog/SourcesList'
 import { CorrectionsList } from '@/components/blog/CorrectionsList'
@@ -279,7 +280,14 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </main>
 
-          <ArticleToc copy={ui} variant="sidebar" reviewedBy={reviewedBy} sources={sourceTitles} />
+          {/* 6.3. The margin column is SHARED with the table of contents, not replaced by
+              it: the TOC is sticky and short, sidenotes are anchored and sparse. They sit in
+              the same 220px column, the TOC pinned at the top and the notes flowing with
+              their anchors beneath it. */}
+          <div className="relative hidden lg:block">
+            <ArticleToc copy={ui} variant="sidebar" reviewedBy={reviewedBy} sources={sourceTitles} />
+            <MarginNotes />
+          </div>
         </div>
       </div>
     </ArticleProvider>

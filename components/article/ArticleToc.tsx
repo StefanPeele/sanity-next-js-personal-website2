@@ -83,8 +83,12 @@ export function ArticleToc({ copy, variant, reviewedBy, sources = [] }: Props) {
   const { headings } = useArticle()
 
   if (variant === 'sidebar') {
+    // h-full matters: `position: sticky` is bounded by its PARENT's box, so the sticky div
+    // inside needs this aside to be as tall as the column. As a direct grid child it was
+    // stretched for free; Phase 6 put a wrapper around it for the margin notes and the TOC
+    // silently stopped sticking -- it scrolled away, measured at top 924 -> -1476.
     return (
-      <aside className="hidden lg:block" aria-label={copy.toc.title} data-toc="sidebar" data-print-hide>
+      <aside className="hidden lg:block h-full" aria-label={copy.toc.title} data-toc="sidebar" data-print-hide>
         {/* The heading row must stay OUTSIDE the scrolling element. `overflow-y: auto` makes
             overflow-x compute to `auto` as well, which clipped the ReaderMenu's absolutely
             positioned panel — it rendered but 18 of its 24 controls were not hit-testable. */}

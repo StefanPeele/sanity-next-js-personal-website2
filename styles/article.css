@@ -750,3 +750,139 @@ body.a11y-big-focus *:focus-visible {
 [data-article-root].a11y-mute-colour [data-article] {
   filter: saturate(0.4);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Phase 6.3 — sidenotes in the margin
+
+   The anchor keeps a dashed underline in the prose; the NOTE moves out of the reading column
+   entirely. Below lg there is no margin, so the margin host is hidden and the inline
+   expander (6.4 option A) carries it instead.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-article] .sidenote-mark {
+  border-bottom: 1px dashed rgba(251, 191, 36, 0.6);
+  cursor: help;
+}
+[data-article] .sidenote-anchor[data-sidenote-kind='glossary'] .sidenote-mark {
+  /* 6.2: same mechanism, different SOURCE. A hand-authored note is the author talking about
+     this passage; a glossary note is a definition that happens to apply here. One colour
+     apart, not one system apart. */
+  border-bottom-color: rgba(125, 211, 252, 0.6);
+}
+
+/* The inline expander. Below lg it is the note; at lg the margin has it and this never
+   opens, because the mark's click target is replaced by the margin note. */
+.sidenote-inline {
+  display: block;
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+  border-left: 2px solid rgba(251, 191, 36, 0.4);
+  background: rgba(120, 53, 15, 0.14);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+@media (min-width: 1024px) {
+  .sidenote-inline { display: none; }
+}
+
+/* The margin column.
+   ABSOLUTE, spanning the whole column, rather than sitting in flow after the table of
+   contents. In flow its top is wherever the TOC happens to end, so every note was offset by
+   the TOC's height and the offsets meant nothing. Spanning the column makes a note's `top`
+   the same coordinate space as its anchor's. */
+.margin-notes {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  pointer-events: none;
+}
+.margin-notes .margin-note { pointer-events: auto; }
+@media (min-width: 1024px) {
+  .margin-notes { display: block; }
+}
+
+/* 6.3: "shared with the TOC, or replacing it where they would collide."
+   The TOC yields. It is navigation a reader consults deliberately and can reopen; a sidenote
+   is about the sentence in front of them right now. MarginNotes toggles this class when a
+   note's rect overlaps the TOC's. */
+/* The class goes on the STICKY box, which is the TOC a reader sees. Putting it on the
+   <aside> dimmed a full-column-height element that always overlapped something.
+   0.25 rather than 0.12: the TOC has to step back far enough that the note beside it reads
+   cleanly, and stay present enough that a reader can still see where their navigation went. */
+[data-toc='sidebar'] .sticky { transition: opacity 0.25s ease; }
+[data-toc='sidebar'] .sticky.toc-yielding {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.margin-note {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--edge);
+}
+.margin-note[data-sidenote-kind='note'] { border-left-color: rgba(251, 191, 36, 0.45); }
+.margin-note[data-sidenote-kind='glossary'] { border-left-color: rgba(125, 211, 252, 0.45); }
+
+.margin-note-label { display: block; margin-bottom: 0.25rem; color: #a8a29e; }
+
+.margin-note-text {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #a8a29e;
+  margin: 0;
+  /* 6.3: a note longer than the space CLAMPS and offers "more". Not a scrolling margin box —
+     a second scrollable region on the page is a thing readers do not find. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 12;
+  overflow: hidden;
+}
+
+.margin-note-more {
+  margin-top: 0.35rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.75rem;
+  color: #d6d3d1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.margin-note-more:hover { color: #ffffff; }
+
+/* 6.5's window. Focus-trapped in the component; this is only its look. */
+.margin-note-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.62);
+}
+.margin-note-dialog {
+  width: min(34rem, 100%);
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--edge);
+  border-radius: 0.75rem;
+  background: var(--surface-raised);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  animation: margin-note-in 0.16s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes margin-note-in { from { opacity: 0 } to { opacity: 1 } }
+
+/* Reduced motion: opacity only is already all this does, and the site-wide reset in
+   styles/index.css takes the duration to 0.01ms. Stated so nobody adds a scale-in later. */
+
+body.theme-paper .margin-note-dialog { background: #ffffff; border-color: rgb(0 0 0 / 0.14); }
+body.theme-paper .margin-note-text,
+body.theme-paper .margin-note-label { color: #57534e; }
+body.theme-paper .margin-note-more { color: #26231f; }

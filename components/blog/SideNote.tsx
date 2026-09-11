@@ -3,56 +3,56 @@
 import { useId, useState } from 'react'
 import { FOCUS } from '@/lib/ui'
 // components/blog/SideNote.tsx
-// Inline annotation mark. The highlighted text is a button so keyboard users can
-// reach it: hover or focus shows the tooltip on desktop, click/tap toggles an
-// inline expansion on mobile. The note is linked through aria-describedby.
+// Phase 6 — the ANCHOR half of a sidenote. The note text itself is rendered twice, and
+// deliberately:
+//
+//   at lg and above  MarginNotes reads `data-sidenote-text` off this element and renders the
+//                    note in the margin, positioned at this anchor's measured offset.
+//   below lg         there is no margin, so the note expands INLINE at the anchor (6.4's
+//                    option A) — which is also what a reader with JS off, or a screen reader
+//                    walking the prose, gets.
+//
+// The text lives in a data attribute rather than being passed to MarginNotes as a prop
+// because the anchors are inside server-rendered Portable Text and the margin is a separate
+// client component: the DOM is the only thing they both already share.
 
 interface SideNoteProps {
   children: React.ReactNode
   note?: string
+  /** 6.2: 'note' is hand-authored, 'glossary' is derived from a definition. */
+  kind?: 'note' | 'glossary'
 }
 
-export function SideNote({ children, note }: SideNoteProps) {
+export function SideNote({ children, note, kind = 'note' }: SideNoteProps) {
   const [open, setOpen] = useState(false)
   const noteId = useId()
 
   if (!note) return <span>{children}</span>
 
   return (
-    <span className="relative group inline">
+    <span
+      className="sidenote-anchor relative inline"
+      data-sidenote-id={noteId}
+      data-sidenote-text={note}
+      data-sidenote-kind={kind}
+    >
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        aria-describedby={noteId}
+        aria-controls={`${noteId}-inline`}
         style={{ font: 'inherit', color: 'inherit' }}
-        className={`border-b border-dashed border-amber-400/60 cursor-help bg-transparent p-0 rounded-sm ${FOCUS}`}
+        className={`sidenote-mark bg-transparent p-0 rounded-sm ${FOCUS}`}
       >
         {children}
         <sup className="font-mono text-xs text-amber-400/80 ml-0.5 select-none" aria-hidden="true">※</sup>
       </button>
 
-      {/* Desktop tooltip — hover or focus-within */}
-      <span
-        id={noteId}
-        role="tooltip"
-        className={`
-          article-light-invert pointer-events-none
-          absolute z-40 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3.5
-          bg-[#1a1a1e] border border-amber-400/20 rounded-lg shadow-2xl shadow-black/60 text-left
-          hidden lg:group-hover:block lg:group-focus-within:block
-        `}
-      >
-        <span className="meta-label text-amber-400/80 block mb-1.5">Note</span>
-        <span className="font-mono text-xs text-stone-200 leading-relaxed block">{note}</span>
-        <span className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-amber-400/20" aria-hidden="true" />
-      </span>
-
-      {/* Mobile inline expander */}
+      {/* 6.4 option A. Hidden at lg, where the margin carries it instead. */}
       {open && (
-        <span className="lg:hidden block mt-2 mb-3 pl-3 border-l-2 border-amber-400/40 bg-amber-950/20 rounded-r-lg py-2 pr-3">
+        <span id={`${noteId}-inline`} className="sidenote-inline">
           <span className="meta-label text-amber-400/80 block mb-1">Note</span>
-          <span className="font-mono text-xs text-stone-200 leading-relaxed block">{note}</span>
+          <span className="font-sans text-xs text-stone-200 leading-relaxed block">{note}</span>
         </span>
       )}
     </span>

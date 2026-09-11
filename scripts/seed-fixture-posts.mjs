@@ -55,6 +55,34 @@ const bodyA = [
     markDefs: [{ _type: 'sidenote', _key: sidenoteKey, note: 'This is the sidenote. On a wide screen it sits in the margin; below lg it collapses behind its marker. Tufte CSS runs the margin column at 0.50x the measure and the note at 0.79x the body size.' }],
   },
 
+  // 6.3's two edge cases, in the fixture rather than in a paragraph of prose about them.
+  // TWO ADJACENT ANCHORS, one line apart, so the push-down rule has something to push.
+  {
+    ...block('normal', [
+      span('Two anchors in one sentence: the '),
+      span('first note', ['sn-a']),
+      span(' and, a few words later, the '),
+      span('second note', ['sn-b']),
+      span(' — close enough that their notes would overlap if nothing moved them.'),
+    ]),
+    markDefs: [
+      { _type: 'sidenote', _key: 'sn-a', note: 'The first of two adjacent notes. It is placed at its own anchor.' },
+      { _type: 'sidenote', _key: 'sn-b', note: 'The second. It cannot sit at its anchor without landing on top of the note above, so it is pushed down to just below it.' },
+    ],
+  },
+
+  // A LONG note, past the 12-line clamp, so the truncation and its "more" affordance render.
+  {
+    ...block('normal', [
+      span('And one '),
+      span('deliberately long note', ['sn-long']),
+      span(' to exercise the clamp.'),
+    ]),
+    markDefs: [
+      { _type: 'sidenote', _key: 'sn-long', note: 'A note long enough to exceed the margin clamp. The margin column is narrow by design — roughly half the prose measure, which is what Tufte CSS uses — so a note of any length will run past the twelve lines the clamp allows. The rule is that it truncates and offers to open the full text in a centred window, rather than growing a scroll region inside the margin. A second scrollable area on a page is a thing readers do not find, and a margin note that scrolls independently of the prose beside it is worse than one that is simply cut off with a way to read the rest. This paragraph exists only to be longer than twelve lines at the rendered size, and it is.' },
+    ],
+  },
+
   // 3B. Three anchorable passages, one per correction kind, plus one anchor that will NOT
   // match so the "passage not found" path is exercised on a real render.
   para('The standard Ethernet MTU is 1500 bytes on this link. Spanning tree converges in about 30 seconds with the default timers, and the switch fabric is rated for 176 Gbps.'),
