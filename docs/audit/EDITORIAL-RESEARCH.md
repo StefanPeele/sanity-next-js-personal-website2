@@ -795,3 +795,84 @@ host, and keeps the data in the CMS everything else reads from.
 
 **Recommendation for 8.6: Sanity plus Resend, not a self-hosted service.** Comments become a
 new document type and a reuse of the existing token pattern.
+
+---
+
+## 1.8 Hover previews
+
+### Measured
+
+Gwern's popups were driven in a real browser — hover a link, poll for a floating element,
+then move the pointer away and poll again:
+
+| | Measured |
+| --- | --- |
+| **Delay before appearing** | **~847ms** |
+| **Delay before dismissing** | **~507ms** after the pointer leaves |
+| Size | **640 × 480px** |
+| Font | **20px — the same as the body text**, not reduced |
+| Image | none in the sampled popup |
+| z-index | 1 |
+| Class | `popup popframe annotation site has-title` |
+
+Two of those are worth dwelling on.
+
+**847ms is a long delay, and that is the point.** It is comfortably past the threshold where
+a pointer crossing a link on its way somewhere else would trigger it. The brief's 4.6
+requirement — "must not fire on accidental pass-through" — is solved by delay alone, and
+roughly 800ms is the measured value from the implementation that has thought about this
+hardest. A 200–300ms delay, which feels responsive in isolation, will fire constantly on a
+page with many links.
+
+**The ~507ms dismissal delay is the other half**, and it is the part that is easy to forget.
+It exists so the pointer can travel from the link into the popup without the popup vanishing
+underneath it. Without it, a preview containing a link is unusable.
+
+**The popup does not shrink its type.** 20px inside the popup against 19px body outside it.
+The instinct to set preview text at 13–14px would make it a tooltip; Gwern treats it as a
+readable excerpt.
+
+### Wikipedia Page Previews — not measured, and why
+
+I tried and failed. My selector for in-article links returned nothing on the live page, and
+rather than tune a scraper until it agrees with me I am recording the failure and citing
+MediaWiki's own documentation instead.
+
+From that documentation:
+
+- **Delay is configurable per project**, not a fixed published number — so there is no
+  canonical figure to copy. Gwern's measured ~847ms is the better reference.
+- Content is **"a portion of the first paragraph from the article"** plus **"an image (if
+  available)"**.
+- **"Page Previews only activate when the focus/hover state occurs over a link. They are
+  usable for people who use keyboard navigation."**
+- Screen readers get **"proper WAI-ARIA semantics declaring them as tooltips."**
+
+### The keyboard equivalent — answered
+
+Phase 4.6 asks how a keyboard user gets the same information. Wikipedia's answer is the
+simple correct one and it needs no separate UI: **bind the preview to `focus` as well as
+`mouseenter`, and give it `role="tooltip"`.** A keyboard user tabs to the link, the preview
+opens on focus, Escape or blur closes it. No extra affordance, no parallel code path.
+
+That also sets the dismissal contract: `mouseleave` *and* `blur` *and* `Escape`, all three.
+
+### Touch — the honest answer
+
+There is no hover on touch, and neither source solves it. Wikipedia's documentation points
+at its native apps for the mobile equivalent rather than claiming a web solution.
+
+**Recommendation for 4.6: do not implement a touch equivalent.** On touch, a tap on a post
+card should simply open the post — which is what the reader wanted. A long-press preview
+competes with text selection and the browser's own context menu, and a tap-to-preview
+intercepts the primary action to show a worse version of the destination. The preview is a
+desktop affordance and should be allowed to be one.
+
+### Off-screen positioning
+
+Not documented by either source in usable detail, and not measurable from one sample.
+Stated from implementation knowledge rather than research: the standard approach is to
+prefer below-right of the cursor, flip vertically when the popup would cross the viewport
+bottom, and clamp horizontally to the viewport with a margin. `@floating-ui` implements
+exactly this and is the library to reach for rather than hand-rolling — but that is a
+Phase 4 implementation decision, not a research finding.
