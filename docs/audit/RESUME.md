@@ -17,11 +17,10 @@ lines). Thirteen sites measured live, three recorded as blocked, five sources fe
 Reusable harnesses committed: `measure-reference-site.mjs`, `measure-metadata.mjs`,
 `measure-sidenotes.mjs`, `capture-change.mjs`.
 
-**Phase 2: in progress.**
+**Phase 2: complete.**
 
 - **2.1 shipped and verified live** (`1d0869b`, `8141a9f`) — the section is called Blog, in
   code *and* in the Studio documents.
-- **2.2, 2.3, 2.4 proposed** in `docs/audit/PROPOSALS.md`, not applied.
 - **2.4, 2.5, 2.6 proposed**, with options rendered for 2.5 and 2.6. Phase 2 is complete.
 
 ## The single next action
