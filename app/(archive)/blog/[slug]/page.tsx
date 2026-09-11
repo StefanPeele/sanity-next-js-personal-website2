@@ -286,7 +286,11 @@ export default async function BlogPostPage({ params }: Props) {
               their anchors beneath it. */}
           <div className="relative hidden lg:block">
             <ArticleToc copy={ui} variant="sidebar" reviewedBy={reviewedBy} sources={sourceTitles} />
-            <MarginNotes />
+            {/* 6.5's model-backed action renders only where it can work. The flag is read
+                on the SERVER: ANTHROPIC_API_KEY is not a public env var, so a client
+                component cannot see it, and a button that always failed would be worse than
+                no button. */}
+            <MarginNotes learnMoreEnabled={Boolean(process.env.ANTHROPIC_API_KEY)} />
           </div>
         </div>
       </div>

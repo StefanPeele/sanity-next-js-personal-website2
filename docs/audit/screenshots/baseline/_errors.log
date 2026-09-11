@@ -4268,3 +4268,276 @@
 [console] Failed to load resource: net::ERR_FAILED
 [console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 [console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /blog/building-my-physical-home-lab-week-2-documentation-and-extensive-researching
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+## 1440 - /garden
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /projects
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /blog
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /library
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /services
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /graph
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /resume
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /now
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /contact
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+## 768 - /blog
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /photography
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /garden
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /services
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /library
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /blog/building-my-physical-home-lab-week-2-documentation-and-extensive-researching
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /graph
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /photography
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /projects
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /resume
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /now
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /uses
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 768 - /contact
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 390 - /blog
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 390 - /garden
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 1440 - /uses
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+## 390 - /
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 390 - /graph
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 390 - /services
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 390 - /blog/building-my-physical-home-lab-week-2-documentation-and-extensive-researching
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 390 - /projects
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+## 390 - /resume
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 390 - /now
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+## 390 - /photography
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 390 - /uses
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+
+## 390 - /contact
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+## 390 - /library
+[console] Access to resource at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[request] https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live - net::ERR_FAILED
+[console] Failed to load resource: net::ERR_FAILED
+[console] Access to fetch at 'https://jebe3ru8.api.sanity.io/v2025-02-27/data/live/events/production?tag=next-loader.live' from origin 'http://127.0.0.1:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+[console] Failed to load resource: the server responded with a status of 404 (Not Found)

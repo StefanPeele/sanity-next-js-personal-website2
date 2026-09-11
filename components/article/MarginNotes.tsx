@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { FOCUS } from '@/lib/ui'
+import { learnMore } from '@/app/actions/learnMore'
+
+type LearnMoreItem = { title: string; author: string; why: string }
 // components/article/MarginNotes.tsx
 // Phase 6.3 — sidenotes in the margin.
 //
@@ -46,14 +49,31 @@ interface Note {
   href: string | null
 }
 
-export function MarginNotes({ label = 'Note', moreLabel = 'More', closeLabel = 'Close', glossaryLabel = 'Full entry in the glossary' }: {
+export function MarginNotes({
+  label = 'Note',
+  moreLabel = 'More',
+  closeLabel = 'Close',
+  glossaryLabel = 'Full entry in the glossary',
+  learnMoreLabel = 'Suggest further reading',
+  loadingLabel = 'Looking…',
+  generatedLabel = 'Suggested by a model, not by Stefan — look these up rather than trusting them',
+  /** False when ANTHROPIC_API_KEY is unset: the control does not render at all. */
+  learnMoreEnabled = false,
+}: {
   label?: string
   moreLabel?: string
   closeLabel?: string
   glossaryLabel?: string
+  learnMoreLabel?: string
+  loadingLabel?: string
+  generatedLabel?: string
+  learnMoreEnabled?: boolean
 }) {
   const [notes, setNotes] = useState<Note[]>([])
   const [open, setOpen] = useState<Note | null>(null)
+  // 6.5's "Learn more". Per-open state, deliberately: it is generated on demand and never
+  // stored, so closing the window throws it away.
+  const [more, setMore] = useState<{ status: 'idle' | 'loading' | 'done' | 'error'; items?: LearnMoreItem[]; error?: string }>({ status: 'idle' })
   const hostRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
   const openerRef = useRef<HTMLElement | null>(null)
@@ -186,10 +206,23 @@ export function MarginNotes({ label = 'Note', moreLabel = 'More', closeLabel = '
   }, [open])
 
   useEffect(() => {
-    if (open) return
+    // Clearing the generated suggestions when the window opens is the point of this effect:
+    // 6.5's results are never stored, so a new note must not show the previous note's.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (open) { setMore({ status: 'idle' }); return }
     openerRef.current?.focus()
     openerRef.current = null
   }, [open])
+
+  const askForMore = useCallback(async (n: Note) => {
+    setMore({ status: 'loading' })
+    // The ANCHOR's own words are the term; the note is the context. A sidenote is attached to
+    // a phrase, so the phrase is what a reader wants to read more about.
+    const anchor = document.querySelector<HTMLElement>(`[data-sidenote-id="${n.id}"] .sidenote-mark`)
+    const term = (anchor?.textContent ?? '').replace(/※/g, '').trim()
+    const res = await learnMore(term, n.text)
+    setMore(res.ok ? { status: 'done', items: res.items } : { status: 'error', error: res.error })
+  }, [])
 
   return (
     <>
@@ -229,6 +262,37 @@ export function MarginNotes({ label = 'Note', moreLabel = 'More', closeLabel = '
               </button>
             </div>
             <p className="font-sans text-sm text-stone-200 leading-relaxed">{open.text}</p>
+            {/* 6.5's "Learn more", and 5.6's rules applied rather than restated: it is
+                labelled machine-generated IN THE PANEL, never styled as prose, and never
+                stored. It returns titles and authors to look up rather than hyperlinks --
+                a model asked for links invents them, and verifying one means a fetch the
+                CSP forbids. */}
+            {learnMoreEnabled && (
+              <div className="mt-4 pt-3 border-t border-edge-faint">
+                {more.status === 'idle' && (
+                  <button type="button" onClick={() => askForMore(open)} className={`font-sans text-xs text-stone-300 underline underline-offset-4 rounded-sm ${FOCUS}`}>
+                    {learnMoreLabel}
+                  </button>
+                )}
+                {more.status === 'loading' && <p className="font-sans text-xs text-stone-400">{loadingLabel}</p>}
+                {more.status === 'error' && <p className="font-sans text-xs text-stone-400">{more.error}</p>}
+                {more.status === 'done' && (
+                  <div>
+                    <p className="meta-label text-amber-400/80 mb-2">{generatedLabel}</p>
+                    <ul className="list-none m-0 p-0 space-y-2.5">
+                      {more.items?.map((it, i) => (
+                        <li key={i} className="font-sans text-xs leading-relaxed">
+                          <span className="text-stone-200">{it.title}</span>
+                          {it.author && <span className="text-stone-400"> — {it.author}</span>}
+                          {it.why && <span className="block text-stone-400">{it.why}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
             {open.href && (
               // 6.2: a glossary note is a definition that lives somewhere. The inline mark
               // used to carry this link in a hover card; the window carries it now, which is

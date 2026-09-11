@@ -221,6 +221,30 @@ try {
   check(closed.gone, 'Escape closes it', '')
   check(closed.focusOnMore === true, 'and focus returns to the control that opened it', String(closed.focusOnMore))
 
+  // 6.5's model-backed action. ANTHROPIC_API_KEY is not set locally, so only the DISABLED
+  // path is testable here: the control must be absent rather than present and failing.
+  // The enabled path is UNVERIFIABLE in this environment and is recorded as such rather than
+  // assumed to work.
+  const keySet = !!process.env.ANTHROPIC_API_KEY
+  await page.locator('.margin-note-more').first().click()
+  await page.waitForTimeout(350)
+  const learn = await page.evaluate(() => {
+    const d = document.querySelector('.margin-note-dialog')
+    return {
+      control: Array.from(d?.querySelectorAll('button') ?? []).some((b) => /further reading/i.test(b.textContent || '')),
+      generatedLabel: /not by Stefan/i.test(d?.textContent || ''),
+    }
+  })
+  if (keySet) {
+    check(learn.control, '6.5: the "further reading" control renders when the key is set', '')
+  } else {
+    check(!learn.control, '6.5: with no ANTHROPIC_API_KEY the control is ABSENT, not present and broken', '')
+    console.log('  (the enabled path is UNVERIFIABLE here — no ANTHROPIC_API_KEY in this environment)')
+  }
+  check(!learn.generatedLabel, 'and nothing claims to be model-generated before anything is generated', '')
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(250)
+
   await page.screenshot({ path: path.join(OUT, 'margin-1440.jpg'), type: 'jpeg', quality: 82, fullPage: false })
   await ctx.close()
 
