@@ -26,6 +26,7 @@ import { SITE, absoluteUrl, articleTypeMeta } from '@/lib/site'
 import { formatDate } from '@/lib/dates'
 import { readingTime } from '@/lib/reading'
 import { reviewerDisplay, reviewerSummary } from '@/lib/reviewers'
+import { effectiveReviewStatus, lastRevisedAt, materialRevision } from '@/lib/status'
 import { applyGlossaryMarks } from '@/lib/glossary'
 import { articleToMarkdown, buildStudyDeck, collectQuizzes, countStudyCards } from '@/lib/anki'
 import { notFound } from 'next/navigation'
@@ -87,6 +88,15 @@ export default async function BlogPostPage({ params }: Props) {
   const wordCount = post.wordCount ?? 0
   const readTime = readingTime(wordCount)
   const publishDate = formatDate(post.publishedAt, 'long', 'Unpublished')
+  // 3.7. Derived from the changelog, never _updatedAt -- a typo fix must not announce a
+  // revision. `revised` in the status list is the same signal, so it is derived here too
+  // and every surface below reads `reviewStatus`, not post.reviewStatus.
+  const lastRevised = materialRevision(lastRevisedAt(post.changelog), post.publishedAt)
+  const updatedDate = lastRevised ? formatDate(lastRevised, 'long', '') : null
+  const reviewStatus = effectiveReviewStatus(post.reviewStatus, lastRevised)
+  // 3.6. Titles only, for the Contents column. The full citations stay in SourcesList at
+  // the bottom of the article; the column links to them by index.
+  const sourceTitles = (post.sources ?? []).map((sc) => sc.title ?? 'Untitled source')
   const title = post.title ?? 'Untitled'
   const url = absoluteUrl(`/blog/${slug}`)
   const lane = articleTypeMeta(post.articleType, taxonomy.articleLanes)
@@ -166,14 +176,15 @@ export default async function BlogPostPage({ params }: Props) {
           lqip={post.lqip}
           sourceCount={post.sources?.length ?? 0}
           conceptCardCount={conceptCards.length}
-          reviewStatus={post.reviewStatus}
+          reviewStatus={reviewStatus}
+          updatedDate={updatedDate}
           labels={ui.header}
           lanes={taxonomy.articleLanes}
         />
 
         <div className="relative max-w-6xl mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12 mt-12 md:mt-16">
           <main id="content" className="max-w-[36rem] mx-auto w-full transition-[max-width] duration-300" data-width="standard">
-            <ArticleToc copy={ui} menu={menu} variant="mobile" reviewedBy={reviewedBy} />
+            <ArticleToc copy={ui} menu={menu} variant="mobile" reviewedBy={reviewedBy} sources={sourceTitles} />
 
             {post.series && <SeriesBanner series={post.series} currentSlug={slug} seriesOrder={post.seriesOrder} labels={ui.seriesBanner} />}
 
@@ -226,7 +237,7 @@ export default async function BlogPostPage({ params }: Props) {
               <CredibilitySection
                 heading={B.credibilityHeading}
                 labels={ui.credibility}
-                reviewStatus={post.reviewStatus}
+                reviewStatus={reviewStatus}
                 reviewers={reviewerDisplays}
                 changelog={(post.changelog ?? []).map((c) => ({ _key: c._key, date: c.date ?? '', description: c.description ?? '' }))}
                 responsesFromField={(post.responsesFromField ?? []).map((r) => ({ ...r, title: r.title ?? '', url: r.url ?? '#', author: r.author ?? undefined, platform: r.platform ?? undefined, summary: r.summary ?? undefined, date: r.date ?? undefined }))}
@@ -245,7 +256,7 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </main>
 
-          <ArticleToc copy={ui} menu={menu} variant="sidebar" reviewedBy={reviewedBy} />
+          <ArticleToc copy={ui} menu={menu} variant="sidebar" reviewedBy={reviewedBy} sources={sourceTitles} />
         </div>
       </div>
     </ArticleProvider>

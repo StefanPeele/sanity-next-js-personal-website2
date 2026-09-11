@@ -28,6 +28,10 @@ Session count: 1
 | Duplicate `<h1>` in body copy | `365e97e` | not yet deployed | **verifier-found** | `CustomPortableText` rendered a body "Heading 1" as a real `<h1>`. Suite is now **35** |
 | Section reading times (Phase 0.1 follow-up) | `76c3d55` | **yes** — production, portfolio 4→1 and home lab 5→3 against headers of 2 and 3 | **verifier-found** | TOC sections summed to more than the post |
 | **2.1 Rename to Blog** | `1d0869b`, `8141a9f` | **yes** — h1 reads Blog, zero `>Writing<`, /writing redirects | self | 20 strings found, **14 renamed, 6 left as the activity**. Both halves: code defaults *and* the live Studio documents |
+| **3.3 Status on five surfaces** | `c010b18` | **draft mode, local** — kitchen-sink 2 marks, minimal 1, both 14px + `sr-only` label | **verifier — 6 PASS, 2 FAIL, 1 UNVERIFIABLE.** Both FAILs real, both now fixed | `lib/status.ts` is the one table. Card 2 / header 1 / Contents all / feed plain text. Distinction carried by icon SHAPE so greyscale survives |
+| **3.4 The status aura** | `223f946` | **23/23** local, draft mode, `measure-aura.mjs` | self + 9 frames for you to pick | Edge glow on the card tile: gradient ring on the border line + inset falloff + a tight outer shadow. Three intensities to pick from, captured at 1440/768/390. Caps at **two** colours — the same two the card's marks show |
+| **3.6 Sources in the Contents column** | `223f946` | **yes** — "2 sources", closed, 2 links, both anchors resolve, at 1440 **and** 390 | self | Column shows count + linked titles, anchored to `#source-N` in the existing body list. One canonical rendering, two volumes |
+| **3.7 Last updated** | `223f946` | **yes** — header reads "August 1, 2026 · Updated September 1, 2026" at both breakpoints | self + 12 unit tests | Derived from `changelog[].date`. No new field, and **not** `_updatedAt` |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:
@@ -137,6 +141,53 @@ first. Now every post is tested.
 - One verifier's scratch file was swept into the repo by a `git add -A` during its run.
   Fixed with `.gitignore` rules; worth remembering that agents write to the repo root.
 
+## Verifier run 3 — Phase 3.3, wide claim (2026-09-11)
+
+The claim named all five surfaces plus greyscale, single-source, draft mode and
+no-regression, per Stefan's instruction to write claims wider than the change. It paid for
+itself twice.
+
+| Part | Verdict | What happened |
+| --- | --- | --- |
+| 1 Index card | PASS | 2 marks on kitchen-sink, 1 on minimal, 14×14px, `title` + `.sr-only` |
+| 2 Article header | PASS | Exactly one, full text "Peer reviewed" |
+| 3 Contents column | PASS | All 3 of the post's statuses, full labels |
+| 4 Feeds | **UNVERIFIABLE** | Status-carrying posts are draft-only; feed routes are pinned to the published perspective, correctly. The verifier **refused to publish to the live dataset to make it observable** — the right call |
+| 5 Hover preview | **FAIL** | *The feature does not exist.* No popover machinery anywhere; hovering a card adds zero DOM nodes |
+| 6 Greyscale | PASS | Extracted the SVG `path d` per mark — three genuinely different shapes, distinct under `grayscale(100%)` |
+| 7 Single source | **FAIL** | A **second status map** in `post.ts`'s Studio preview |
+| 8 Draft mode / stega | PASS | Confirmed stega was genuinely active (zero-width chars in `h3.textContent`) and every badge still resolved |
+| 9 No regression | PASS | 3 published posts, 1 h1 each, no enum leakage, feeds unprefixed |
+
+**Part 7 — what the second map was.** `sanity/schemas/documents/post.ts` kept its own
+`statusIcons` table of emoji. It had drifted three ways at once: it still listed
+`expert-verified`, removed from the schema; it had no entry for `fact-checked`,
+`open-to-comment` or `revised`; and it indexed itself with `reviewStatus` even though that
+field is an **array**, so `statusIcons[array]` coerced through `Array.toString()` and only
+ever matched a post carrying exactly one of its three known values. Fixed by reading
+`lib/status.ts`. Then taken further than the finding: the Studio's **picker list is now
+derived from `REVIEW_FLAG_ORDER` too**, so the option an author picks and the badge a reader
+sees cannot drift apart again.
+
+**Part 5 — the honest answer.** My claim asserted a surface that isn't built. The brief's
+3.3 table lists a hover preview, but no link-preview popover exists on the site and none is
+specified anywhere in the brief. 3.3 is **four surfaces of five**, and the fifth is blocked
+on a feature nobody has scoped. Flagged to Stefan below.
+
+**Part 4 — closed a different way.** Rather than publish a status-bearing post to
+production, the pure transform was split out of `lib/feed.ts` into `lib/feedItems.ts` (which
+imports no Sanity client) and covered by 12 unit tests including a real `vercelStegaCombine`
+payload. What remains uncovered is the single line where `loadFeedItems` hands its query
+result to `toFeedItems`.
+
+**Outside the claim, on pages it loaded:**
+
+- **`/paths` returns 404.** `CLAUDE.md`'s architecture map lists it as an `(archive)` route;
+  there is no `app/(archive)/paths` directory at all. Documentation describes a route that
+  was never built.
+- The verifier's browser could not go below ~638px, so it could not check 390px. My own
+  Playwright harnesses can and do — 3.4, 3.6 and 3.7 are all measured at 390.
+
 ## Proposed, awaiting Stefan
 
 Everything below is written up in `EDITORIAL-RESEARCH.md` with its evidence. None of it has
@@ -235,6 +286,13 @@ enough is systematically early**, which is worth knowing for how future briefs a
 | 1.x method | Measured live sites rather than describing them | "What are the actual values" is the brief's own standard | — |
 | 1.6, 1.7 sourcing | Labelled documentation and knowledge separately from measurement | Mixing them is how a confident wrong number gets written down | — |
 | Phase 1 scope | Answered every sub-question including ones that turned out to have no prior art, and said so | "No prior art" is a finding, not a gap | — |
+| 3.4 how many glows | The aura shows **exactly the colours the card's marks show** — at most two | The brief says "do not stack five glows" but not where to cut. Any independent cutoff would let the aura and the marks disagree on the same card; tying them to one call (`reviewFlags(status, 2)`) makes that impossible | `auraProps` in `lib/status.ts` |
+| 3.4 where the aura lives | On the card's image tile, not the whole card | The card `<Link>` has no border or background of its own, so a glow around it would be a halo in empty space — the exact thing the brief rules out. The tile already has the border the glow attaches to | `styles/status.css` |
+| 3.4 default intensity | Ships as `subtle`; all three are captured for you to pick | The brief's own words are "a faint edge treatment"; the louder two are candidates, not the stated starting point | `AURA_INTENSITY`, one line in `lib/status.ts` |
+| 3.6 volume in the column | Count + linked titles, collapsed, **not** full citations | The sidebar is 220px wide and height-capped; fifteen full citations would push the headings out of the sticky viewport. The body list stays the one full rendering and the column links into it by index | `SourcesBlock` in `ArticleToc.tsx` |
+| 3.6 what to leave out of the schema | Kept title / url / author / type / description. **Left out publication and accessed-date**, which the brief floated | `author` is already "Author / Organization", so publication is a second field for the same fact. Accessed-date is link-rot hygiene that costs a keystroke on every source and is solved better by an archive link in `url` | `sanity/schemas/documents/post.ts` |
+| 3.7 manual or automatic | **Manual, via the existing `changelog[]`** — no new field, and never `_updatedAt` | `_updatedAt` fires on typo fixes, which the brief warned about. `changelog` already requires *both* a date and a description, so a revision date cannot be recorded without saying what changed — a higher bar than a `revisedAt` field, and it is the same record the reader sees | `lastRevisedAt()` in `lib/status.ts` |
+| 3.7 is `Revised` the same signal | **Yes.** Derived from the changelog and **removed from the Studio options list** | Two independently settable sources for one fact will disagree. A post could claim it was revised while showing no record of what changed. Cost: a post with a hand-set `revised` and no changelog loses the badge — correctly, because there is no evidence for it | `effectiveReviewStatus()`; re-add the enum value to overrule |
 
 ## Premises that turned out wrong
 
@@ -253,6 +311,10 @@ enough is systematically early**, which is worth knowing for how future briefs a
 | 1.7 "comment labels have little prior art" | Conventional Comments is a published standard with seven | Search |
 | 2.6 "nothing leads" (the brief's theory) | **Right about the card, wrong about the page.** Page lead:body 5.14× is 2nd highest of 13; card spread 1.67× is lowest of 5 | Measured a card on ours and four references |
 | 2.4 my own claim that "Read →" is a literal glyph | True on the **hero** only. The card already uses a lucide `ArrowRight` with a hover translate | Read the card markup after writing the note |
+| My 3.3 claim that a hover preview exists | It does not exist anywhere in the codebase. I asserted a surface from the brief's table without checking it was built | Verifier: exhaustive static search + a hover that added 0 DOM nodes |
+| My own aura probe, first run | **11 false failures against a working implementation.** It matched `/kitchen/i` against the card title; the fixture is called "A deliberately long fixture title". Keyed on the slug instead | Re-ran after reading the row dump, which showed the aura present and correct |
+| My aura CSS's reduced-motion block | Dead code. `styles/index.css` already sets `transition-duration: 0.01ms !important` site-wide, which beats it. Removed, with the reason written where the rule was | Probe reported `1e-05s`, not `0s` |
+| My 3.7 first cut | Rendered "Updated September 1" under "Published September 11" — an update older than the publication | The draft fixture, whose changelog predates its `publishedAt`. Now guarded by `materialRevision()` |
 | 2.1 my own grep | Missed **6 of 20** strings because the pattern required quotes tight around the word — including the RSS feed title, the OG image and the JSON-LD name, all user-visible | Re-grepped without the quote assumption |
 
 ## Deferred / out of scope

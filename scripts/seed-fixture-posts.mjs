@@ -129,7 +129,10 @@ const FIXTURES = [
     title: 'A deliberately long fixture title that will wrap across two or three lines at every breakpoint, so the header measure can be seen',
     slug: { _type: 'slug', current: 'fixture-kitchen-sink' },
     excerpt: 'A draft-only fixture exercising every field and block type the article page can render. Not for reading.',
-    publishedAt: '2026-09-11',
+    // Predates the changelog below ON PURPOSE. `Updated` only renders when the revision is
+    // strictly after publication -- materialRevision() in lib/status.ts -- so a fixture
+    // published today with an August changelog would silently stop exercising 3.7.
+    publishedAt: '2026-08-01',
     articleType: 'concept-deep-dive',
     categories: ['Network & Infrastructure'],
     mainImage: { _type: 'image', asset: { _type: 'reference', _ref: IMAGE }, alt: 'Fixture cover image.' },
@@ -138,7 +141,11 @@ const FIXTURES = [
     confidenceLevel: 'working-theory',
     maturityIndicator: 'tested',
     cognitiveLoad: 'dense',
-    reviewStatus: ['peer-reviewed', 'fact-checked', 'revised'],
+    // All FOUR selectable values. 'revised' is not listed because it is derived from the
+    // changelog below (3.7), so this post renders all five -- which is what makes it the
+    // degradation case for 3.4's "do not stack five glows" and the only place the
+    // open-to-comment and revised marks can be seen rendered at all.
+    reviewStatus: ['peer-reviewed', 'fact-checked', 'seeking-review', 'open-to-comment'],
     reviewers: [
       { _type: 'reviewer', _key: 'rev-named', name: 'Dana Okafor', role: 'Senior Network Engineer', organization: 'Fixture Networks', quote: 'The spanning tree section matches what I see in production, and the failure case is the one people actually hit.', date: '2026-08-14', linkedIn: 'https://www.linkedin.com/in/example-fixture', anonymous: false },
       { _type: 'reviewer', _key: 'rev-anon', name: 'Should Never Render', role: 'Infrastructure Engineer', organization: 'Should Never Render Ltd', linkedIn: 'https://www.linkedin.com/in/should-never-render', quote: 'The layer 2 explanation is accurate.', date: '2026-08-20', anonymous: true },
@@ -151,7 +158,7 @@ const FIXTURES = [
       { _type: 'response', _key: 'rf1', title: 'A response from the field', url: 'https://example.com/response', author: 'A reader', platform: 'Email', summary: 'Pointed out that the mask mismatch is more common than the cable fault.', date: '2026-08-30' },
     ],
     sources: [
-      { _type: 'source', _key: 'src1', title: 'RFC 826 — An Ethernet Address Resolution Protocol', url: 'https://www.rfc-editor.org/rfc/rfc826', author: 'D. Plummer', type: 'specification', description: 'The original ARP specification.' },
+      { _type: 'source', _key: 'src1', title: 'RFC 826 — An Ethernet Address Resolution Protocol', url: 'https://www.rfc-editor.org/rfc/rfc826', author: 'D. Plummer', type: 'rfc', description: 'The original ARP specification.' },
       { _type: 'source', _key: 'src2', title: 'Spanning Tree Protocol', url: 'https://en.wikipedia.org/wiki/Spanning_Tree_Protocol', type: 'reference' },
     ],
     learningObjectives: ['See every block type render at once.', 'See two review flags on one post.', 'See an anonymous reviewer redacted.'],

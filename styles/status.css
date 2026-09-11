@@ -1,0 +1,116 @@
+/* styles/status.css
+   Phase 3.4 -- the status aura.
+
+   Imported by app/(archive)/layout.tsx, so it covers /blog, /garden, /library and /paths
+   without touching the platform-owned styles/index.css.
+
+   PERSISTENT, NOT HOVER-TRIGGERED. A hover-only status is invisible while scanning, which
+   defeats the entire purpose of having one.
+
+   AN EDGE GLOW, NOT A HALO. The light reads as coming from the card's own border with a
+   short falloff inward, rather than a diffuse ring floating around the card in space. Three
+   layers, all tied to the border line:
+
+     1. a gradient ring drawn EXACTLY on the border (::before + mask-composite: exclude)
+     2. an inset falloff hugging that line from the inside (inset box-shadow)
+     3. at the two higher intensities only, a deliberately TIGHT outer shadow -- small blur
+        and a negative spread. Blur it any further and it becomes the halo the brief rules
+        out; the negative spread is what keeps it on the edge.
+
+   COLOURS come from lib/status.ts as `r g b` triples, set inline as --aura-1 / --aura-2, so
+   the one vocabulary table still drives this surface like every other one.
+
+   MULTIPLE STATUSES: the aura shows exactly the colours the card's marks show -- at most
+   two, in REVIEW_FLAG_ORDER. A post carrying five statuses gets two marks and a two-stop
+   gradient, never five stacked glows. The rule is "the aura matches the marks", which is
+   what stops the two surfaces from disagreeing. With one status, --aura-2 repeats --aura-1
+   and the gradient collapses to a flat ring on its own.
+
+   REDUCED MOTION: the aura never animates by itself -- there is no pulse, no breathing, no
+   keyframes anywhere in this file. The only movement is the hover intensification, and its
+   transition is removed under prefers-reduced-motion. The intensity still changes; it just
+   arrives instantly.
+
+   CONTRAST: every layer is confined to the tile's edge, and all card text lives below the
+   tile, not over it. The two things that DO sit over the tile -- the kicker badge and the
+   reading-time chip -- carry their own opaque scrims and sit inset from the edge.
+   Measured, not assumed: docs/audit/measure-aura.mjs. */
+
+[data-aura] {
+  position: relative;
+  /* Only these two properties transition. Nothing here animates unprompted. */
+  transition: box-shadow 300ms ease, border-color 300ms ease;
+  border-color: rgb(var(--aura-1) / var(--aura-edge-o));
+  box-shadow:
+    inset var(--aura-off) var(--aura-off) var(--aura-in) calc(var(--aura-in) / -3) rgb(var(--aura-1) / var(--aura-in-o)),
+    inset calc(var(--aura-off) * -1) calc(var(--aura-off) * -1) var(--aura-in) calc(var(--aura-in) / -3) rgb(var(--aura-2) / var(--aura-in-o)),
+    0 0 var(--aura-out) calc(var(--aura-out) / -2) rgb(var(--aura-1) / var(--aura-out-o));
+}
+
+/* The ring: a gradient painted into the padding box only, so it lands on the border line
+   itself rather than filling the tile. mask-composite: exclude punches out the middle. */
+[data-aura]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  border-radius: inherit;
+  padding: var(--aura-ring);
+  background: linear-gradient(135deg, rgb(var(--aura-1) / var(--aura-ring-o)), rgb(var(--aura-2) / var(--aura-ring-o)));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  transition: background 300ms ease;
+}
+
+/* ── The three intensities ────────────────────────────────────────────────────
+   Rendered side by side at 1440 / 768 / 390 in docs/audit/frames/aura-*. Change the
+   default in lib/status.ts (AURA_INTENSITY), not here. */
+
+[data-aura="subtle"] {
+  --aura-ring: 1px; --aura-ring-o: 0.30;
+  --aura-in: 12px;  --aura-in-o: 0.07;
+  --aura-out: 0px;  --aura-out-o: 0;
+  --aura-edge-o: 0.22;
+  --aura-off: 2px;
+}
+
+[data-aura="medium"] {
+  --aura-ring: 1px; --aura-ring-o: 0.55;
+  --aura-in: 18px;  --aura-in-o: 0.13;
+  --aura-out: 10px; --aura-out-o: 0.22;
+  --aura-edge-o: 0.40;
+  --aura-off: 3px;
+}
+
+[data-aura="pronounced"] {
+  --aura-ring: 2px; --aura-ring-o: 0.85;
+  --aura-in: 26px;  --aura-in-o: 0.20;
+  --aura-out: 16px; --aura-out-o: 0.38;
+  --aura-edge-o: 0.60;
+  --aura-off: 4px;
+}
+
+/* Hover intensifies SLIGHTLY -- roughly a third of the way to the next step up, never a
+   full step, or the hover state reads as a different status. */
+.group:hover [data-aura="subtle"]     { --aura-ring-o: 0.42; --aura-in-o: 0.10; --aura-edge-o: 0.30; }
+.group:hover [data-aura="medium"]     { --aura-ring-o: 0.68; --aura-in-o: 0.16; --aura-edge-o: 0.48; --aura-out-o: 0.28; }
+.group:hover [data-aura="pronounced"] { --aura-ring-o: 0.97; --aura-in-o: 0.24; --aura-edge-o: 0.70; --aura-out-o: 0.46; }
+
+/* REDUCED MOTION is already handled, site-wide and more forcefully than a rule here could:
+   styles/index.css sets `transition-duration: 0.01ms !important` on *, ::before and ::after
+   under prefers-reduced-motion. A local `transition: none` here loses to that !important and
+   would be dead code pretending to be a safeguard, so it is deliberately absent. Measured:
+   the tile and its ring both report 1e-05s under reduce and 0.3s without it. The duration is
+   near-zero rather than exactly zero on purpose -- that is the standard pattern, so that a
+   transitionend listener still fires. */
+
+/* Forced-colours mode removes the glow entirely rather than leaving a mud-coloured ring the
+   user did not choose. The icon mark and its sr-only label still carry the status, which is
+   the whole reason 3.3 put the distinction in the SHAPE. */
+@media (forced-colors: active) {
+  [data-aura] { box-shadow: none; }
+  [data-aura]::before { display: none; }
+}

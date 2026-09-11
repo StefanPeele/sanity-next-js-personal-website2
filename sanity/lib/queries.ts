@@ -43,6 +43,10 @@ const postCardFields = `
   // The card carries the small status mark (Phase 3.3). Without this the index and the
   // feeds had no status at all while the article had three tiers of it.
   reviewStatus,
+  // 3.7. The newest changelog date, which is what "revised" and "last updated" both mean.
+  // Projected as one value rather than the whole changelog: the card needs the date, not
+  // the descriptions, and shipping 20 revision notes per card to the client is waste.
+  "lastRevised": (changelog[] | order(date desc)[0].date),
   ${wordCountField},
   "series": series->{ title, "slug": slug.current }
 `
@@ -412,6 +416,7 @@ export const feedQuery = defineQuery(`
   *[_type == "post" && defined(slug.current) && defined(publishedAt)] | order(publishedAt desc)[0...50] {
     _id, title, "slug": slug.current, publishedAt, _updatedAt, excerpt, body, articleType,
     reviewStatus,
+    "lastRevised": (changelog[] | order(date desc)[0].date),
     "categories": categories[]->title,
     "imageUrl": mainImage.asset->url
   }

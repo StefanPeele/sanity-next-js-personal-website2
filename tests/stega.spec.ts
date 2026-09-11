@@ -108,7 +108,7 @@ test('draft mode renders every status badge on the fixture post', async ({ page 
     // "FACT CHECKED" while the source string is "Fact checked". Comparing against the
     // source case-sensitively fails and looks exactly like a missing badge.
     const text = (await page.locator('body').innerText()).toLowerCase()
-    for (const badge of ['peer reviewed', 'fact checked', 'revised', 'working theory', 'lab tested']) {
+    for (const badge of ['peer reviewed', 'fact checked', 'seeking peer review', 'open to comment', 'revised', 'working theory', 'lab tested']) {
       expect(text, `"${badge}" badge missing under draft mode — a stega-broken lookup looks exactly like this`).toContain(badge)
     }
     // And the value removed from confidenceLevel in Phase 3.1 must not come back.

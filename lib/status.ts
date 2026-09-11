@@ -27,6 +27,13 @@ export interface StatusMeta {
   icon: IconName
   color: string
   bg: string
+  /**
+   * The same colour as `color`, as an `r g b` triple, for the 3.4 aura. CSS custom
+   * properties cannot hold a Tailwind class, and the aura needs an alpha the palette does
+   * not offer, so the value is spelled twice. Keep them equal -- the triples below are the
+   * literal Tailwind values of the classes beside them.
+   */
+  rgb: string
 }
 
 /** Render order wherever several apply at once. Strongest claim first. */
@@ -39,18 +46,18 @@ export type ReviewFlag = (typeof REVIEW_FLAG_ORDER)[number]
 // stronger/weaker. Fact-checking is CLAIM-level (were these statements true); peer review
 // is DOCUMENT-level (is the argument sound). Neither implies the other.
 export const REVIEW_STATUS: Record<string, StatusMeta> = {
-  'peer-reviewed':   { label: 'Peer reviewed',       short: 'Reviewed',  icon: 'award',       color: 'text-emerald-400', bg: 'border-emerald-500/30 bg-emerald-950/10' },
-  'fact-checked':    { label: 'Fact checked',        short: 'Checked',   icon: 'check',       color: 'text-blue-400',    bg: 'border-blue-500/30 bg-blue-950/10' },
-  'seeking-review':  { label: 'Seeking peer review', short: 'Seeking',   icon: 'search',      color: 'text-amber-400',   bg: 'border-amber-500/30 bg-amber-950/10' },
-  'open-to-comment': { label: 'Open to comment',     short: 'Open',      icon: 'message-square', color: 'text-stone-300', bg: 'border-stone-500/30 bg-stone-950/30' },
-  'revised':         { label: 'Revised',             short: 'Revised',   icon: 'rotate-ccw',  color: 'text-stone-300',   bg: 'border-stone-500/30 bg-stone-950/30' },
+  'peer-reviewed':   { label: 'Peer reviewed',       short: 'Reviewed',  icon: 'award',       color: 'text-emerald-400', rgb: '52 211 153', bg: 'border-emerald-500/30 bg-emerald-950/10' },
+  'fact-checked':    { label: 'Fact checked',        short: 'Checked',   icon: 'check',       color: 'text-blue-400', rgb: '96 165 250',    bg: 'border-blue-500/30 bg-blue-950/10' },
+  'seeking-review':  { label: 'Seeking peer review', short: 'Seeking',   icon: 'search',      color: 'text-amber-400', rgb: '251 191 36',   bg: 'border-amber-500/30 bg-amber-950/10' },
+  'open-to-comment': { label: 'Open to comment',     short: 'Open',      icon: 'message-square', color: 'text-stone-300', rgb: '214 211 209', bg: 'border-stone-500/30 bg-stone-950/30' },
+  'revised':         { label: 'Revised',             short: 'Revised',   icon: 'rotate-ccw',  color: 'text-stone-300', rgb: '214 211 209',   bg: 'border-stone-500/30 bg-stone-950/30' },
 }
 
 /** How sure the author is. Nothing about who checked it — that is reviewStatus. */
 export const CONFIDENCE: Record<string, StatusMeta> = {
-  'speculative':    { label: 'Speculative',    short: 'Speculative', icon: 'lightbulb', color: 'text-orange-400', bg: 'border-orange-500/30 bg-orange-950/10' },
-  'working-theory': { label: 'Working theory', short: 'Theory',      icon: 'zap',       color: 'text-amber-400',  bg: 'border-amber-500/30 bg-amber-950/10' },
-  'confident':      { label: 'Confident',      short: 'Confident',   icon: 'check',     color: 'text-stone-300',  bg: 'border-stone-500/30 bg-stone-950/30' },
+  'speculative':    { label: 'Speculative',    short: 'Speculative', icon: 'lightbulb', color: 'text-orange-400', rgb: '251 146 60', bg: 'border-orange-500/30 bg-orange-950/10' },
+  'working-theory': { label: 'Working theory', short: 'Theory',      icon: 'zap',       color: 'text-amber-400', rgb: '251 191 36',  bg: 'border-amber-500/30 bg-amber-950/10' },
+  'confident':      { label: 'Confident',      short: 'Confident',   icon: 'check',     color: 'text-stone-300', rgb: '214 211 209',  bg: 'border-stone-500/30 bg-stone-950/30' },
 }
 
 /** How tested it is. Nothing about who checked it, and nothing about confidence. */
@@ -81,4 +88,107 @@ export function reviewFlags(values: readonly (string | null)[] | null | undefine
 export function statusPlainText(values: readonly (string | null)[] | null | undefined): string | null {
   const labels = reviewFlags(values).map((f) => f.label)
   return labels.length ? labels.join(' · ') : null
+}
+
+/* ── The aura (3.4) ───────────────────────────────────────────────────────────
+   A persistent edge glow on the card tile in the status colour. Styling lives in
+   styles/status.css; this decides only WHICH colours and HOW MANY. */
+
+export type AuraIntensity = 'subtle' | 'medium' | 'pronounced'
+
+/**
+ * The shipped intensity. All three are rendered at 1440/768/390 in docs/audit/frames/ for
+ * Stefan to pick from; changing this one line changes every card. `subtle` is the default
+ * because 3.4 asks for "a faint edge treatment" and the louder two are candidates, not the
+ * brief's stated starting point.
+ */
+export const AURA_INTENSITY: AuraIntensity = 'subtle'
+
+/**
+ * Props for the aura, or `null` when the post carries no status — in which case no
+ * `data-aura` attribute is emitted at all and the card renders exactly as it did before.
+ * That is the graceful default, and it is most posts.
+ *
+ * AT MOST TWO COLOURS, and specifically the same two the card's marks show, because
+ * `reviewFlags(status, 2)` is what feeds both. The brief's instruction is "do not stack five
+ * glows"; the rule that satisfies it without a second, disagreeing cutoff is "the aura
+ * matches the marks". With one status the second stop repeats the first, so the gradient
+ * collapses to a flat ring by itself rather than by a special case.
+ */
+export function auraProps(
+  values: readonly (string | null)[] | null | undefined,
+  intensity: AuraIntensity = AURA_INTENSITY,
+): { 'data-aura': AuraIntensity; style: Record<string, string> } | null {
+  const flags = reviewFlags(values, 2)
+  if (!flags.length) return null
+  return {
+    'data-aura': intensity,
+    // Custom properties, so they must go through style rather than a Tailwind class.
+    style: { '--aura-1': flags[0].rgb, '--aura-2': (flags[1] ?? flags[0]).rgb },
+  }
+}
+
+/* ── Last updated, and where `revised` comes from (3.7) ───────────────────────
+   The brief asks whether "last updated" should be manual or automatic, and whether it is
+   the same signal as the `Revised` status. Both answers are here.
+
+   NOT `_updatedAt`. It fires on a typo fix, a tag change, and every accidental Studio save,
+   so a post would announce a revision that never happened. The brief warned about exactly
+   this and it is the whole reason the field is not used.
+
+   NO NEW FIELD EITHER. `changelog[]` already exists, and both of its members -- a date and
+   a description of what changed -- are REQUIRED. That makes it manual by construction:
+   you cannot record a revision date without also saying what you revised. A checkbox or a
+   bare `revisedAt` date asks for less evidence than the claim deserves, and a second field
+   could disagree with the changelog the reader is looking at.
+
+   SAME SIGNAL. `Revised` and "last updated" are one thing, so `revised` is derived here
+   rather than selected in Studio -- it has been removed from the schema's options list. A
+   post cannot now claim it was revised while showing no record of what changed. */
+
+/** The most recent changelog date, or null. Dates are `YYYY-MM-DD`, so lexical max is
+ *  chronological max — no parsing, and no timezone to get wrong. */
+export function lastRevisedAt(changelog: readonly { date?: string | null }[] | null | undefined): string | null {
+  const dates = (changelog ?? []).map((c) => (c?.date ?? '').slice(0, 10)).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
+  return dates.length ? dates.reduce((a, b) => (b > a ? b : a)) : null
+}
+
+/**
+ * The review flags to render: whatever the author set, plus `revised` when the changelog
+ * says so. Every surface must call this rather than reading `reviewStatus` raw, or the card
+ * and the article will disagree about whether a post was revised.
+ */
+export function effectiveReviewStatus(
+  values: readonly (string | null)[] | null | undefined,
+  lastRevised: string | null | undefined,
+): string[] {
+  // A hand-set 'revised' is dropped even when it is present in old data. It is no longer
+  // settable, and honouring it would reintroduce the disagreement this removes.
+  const keys = enumKeys(values).filter((v) => v !== 'revised')
+  return lastRevised ? [...keys, 'revised'] : keys
+}
+
+/**
+ * The revision date, but only when it is a real post-publication revision.
+ *
+ * Found by the fixture: its changelog dates (August, 1 September) predate its publishedAt,
+ * and the header rendered "September 11, 2026 · Updated September 1, 2026" — an update
+ * older than the publication it supposedly updates, which reads as nonsense. A backdated
+ * changelog entry, or a draft written over weeks and published afterwards, produces exactly
+ * this on a real post too.
+ *
+ * Every surface routes its date through here so the card, the header and the feed cannot
+ * disagree about whether a revision counts.
+ */
+export function materialRevision(
+  lastRevised: string | null | undefined,
+  publishedAt: string | null | undefined,
+): string | null {
+  const revised = (lastRevised ?? '').slice(0, 10)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(revised)) return null
+  // No publish date yet (an unpublished draft) — nothing to be later than, so show it.
+  const published = (publishedAt ?? '').slice(0, 10)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(published)) return revised
+  // Strictly after: an edit on the day of publication is publishing, not revising.
+  return revised > published ? revised : null
 }

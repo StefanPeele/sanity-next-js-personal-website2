@@ -1,5 +1,16 @@
 import { defineField, defineType } from 'sanity'
+import { REVIEW_FLAG_ORDER, REVIEW_STATUS, reviewFlags, type ReviewFlag } from '../../../lib/status'
 // sanity/schemas/documents/post.ts
+
+/** What each review flag means, for the Studio picker only. The LABELS come from
+ *  REVIEW_STATUS so the picker and the badge can never disagree; only the explanation is
+ *  local, because a reader never sees it. */
+const REVIEW_HINTS: Record<Exclude<ReviewFlag, 'revised'>, string> = {
+  'peer-reviewed': 'a qualified person assessed the reasoning',
+  'fact-checked': 'claims verified against sources',
+  'seeking-review': 'want qualified eyes on this',
+  'open-to-comment': 'want general discussion',
+}
 
 export default defineType({
   name: 'post',
@@ -505,16 +516,21 @@ export default defineType({
         FACT CHECKED — the claims were verified against sources. This is a different guarantee from peer review, not a stronger one.
         SEEKING REVIEW — published, and you want qualified eyes on it. An invitation, and an honest one.
         OPEN TO COMMENT — you want general discussion, not just expert correction.
-        REVISED — materially changed since it was first published.
+        Revised is not in this list on purpose: it is derived from the Changelog, so the badge and the record of what changed can never disagree.
       `,
       options: {
-        list: [
-          { title: 'Peer reviewed — a qualified person assessed the reasoning', value: 'peer-reviewed' },
-          { title: 'Fact checked — claims verified against sources', value: 'fact-checked' },
-          { title: 'Seeking review — want qualified eyes on this', value: 'seeking-review' },
-          { title: 'Open to comment — want general discussion', value: 'open-to-comment' },
-          { title: 'Revised — materially changed since publication', value: 'revised' },
-        ],
+        // Derived from REVIEW_FLAG_ORDER, not retyped. The picker and the rendered badge
+        // now cannot drift apart: adding a value to lib/status.ts adds it here, and the
+        // label a Studio author picks is the label a reader sees, plus the hint below.
+        //
+        // 'revised' is filtered out because it is NOT selectable. It is derived from the
+        // Changelog, whose date and description are both required -- see lastRevisedAt().
+        // A checkbox let a post claim a revision with no record of what changed, and let
+        // the badge and the changelog disagree.
+        list: REVIEW_FLAG_ORDER.filter((f) => f !== 'revised').map((f) => ({
+          title: `${REVIEW_STATUS[f].label} — ${REVIEW_HINTS[f]}`,
+          value: f,
+        })),
       },
     }),
 
@@ -637,16 +653,18 @@ export default defineType({
         'field-notes': '🔧',
         'transmission': '📡',
       }
-      const statusIcons: Record<string, string> = {
-        'expert-verified': '⭐',
-        'seeking-review': '🔍',
-        'peer-reviewed': '✅',
-      }
       const icon = typeIcons[articleType] ?? '📝'
-      const status = statusIcons[reviewStatus] ?? ''
+      // Reads lib/status.ts, the one status vocabulary, rather than keeping a second table
+      // here. The map this replaced had drifted badly: it still listed 'expert-verified'
+      // (removed from the schema), had no entry for fact-checked, open-to-comment or
+      // revised, and indexed itself with `reviewStatus` even though the field is an ARRAY --
+      // so it silently matched only when a post carried exactly one of its three known
+      // values, and printed a comma-joined array as the subtitle otherwise. Found by the
+      // verifier against the claim "there is exactly one status vocabulary".
+      const status = reviewFlags(reviewStatus).map((f) => f.label).join(' · ')
       return {
         title: `${icon} ${title}`,
-        subtitle: status ? `${status} ${reviewStatus}` : articleType,
+        subtitle: status || articleType,
         media,
       }
     },

@@ -3,6 +3,9 @@ import Footer from '@/components/Footer'
 import { BlogBackground } from '@/components/blog/BlogBackground'
 import { TaxonomyProvider } from '@/components/TaxonomyProvider'
 import { getSiteChrome, getTaxonomy } from '@/lib/cms/loaders'
+// The status aura (3.4). Imported here, not in the platform-owned styles/index.css, so it
+// scopes to the archive shell -- /blog, /garden, /library, /paths -- and nowhere else.
+import '@/styles/status.css'
 // app/(archive)/layout.tsx
 // Shared shell for /blog, /garden, /library, /glossary.
 // Pages control their own <main> and top padding so full-bleed article heroes still work.

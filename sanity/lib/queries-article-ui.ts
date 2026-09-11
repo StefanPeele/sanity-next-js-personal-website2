@@ -5,7 +5,7 @@ const v = `_key, key, label, short, description, banner, color, dots`
 
 export const articleUiQuery = defineQuery(`
   *[_type == "articleUi"][0]{
-    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },
+    header{ backLabel, readTimeLabel, sourcesLabel, updatedLabel, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },
     toc{ title, mobileTitle, minutesSuffix },
     readerMenu{
       buttonLabel, closeLabel,

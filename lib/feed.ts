@@ -4,24 +4,11 @@
 
 import { client } from '@/sanity/lib/client'
 import { feedQuery } from '@/sanity/lib/queries'
-import { portableTextToHtml } from '@/lib/portableTextToHtml'
-import { portableTextToPlain } from '@/lib/reading'
-import { statusPlainText } from '@/lib/status'
-import { absoluteUrl, articleTypeMeta, SITE } from '@/lib/site'
+import { absoluteUrl, SITE } from '@/lib/site'
+import { toFeedItems, type FeedItem } from '@/lib/feedItems'
 
-export type FeedItem = {
-  id: string
-  title: string
-  url: string
-  publishedAt: string
-  updatedAt: string
-  summary: string
-  html: string
-  categories: string[]
-  imageUrl: string | null
-  /** Plain text, because a feed reader has no colour and no icons to lean on. */
-  status: string | null
-}
+export { toFeedItems }
+export type { FeedItem }
 
 export const FEED_META = {
   title: `${SITE.name} — Blog`,
@@ -37,29 +24,5 @@ export const FEED_CACHE_CONTROL = 'public, s-maxage=3600, stale-while-revalidate
 
 export async function loadFeedItems(): Promise<FeedItem[]> {
   const posts = await client.fetch(feedQuery, {}, { next: { revalidate: 3600 } })
-  return (posts ?? [])
-    .filter((p) => Boolean(p.slug && p.title && p.publishedAt))
-    .map((p) => {
-      const url = absoluteUrl(`/blog/${p.slug}`)
-      const lane = articleTypeMeta(p.articleType)?.label
-      const categories = [...(p.categories ?? []).filter((c): c is string => Boolean(c))]
-      if (lane) categories.unshift(lane)
-      const summary = p.excerpt?.trim() || portableTextToPlain(p.body as never).slice(0, 280)
-      // Phase 3.3's feed tier. Prefixed into the summary rather than added as a field
-      // nothing reads: RSS and JSON Feed have no slot for an epistemic status, so the
-      // only way a subscriber sees it is in text they already read.
-      const status = statusPlainText(p.reviewStatus)
-      return {
-        id: p._id,
-        title: p.title ?? 'Untitled',
-        url,
-        publishedAt: p.publishedAt!,
-        updatedAt: p._updatedAt,
-        summary: status ? `[${status}] ${summary}` : summary,
-        status,
-        html: portableTextToHtml(p.body, url),
-        categories,
-        imageUrl: p.imageUrl ?? null,
-      }
-    })
+  return toFeedItems(posts)
 }

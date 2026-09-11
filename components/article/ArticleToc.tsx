@@ -16,6 +16,45 @@ type Props = {
   /** Pre-redacted on the server by reviewerSummary(). Never the raw reviewer objects --
       this is a client component, so anything passed here reaches the RSC payload. */
   reviewedBy?: string | null
+  /**
+   * 3.6. Titles only, in the order they appear in the body list. Deliberately NOT the full
+   * source objects: the sidebar is 220px wide and a well-cited post can carry fifteen
+   * citations, so the column shows a count and the titles, and each one links to its full
+   * entry at the bottom of the article. One canonical rendering, two volumes -- the same
+   * rule 3.3 applies to status.
+   */
+  sources?: string[]
+}
+
+function SourcesBlock({ copy, sources, className }: { copy: ArticleUiCopy; sources: string[]; className: string }) {
+  if (!sources.length) return null
+  return (
+    <details className={className}>
+      <summary className={`cursor-pointer list-none font-sans text-xs text-stone-400 hover:text-stone-100 flex items-center justify-between gap-2 rounded-sm ${FOCUS}`}>
+        {copy.header.sourcesLabel.replace('{n}', String(sources.length))}
+        <ChevronDown size={14} className="shrink-0" aria-hidden="true" />
+      </summary>
+      {/* Bounded: the sidebar is a fixed-height sticky column, and an open list of fifteen
+          citations would otherwise push past the viewport with no way to scroll it. Safe to
+          use overflow here -- unlike the TOC container, nothing inside this list renders an
+          absolutely positioned panel that the implied overflow-x would clip. */}
+      <ol className="mt-2.5 space-y-1.5 list-none m-0 p-0 max-h-[40vh] overflow-y-auto pr-1">
+        {sources.map((title, i) => (
+          <li key={i} className="flex items-baseline gap-2">
+            <span className="font-mono text-xs text-stone-400 shrink-0">[{i + 1}]</span>
+            {/* A plain anchor, not scrollTo: these are real ids in the document and a
+                reader should be able to copy the link to a single citation. */}
+            <a
+              href={`#source-${i + 1}`}
+              className={`flex-1 min-w-0 font-sans text-xs text-stone-400 hover:text-stone-100 leading-snug transition-colors rounded-sm ${FOCUS}`}
+            >
+              {title}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </details>
+  )
 }
 
 function TocList({ copy }: { copy: ArticleUiCopy }) {
@@ -42,7 +81,7 @@ function TocList({ copy }: { copy: ArticleUiCopy }) {
   )
 }
 
-export function ArticleToc({ copy, menu, variant, reviewedBy }: Props) {
+export function ArticleToc({ copy, menu, variant, reviewedBy, sources = [] }: Props) {
   const { headings } = useArticle()
 
   if (variant === 'sidebar') {
@@ -72,6 +111,10 @@ export function ArticleToc({ copy, menu, variant, reviewedBy }: Props) {
               {copy.credibility.reviewedByLabel}: <span className="text-stone-300">{reviewedBy}</span>
             </p>
           )}
+          {/* 3.6: at the bottom of the column, below who checked it. Closed by default --
+              the column's job is orientation, and an open list of fifteen citations would
+              push the headings out of the sticky viewport. */}
+          <SourcesBlock copy={copy} sources={sources} className="mt-4 pt-4 border-t border-edge-faint shrink-0" />
         </div>
       </aside>
     )
@@ -93,6 +136,9 @@ export function ArticleToc({ copy, menu, variant, reviewedBy }: Props) {
               {copy.credibility.reviewedByLabel}: <span className="text-stone-300">{reviewedBy}</span>
             </p>
           )}
+          {/* The Contents surface must not differ between breakpoints -- the verifier caught
+              exactly that when reviewedBy shipped to the sidebar only. */}
+          <SourcesBlock copy={copy} sources={sources} className="mt-4 pt-3 border-t border-edge-faint" />
         </details>
       ) : <div className="flex-1" />}
       <ReaderMenu {...menu} />

@@ -25,7 +25,7 @@ export default defineType({
     obj('header', 'Header', [
       str('backLabel', 'Back link label'),
       str('readTimeLabel', 'Read time ({n} = minutes)'),
-      str('sourcesLabel', 'Sources count ({n})'),
+      str('sourcesLabel', 'Sources count ({n})'), str('updatedLabel', 'Last updated ({date})'),
       str('cardsLabel', 'Key terms count ({n})'),
       obj('reviewBadges', 'Review badges', [str('seekingReview', 'Seeking review'), str('peerReviewed', 'Peer reviewed')]),
     ], { group: 'header' }),

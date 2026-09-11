@@ -6,6 +6,9 @@ export const DEFAULT_ARTICLE_UI = {
     backLabel: 'Blog',
     readTimeLabel: '{n} min read',
     sourcesLabel: '{n} sources',
+    // 3.7. Shown only when the changelog says the post was materially revised, never on
+    // every Studio save -- see lastRevisedAt() in lib/status.ts.
+    updatedLabel: 'Updated {date}',
     cardsLabel: '{n} key terms',
     reviewBadges: { seekingReview: 'Seeking review', peerReviewed: 'Peer reviewed' },
   },

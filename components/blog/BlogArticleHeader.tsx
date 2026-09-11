@@ -20,6 +20,11 @@ interface BlogArticleHeaderProps {
   title: string
   /** Already formatted with lib/dates formatDate. */
   publishDate: string
+  /**
+   * 3.7. Already formatted, and already decided: the page passes this ONLY when the
+   * changelog records a material revision. Never `_updatedAt`, which fires on a typo fix.
+   */
+  updatedDate?: string | null
   readTime: number
   categories: string[]
   articleType?: string | null
@@ -36,6 +41,7 @@ interface BlogArticleHeaderProps {
 export function BlogArticleHeader({
   title,
   publishDate,
+  updatedDate,
   readTime,
   categories,
   articleType,
@@ -61,6 +67,9 @@ export function BlogArticleHeader({
 
   const metaItems = [
     publishDate,
+    // Beside the published date, not replacing it. A reader who wants to know how old the
+    // thinking is needs both -- "updated last month" hides a post first written in 2019.
+    ...(updatedDate ? [labels.updatedLabel.replace('{date}', updatedDate)] : []),
     n(labels.readTimeLabel, readTime),
     ...(sourceCount > 0 ? [n(labels.sourcesLabel, sourceCount)] : []),
     ...(conceptCardCount > 0 ? [n(labels.cardsLabel, conceptCardCount)] : []),

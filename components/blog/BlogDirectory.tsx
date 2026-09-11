@@ -13,7 +13,7 @@ import type { BlogIndexQueryResult } from '@/sanity.types'
 import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPage'
 import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { Icon } from '@/lib/cms/icons'
-import { reviewFlags } from '@/lib/status'
+import { auraProps, effectiveReviewStatus, materialRevision, reviewFlags } from '@/lib/status'
 import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
 import { ArrowRight } from 'lucide-react'
 // components/blog/BlogDirectory.tsx
@@ -277,6 +277,12 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           const minutes = readingTime(post.wordCount ?? 0)
           const firstCat = post.categories?.[0] ?? undefined
           const meta = articleTypeMeta(post.articleType)
+          // null for a post with no status, which is most of them -- no data-aura is
+          // emitted and the tile renders exactly as it did before 3.4.
+          // 3.7: `revised` is derived from the changelog, not selected, so every surface
+          // must read it through effectiveReviewStatus or the card and the article disagree.
+          const status = effectiveReviewStatus(post.reviewStatus, materialRevision(post.lastRevised, post.publishedAt))
+          const aura = auraProps(status)
 
           return (
             <Link
@@ -285,7 +291,11 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
               onClick={() => post.slug && markPostRead(post.slug)}
               className={`group flex flex-col space-y-4 transition-all duration-300 rounded-lg ${FOCUS} ${isRead ? 'opacity-60 hover:opacity-100' : 'opacity-100'}`}
             >
-              <div className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-edge relative" style={{ backgroundColor: 'rgba(20,20,24,0.8)' }}>
+              <div
+                className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-edge relative"
+                data-aura={aura?.['data-aura']}
+                style={{ backgroundColor: 'rgba(20,20,24,0.8)', ...aura?.style }}
+              >
                 <div className="absolute inset-0 z-10 bg-black/20 group-hover:bg-transparent transition-all duration-500" />
 
                 {post.imageUrl ? (
@@ -349,7 +359,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                         and greyscale printing. Colour is only the second cue. 14px, which
                         is 3.3's floor. At most two, so a heavily-flagged post does not turn
                         its card into a badge rack. */}
-                    {reviewFlags(post.reviewStatus, 2).map((f) => (
+                    {reviewFlags(status, 2).map((f) => (
                       <span key={f.key} className={`inline-flex items-center ${f.color}`} title={f.label}>
                         <Icon name={f.icon} size={14} aria-hidden />
                         <span className="sr-only">{f.label}</span>

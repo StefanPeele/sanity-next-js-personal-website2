@@ -49,7 +49,11 @@ export function SourcesList({ sources, heading = 'Sources' }: SourcesListProps &
           return (
             <li
               key={source._key ?? i}
-              className="flex items-start gap-4 group"
+              // 3.6. The Contents column lists these by number and links here, so the body
+              // list stays the ONE full rendering and the column is a pointer to it. Ids are
+              // 1-based to match the [n] the reader sees. scroll-mt clears the sticky header.
+              id={`source-${i + 1}`}
+              className="flex items-start gap-4 group scroll-mt-24"
             >
               {/* Index number */}
               <span className="font-mono text-xs text-stone-400 flex-shrink-0 mt-0.5 w-6 text-right">

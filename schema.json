@@ -3172,6 +3172,13 @@
               },
               "optional": true
             },
+            "updatedLabel": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
             "cardsLabel": {
               "type": "objectAttribute",
               "value": {
