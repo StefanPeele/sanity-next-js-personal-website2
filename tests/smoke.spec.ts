@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { firstPostSlug } from './helpers'
+import { allPostSlugs, firstPostSlug } from './helpers'
 // tests/smoke.spec.ts
 // Every reserved route returns 200 with exactly one <h1> and a #content landmark; unknown slugs 404
 // with the Studio-editable copy; feeds/sitemap/robots parse; the article page has one TOC, one progress
@@ -200,5 +200,19 @@ test('reading time agrees between every card and its article', async ({ page }) 
     expect(found.length, `${href} rendered no "N min read"`).toBeGreaterThan(0)
     expect(new Set(found).size, `${href} renders disagreeing figures: ${found.join(', ')}`).toBe(1)
     expect(found[0], `card says ${cardMinutes} min, ${href} says ${found[0]} min`).toBe(cardMinutes)
+  }
+})
+
+test('every post has exactly one h1', async ({ page, request }) => {
+  // The article-page tests above open only the FIRST post. A second <h1> sat on the
+  // portfolio post for as long as it existed because no test ever opened that page --
+  // CustomPortableText rendered a body "Heading 1" block as a real <h1>, competing with
+  // the article title. This opens all of them.
+  const slugs = await allPostSlugs(request)
+  expect(slugs.length, 'sitemap listed no posts').toBeGreaterThan(0)
+  for (const slug of slugs) {
+    const res = await page.goto(`/blog/${slug}`)
+    expect(res?.status(), `/blog/${slug} status`).toBe(200)
+    await expect(page.locator('h1'), `/blog/${slug} h1 count`).toHaveCount(1)
   }
 })

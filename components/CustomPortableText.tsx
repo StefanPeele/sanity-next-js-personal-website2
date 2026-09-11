@@ -97,11 +97,31 @@ export function CustomPortableText({
       normal: ({ children }) => (
         <p className={paragraphClasses ?? `mb-6 leading-[1.7] text-stone-300 ${bodyText}`}>{children}</p>
       ),
-      h1: ({ children }) => (
-        <h1 className="mt-16 mb-6 font-serif text-4xl md:text-5xl font-bold text-white leading-tight tracking-tight">
-          {children}
-        </h1>
-      ),
+      // Rendered as <h2>, not <h1>, and deliberately.
+      //
+      // Every surface that renders this component already supplies the page's own <h1>:
+      // BlogArticleHeader on an article, Header.tsx on project and personal pages, and
+      // their own markup on /garden and /glossary. So a body "Heading 1" was ALWAYS a
+      // second h1 on the page, against CLAUDE.md's one-h1-per-page rule. Measured on
+      // production: /blog/the-creation-of-my-personal-portfolio-site rendered two.
+      //
+      // It was also the only heading style with no headingProps, so it had no id, no
+      // anchor link, and -- because ArticleProvider collects `h2, h3` -- it never appeared
+      // in the table of contents. A large heading the contents could not reach.
+      //
+      // The visual treatment is kept, so an author who picked "Heading 1" still gets the
+      // largest section heading. Only the tag and the missing props change.
+      //
+      // Found by the verifier subagent, outside the claim it was given.
+      h1: ({ children, value: v }) => {
+        const p = headingProps(v?._key)
+        return (
+          <h2 {...p} className="group mt-16 mb-6 font-serif text-4xl md:text-5xl font-bold text-white leading-tight tracking-tight scroll-mt-28">
+            {children}
+            {p.id && <HeadingAnchor id={p.id} />}
+          </h2>
+        )
+      },
       h2: ({ children, value: v }) => {
         const p = headingProps(v?._key)
         return (
