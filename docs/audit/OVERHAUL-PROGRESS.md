@@ -1,7 +1,7 @@
 # Blog Overhaul — Progress
 
-Last updated: 2026-09-11T04:05Z
-Current phase: **Phase 2 complete** — 2.1 shipped and live; 2.2–2.6 proposed, with options rendered where the brief asked. **Phase 3 is next and not started.**
+Last updated: 2026-09-11T05:30Z
+Current phase: **Phase 3 in progress — 3.1 shipped. Verification infrastructure built and retroactively tested.** Phase 2 complete — 2.1 shipped and live; 2.2–2.6 proposed, with options rendered where the brief asked. **Phase 3 is next and not started.**
 Session count: 1
 
 ## Shipped
@@ -9,7 +9,7 @@ Session count: 1
 | Item | Commit | Verified live | **Verified by** | Notes |
 | --- | --- | --- | --- | --- |
 | Brief installed in the repo | `33859fb` | n/a | self | 1226 lines, survives a context reset |
-| 0.1 Reading time — one source of truth | `2724d3e` | **yes** — agreement test passes against stefanpeele.com | self | Suite is now **34**, not 33 |
+| 0.1 Reading time — one source of truth | `2724d3e` | **yes** | **verifier — PASS**, 3 posts × 2 viewports × 4 states. It also found a *third* surface the claim missed (fixed `76c3d55`) | Suite is now **34**, not 33 |
 | 0.2 FEATURED badge alignment | `b6c07c2` | **yes** | self | Text asymmetry 5px → 1px, box unchanged at 30px |
 | 0.3 `(TESTING)` prefix removed | Sanity txn `mIRMU65sT5gw12rzV1sPip` | yes — dataset re-read | self | Draft only; published was already clean |
 | 0.4 `--` → em dash | same transaction | yes — dataset re-read | self | Published document patched directly |
@@ -23,12 +23,86 @@ Session count: 1
 | **1.7 Comment systems** | `9e43345` | n/a | self | |
 | **1.8 Hover previews** | `e2622cc` | n/a | self | |
 | **1.9 Corrections** | `43d45ce` | n/a | self | |
+| **3.1 Status fields: subtraction then flags** | `d91a555` | not yet deployed | self | `confidenceLevel` loses `verified`/`peer-reviewed`; `reviewStatus` becomes independent flags |
+| Section reading times (Phase 0.1 follow-up) | `76c3d55` | not yet deployed | **verifier-found** | TOC sections summed to more than the post |
 | **2.1 Rename to Blog** | `1d0869b`, `8141a9f` | **yes** — h1 reads Blog, zero `>Writing<`, /writing redirects | self | 20 strings found, **14 renamed, 6 left as the activity**. Both halves: code defaults *and* the live Studio documents |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:
 `measure-reference-site.mjs`, `measure-metadata.mjs`, `measure-sidenotes.mjs`, plus
 `capture-change.mjs` for before/after captures.
+
+## Independent verification — retroactive run, 2026-09-11
+
+Three already-shipped claims from Phases 0–2, chosen because a false negative on any of
+them would be expensive. Each verifier was given **the claim only** — never the
+implementation, never the commit — and told to design its own measurement and not to reuse
+any harness under `docs/audit/`.
+
+All three ran against **production at `63c5de4`**.
+
+| # | Claim | Verdict | n |
+| --- | --- | --- | --- |
+| 1 | Card and article reading time agree for every post; no post shows two figures; nothing three-digit | **PASS** | 3 posts × 2 viewports × 4 article states |
+| 2 | No visible text below 12px anywhere, except four 8px SVG labels on `/graph` | **PASS** | 18 routes, 5,633 elements, 1,548 text nodes, + 39 interaction clicks |
+| 3 | Every keyboard-reachable control on the knowledge routes shows a focus indicator; skip link has its own | **PASS** | 7 routes, **228 tab stops** |
+
+### Does a verifier that agrees three times actually work?
+
+That is the right question, and the answer here is yes — because two of the three **ran
+their own controls**, which is the only evidence that distinguishes a working verifier from
+a rubber stamp:
+
+- **#3 ran a negative control.** It injected `a:focus,button:focus{outline:none!important}`
+  on `/blog`, re-tabbed, and its probe correctly reported **25 of 25 stops failing**. The
+  probe can detect absence; there was simply nothing absent.
+- **#2 ran a positive control.** It injected eight cases — 10px plain, 11px bare text node
+  inside a mixed element, 9px nested span, `<text font-size="7">`, plus four hidden variants
+  at 8px — and the probe flagged **exactly the four visible ones and excluded exactly the
+  four hidden ones**.
+
+All three also **caught and corrected their own first-pass errors before reporting**: an
+ancestor climb that collapsed three cards into one, a tab loop that re-counted elements
+after wrap-around, and a settle time short enough to sample a CSS transition mid-flight.
+
+### What they found that the claims did not cover
+
+**A third reading-time surface (now fixed, `76c3d55`).** Verifier #1 confirmed card and
+article agree, then reported — as an aside outside its claim — that the article TOC renders
+per-section estimates that **sum to more than the post**: portfolio 1/1/1/1 = 4 against a
+2-minute header, home lab 1/1/2/1 = 5 against 3. Phase 0.1 claimed "one source of truth"
+and there were three. **The claim I wrote was too narrow, and so is its regression test.**
+
+**Two new measurement artifacts**, added to the trap lists:
+
+- **#21 — the focus ring is transitioned.** A short settle samples it mid-animation. At
+  150ms, verifier #3 saw five phantom "non-standard ring" colours (`rgb(253,226,155)`,
+  `rgb(254,237,194)` …); sampling one over 2.5s showed it resolving to the standard
+  `rgb(251,191,36)`. At 320ms they all collapsed. Anyone probing focus styles with a short
+  wait will report false non-standard rings.
+- **#22 — `body.textContent` is not a safe substitute for `innerText`.** It includes
+  `<script>` contents, so it inherits the Tailwind-class trap: the RSC payload contains
+  `min-h-[48px]`, which a `/\d+ min/` match reads as "2 min". All three article pages
+  produce phantom 2s that way. Only `innerText` is clean.
+
+**A third, found by me while verifying Phase 3.1:**
+
+- **#23 — the object `sanityFetch` returns is frozen.** Assigning to it crashes the Next
+  build worker with `exited with code: 3221226505` during "Collecting page data" — a
+  Windows access violation that looks nothing like a frozen-object error. Reverting fixed it
+  immediately.
+
+### Honest limits
+
+- Coverage was desktop-width only, `/studio` was measured at the unauthenticated login
+  screen, and hover/focus-only states were not forced (though #2 confirmed there is no
+  hidden sub-12px text in the DOM to be revealed).
+- `.claude/agents/verifier.md` is **not loaded mid-session** — agent definitions register at
+  startup. These three ran as general-purpose agents with the verifier's instructions
+  inlined. From the next session the named subagent is available and this is a one-word
+  invocation.
+- One verifier's scratch file was swept into the repo by a `git add -A` during its run.
+  Fixed with `.gitignore` rules; worth remembering that agents write to the repo root.
 
 ## Proposed, awaiting Stefan
 
