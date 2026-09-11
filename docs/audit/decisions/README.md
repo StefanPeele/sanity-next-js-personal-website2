@@ -1,11 +1,62 @@
 # Two decisions, made decidable — 2026-09-09
 
+> ## STATUS, updated 2026-09-11 — read this before acting on anything below
+>
+> Phase 5.5 of the blog brief requires this document to say which of its options are still
+> live, so a future session does not implement a recommendation that has already shipped or
+> has been overtaken.
+>
+> | | Status |
+> | --- | --- |
+> | **Decision 1 — the h1 measure** | **DONE.** Option **C** shipped. `lg:w-[52rem] lg:max-w-none` is on the `<h1>` in `components/blog/BlogArticleHeader.tsx:126`. Verified in the file, not assumed. Nothing here is outstanding. |
+> | **Decision 2 — chrome in the reading column** | **SUPERSEDED by Phase 5.** Its recommendation (Config 2) should **not** be implemented as written. |
+>
+> ### Why Decision 2 is superseded rather than simply done
+>
+> Its analysis was right and its conclusion has been overtaken by a later decision, which is
+> a different thing from being wrong.
+>
+> Decision 2 rejected **Config 3 (remove the chrome entirely)** for one reason, stated
+> plainly at the time: *"the reader menu loses its home — theme, text size, width, and the
+> four accessibility toggles would all need somewhere else to live. That is the real cost,
+> and it is not small."*
+>
+> **Phase 5 builds that home.** The reading toolbar is a persistent, context-aware control
+> that lives outside the reading measure and carries the themes, text sizes, width,
+> accessibility toggles, sharing and read-aloud. Once it exists, the objection to Config 3
+> is gone — not argued away, but removed, because the thing it was protecting has somewhere
+> else to be.
+>
+> So the sequencing in the "Sequencing note" at the foot of this file is **stale**. It reads
+> *"Config 2 is a component rewrite and should be its own session"*. Config 2 is now work
+> that would be undone by Phase 5 a few items later.
+>
+> ### What is still true and worth keeping
+>
+> Two measurements here remain load-bearing and should not be re-derived:
+>
+> - **Removing the TOC does not centre the prose.** It moves from x=298 to x=266 and still
+>   leaves 534px to its right, because the centring is done by the `max-w-6xl` container, not
+>   by the sidebar. Any Phase 5 layout that assumes deleting chrome will rebalance the page
+>   is wrong, and this is the measurement that says so.
+> - **The reference-site table.** Six of eight sites put *nothing* in the reading column, and
+>   the one that keeps something (maggieappleton.com) keeps exactly one collapsed control in
+>   the margin. That is the shape Phase 5 is aiming at, and this is the evidence for it.
+>
+> ### What breaks when Phase 5 lands
+>
+> `tests/smoke.spec.ts:97-98,122` asserts `[data-toc="sidebar"]` visible at desktop and
+> `[data-toc="mobile"]` hidden, and the reverse at mobile. Decision 2 already flagged this;
+> it is still true and is now Phase 5's problem rather than Config 2's.
+
+---
+
 Rendered against production by injecting CSS at runtime. **No application code was changed.**
 Every option below is a real screenshot of the real article, not a mockup.
 
 ---
 
-## Decision 1 — the h1 measure (D4)
+## Decision 1 — the h1 measure (D4)  ·  **DONE, option C shipped**
 
 **First, a correction.** My proposal said to add `text-balance`. It is already there:
 `styles/index.css:21` applies `text-wrap: balance` to every `h1`–`h6`. That is why option B
@@ -57,7 +108,7 @@ measure, not every possible title. Nothing else in the header moves, because onl
 
 ---
 
-## Decision 2 — chrome in the reading column
+## Decision 2 — chrome in the reading column  ·  **SUPERSEDED by Phase 5 — do not implement Config 2**
 
 ### What the reference sites actually do
 
@@ -118,5 +169,9 @@ sidebar. Config 3 therefore needs a container change too, or it just shifts the 
 that keeps anything at all — without losing the accessibility work. Config 3 is the purer answer and
 the right one eventually, but only after the reader menu has a home that is not the TOC.
 
-**Sequencing note:** do Decision 1 first. It is minutes and independent. Config 2 is a component
-rewrite and should be its own session.
+**Sequencing note — STALE, kept for the record.** It read: *"do Decision 1 first. It is minutes
+and independent. Config 2 is a component rewrite and should be its own session."*
+
+Decision 1 was done. Config 2 should not be: Phase 5's toolbar makes Config 3 reachable, and
+building Config 2 first would be work undone a few items later. The live sequencing is the
+brief's own — Phase 5 replaces the reader menu, and the reading column follows from that.

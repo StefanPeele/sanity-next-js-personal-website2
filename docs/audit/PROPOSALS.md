@@ -403,3 +403,168 @@ round of options rather than being folded in here.
 | Drop the duplicate FEATURED badge | **Recommended, not applied** — subtraction, one line |
 | h1 72px → 48px | **Not rendered.** Needs its own options round |
 | Latest strip as a real second tier | **Not designed.** Depends on the h1 decision |
+
+---
+
+# Phase 5.6 — Summaries. The full proposal.
+
+Written 2026-09-11. Nothing here is built yet; this answers the six questions 5.6 asks,
+with the arithmetic done against the real corpus rather than a guess at it.
+
+## What already exists, so none of it gets rebuilt
+
+- **`@anthropic-ai/sdk` is already a dependency**, and `app/actions/ask.ts` already calls it
+  for "Ask this article" — gated on `ANTHROPIC_API_KEY`, rate-limited per IP, fed article
+  text through `portableTextToPlain`. The summary feature reuses that shape.
+- **A publish webhook already exists**, at `app/api/draft-mode/enable/revalidate/route.ts`.
+  Sanity calls it on every create/update/delete and it revalidates the affected paths. This
+  is the hook the summary generation attaches to.
+  *(Aside, outside 5.6: that route lives at `/api/draft-mode/enable/revalidate`, nested
+  inside the draft-mode enable route. It works, and the path is misleading — it has nothing
+  to do with enabling draft mode. Worth moving to `/api/revalidate` with a redirect, but not
+  as part of this.)*
+
+## 1. When does it generate?
+
+**At publish time, from the existing webhook. Stored in Sanity.** Not at build time, not on
+first request.
+
+The three options and why this one:
+
+| | Where it runs | Cost driver | Latency for a reader | Fails how |
+| --- | --- | --- | --- | --- |
+| Build time | `npm run build` | **every build**, × every post | none | build breaks or ships empty |
+| First request, cached | edge/server | cache misses | **first reader of each post waits** | reader sees a spinner or nothing |
+| **Publish webhook → Sanity** | once, out of band | **every material edit** | none | nothing renders; the failure is visible in Studio |
+
+The decisive number is the second column, and it is worked out below: build-time generation
+costs more *every month* than the webhook approach costs *in total, ever*.
+
+The second-order reason is just as strong. Storing the summary in Sanity makes it a piece of
+content rather than a cache entry — which is what makes question 6 (hand-written override)
+answerable at all, and what makes a failure something Stefan can see rather than something a
+reader can.
+
+## 2. Is it cached, and where?
+
+It is not cached; it is **stored**, as a field on the post. The distinction matters: a cache
+can be evicted and silently regenerated, and this must not be, because the field is
+editable and an eviction would throw away a hand-written override.
+
+Schema:
+
+```
+summary        text        the summary itself
+summarySource  'generated' | 'authored'
+summaryModel   string      which model wrote it, e.g. claude-haiku-4-5
+summaryAt      datetime    when
+summaryOfHash  string      hash of the body text it describes
+```
+
+`summaryOfHash` is what makes staleness detectable rather than assumed — see question 4.
+
+## 3. What does it cost?
+
+**Measured against the real corpus**, not estimated from a typical blog post. The three
+published posts are 4,760, 24,281 and 3,037 characters of body text: mean 10,693 chars,
+about **2,673 tokens each**, with the longest at about **6,070**.
+
+Per generation: roughly **2,900 input tokens** (post + a short system prompt) on average,
+**6,300 worst case**, and **100–150 output tokens** for a summary of 60–90 words.
+
+Lifetime, assuming the blog reaches 50 posts and each is regenerated three times (first
+publish plus two material edits):
+
+- 150 generations × ~2,900 in ≈ **435,000 input tokens**
+- 150 × ~130 out ≈ **20,000 output tokens**
+
+That is the *total, forever* figure, not a monthly one.
+
+**Per month at realistic traffic: zero.** Generation is decoupled from requests entirely, so
+a thousand readers and one reader cost the same. This is the whole argument for option three.
+
+Contrast build-time generation: 50 posts × 2,900 ≈ **145,000 input tokens per build**, and
+the publish webhook triggers a rebuild on every content change. At a few dozen content edits
+a month that is **3–5 million input tokens per month** — roughly ten times the *lifetime*
+cost of the webhook approach, every month, forever.
+
+**Model: Haiku 4.5, not Opus.** `ask.ts` uses `claude-opus-5`, which is right for answering
+an arbitrary reader question from a long article and wrong for compressing a document into
+80 words. Summarisation is the cheapest capable model's job.
+
+**On dollar figures:** the token arithmetic above is exact and derived from the real corpus.
+I have deliberately not converted it to dollars, because I would be quoting a price list
+from memory and this project has a standing rule about confident numbers that turn out to be
+wrong. Multiply by the current published per-token price — at any plausible price this is a
+rounding error, and that conclusion is robust to being wrong about the exact rate.
+
+## 4. What happens when generation fails?
+
+**Nothing renders, and publishing is never blocked.**
+
+- The webhook writes nothing on failure. `summary` stays empty, and every surface that would
+  show it — the hover preview, the toolbar panel — simply omits it. No spinner, no
+  placeholder, no "summary unavailable". A missing summary is not an error state for a
+  reader; it is the absence of an optional convenience.
+- The failure is logged and **visible in Studio**: `summaryAt` stays empty while `summaryOfHash`
+  does not match the body, which is exactly the "stale" condition below. Stefan sees a post
+  with no summary, not a reader seeing a broken panel.
+- Retries are not automatic. An automatic retry on a webhook that fires on every edit is how
+  a bad prompt turns into a bill.
+
+**Staleness is the harder failure, and it matters more here than on most sites.** If the body
+changes and the summary does not, the page shows a machine's description of a version of the
+post that no longer exists. `summaryOfHash` detects it: when it does not match the current
+body, the summary is **suppressed, not shown stale**, and Studio marks it for regeneration.
+
+**This connects directly to Phase 3B.** A post that gains a *correction* has, by definition,
+said something wrong. A summary generated before that correction may well repeat the thing
+that was corrected — the site would then be marking an error in place, in the body, while
+an AI summary two panels away confidently restates it. **A correction must invalidate the
+summary.** That is one line in the webhook's rule table and it is not optional.
+
+## 5. Is it labelled as machine-generated?
+
+**Yes, visibly, in the panel itself — not in a tooltip and not in the page source.**
+
+The label is not a disclaimer bolted on; it is the first line of the panel:
+
+```
+Summary · generated by claude-haiku-4-5, 11 Sep 2026
+```
+
+Three commitments behind that:
+
+- **It is never styled like prose.** Different family, different colour, inside a bordered
+  panel — closer to the correction card than to the article body.
+- **It never appears in the feeds.** RSS and JSON Feed strip context, and a label that
+  survives in one reader is lost in the next. The feeds already carry an authored `excerpt`;
+  that is what a subscriber gets.
+- **When Stefan writes it himself, the label goes away entirely** — because then it is simply
+  his summary, and labelling authored text as generated would be its own kind of dishonesty.
+
+A blog whose subject is epistemic honesty, which now marks its own errors in place with
+attribution, cannot present a model's paraphrase as the author's. This is the one requirement
+in 5.6 with no trade-off to weigh.
+
+## 6. Can it be overridden by hand?
+
+**Yes, and the override must be unclobberable.** That is the part worth being careful about.
+
+- Editing `summary` in Studio sets `summarySource: 'authored'`.
+- **The webhook refuses to write when `summarySource === 'authored'`.** Not "prefers not
+  to" — refuses. A regeneration that silently overwrote a hand-written summary would be the
+  same class of bug as a correction whose anchor no longer matches: invisible, and only
+  noticed later by a reader.
+- Clearing the field resets it to `generated`, and the next publish regenerates it.
+
+This also gives the honest default for a post Stefan has thought hard about: write the
+summary yourself, and the machine never touches it.
+
+## What I would build first
+
+Not the generation. **The field, the label and the suppression rules** — schema, the panel,
+`summaryOfHash`, and the correction-invalidates-summary rule — with summaries written by
+hand. That ships the reader-facing half with zero API cost and zero failure modes, and it
+means the generation step, when it lands, is a webhook that fills in a field whose every
+consumer already works.
