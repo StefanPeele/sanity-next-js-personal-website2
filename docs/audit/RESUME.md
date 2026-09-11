@@ -11,15 +11,34 @@ stale — the point of this file is that it is useful at any moment, not only at
   3.5 `fc65349`.
 - **Phase 3B (corrections in place) — complete**, `952452f`. Verified 10/10 by an
   independent verifier.
-- **Phase 4 — partly done.** 4.2, 4.3 and 4.6 complete (`7451e60`).
-  **4.1, 4.4 and 4.5 are the remaining work**, and they are one problem, not three.
+- **Phase 4 — complete.** 4.2/4.3/4.6 `7451e60`, 4.1/4.4/4.5 `0fabe5b`. Verified 8/9 by an
+  independent verifier; the one FAIL was trap 16, disproved by `probe-tag-facet.mjs`.
+- **Phase 5 — partly done.** 5.5 and 5.6 `c473f5e`. 5.1–5.4 `e6181e5`: the reading toolbar
+  and four themes including a light mode.
+  **What remains in Phase 5:**
+  - **5.1's index half.** `ReadingToolbar` takes `variant="index"` and it is built, but
+    nothing renders it: `/blog` has no `ArticleProvider`, and `useArticle()` throws without
+    one. The component returns `null` rather than crashing, so wiring it is additive. The
+    index variant also wants a **density** control, which does not exist yet.
+  - **5.2's expanded accessibility set.** Currently four toggles. The brief asks for line
+    height, letter spacing, word spacing, paragraph spacing, link underlining, focus-ring
+    size, animation off and colour filters. Deliberately NOT added to the old menu first —
+    that menu is now the toolbar, so they go straight into it.
+  - **5.2's read-aloud voice selection and speed.** `useReadAloud` exposes play/pause/stop
+    only.
 
 Everything above is committed and pushed. `git status` is clean.
 
 ## The single next action
 
-**Phase 4.1 — turn the filter rows into browsable sections.** Start by reading
-`components/blog/BlogDirectory.tsx`, which is where all of 4.1, 4.4 and 4.5 land.
+**Phase 5.2 — the expanded accessibility set**, into `components/article/ReadingToolbar.tsx`.
+
+Add the settings to `ArticleSettings` in `ArticleProvider.tsx` (type, default, storage key,
+and the line in the apply-effect that writes them to the DOM), express the four spacing ones
+as CSS custom properties on `[data-article-root]` consumed by the prose rules in
+`styles/article.css`, and render them in the toolbar's Accessibility group. `measure-themes.mjs`
+is the model for verifying them: composite the layers, walk text nodes, and check a positive
+control so "nothing changed" cannot pass for "it works".
 
 The brief asks for a structure that works **at 3 posts and at 50**, and for an explicit
 statement of what changes between those states. There are 3 published posts, so the 50-post
@@ -59,6 +78,11 @@ Run with a server on `127.0.0.1:3000` serving the build you mean (check the CSS 
 | `docs/audit/measure-status-filter.mjs` | 16: the filter row is **absent** where no post has a status, and correct where one does |
 | `docs/audit/measure-corrections.mjs` | 27: in place, at the foot, keyboard-operable, three kinds, nothing struck through |
 | `docs/audit/measure-preview-placeholders.mjs` | 28: the hover preview's delays, edges and keyboard path; the placeholders' inertness. **Temporarily patches the blogPage singleton and restores it — verified by re-read** |
+| `docs/audit/measure-directory-scale.mjs` | 22: the directory at 3 posts and at 50, three breakpoints, no post appearing twice |
+| `docs/audit/measure-toolbar.mjs` | 50: the rail's position, the scroll test that catches the transform trap, state memory, dismissal and recovery. Runs twice — **normal and reduced motion** |
+| `docs/audit/measure-themes.mjs` | 15: four themes, composited contrast on every text leaf, seven text sizes |
+| `docs/audit/probe-tag-facet.mjs` | Settles whether a missing facet is a defect or a stale build |
+| `scripts/seed-scale-fixtures.mjs --apply` | 47 draft-only posts so the 50-post state can be seen. `--delete` after |
 | `scripts/seed-fixture-posts.mjs --apply` | Re-seeds the two draft fixtures and proves they are invisible to the published perspective |
 | `scripts/migrate-lab-notes.mjs` | The 4.3 rename, dry-run by default |
 
@@ -80,6 +104,15 @@ Suite: `npx playwright test` — **114 passing** across both projects.
 - **Four heavy Playwright harnesses back to back killed the `next start` server**, and three
   of them then failed with navigation timeouts that looked like real defects. Check the
   server between runs.
+- **`app/template.tsx` wraps every page in a transform that never goes away.** The
+  `page-enter` keyframe is declared `both`, so it holds `translateY(0)` forever, and any
+  transform makes an element a containing block for `position: fixed` children. Anything
+  fixed must be portalled to `document.body`. It bit three times in one session — the rail,
+  the panel's own animation overwriting its centring, and a dropped `lg:absolute`.
+- **An element-based text scan misses any element with both text and a child** — which is
+  most links and headings. Walk text nodes.
+- **A local sonner toast docks bottom-right** and intercepts clicks there. It is a local
+  artifact, but the collision it exposes is real.
 
 ## Standing instructions from Stefan
 
