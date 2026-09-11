@@ -144,7 +144,15 @@ function collectHeadings(root: HTMLElement): { headings: ArticleHeading[]; els: 
       text: text.trim(),
       level: el.tagName === 'H2' ? 2 : 3,
       words,
-      minutes: words ? Math.max(1, Math.round(words / 220)) : 0,
+      // No Math.max(1, ...) here. That floor is correct for a WHOLE POST -- nothing is a
+      // "0 min read" -- but wrong for a section: it charged every heading a full minute
+      // however short, so the TOC's sections summed to more than the post. Measured on
+      // production: the portfolio post's four sections read 1/1/1/1 = 4 against a 2-minute
+      // header, and the home-lab post's read 1/1/2/1 = 5 against 3. The JSDoc on `minutes`
+      // above already documented the intended behaviour -- "0 when under half a minute" --
+      // and the floor contradicted it. Found by the verifier subagent, outside the claim
+      // it was given, while checking that card and article agree (Phase 0.1).
+      minutes: words ? Math.round(words / 220) : 0,
     })
   })
   return { headings, els }
