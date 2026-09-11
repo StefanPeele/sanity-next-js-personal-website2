@@ -20,8 +20,9 @@ An item is not shipped until all of these hold.
 - [ ] **`npm run check` exits 0 with ZERO WARNINGS.** Not zero errors — zero warnings.
       Remove orphaned code rather than suppressing it.
 - [ ] **Clean build**: kill any server on the port **first**, then `rm -rf .next && npm run build`.
-- [ ] **Full Playwright suite, 40 tests.** (33 originally; +1 reading-time agreement,
-      +1 every-post h1, +5 reviewer anonymity.) **If it reports any other number, investigate — do not re-run until
+- [ ] **Full Playwright suite, 46 tests.** (33 originally; +1 reading-time agreement,
+      +1 every-post h1, +5 reviewer anonymity, +6 stega/draft-mode.) **Locally `46 passed`;
+      in CI `45 passed, 1 skipped`** — the draft-mode test needs a write token CI lacks. **If it reports any other number, investigate — do not re-run until
       it agrees.** A suite that silently skips is worse than one that fails.
 - [ ] **Before/after screenshots at 1440 / 768 / 390** for any visual change, committed,
       with what moved stated in pixels. `docs/audit/capture-change.mjs`.

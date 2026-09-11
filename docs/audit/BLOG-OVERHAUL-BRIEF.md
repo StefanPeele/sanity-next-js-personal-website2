@@ -54,9 +54,13 @@ around a wrong premise; name it.
 - `npm run check` must exit 0 with **zero warnings**. Not "zero errors" — zero
   warnings. Remove orphaned code rather than suppressing it.
 - Clean build (`rm -rf .next && npm run build`) before any e2e run that matters.
-- Full Playwright suite including axe and CSP. **The suite reports 40 tests.** It was 33 when
-  this brief was written; Phase 0.1 added the reading-time agreement test, Phase 3 added the
-  every-post h1 test, and Phase 3.2 added five reviewer-anonymity tests. If it
+- Full Playwright suite including axe and CSP. **The suite reports 46 tests.** It was 33 when
+  this brief was written; since then: +1 reading-time agreement, +1 every-post h1, +5 reviewer
+  anonymity, +6 stega/draft-mode.
+  **One of the 46 skips without `SANITY_API_WRITE_TOKEN`** (the draft-mode badge test needs it
+  to mint a preview secret, and CI is read-token-only by design). That is a LOUD skip —
+  Playwright reports it and the total stays 46 — so expect `46 passed` locally and
+  `45 passed, 1 skipped` in CI. Anything else, investigate. If it
   reports any other number, investigate before proceeding — do not re-run until it
   agrees. A suite that silently skips tests is worse than one that fails.
 - **Before ending a turn for ANY reason other than "every phase is complete", invoke the

@@ -165,6 +165,48 @@ been applied — Phase 1 is research only.
 | **8.8 sequencing** | §1.9 | **Build it first and independently of comments.** `lib/glossary.ts` already implements the hard part |
 | **7.1 measure** | §1.5 | **Flagged, not acted on.** The measure is 56 characters, not 65. Phase 7 should re-decide with the corrected number |
 
+## Heading-pipeline audit — every published document, before and after
+
+Measured against the dataset (`perspective=raw`), then verified on production at `2c074cc`.
+**Two of the three published posts were affected, in different ways.**
+
+| Post | Body styles | TOC entries before | What was missing before |
+| --- | --- | --- | --- |
+| home lab week 2 | h2×2, h3×2 | 4 | nothing — fully handled |
+| **The Field** | **h5×7, nothing else** | **0 — an empty Contents column** | no renderer, no id, no anchor, absent from TOC |
+| portfolio site | h1×1, h3×4 | 4 | the h1: no id, no anchor, absent from TOC — *and* it was the duplicate `<h1>` |
+
+Also checked: `note` and `page` documents. The only other body is the `test` page, which has
+no headings at all.
+
+**After the fix, measured on production:**
+
+| Post | Headings in the article | Headings without an id | Anchors | TOC entries |
+| --- | --- | --- | --- | --- |
+| The Field | H5×7 | **0** | 7 | **0 → 7** |
+| portfolio site | H2×1, H3×4 | **0** | 5 | 4 → 5 |
+| home lab week 2 | H2×2, H3×2 | **0** | 4 | 4 (unchanged, correctly) |
+
+Every heading on every published post now carries an id and an anchor, and every one appears
+in the Contents column.
+
+## Draft-mode coverage
+
+The stega class of bug lives only in draft mode, which the suite never entered. Now covered in
+two layers, because the honest answers are different:
+
+1. **The mechanism, deterministically** — `tests/stega.spec.ts` builds a *real* stega payload
+   with `vercelStegaCombine` (what Sanity's encoder uses underneath) and asserts `enumKey`
+   restores the lookup. It opens with a **negative control**: a plain lookup on the encoded key
+   must return `undefined`, so the suite cannot pass vacuously if the encoding ever changes.
+   Runs everywhere, no network, no token.
+2. **The end-to-end render** — mints a preview secret, enters real draft mode, and asserts all
+   five status badges render on the fixture. **Needs `SANITY_API_WRITE_TOKEN`, which CI does not
+   have by design**, so it skips there: `46 passed` locally, `45 passed, 1 skipped` in CI. The
+   skip is loud and the total is unchanged, so a silently-vanishing test cannot hide in it.
+
+Layer 1 is the one that actually guards the class; layer 2 is end-to-end confirmation.
+
 ## Continuation audits
 
 Every time a stop is contemplated for a reason other than "complete", the
