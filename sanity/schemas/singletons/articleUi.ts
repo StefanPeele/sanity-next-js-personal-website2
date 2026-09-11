@@ -27,7 +27,7 @@ export default defineType({
       str('readTimeLabel', 'Read time ({n} = minutes)'),
       str('sourcesLabel', 'Sources count ({n})'),
       str('cardsLabel', 'Key terms count ({n})'),
-      obj('reviewBadges', 'Review badges', [str('seekingReview', 'Seeking review'), str('expertVerified', 'Expert verified')]),
+      obj('reviewBadges', 'Review badges', [str('seekingReview', 'Seeking review'), str('peerReviewed', 'Peer reviewed')]),
     ], { group: 'header' }),
     obj('toc', 'Contents', [str('title', 'Sidebar title'), str('mobileTitle', 'Mobile title'), str('minutesSuffix', 'Minutes suffix')], { group: 'header' }),
     obj('readerMenu', 'Reading options menu', [

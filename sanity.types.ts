@@ -544,7 +544,7 @@ export type ArticleUi = {
     cardsLabel?: string
     reviewBadges?: {
       seekingReview?: string
-      expertVerified?: string
+      peerReviewed?: string
     }
   }
   toc?: {
@@ -1523,7 +1523,7 @@ export type Post = {
   series?: SeriesReference
   seriesOrder?: number
   recommendedTheme?: 'archive' | 'terminal'
-  confidenceLevel?: 'speculative' | 'working-theory' | 'confident' | 'verified' | 'peer-reviewed'
+  confidenceLevel?: 'speculative' | 'working-theory' | 'confident'
   maturityIndicator?: 'fresh' | 'tested' | 'production-proven'
   cognitiveLoad?: 'light' | 'technical' | 'dense' | 'reference'
   learningObjectives?: Array<string>
@@ -1543,7 +1543,7 @@ export type Post = {
   readNextGoDeeper?: PostReference
   readNextGoBroader?: PostReference
   readNextApplyThis?: PostReference
-  reviewStatus?: 'self-reviewed' | 'seeking-review' | 'community-reviewed' | 'expert-verified'
+  reviewStatus?: Array<string>
   reviewers?: Array<{
     name?: string
     role?: string
@@ -2226,7 +2226,7 @@ export type AllSanitySchemaTypes =
 
 // Source: sanity/lib/queries-article-ui.ts
 // Variable: articleUiQuery
-// Query: *[_type == "articleUi"][0]{    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },    toc{ title, mobileTitle, minutesSuffix },    readerMenu{      buttonLabel, closeLabel,      groupLabels{ theme, textSize, width, accessibility, share, listen, position },      themeLabels{ archive, terminal },      widthLabels{ narrow, standard, wide },      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },      listenLabels{ play, pause, resume, stop, unsupported },      bookmarkLabels{ save, saved, resume, clear }    },    blocks{      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,      sourcesHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent    },    credibility{      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl    },    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }  }
+// Query: *[_type == "articleUi"][0]{    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },    toc{ title, mobileTitle, minutesSuffix },    readerMenu{      buttonLabel, closeLabel,      groupLabels{ theme, textSize, width, accessibility, share, listen, position },      themeLabels{ archive, terminal },      widthLabels{ narrow, standard, wide },      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },      listenLabels{ play, pause, resume, stop, unsupported },      bookmarkLabels{ save, saved, resume, clear }    },    blocks{      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,      sourcesHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent    },    credibility{      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl    },    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }  }
 export type ArticleUiQueryResult = {
   header: {
     backLabel: string | null
@@ -2235,7 +2235,7 @@ export type ArticleUiQueryResult = {
     cardsLabel: string | null
     reviewBadges: {
       seekingReview: string | null
-      expertVerified: string | null
+      peerReviewed: string | null
     } | null
   } | null
   toc: {
@@ -4594,17 +4594,11 @@ export type PostBySlugQueryResult = {
   categories: Array<string | null> | null
   tags: Array<null> | null
   articleType: 'concept-deep-dive' | 'field-notes' | 'perspective' | 'transmission' | null
-  confidenceLevel:
-    | 'confident'
-    | 'peer-reviewed'
-    | 'speculative'
-    | 'verified'
-    | 'working-theory'
-    | null
+  confidenceLevel: 'confident' | 'speculative' | 'working-theory' | null
   maturityIndicator: 'fresh' | 'production-proven' | 'tested' | null
   cognitiveLoad: 'dense' | 'light' | 'reference' | 'technical' | null
   recommendedTheme: 'archive' | 'terminal' | null
-  reviewStatus: 'community-reviewed' | 'expert-verified' | 'seeking-review' | 'self-reviewed' | null
+  reviewStatus: Array<string> | null
   learningObjectives: Array<string> | null
   prerequisites: Array<{
     _key: string
@@ -5345,7 +5339,7 @@ export type NowQueryResult = {
 
 declare module '@sanity/client' {
   interface SanityQueries {
-    '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, expertVerified } },\n    toc{ title, mobileTitle, minutesSuffix },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, share, listen, position },\n      themeLabels{ archive, terminal },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported },\n      bookmarkLabels{ save, saved, resume, clear }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent\n    },\n    credibility{\n      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
+    '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },\n    toc{ title, mobileTitle, minutesSuffix },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, share, listen, position },\n      themeLabels{ archive, terminal },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported },\n      bookmarkLabels{ save, saved, resume, clear }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent\n    },\n    credibility{\n      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
     '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },\n    list{ heading, filterLabels{ lane, category, tag, sort }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount }\n  }\n': BlogPageQueryResult
     '\n  *[_type == "knowledgePages"][0]{\n    garden{ header{ title, lede, metaTitle, metaDescription }, stats{ notes, evergreen, tags }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n      note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },\n    library{ header{ title, lede, metaTitle, metaDescription }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) }, filterLabels{ type, status, all, clear } },\n    glossary{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, termsCount },\n    series{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },\n    graph{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },\n      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },\n      linesNote, nodeListLabel, openHint, ariaSummary },\n    osi{ header{ title, lede, metaTitle, metaDescription }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }\n  }\n': KnowledgePagesQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, body, tldr, excerpt\n  }\n': ArticleTextQueryResult

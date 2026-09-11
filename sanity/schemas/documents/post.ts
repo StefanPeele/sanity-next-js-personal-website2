@@ -310,21 +310,30 @@ export default defineType({
       title: 'Confidence Level',
       type: 'string',
       group: 'presentation',
+      // This field answers ONE question: how sure am I? It used to answer three.
+      //
+      // 'verified — confirmed in lab/production' restated maturityIndicator's
+      // 'tested' / 'production-proven', and 'peer reviewed' restated reviewStatus's
+      // 'expert-verified' — the same event encoded in two fields, two vocabularies,
+      // both wearing a star, in two radio fields, so the author picked one spelling
+      // and the other silently said something else. Both removed. Nothing was
+      // migrated because every post had this unset.
+      //
+      // No mature system ranks "peer reviewed" as a point on a confidence scale:
+      // Gwern keeps confidence / status / importance independent, Wikipedia holds the
+      // quality grade apart from claim-level flags, arXiv makes no quality claim at
+      // all. See EDITORIAL-RESEARCH.md §1.4.
       description: `
-        How certain are you in what you've written? This tells readers how much weight to give the content — and signals intellectual honesty.
+        How sure are you about what you've written? Nothing else — who reviewed it and how well tested it is are separate fields.
         SPECULATIVE — thinking out loud, may be wrong, worth writing anyway.
         WORKING THEORY — has logic behind it, haven't fully tested it.
         CONFIDENT — you understand this well enough to teach it.
-        VERIFIED — you've confirmed this in a lab or real environment.
-        PEER REVIEWED — an industry professional has confirmed the accuracy.
       `,
       options: {
         list: [
-          { title: '🌫 Speculative — thinking out loud', value: 'speculative' },
-          { title: '🔄 Working Theory — not fully tested', value: 'working-theory' },
-          { title: '✓ Confident — understand this well', value: 'confident' },
-          { title: '🔬 Verified — confirmed in lab/production', value: 'verified' },
-          { title: '⭐ Peer Reviewed — expert confirmed', value: 'peer-reviewed' },
+          { title: 'Speculative — thinking out loud', value: 'speculative' },
+          { title: 'Working theory — not fully tested', value: 'working-theory' },
+          { title: 'Confident — understand this well', value: 'confident' },
         ],
         layout: 'radio',
       },
@@ -474,25 +483,39 @@ export default defineType({
 
     defineField({
       name: 'reviewStatus',
-      title: 'Review Status',
-      type: 'string',
+      title: 'Review',
+      // An ARRAY, not a single select: several of these are true at once. A piece can
+      // be peer-reviewed AND still seeking review AND revised, and the old radio made
+      // the author pick one and drop the rest.
+      //
+      // 'self-reviewed' is gone as a value. It meant "nothing has happened", which is
+      // what an empty array already says, and it was the default on every post — a
+      // badge that appears on everything tells a reader nothing.
+      //
+      // PEER-REVIEWED and FACT-CHECKED are independent and must never be collapsed.
+      // Fact-checking is CLAIM-level: were these statements true. Peer review is
+      // DOCUMENT-level: is the argument sound. A piece can be fact-checked and wrong,
+      // or peer-reviewed and factually sloppy. See EDITORIAL-RESEARCH.md §1.4.
+      type: 'array',
+      of: [{ type: 'string' }],
       group: 'credibility',
       description: `
-        SELF REVIEWED — default. You wrote and edited it yourself.
-        SEEKING REVIEW — published but want expert eyes. Shows an amber "Seeking peer review" tag — this is an invitation and signals intellectual honesty.
-        COMMUNITY REVIEWED — one or more people have read and responded. Add their names in the Reviewers field below.
-        EXPERT VERIFIED — an industry professional has confirmed the technical accuracy. This is the strongest signal. A working engineer vouching for your content matters to hiring managers more than any certification badge.
+        Who has checked this, and how. Leave empty if nobody but you has read it — that is the normal case and needs no badge. Several can be true at once.
+        PEER REVIEWED — a qualified person assessed the reasoning. Add them in Reviewers below.
+        FACT CHECKED — the claims were verified against sources. This is a different guarantee from peer review, not a stronger one.
+        SEEKING REVIEW — published, and you want qualified eyes on it. An invitation, and an honest one.
+        OPEN TO COMMENT — you want general discussion, not just expert correction.
+        REVISED — materially changed since it was first published.
       `,
       options: {
         list: [
-          { title: '✏️ Self-reviewed', value: 'self-reviewed' },
-          { title: '🔍 Seeking peer review', value: 'seeking-review' },
-          { title: '👥 Community reviewed', value: 'community-reviewed' },
-          { title: '⭐ Expert verified', value: 'expert-verified' },
+          { title: 'Peer reviewed — a qualified person assessed the reasoning', value: 'peer-reviewed' },
+          { title: 'Fact checked — claims verified against sources', value: 'fact-checked' },
+          { title: 'Seeking review — want qualified eyes on this', value: 'seeking-review' },
+          { title: 'Open to comment — want general discussion', value: 'open-to-comment' },
+          { title: 'Revised — materially changed since publication', value: 'revised' },
         ],
-        layout: 'radio',
       },
-      initialValue: 'self-reviewed',
     }),
 
     defineField({

@@ -48,3 +48,10 @@ next-env.d.ts
 # Playwright
 test-results/
 playwright-report/
+
+# Scratch probes written by verifier subagents at the repo root. They must never be
+# committed -- a `git add -A` during a verification run swept one in (Phase 3, 1450774).
+/probe-*.mjs
+/verify-*.mjs
+/verify-*.json
+/_*.mjs

@@ -35,7 +35,7 @@ interface FieldResponse {
 }
 
 interface CredibilitySectionProps {
-  reviewStatus?: string
+  reviewStatus?: string[] | null
   reviewers?: Reviewer[]
   changelog?: ChangelogEntry[]
   responsesFromField?: FieldResponse[]
@@ -46,12 +46,14 @@ interface CredibilitySectionProps {
   labels?: ArticleUiCopy['credibility']
 }
 
+// Confidence answers only "how sure am I". 'verified' and 'peer-reviewed' were removed
+// from this scale in Phase 3.1 -- they restated maturityIndicator and reviewStatus, and
+// 'peer-reviewed' rendered here in blue while the same event rendered in REVIEW_CONFIG in
+// emerald. One event, one place. See EDITORIAL-RESEARCH.md §1.4.
 const CONFIDENCE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   'speculative':    { label: 'Speculative',      color: 'text-orange-400', bg: 'border-orange-500/30 bg-orange-950/10' },
-  'working-theory': { label: 'Working Theory',   color: 'text-amber-400',  bg: 'border-amber-500/30 bg-amber-950/10' },
+  'working-theory': { label: 'Working theory',   color: 'text-amber-400',  bg: 'border-amber-500/30 bg-amber-950/10' },
   'confident':      { label: 'Confident',        color: 'text-stone-300',  bg: 'border-stone-500/30 bg-stone-950/30' },
-  'verified':       { label: 'Verified',         color: 'text-emerald-400', bg: 'border-emerald-500/30 bg-emerald-950/10' },
-  'peer-reviewed':  { label: 'Peer Reviewed',    color: 'text-blue-400',   bg: 'border-blue-500/30 bg-blue-950/10' },
 }
 
 const MATURITY_CONFIG: Record<string, { label: string }> = {
@@ -67,10 +69,19 @@ const LOAD_CONFIG: Record<string, { label: string }> = {
   'reference': { label: 'Reference' },
 }
 
+// Independent flags -- several can be true at once. Peer-reviewed and fact-checked are
+// deliberately NOT on one scale: fact-checking is claim-level (were these statements
+// true), peer review is document-level (is the argument sound), and neither implies the
+// other. They are given different colours for that reason, not different weights.
+// Order here is the render order.
+const REVIEW_FLAG_ORDER = ['peer-reviewed', 'fact-checked', 'seeking-review', 'open-to-comment', 'revised'] as const
+
 const REVIEW_STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  'seeking-review':    { label: 'Seeking peer review', color: 'text-amber-400', bg: 'border-amber-500/30 bg-amber-950/10' },
-  'community-reviewed':{ label: 'Community reviewed',  color: 'text-blue-400',  bg: 'border-blue-500/30 bg-blue-950/10' },
-  'expert-verified':   { label: 'Expert verified',     color: 'text-emerald-400', bg: 'border-emerald-500/30 bg-emerald-950/10' },
+  'peer-reviewed':   { label: 'Peer reviewed',        color: 'text-emerald-400', bg: 'border-emerald-500/30 bg-emerald-950/10' },
+  'fact-checked':    { label: 'Fact checked',         color: 'text-blue-400',    bg: 'border-blue-500/30 bg-blue-950/10' },
+  'seeking-review':  { label: 'Seeking peer review',  color: 'text-amber-400',   bg: 'border-amber-500/30 bg-amber-950/10' },
+  'open-to-comment': { label: 'Open to comment',      color: 'text-stone-300',   bg: 'border-stone-500/30 bg-stone-950/30' },
+  'revised':         { label: 'Revised',              color: 'text-stone-300',   bg: 'border-stone-500/30 bg-stone-950/30' },
 }
 
 export function CredibilitySection({
@@ -106,20 +117,22 @@ export function CredibilitySection({
   const confidence = confidenceLevel ? CONFIDENCE_CONFIG[confidenceLevel] : null
   const maturity   = maturityIndicator ? MATURITY_CONFIG[maturityIndicator] : null
   const load       = cognitiveLoad ? LOAD_CONFIG[cognitiveLoad] : null
-  const reviewBadge = reviewStatus ? REVIEW_STATUS_CONFIG[reviewStatus] : null
+  const reviewBadges = REVIEW_FLAG_ORDER
+    .filter((f) => (reviewStatus ?? []).includes(f))
+    .map((f) => ({ key: f, ...REVIEW_STATUS_CONFIG[f] }))
 
   return (
     <section className="mt-16 pt-12 border-t border-edge space-y-8" aria-label={heading}>
       <h2 className="sr-only">{heading}</h2>
 
       {/* ── Metadata badges ────────────────────────────────────────── */}
-      {(confidence || maturity || load || reviewBadge) && (
+      {(confidence || maturity || load || reviewBadges.length > 0) && (
         <div className="flex flex-wrap gap-2">
-          {reviewBadge && (
-            <span className={`meta-label px-3 py-1.5 rounded-sm border ${reviewBadge.bg} ${reviewBadge.color}`}>
-              {reviewBadge.label}
+          {reviewBadges.map((b) => (
+            <span key={b.key} className={`meta-label px-3 py-1.5 rounded-sm border ${b.bg} ${b.color}`}>
+              {b.label}
             </span>
-          )}
+          ))}
           {confidence && (
             <span className={`meta-label px-3 py-1.5 rounded-sm border ${confidence.bg} ${confidence.color}`}>
               {confidence.label}

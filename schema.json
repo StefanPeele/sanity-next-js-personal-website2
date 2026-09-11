@@ -3191,7 +3191,7 @@
                     },
                     "optional": true
                   },
-                  "expertVerified": {
+                  "peerReviewed": {
                     "type": "objectAttribute",
                     "value": {
                       "type": "string"
@@ -9064,14 +9064,6 @@
             {
               "type": "string",
               "value": "confident"
-            },
-            {
-              "type": "string",
-              "value": "verified"
-            },
-            {
-              "type": "string",
-              "value": "peer-reviewed"
             }
           ]
         },
@@ -9257,25 +9249,10 @@
       "reviewStatus": {
         "type": "objectAttribute",
         "value": {
-          "type": "union",
-          "of": [
-            {
-              "type": "string",
-              "value": "self-reviewed"
-            },
-            {
-              "type": "string",
-              "value": "seeking-review"
-            },
-            {
-              "type": "string",
-              "value": "community-reviewed"
-            },
-            {
-              "type": "string",
-              "value": "expert-verified"
-            }
-          ]
+          "type": "array",
+          "of": {
+            "type": "string"
+          }
         },
         "optional": true
       },

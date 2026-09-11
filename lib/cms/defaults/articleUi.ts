@@ -7,7 +7,7 @@ export const DEFAULT_ARTICLE_UI = {
     readTimeLabel: '{n} min read',
     sourcesLabel: '{n} sources',
     cardsLabel: '{n} key terms',
-    reviewBadges: { seekingReview: 'Seeking review', expertVerified: 'Expert verified' },
+    reviewBadges: { seekingReview: 'Seeking review', peerReviewed: 'Peer reviewed' },
   },
   toc: { title: 'Contents', mobileTitle: 'In this article', minutesSuffix: 'min' },
   readerMenu: {

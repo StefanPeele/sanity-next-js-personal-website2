@@ -219,7 +219,7 @@ export default async function BlogPostPage({ params }: Props) {
               <CredibilitySection
                 heading={B.credibilityHeading}
                 labels={ui.credibility}
-                reviewStatus={post.reviewStatus ?? undefined}
+                reviewStatus={post.reviewStatus}
                 reviewers={(post.reviewers ?? []).map((r) => ({ ...r, name: r.name ?? 'Reviewer', role: r.role ?? undefined, organization: r.organization ?? undefined, quote: r.quote ?? undefined, date: r.date ?? undefined, linkedIn: r.linkedIn ?? undefined }))}
                 changelog={(post.changelog ?? []).map((c) => ({ _key: c._key, date: c.date ?? '', description: c.description ?? '' }))}
                 responsesFromField={(post.responsesFromField ?? []).map((r) => ({ ...r, title: r.title ?? '', url: r.url ?? '#', author: r.author ?? undefined, platform: r.platform ?? undefined, summary: r.summary ?? undefined, date: r.date ?? undefined }))}

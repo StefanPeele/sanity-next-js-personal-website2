@@ -27,7 +27,7 @@ interface BlogArticleHeaderProps {
   lqip?: string | null
   sourceCount?: number
   conceptCardCount?: number
-  reviewStatus?: string | null
+  reviewStatus?: string[] | null
   labels?: ArticleUiCopy['header']
   lanes?: VocabEntry[]
 }
@@ -50,10 +50,16 @@ export function BlogArticleHeader({
   const typeMeta = articleTypeMeta(articleType, lanes)
   const n = (t: string, v: number) => t.replace('{n}', String(v))
 
-  const reviewBadge = reviewStatus === 'seeking-review'
+  // The header shows at most ONE flag, deliberately. reviewStatus is now an array and
+  // several flags can be true at once, but §1.4's finding is that document-level status
+  // goes QUIET -- Wikipedia hides its article grade from readers entirely. The full set
+  // renders in CredibilitySection further down the page. Peer review outranks the
+  // invitation to review, because it is a fact rather than a request.
+  const flags = reviewStatus ?? []
+  const reviewBadge = flags.includes('peer-reviewed')
+    ? { label: labels.reviewBadges.peerReviewed, className: 'text-emerald-400 border-emerald-500/30' }
+    : flags.includes('seeking-review')
     ? { label: labels.reviewBadges.seekingReview, className: 'text-amber-400 border-amber-500/30' }
-    : reviewStatus === 'expert-verified'
-    ? { label: labels.reviewBadges.expertVerified, className: 'text-emerald-400 border-emerald-500/30' }
     : null
 
   const metaItems = [
