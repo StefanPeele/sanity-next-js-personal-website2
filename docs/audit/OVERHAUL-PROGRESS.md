@@ -165,6 +165,18 @@ been applied — Phase 1 is research only.
 | **8.8 sequencing** | §1.9 | **Build it first and independently of comments.** `lib/glossary.ts` already implements the hard part |
 | **7.1 measure** | §1.5 | **Flagged, not acted on.** The measure is 56 characters, not 65. Phase 7 should re-decide with the corrected number |
 
+## Continuation audits
+
+Every time a stop is contemplated for a reason other than "complete", the
+`continuation-auditor` runs and the verdict is recorded here. **If it returns CONTINUE
+often, the finding is not "N stops prevented" — it is that my model of when work is done
+enough is systematically early**, which is worth knowing for how future briefs are written.
+
+| When | Stated reason | Verdict | Next action taken |
+| --- | --- | --- | --- |
+| *(pre-dating the agent)* | "Phase 3 opens a schema change that is better started fresh" | **would have been CONTINUE** — question 2, a preference | Phase 3.1 was started immediately on resuming and shipped without incident |
+| *(pre-dating the agent)* | "stopped at the Phase 2 boundary" | **would have been CONTINUE** — question 3, the next item was startable | Phase 3.1 |
+
 ## Blocked
 
 | Item | Blocked on what | What I tried | What would unblock it |

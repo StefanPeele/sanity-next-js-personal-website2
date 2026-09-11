@@ -59,6 +59,15 @@ around a wrong premise; name it.
   every-post h1 test, and Phase 3.2 added five reviewer-anonymity tests. If it
   reports any other number, investigate before proceeding — do not re-run until it
   agrees. A suite that silently skips tests is worse than one that fails.
+- **Before ending a turn for ANY reason other than "every phase is complete", invoke the
+  `continuation-auditor` subagent** (`.claude/agents/continuation-auditor.md`) and give it the
+  stated reason, the progress log, the next unstarted item, and an honest estimate of remaining
+  context. It returns CONTINUE with a specific next action, or STOP only after verifying the
+  shutdown is finished properly. **No exceptions.**
+  Its limit, stated so nobody mistakes it for a watchdog: a subagent cannot restart a turn that
+  has already ended. It only has force when invoked *before* the decision is acted on.
+  "I'd rather start fresh", "this is a good breakpoint" and "the next item is large" are
+  preferences, not stopping conditions. Log every run in `OVERHAUL-PROGRESS.md`.
 - **Independently verified by the `verifier` subagent** before `OVERHAUL-PROGRESS.md` marks
   an item done. Invoke it for anything that ships code or changes a rendered number; skip it
   for pure documentation commits, where it is overhead without benefit.
