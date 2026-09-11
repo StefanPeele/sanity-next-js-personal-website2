@@ -1,0 +1,91 @@
+{
+  "name": "verge-index",
+  "url": "https://www.theverge.com/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [
+        {
+          "text": "Sep 10",
+          "size": 11,
+          "face": "polySans",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.1px",
+          "color": "rgb(99, 99, 99)",
+          "rel": null
+        },
+        {
+          "text": "Sep 9",
+          "size": 11,
+          "face": "polySans",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.1px",
+          "color": "rgb(99, 99, 99)",
+          "rel": null
+        },
+        {
+          "text": "Sep 9",
+          "size": 11,
+          "face": "polySans",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.1px",
+          "color": "rgb(99, 99, 99)",
+          "rel": null
+        },
+        {
+          "text": "Sep 9",
+          "size": 11,
+          "face": "polySans",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.1px",
+          "color": "rgb(99, 99, 99)",
+          "rel": null
+        },
+        {
+          "text": "Sep 9",
+          "size": 11,
+          "face": "polySans",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.1px",
+          "color": "rgb(99, 99, 99)",
+          "rel": null
+        },
+        {
+          "text": "Sep 10",
+          "size": 11,
+          "face": "polySans",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.1px",
+          "color": "rgb(99, 99, 99)",
+          "rel": null
+        }
+      ],
+      "relativeDate": [
+        {
+          "text": "The biggest new stories from today’s biggest n",
+          "size": 24,
+          "face": "polySans",
+          "weight": "300",
+          "transform": "none",
+          "ls": "0.24px",
+          "color": "rgb(74, 74, 74)",
+          "rel": null
+        }
+      ],
+      "updated": []
+    },
+    "separators": {
+      "/": 5
+    },
+    "bodySize": 16,
+    "url": "https://www.theverge.com/"
+  }
+}

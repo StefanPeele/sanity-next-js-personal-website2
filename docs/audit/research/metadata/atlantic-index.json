@@ -1,0 +1,147 @@
+{
+  "name": "atlantic-index",
+  "url": "https://www.theatlantic.com/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [
+        {
+          "text": "The September 11 attacks inspired a sense of n",
+          "size": 18,
+          "face": "AGaramondPro",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(0, 0, 0)",
+          "rel": {
+            "pos": "below",
+            "dy": 8,
+            "size": 24
+          }
+        },
+        {
+          "text": "September 10, 2026",
+          "size": 13,
+          "face": "Logic Monospace",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "0.5px",
+          "color": "rgb(94, 106, 116)",
+          "rel": {
+            "pos": "below",
+            "dy": 31,
+            "size": 32
+          }
+        },
+        {
+          "text": "September 10, 2026",
+          "size": 13,
+          "face": "Logic Monospace",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "0.5px",
+          "color": "rgb(94, 106, 116)",
+          "rel": {
+            "pos": "below",
+            "dy": 31,
+            "size": 32
+          }
+        },
+        {
+          "text": "September 10, 2026",
+          "size": 13,
+          "face": "Logic Monospace",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "0.5px",
+          "color": "rgb(94, 106, 116)",
+          "rel": {
+            "pos": "below",
+            "dy": 31,
+            "size": 32
+          }
+        },
+        {
+          "text": "September 10, 2026",
+          "size": 13,
+          "face": "Logic Monospace",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "0.5px",
+          "color": "rgb(94, 106, 116)",
+          "rel": {
+            "pos": "below",
+            "dy": 31,
+            "size": 32
+          }
+        },
+        {
+          "text": "September 10, 2026",
+          "size": 13,
+          "face": "Logic Monospace",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "0.5px",
+          "color": "rgb(94, 106, 116)",
+          "rel": {
+            "pos": "below",
+            "dy": 31,
+            "size": 32
+          }
+        }
+      ],
+      "relativeDate": [
+        {
+          "text": "Play Today's Game",
+          "size": 12,
+          "face": "Logic Monospace",
+          "weight": "500",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(0, 0, 0)",
+          "rel": {
+            "pos": "below",
+            "dy": 62,
+            "size": 26
+          }
+        },
+        {
+          "text": "Play Today's Game",
+          "size": 12,
+          "face": "Logic Monospace",
+          "weight": "500",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(0, 0, 0)",
+          "rel": {
+            "pos": "below",
+            "dy": 62,
+            "size": 26
+          }
+        },
+        {
+          "text": "Play Today's Game",
+          "size": 12,
+          "face": "Logic Monospace",
+          "weight": "500",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(0, 0, 0)",
+          "rel": {
+            "pos": "below",
+            "dy": 62,
+            "size": 26
+          }
+        }
+      ],
+      "updated": []
+    },
+    "separators": {
+      "•": 3
+    },
+    "bodySize": 18,
+    "url": "https://www.theatlantic.com/"
+  }
+}

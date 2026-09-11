@@ -1,0 +1,119 @@
+{
+  "name": "guardian-index",
+  "url": "https://www.theguardian.com/us",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [
+        {
+          "text": "September 11: 25 years on",
+          "size": 20,
+          "face": "GuardianTextSans",
+          "weight": "700",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(51, 51, 51)",
+          "rel": null
+        },
+        {
+          "text": "September 11 2001",
+          "size": 14,
+          "face": "GuardianTextSans",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(199, 0, 0)",
+          "rel": null
+        }
+      ],
+      "relativeDate": [
+        {
+          "text": "44m ago",
+          "size": 12,
+          "face": "GuardianTextSans",
+          "weight": "700",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(112, 112, 112)",
+          "rel": null
+        },
+        {
+          "text": "8h ago",
+          "size": 12,
+          "face": "GuardianTextSans",
+          "weight": "700",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(112, 112, 112)",
+          "rel": {
+            "pos": "below",
+            "dy": 26,
+            "size": 20
+          }
+        },
+        {
+          "text": "6h ago",
+          "size": 12,
+          "face": "GuardianTextSans",
+          "weight": "700",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(112, 112, 112)",
+          "rel": {
+            "pos": "below",
+            "dy": 72,
+            "size": 20
+          }
+        },
+        {
+          "text": "11h ago",
+          "size": 12,
+          "face": "GuardianTextSans",
+          "weight": "700",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(112, 112, 112)",
+          "rel": {
+            "pos": "below",
+            "dy": 49,
+            "size": 20
+          }
+        },
+        {
+          "text": "3h ago",
+          "size": 12,
+          "face": "GuardianTextSans",
+          "weight": "700",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(112, 112, 112)",
+          "rel": {
+            "pos": "below",
+            "dy": 49,
+            "size": 20
+          }
+        },
+        {
+          "text": "4h ago",
+          "size": 12,
+          "face": "GuardianTextSans",
+          "weight": "700",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(112, 112, 112)",
+          "rel": {
+            "pos": "below",
+            "dy": 49,
+            "size": 20
+          }
+        }
+      ],
+      "updated": []
+    },
+    "separators": {},
+    "bodySize": 20,
+    "url": "https://www.theguardian.com/us"
+  }
+}

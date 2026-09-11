@@ -1,0 +1,81 @@
+{
+  "name": "OURS-blog",
+  "url": "https://stefanpeele.com/blog",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [
+        {
+          "text": "18 min read",
+          "size": 14,
+          "face": "Inter",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(168, 162, 158)",
+          "rel": null
+        },
+        {
+          "text": "3 min",
+          "size": 12,
+          "face": "IBM Plex Mono",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.44px",
+          "color": "rgb(168, 162, 158)",
+          "rel": null
+        },
+        {
+          "text": "2 min",
+          "size": 12,
+          "face": "IBM Plex Mono",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.44px",
+          "color": "rgb(168, 162, 158)",
+          "rel": null
+        }
+      ],
+      "byline": [],
+      "absoluteDate": [
+        {
+          "text": "May 15, 2026",
+          "size": 14,
+          "face": "Inter",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(168, 162, 158)",
+          "rel": null
+        },
+        {
+          "text": "Apr 6, 2026",
+          "size": 12,
+          "face": "Inter",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(168, 162, 158)",
+          "rel": null
+        },
+        {
+          "text": "Mar 31, 2026",
+          "size": 12,
+          "face": "Inter",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(168, 162, 158)",
+          "rel": null
+        }
+      ],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {
+      "•": 1
+    },
+    "bodySize": 14,
+    "url": "https://stefanpeele.com/blog"
+  }
+}

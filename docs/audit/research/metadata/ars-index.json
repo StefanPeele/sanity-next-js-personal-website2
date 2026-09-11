@@ -1,0 +1,19 @@
+{
+  "name": "ars-index",
+  "url": "https://arstechnica.com/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {
+      "|": 36
+    },
+    "bodySize": 24,
+    "url": "https://arstechnica.com/"
+  }
+}

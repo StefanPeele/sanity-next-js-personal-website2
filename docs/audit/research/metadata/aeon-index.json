@@ -1,0 +1,104 @@
+{
+  "name": "aeon-index",
+  "url": "https://aeon.co/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [
+        {
+          "text": "6 minutes",
+          "size": 16,
+          "face": "sansFont",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(0, 0, 0)",
+          "rel": {
+            "pos": "below",
+            "dy": 14,
+            "size": 28
+          }
+        },
+        {
+          "text": "11 minutes",
+          "size": 16,
+          "face": "sansFont",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(0, 0, 0)",
+          "rel": {
+            "pos": "below",
+            "dy": 14,
+            "size": 28
+          }
+        },
+        {
+          "text": "11 minutes",
+          "size": 16,
+          "face": "sansFont",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(0, 0, 0)",
+          "rel": {
+            "pos": "below",
+            "dy": 14,
+            "size": 28
+          }
+        },
+        {
+          "text": "7 minutes",
+          "size": 16,
+          "face": "sansFont",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(0, 0, 0)",
+          "rel": {
+            "pos": "below",
+            "dy": 14,
+            "size": 28
+          }
+        },
+        {
+          "text": "14 minutes",
+          "size": 16,
+          "face": "sansFont",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(0, 0, 0)",
+          "rel": {
+            "pos": "below",
+            "dy": 14,
+            "size": 28
+          }
+        },
+        {
+          "text": "14 minutes",
+          "size": 16,
+          "face": "sansFont",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(0, 0, 0)",
+          "rel": {
+            "pos": "below",
+            "dy": 14,
+            "size": 28
+          }
+        }
+      ],
+      "byline": [],
+      "absoluteDate": [],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {
+      "/": 4
+    },
+    "bodySize": 16,
+    "url": "https://aeon.co/"
+  }
+}

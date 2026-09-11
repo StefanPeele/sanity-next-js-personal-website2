@@ -1,0 +1,17 @@
+{
+  "name": "atlantic-article",
+  "url": "https://www.theatlantic.com/magazine/archive/1861/01/henry-wadsworth-longfellow-paul-reveres-ride/308349/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {},
+    "bodySize": 10,
+    "url": "https://www.theatlantic.com/magazine/archive/1861/01/henry-wadsworth-longfellow-paul-reveres-ride/308349/"
+  }
+}

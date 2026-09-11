@@ -1,0 +1,200 @@
+{
+  "name": "nyt-index",
+  "url": "https://www.nytimes.com/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [
+        {
+          "text": "8 min read",
+          "size": 10,
+          "face": "nyt-franklin",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "1px",
+          "color": "rgb(114, 114, 114)",
+          "rel": {
+            "pos": "below",
+            "dy": 4,
+            "size": 14
+          }
+        },
+        {
+          "text": "5 min read",
+          "size": 10,
+          "face": "nyt-franklin",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "1px",
+          "color": "rgb(114, 114, 114)",
+          "rel": {
+            "pos": "below",
+            "dy": 4,
+            "size": 18
+          }
+        },
+        {
+          "text": "5 min read",
+          "size": 10,
+          "face": "nyt-franklin",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "1px",
+          "color": "rgb(114, 114, 114)",
+          "rel": {
+            "pos": "below",
+            "dy": 4,
+            "size": 14
+          }
+        },
+        {
+          "text": "4 min read",
+          "size": 10,
+          "face": "nyt-franklin",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "1px",
+          "color": "rgb(114, 114, 114)",
+          "rel": {
+            "pos": "below",
+            "dy": 4,
+            "size": 18
+          }
+        },
+        {
+          "text": "5 min read",
+          "size": 10,
+          "face": "nyt-franklin",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "1px",
+          "color": "rgb(114, 114, 114)",
+          "rel": {
+            "pos": "below",
+            "dy": 4,
+            "size": 18
+          }
+        },
+        {
+          "text": "5 min read",
+          "size": 10,
+          "face": "nyt-franklin",
+          "weight": "500",
+          "transform": "uppercase",
+          "ls": "1px",
+          "color": "rgb(114, 114, 114)",
+          "rel": {
+            "pos": "below",
+            "dy": 27,
+            "size": 18
+          }
+        }
+      ],
+      "byline": [],
+      "absoluteDate": [
+        {
+          "text": "Friday, September 11, 2026",
+          "size": 14,
+          "face": "nyt-franklin",
+          "weight": "400",
+          "transform": "none",
+          "ls": "0.1px",
+          "color": "rgb(18, 18, 18)",
+          "rel": null
+        },
+        {
+          "text": "Sept. 11, 2026, 12:19 a.m. ET",
+          "size": 11,
+          "face": "nyt-franklin",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(208, 2, 27)",
+          "rel": {
+            "pos": "above",
+            "dy": 19,
+            "size": 18
+          }
+        },
+        {
+          "text": "Sept. 11",
+          "size": 14,
+          "face": "nyt-franklin",
+          "weight": "700",
+          "transform": "none",
+          "ls": "0.5px",
+          "color": "rgb(18, 18, 18)",
+          "rel": {
+            "pos": "above",
+            "dy": 23,
+            "size": 24
+          }
+        }
+      ],
+      "relativeDate": [
+        {
+          "text": "Today’s Paper",
+          "size": 14,
+          "face": "nyt-franklin",
+          "weight": "400",
+          "transform": "none",
+          "ls": "0.1px",
+          "color": "rgb(18, 18, 18)",
+          "rel": null
+        },
+        {
+          "text": "18m ago",
+          "size": 11,
+          "face": "nyt-franklin",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(208, 2, 27)",
+          "rel": {
+            "pos": "above",
+            "dy": 37,
+            "size": 18
+          }
+        },
+        {
+          "text": "18m ago",
+          "size": 11,
+          "face": "nyt-franklin",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(208, 2, 27)",
+          "rel": {
+            "pos": "above",
+            "dy": 4,
+            "size": 18
+          }
+        },
+        {
+          "text": "Catch Up on Today’s Biggest Stories",
+          "size": 18,
+          "face": "nyt-cheltenham",
+          "weight": "700",
+          "transform": "none",
+          "ls": "0.18px",
+          "color": "rgb(18, 18, 18)",
+          "rel": null
+        },
+        {
+          "text": "Watch Today’s Videos",
+          "size": 14,
+          "face": "nyt-franklin",
+          "weight": "700",
+          "transform": "none",
+          "ls": "0.5px",
+          "color": "rgb(18, 18, 18)",
+          "rel": null
+        }
+      ],
+      "updated": []
+    },
+    "separators": {},
+    "bodySize": 16,
+    "url": "https://www.nytimes.com/"
+  }
+}

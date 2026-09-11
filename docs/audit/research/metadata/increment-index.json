@@ -1,0 +1,17 @@
+{
+  "name": "increment-index",
+  "url": "https://increment.com/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {},
+    "bodySize": 16,
+    "url": "https://increment.com/"
+  }
+}

@@ -214,3 +214,117 @@ rule beneath. The web versions measured above have **dropped the rule entirely**
 switched to colour as the distinguishing signal, because a 1px rule at screen resolution
 competes with the card borders around it. That drift — rule → colour — is the single most
 useful thing to carry over.
+
+---
+
+## 1.3 Metadata treatment
+
+### Reading time: who shows it
+
+The brief asks this directly. Counted three independent ways, because the first two
+disagreed and the disagreement was *my* fault, not the sites':
+
+1. **Leaf-element `textContent`** — missed our own article, where "18 min read" sits in a
+   `<span>` that has siblings, so it is not a leaf.
+2. **Text-node walk** — missed our own `/blog`, where JSX renders `{minutes} min` as two
+   adjacent text nodes (`"3"`, `" min"`), neither of which matches on its own.
+3. **`document.body.innerText` regex** — structure-independent. This is the number below.
+
+Methods 1 and 2 each produced a false zero on a page the other caught. Method 3 agrees
+with both where they were right. **Only method 3 is safe for this question**, and it is
+the same method the Phase 0.1 regression test uses, for the same reason.
+
+| Site | `N min read` | `N min` | `N minutes` |
+| --- | --- | --- | --- |
+| **NYT** | **62** | 67 | 0 |
+| **Aeon** | 0 | 0 | **9** |
+| FT | 0 | 8 | 1 |
+| The Guardian | 0 | 0 | 0 |
+| The Atlantic | 0 | 0 | 0 |
+| The Verge | 0 | 0 | 0 |
+| Ars Technica | 0 | 0 | 0 |
+| Quanta | 0 | 0 | 0 |
+| Defector | 0 | 0 | 0 |
+| 404 Media | 0 | 0 | 0 |
+| Increment | 0 | 0 | 0 |
+| Asterisk | 0 | 0 | 0 |
+| Works in Progress | 0 | 0 | 0 |
+| **Ours `/blog`** | 1 | 3 | 0 |
+
+**Ten of thirteen index pages do not show reading time anywhere.** Two do. FT's eight are
+ambiguous and I have not verified they are durations rather than market timestamps — treat
+FT as unknown, not as a yes.
+
+The two that do, do it very differently:
+
+| | Size | Face | Case | Colour | Position |
+| --- | --- | --- | --- | --- | --- |
+| **NYT** | **10px** | nyt-franklin w500 | **uppercase**, ls 1px (0.1em) | `rgb(114,114,114)` mid-grey | **4px below** the headline |
+| **Aeon** | **16px** — full body size | sansFont w400 | sentence case | `rgb(0,0,0)` **black** | 14px below a 28px headline |
+
+NYT treats duration as chrome: tiny, grey, tracked caps, tucked under the headline. Aeon
+treats it as **content**: body size, black, same weight as the prose, and it says
+"6 minutes" rather than "6 min read". Those are the two coherent positions. There is no
+middle convention to copy.
+
+**This grounds Phase 7.5.** Moving reading time out of the article header is well supported
+— most serious publications never show it at all, and the one that shows it most (NYT)
+renders it at 10px grey, which is *below* our own 12px floor and clearly chrome rather than
+information.
+
+### Our own page contradicts itself
+
+Found while measuring, not looked for:
+
+| Where | Text | Size | Face | Case | Tracking |
+| --- | --- | --- | --- | --- | --- |
+| Featured hero | "18 min read" | 14px | Inter | sentence | normal |
+| Post cards | "3 min" | 12px | IBM Plex Mono | **uppercase** | 1.44px |
+
+**Same datum, same page, two faces, two sizes, two cases, two different wordings.** The
+hero says "18 min read"; the cards say "3 min" and drop the word entirely. Phase 2.4 already
+flags that "3 MIN" reads as noise — it is worse than that: there is no single treatment to
+fix, there are two that disagree.
+
+### Separators between metadata items
+
+Counted as standalone glyph text nodes:
+
+| Convention | Sites |
+| --- | --- |
+| `\|` pipe | Ars Technica (36) |
+| `·` middot | 404 Media (13) |
+| `/` slash | Verge (5), Aeon (4), Quanta (2) |
+| `•` bullet | The Atlantic (3) |
+| **None — space or line break only** | **NYT, Guardian, Defector, Increment, Asterisk, Works in Progress** |
+| Ours | `•` (1) |
+
+Six of thirteen use **no separator glyph at all**, which is the single largest group. There
+is no dominant punctuation convention; the dominant convention is *not to punctuate*.
+
+### Relative vs absolute dates
+
+From the pattern counts on each index:
+
+| Site | Absolute hits | Relative hits | Posture |
+| --- | --- | --- | --- |
+| NYT | 3 | 5 | Mixed — relative for breaking, absolute for features |
+| Guardian | 2 | 6 | Mostly relative |
+| The Atlantic | 6 | 3 | Mostly absolute |
+| The Verge | 6 | 1 | Absolute |
+| Defector | 6 | 0 | Absolute only |
+| 404 Media | 6 | 0 | Absolute only |
+| Quanta, Increment, Asterisk, Ars | 0 | 0 | **No date on the index at all** |
+| Ours | 3 | 0 | Absolute only |
+
+Note the fourth group: **four sites show no date on their index page whatsoever.** For a
+low-volume archive where posts stay relevant, that is a live option worth considering rather
+than assuming a date must appear.
+
+### "Updated"
+
+**Zero occurrences of "updated", "last updated", "revised" or "edited" on any of the
+thirteen index pages.** Not one. Whatever Phase 3.7 does with revision dates, it will be
+inventing a convention for the index rather than following one — the prior art for revision
+display lives on article pages and in the wikis and preprint servers covered in §1.4, not on
+publication front pages.

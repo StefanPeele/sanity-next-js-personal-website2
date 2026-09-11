@@ -1,0 +1,19 @@
+{
+  "name": "quanta-index",
+  "url": "https://www.quantamagazine.org/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {
+      "/": 2
+    },
+    "bodySize": 13,
+    "url": "https://www.quantamagazine.org/"
+  }
+}

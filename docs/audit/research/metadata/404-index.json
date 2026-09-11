@@ -1,0 +1,81 @@
+{
+  "name": "404-index",
+  "url": "https://www.404media.co/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [
+        {
+          "text": "Sep 8, 2026",
+          "size": 14.1,
+          "face": "Space Mono",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "normal",
+          "color": "rgb(210, 210, 210)",
+          "rel": null
+        },
+        {
+          "text": "Sep 9, 2026",
+          "size": 14.1,
+          "face": "Space Mono",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "normal",
+          "color": "rgb(210, 210, 210)",
+          "rel": null
+        },
+        {
+          "text": "Sep 9, 2026",
+          "size": 14.1,
+          "face": "Space Mono",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "normal",
+          "color": "rgb(210, 210, 210)",
+          "rel": null
+        },
+        {
+          "text": "Sep 9, 2026",
+          "size": 14.1,
+          "face": "Space Mono",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "normal",
+          "color": "rgb(210, 210, 210)",
+          "rel": null
+        },
+        {
+          "text": "Sep 9, 2026",
+          "size": 14.1,
+          "face": "Space Mono",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "normal",
+          "color": "rgb(210, 210, 210)",
+          "rel": null
+        },
+        {
+          "text": "Sep 9, 2026",
+          "size": 14.1,
+          "face": "Space Mono",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "normal",
+          "color": "rgb(210, 210, 210)",
+          "rel": null
+        }
+      ],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {
+      "·": 13,
+      "•": 1
+    },
+    "bodySize": 17.6,
+    "url": "https://www.404media.co/"
+  }
+}

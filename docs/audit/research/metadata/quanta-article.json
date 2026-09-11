@@ -1,0 +1,62 @@
+{
+  "name": "quanta-article",
+  "url": "https://www.quantamagazine.org/the-four-color-theorem-gets-a-rare-new-proof-20260910/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [
+        {
+          "text": "September 10, 2026",
+          "size": 10,
+          "face": "Merriweather",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(26, 26, 26)",
+          "rel": {
+            "pos": "below",
+            "dy": 31,
+            "size": 13
+          }
+        },
+        {
+          "text": "September 3, 2026",
+          "size": 9,
+          "face": "Merriweather",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.8px",
+          "color": "rgb(118, 118, 118)",
+          "rel": null
+        },
+        {
+          "text": "August 28, 2026",
+          "size": 9,
+          "face": "Merriweather",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.8px",
+          "color": "rgb(118, 118, 118)",
+          "rel": null
+        },
+        {
+          "text": "August 20, 2026",
+          "size": 9,
+          "face": "Merriweather",
+          "weight": "400",
+          "transform": "uppercase",
+          "ls": "1.8px",
+          "color": "rgb(118, 118, 118)",
+          "rel": null
+        }
+      ],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {},
+    "bodySize": 16,
+    "url": "https://www.quantamagazine.org/the-four-color-theorem-gets-a-rare-new-proof-20260910/"
+  }
+}

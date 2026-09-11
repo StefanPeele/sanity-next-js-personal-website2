@@ -1,0 +1,102 @@
+{
+  "name": "defector-index",
+  "url": "https://defector.com/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [
+        {
+          "text": "September 10, 2026",
+          "size": 12,
+          "face": "dm-mono",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(77, 77, 77)",
+          "rel": {
+            "pos": "below",
+            "dy": 38,
+            "size": 48
+          }
+        },
+        {
+          "text": "September 10, 2026",
+          "size": 12,
+          "face": "dm-mono",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(77, 77, 77)",
+          "rel": {
+            "pos": "below",
+            "dy": 37,
+            "size": 24
+          }
+        },
+        {
+          "text": "September 10, 2026",
+          "size": 12,
+          "face": "dm-mono",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(77, 77, 77)",
+          "rel": {
+            "pos": "below",
+            "dy": 37,
+            "size": 24
+          }
+        },
+        {
+          "text": "September 10, 2026",
+          "size": 12,
+          "face": "dm-mono",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(77, 77, 77)",
+          "rel": {
+            "pos": "below",
+            "dy": 37,
+            "size": 24
+          }
+        },
+        {
+          "text": "September 10, 2026",
+          "size": 12,
+          "face": "dm-mono",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(77, 77, 77)",
+          "rel": {
+            "pos": "below",
+            "dy": 37,
+            "size": 24
+          }
+        },
+        {
+          "text": "September 9, 2026",
+          "size": 12,
+          "face": "dm-mono",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(77, 77, 77)",
+          "rel": {
+            "pos": "below",
+            "dy": 37,
+            "size": 24
+          }
+        }
+      ],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {},
+    "bodySize": 24,
+    "url": "https://defector.com/"
+  }
+}

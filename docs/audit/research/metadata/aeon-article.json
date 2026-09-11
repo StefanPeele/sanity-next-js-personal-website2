@@ -1,0 +1,41 @@
+{
+  "name": "aeon-article",
+  "url": "https://aeon.co/essays/the-curio-cabinet-of-medieval-mental-health",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [
+        {
+          "text": "29 minute listen",
+          "size": 14,
+          "face": "sansFont",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "oklab(0 0 0 / 0.8)",
+          "rel": null
+        }
+      ],
+      "byline": [],
+      "absoluteDate": [
+        {
+          "text": "10 September 2026",
+          "size": 14,
+          "face": "monoFont",
+          "weight": "400",
+          "transform": "none",
+          "ls": "normal",
+          "color": "rgb(153, 153, 153)",
+          "rel": null
+        }
+      ],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {
+      "/": 5
+    },
+    "bodySize": 22,
+    "url": "https://aeon.co/essays/the-curio-cabinet-of-medieval-mental-health"
+  }
+}

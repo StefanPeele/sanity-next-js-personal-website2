@@ -1,0 +1,30 @@
+{
+  "name": "ars-article",
+  "url": "https://arstechnica.com/tech-policy/2026/09/man-told-chatgpt-he-was-feeling-delusional-chatgpt-insisted-he-was-jesus/",
+  "status": 200,
+  "data": {
+    "hits": {
+      "readingTime": [],
+      "byline": [],
+      "absoluteDate": [
+        {
+          "text": "Sep 9, 2026 7:00 AM",
+          "size": 12,
+          "face": "Exo 2",
+          "weight": "600",
+          "transform": "uppercase",
+          "ls": "normal",
+          "color": "rgb(137, 140, 155)",
+          "rel": null
+        }
+      ],
+      "relativeDate": [],
+      "updated": []
+    },
+    "separators": {
+      "|": 1
+    },
+    "bodySize": 18,
+    "url": "https://arstechnica.com/tech-policy/2026/09/man-told-chatgpt-he-was-feeling-delusional-chatgpt-insisted-he-was-jesus/"
+  }
+}
