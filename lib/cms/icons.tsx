@@ -4,7 +4,7 @@
 import {
   ArrowDown, ArrowLeftRight, ArrowRight, Award, Book, BookOpen, Camera, Check, ExternalLink,
   FileText, Gift, GitBranch, GraduationCap, Layers, Leaf, Library, Lightbulb, ListOrdered, Mail,
-  Mic, Network, Newspaper, RotateCcw, Route, Rss, Search, Settings2, Sprout, TreePine, Type, Video,
+  MessageSquare, Mic, Network, Newspaper, RotateCcw, Route, Rss, Search, Settings2, Sprout, TreePine, Type, Video,
   AlertTriangle, ClipboardList, Diamond, Factory, Link2, Sparkles, Wrench, Zap,
   type LucideIcon,
 } from 'lucide-react'
@@ -24,6 +24,7 @@ export const ICONS = {
   mail: Mail,
   rss: Rss,
   search: Search,
+  'message-square': MessageSquare,
   layers: Layers,
   'git-branch': GitBranch,
   'graduation-cap': GraduationCap,

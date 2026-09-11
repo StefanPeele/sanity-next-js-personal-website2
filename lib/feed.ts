@@ -6,6 +6,7 @@ import { client } from '@/sanity/lib/client'
 import { feedQuery } from '@/sanity/lib/queries'
 import { portableTextToHtml } from '@/lib/portableTextToHtml'
 import { portableTextToPlain } from '@/lib/reading'
+import { statusPlainText } from '@/lib/status'
 import { absoluteUrl, articleTypeMeta, SITE } from '@/lib/site'
 
 export type FeedItem = {
@@ -18,6 +19,8 @@ export type FeedItem = {
   html: string
   categories: string[]
   imageUrl: string | null
+  /** Plain text, because a feed reader has no colour and no icons to lean on. */
+  status: string | null
 }
 
 export const FEED_META = {
@@ -42,13 +45,18 @@ export async function loadFeedItems(): Promise<FeedItem[]> {
       const categories = [...(p.categories ?? []).filter((c): c is string => Boolean(c))]
       if (lane) categories.unshift(lane)
       const summary = p.excerpt?.trim() || portableTextToPlain(p.body as never).slice(0, 280)
+      // Phase 3.3's feed tier. Prefixed into the summary rather than added as a field
+      // nothing reads: RSS and JSON Feed have no slot for an epistemic status, so the
+      // only way a subscriber sees it is in text they already read.
+      const status = statusPlainText(p.reviewStatus)
       return {
         id: p._id,
         title: p.title ?? 'Untitled',
         url,
         publishedAt: p.publishedAt!,
         updatedAt: p._updatedAt,
-        summary,
+        summary: status ? `[${status}] ${summary}` : summary,
+        status,
         html: portableTextToHtml(p.body, url),
         categories,
         imageUrl: p.imageUrl ?? null,

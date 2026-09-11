@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatDate } from '@/lib/dates'
-import { enumKey, enumKeys } from '@/lib/stega'
+import { enumKey } from '@/lib/stega'
+import { CONFIDENCE, LOAD, MATURITY, reviewFlags } from '@/lib/status'
 import type { ReviewerDisplay } from '@/lib/reviewers'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 import { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
@@ -45,44 +46,9 @@ interface CredibilitySectionProps {
   labels?: ArticleUiCopy['credibility']
 }
 
-// Confidence answers only "how sure am I". 'verified' and 'peer-reviewed' were removed
-// from this scale in Phase 3.1 -- they restated maturityIndicator and reviewStatus, and
-// 'peer-reviewed' rendered here in blue while the same event rendered in REVIEW_CONFIG in
-// emerald. One event, one place. See EDITORIAL-RESEARCH.md §1.4.
-const CONFIDENCE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  'speculative':    { label: 'Speculative',      color: 'text-orange-400', bg: 'border-orange-500/30 bg-orange-950/10' },
-  'working-theory': { label: 'Working theory',   color: 'text-amber-400',  bg: 'border-amber-500/30 bg-amber-950/10' },
-  'confident':      { label: 'Confident',        color: 'text-stone-300',  bg: 'border-stone-500/30 bg-stone-950/30' },
-}
-
-const MATURITY_CONFIG: Record<string, { label: string }> = {
-  'fresh': { label: 'Fresh' },
-  'tested': { label: 'Lab tested' },
-  'production-proven': { label: 'Production proven' },
-}
-
-const LOAD_CONFIG: Record<string, { label: string }> = {
-  'light': { label: 'Light read' },
-  'technical': { label: 'Technical' },
-  'dense': { label: 'Dense' },
-  'reference': { label: 'Reference' },
-}
-
-// Independent flags -- several can be true at once. Peer-reviewed and fact-checked are
-// deliberately NOT on one scale: fact-checking is claim-level (were these statements
-// true), peer review is document-level (is the argument sound), and neither implies the
-// other. They are given different colours for that reason, not different weights.
-// Order here is the render order.
-const REVIEW_FLAG_ORDER = ['peer-reviewed', 'fact-checked', 'seeking-review', 'open-to-comment', 'revised'] as const
-
-const REVIEW_STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  'peer-reviewed':   { label: 'Peer reviewed',        color: 'text-emerald-400', bg: 'border-emerald-500/30 bg-emerald-950/10' },
-  'fact-checked':    { label: 'Fact checked',         color: 'text-blue-400',    bg: 'border-blue-500/30 bg-blue-950/10' },
-  'seeking-review':  { label: 'Seeking peer review',  color: 'text-amber-400',   bg: 'border-amber-500/30 bg-amber-950/10' },
-  'open-to-comment': { label: 'Open to comment',      color: 'text-stone-300',   bg: 'border-stone-500/30 bg-stone-950/30' },
-  'revised':         { label: 'Revised',              color: 'text-stone-300',   bg: 'border-stone-500/30 bg-stone-950/30' },
-}
-
+// The status vocabulary lives in lib/status.ts so the card, the header, the Contents
+// column and the feeds all read one table. It used to live here, in a client component,
+// which is exactly why the card and the feeds carried no status at all.
 export function CredibilitySection({
   reviewStatus,
   reviewers: reviewersProp,
@@ -116,13 +82,11 @@ export function CredibilitySection({
   // enumKey, not the raw value. In draft mode Sanity encodes the field's source path into
   // the string as zero-width characters, so CONFIDENCE_CONFIG['working-theory\u200B…'] is
   // undefined and the badge silently vanishes in Presentation. See lib/stega.ts.
-  const confidence = CONFIDENCE_CONFIG[enumKey(confidenceLevel) ?? ''] ?? null
-  const maturity   = MATURITY_CONFIG[enumKey(maturityIndicator) ?? ''] ?? null
-  const load       = LOAD_CONFIG[enumKey(cognitiveLoad) ?? ''] ?? null
-  const flags = enumKeys(reviewStatus)
-  const reviewBadges = REVIEW_FLAG_ORDER
-    .filter((f) => flags.includes(f))
-    .map((f) => ({ key: f, ...REVIEW_STATUS_CONFIG[f] }))
+  const confidence = CONFIDENCE[enumKey(confidenceLevel) ?? ''] ?? null
+  const maturity   = MATURITY[enumKey(maturityIndicator) ?? ''] ?? null
+  const load       = LOAD[enumKey(cognitiveLoad) ?? ''] ?? null
+  // All of them: the Contents column is the full-detail tier in 3.3.
+  const reviewBadges = reviewFlags(reviewStatus)
 
   return (
     <section className="mt-16 pt-12 border-t border-edge space-y-8" aria-label={heading}>

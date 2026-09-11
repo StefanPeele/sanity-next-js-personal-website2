@@ -4262,6 +4262,10 @@
               },
               {
                 "type": "string",
+                "value": "message-square"
+              },
+              {
+                "type": "string",
                 "value": "layers"
               },
               {

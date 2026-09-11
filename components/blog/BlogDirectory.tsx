@@ -13,6 +13,7 @@ import type { BlogIndexQueryResult } from '@/sanity.types'
 import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPage'
 import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { Icon } from '@/lib/cms/icons'
+import { reviewFlags } from '@/lib/status'
 import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
 import { ArrowRight } from 'lucide-react'
 // components/blog/BlogDirectory.tsx
@@ -341,7 +342,21 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                       <span className="font-sans text-xs px-3 py-1.5 rounded-full border border-orange-300/30 text-orange-300/90 inline-flex items-center gap-1.5"><Icon name="layers" size={12} aria-hidden />{post.series.title}</span>
                     )}
                   </div>
-                  <span className="meta-label text-stone-400 flex-shrink-0">{minutes} min</span>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {/* Phase 3.3's smallest tier: a mark, not a label. The ICON carries the
+                        distinction -- a different shape per status -- because the brief
+                        requires it to be readable without colour, for colourblind readers
+                        and greyscale printing. Colour is only the second cue. 14px, which
+                        is 3.3's floor. At most two, so a heavily-flagged post does not turn
+                        its card into a badge rack. */}
+                    {reviewFlags(post.reviewStatus, 2).map((f) => (
+                      <span key={f.key} className={`inline-flex items-center ${f.color}`} title={f.label}>
+                        <Icon name={f.icon} size={14} aria-hidden />
+                        <span className="sr-only">{f.label}</span>
+                      </span>
+                    ))}
+                    <span className="meta-label text-stone-400">{minutes} min</span>
+                  </div>
                 </div>
 
                 <h3 className="text-xl font-serif text-white group-hover:text-stone-100 transition-colors mb-2 leading-snug">{post.title}</h3>

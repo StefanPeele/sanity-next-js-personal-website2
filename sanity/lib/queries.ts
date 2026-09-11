@@ -40,6 +40,9 @@ const postCardFields = `
   "categories": categories[]->title,
   "tags": tags[]->{ _id, title, "slug": slug.current },
   articleType,
+  // The card carries the small status mark (Phase 3.3). Without this the index and the
+  // feeds had no status at all while the article had three tiers of it.
+  reviewStatus,
   ${wordCountField},
   "series": series->{ title, "slug": slug.current }
 `
@@ -408,6 +411,7 @@ export const searchIndexQuery = defineQuery(`{
 export const feedQuery = defineQuery(`
   *[_type == "post" && defined(slug.current) && defined(publishedAt)] | order(publishedAt desc)[0...50] {
     _id, title, "slug": slug.current, publishedAt, _updatedAt, excerpt, body, articleType,
+    reviewStatus,
     "categories": categories[]->title,
     "imageUrl": mainImage.asset->url
   }

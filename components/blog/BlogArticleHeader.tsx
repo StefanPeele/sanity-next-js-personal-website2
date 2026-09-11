@@ -6,7 +6,7 @@ import { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from '@/lib/cms/defaults/artic
 import type { VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { heroImageUrl } from '@/components/article/heroImage'
 import { FOCUS } from '@/lib/ui'
-import { enumKeys } from '@/lib/stega'
+import { reviewFlags } from '@/lib/status'
 // components/blog/BlogArticleHeader.tsx
 // Text-first article header, left-aligned to the prose measure.
 //
@@ -51,17 +51,12 @@ export function BlogArticleHeader({
   const typeMeta = articleTypeMeta(articleType, lanes)
   const n = (t: string, v: number) => t.replace('{n}', String(v))
 
-  // The header shows at most ONE flag, deliberately. reviewStatus is now an array and
-  // several flags can be true at once, but §1.4's finding is that document-level status
-  // goes QUIET -- Wikipedia hides its article grade from readers entirely. The full set
-  // renders in CredibilitySection further down the page. Peer review outranks the
-  // invitation to review, because it is a fact rather than a request.
-  // enumKeys, not the raw array -- see lib/stega.ts.
-  const flags = enumKeys(reviewStatus)
-  const reviewBadge = flags.includes('peer-reviewed')
-    ? { label: labels.reviewBadges.peerReviewed, className: 'text-emerald-400 border-emerald-500/30' }
-    : flags.includes('seeking-review')
-    ? { label: labels.reviewBadges.seekingReview, className: 'text-amber-400 border-amber-500/30' }
+  // ONE flag, the strongest that applies. 3.3 gives the header the "full label" tier and
+  // §1.4 says document-level status goes quiet -- the whole set renders further down in
+  // CredibilitySection, and the Contents column carries who and when.
+  const headerFlag = reviewFlags(reviewStatus, 1)[0] ?? null
+  const reviewBadge = headerFlag
+    ? { label: headerFlag.label, className: `${headerFlag.color} ${headerFlag.bg.split(' ')[0]}` }
     : null
 
   const metaItems = [
