@@ -40,19 +40,6 @@ as CSS custom properties on `[data-article-root]` consumed by the prose rules in
 is the model for verifying them: composite the layers, walk text nodes, and check a positive
 control so "nothing changed" cannot pass for "it works".
 
-The brief asks for a structure that works **at 3 posts and at 50**, and for an explicit
-statement of what changes between those states. There are 3 published posts, so the 50-post
-state cannot be seen — build `scripts/seed-scale-fixtures.mjs` to create ~50 DRAFT posts
-across the three lanes (same safety pattern as `scripts/seed-fixture-posts.mjs`: prove they
-are invisible to the published perspective by querying afterwards and exiting non-zero if
-any appear), render and capture both states, then delete them.
-
-4.4 falls out of 4.1: *"try sections first; if sections genuinely subsume filtering, remove
-the filter row entirely, otherwise fold filtering into the search bar."* Report which
-happened and why. Note that lane sections cannot subsume **topic**, **tag** or **status**
-filtering — those are orthogonal to lane — so the honest answer is likely "fold into
-search", which means checking what `components/SearchModal.tsx` already does.
-
 ## What is already true and should not be re-derived
 
 - **The status vocabulary is one table**, `lib/status.ts`. Four separate copies of it have
