@@ -328,3 +328,125 @@ thirteen index pages.** Not one. Whatever Phase 3.7 does with revision dates, it
 inventing a convention for the index rather than following one — the prior art for revision
 display lives on article pages and in the wikis and preprint servers covered in §1.4, not on
 publication front pages.
+
+---
+
+## 1.4 Epistemic status in the wild
+
+Sources fetched directly: `gwern.net/about`, `maggieappleton.com/garden-history`,
+`en.wikipedia.org/wiki/Wikipedia:Content_assessment`, `arxiv.org/abs/2502.14132`, plus a
+literature search on the fact-checking / peer-review distinction. Vocabulary below is
+quoted from those pages, not recalled.
+
+### Nobody puts this on one scale
+
+The single most important finding. Every mature system uses **multiple orthogonal axes**,
+and none of them ranks "peer reviewed" as a point on a confidence scale.
+
+| Source | Axes it keeps separate |
+| --- | --- |
+| **Gwern** | **confidence** (Kesselman estimative words: certain / highly likely / likely / possible / unlikely / highly unlikely / remote / impossible) · **status** (notes / draft / in progress / finished) · **importance** (0–10 decile) |
+| **Digital gardens** (Appleton) | **maturity** only: seedling / budding / evergreen, with planting and tending dates |
+| **Devon Zuegel** | **epistemic status** (certainty) · **epistemic effort** (research invested) |
+| **Wikipedia** | **quality grade** (FA / FL / A / GA / B / C / Start / Stub / List), held separately from any claim-level flag |
+| **arXiv** | **version** only. No quality claim at all |
+
+Four distinct axes appear across these: *how sure am I* · *how finished is it* · *how much
+work went in* · *who else has checked it*. They are never collapsed.
+
+### Our schema collapses them, twice
+
+Read from `sanity/schemas/documents/post.ts`:
+
+```
+confidenceLevel     speculative | working-theory | confident | VERIFIED | PEER-REVIEWED
+maturityIndicator   fresh | TESTED | PRODUCTION-PROVEN
+reviewStatus        self-reviewed | seeking-review | community-reviewed | EXPERT-VERIFIED
+cognitiveLoad       (separate axis, fine)
+```
+
+Two overlaps, both real:
+
+1. **"Peer reviewed" is the top of the confidence scale *and* the top of the review scale.**
+   The same real-world event — an engineer read it and vouched — is encoded in two fields,
+   in two vocabularies, and both wear the same star icon. They are radio fields, so an
+   author must choose one encoding and the other silently says something else.
+2. **"Verified — confirmed in lab/production"** (confidence) restates
+   **"tested" / "production-proven"** (maturity). Same event, second collision.
+
+This is a worse version of exactly the conflation the brief warns against. **Phase 3.1's
+job is subtraction, not addition:** take review *out* of `confidenceLevel` and lab
+verification *out* of `confidenceLevel`, leaving confidence to mean only "how sure am I",
+which is what every source above does.
+
+Proposed, for Stefan to accept or overrule:
+
+| Field | Axis | Values |
+| --- | --- | --- |
+| `confidenceLevel` | how sure am I | speculative / working theory / confident — *drop verified and peer-reviewed* |
+| `maturityIndicator` | how tested is it | fresh / tested / production-proven — unchanged |
+| `reviewStatus` | who checked it | self-reviewed / seeking review / community reviewed / **peer reviewed** / **fact-checked** — the last two independent, see below |
+
+Note also: every option title in these fields is prefixed with an emoji. `CLAUDE.md` says
+icons are lucide, never emoji. Studio-only and not site-facing, so low priority — but it is
+the same rule.
+
+### Fact-checked vs peer-reviewed: the distinction is *level*, not *strength*
+
+The brief believes these are different guarantees and asks how others handle it. They are,
+and the cleanest formulation the research supports is not "one is stronger":
+
+- **Fact-checking is claim-level.** The workflow is claim selection, collect evidence,
+  reach a verdict, publish it. It asks *are these individual statements true?*
+- **Peer review is document-level.** An expert assesses method and reasoning as a whole.
+  It asks *is the argument sound?*
+
+A piece can be fact-checked and wrong (every statement true, conclusion unsupported) or
+peer-reviewed and factually sloppy. Neither implies the other. **They must be independent
+booleans, never points on one scale** — which is what the brief already specifies, now with
+a reason attached.
+
+### Wikipedia's decision is the most instructive one in the set
+
+Wikipedia runs the largest article-quality assessment system in existence, and
+**deliberately does not show the grade to readers.** Grades live in WikiProject banners on
+*talk* pages; the assessment is "mainly for the internal use of the WikiProject." What
+readers do see are **claim-level** markers — "citation needed" — attached to the specific
+sentence at issue.
+
+That is a strong argument against badging the article heavily, and it produces the design
+principle this whole phase has been circling:
+
+> **Document-level status goes quiet. Claim-level status goes inline.**
+
+Confidence, maturity and review status describe the *document*, so they belong in the
+header and the Contents column at low volume — which is what Phase 3.3 already proposes.
+Fact-checking and corrections attach to *claims*, so they belong **at the passage**, which
+is Phase 8.8. The two halves of the brief are one idea seen from two ends, and the split
+between them should be by level, not by importance.
+
+### "Revised" — the measured prior art
+
+| Source | How revision is shown |
+| --- | --- |
+| **arXiv** | A "Submission history" block **below the abstract**: `[v1]` plus UTC timestamp plus file size, one line per version. Every version stays permanently addressable at its own URL (`/abs/2502.14132v1`). The current version is marked in the title metadata. **No diff tool** |
+| **Gwern** | A `modified` date recording only "meaningful modification" — deliberately not bumped by link fixes or formatting, so the date stays informative |
+| **Wikipedia** | Full edit history plus a talk page. Diffs between any two revisions |
+| **Digital gardens** | Planted and tended dates, no version list |
+
+For a statically generated Sanity site, **arXiv's model is the copyable one** and Gwern's
+rule is what makes it useful. A version list of `{ date, what changed }` in Sanity, rendered
+below the header, costs one array field and no infrastructure. Storing whole prior bodies to
+support diffs is where the cost explodes — and arXiv, with far more at stake, does not offer
+diffs either.
+
+**Gwern's "meaningful modification" rule matters more than the mechanism.** A revision date
+that moves when a typo is fixed teaches readers to ignore it.
+
+### Does status affect sorting or filtering anywhere?
+
+Looked for, **not found** in any of these sources. Gwern's importance rating orders his site
+index; Wikipedia sorts by grade only inside WikiProject worklists, which readers never see.
+No consumer-facing site in the set filters by epistemic status. Phase 3.5 would be inventing
+this, not adopting it — which is fine, but it should be built knowing there is no prior art
+to lean on and no reader expectation to meet.
