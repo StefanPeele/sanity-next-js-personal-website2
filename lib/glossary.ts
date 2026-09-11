@@ -6,8 +6,13 @@
 // own span carrying a `glossary` mark whose markDef holds the definition.
 // CustomPortableText renders that mark as <GlossaryTerm>.
 //
+import { enumKey } from '@/lib/stega'
+
 // Rules: longest pattern first, case-insensitive, whole-word, at most one
 // highlight per term per article, never inside headings, code, links or sidenotes.
+//
+// That "at most one per article" IS the hybrid Phase 6.2 asks to choose between: automatic,
+// but only the first occurrence. The decision was already made here.
 
 export interface GlossaryEntry {
   _id?: string
@@ -51,7 +56,13 @@ export function buildGlossaryMatcher(entries: GlossaryEntry[] | null | undefined
   const patterns: Pattern[] = []
   for (const e of entries) {
     if (!e.term || !e.slug || !e.definition) continue
-    const variants = [e.term, ...(e.aliases ?? [])]
+    // enumKey, because these build a REGEX. In draft mode Sanity encodes each string's source
+    // path into it as zero-width characters, so `e.term` is "broadcast domain" followed by an
+    // invisible payload and a pattern built from it matches nothing — the glossary silently
+    // marked zero terms in every draft preview, which is the only place it could be tested.
+    // The DEFINITION below is left encoded on purpose: it is displayed, stega is invisible,
+    // and keeping it is what makes the note click-to-editable in Presentation.
+    const variants = [enumKey(e.term), ...(e.aliases ?? []).map((a) => enumKey(a))]
       .filter((v): v is string => typeof v === 'string' && v.trim().length > 1)
       .map((v) => v.trim())
     if (!variants.length) continue
@@ -59,8 +70,9 @@ export function buildGlossaryMatcher(entries: GlossaryEntry[] | null | undefined
     variants.sort((a, b) => b.length - a.length)
     const alternation = variants.map(escapeRegex).join('|')
     patterns.push({
-      slug: e.slug,
-      term: e.term,
+      // The slug is a key too -- it is used to de-duplicate and lands in the mark.
+      slug: enumKey(e.slug) ?? e.slug,
+      term: enumKey(e.term) ?? e.term,
       definition: e.definition,
       // Lookarounds instead of \b so terms like "802.1Q" or "IPv6" still match cleanly.
       regex: new RegExp(`(?<![A-Za-z0-9_])(?:${alternation})(?![A-Za-z0-9_])`, 'i'),

@@ -9,7 +9,6 @@ import { SideNote } from '@/components/blog/SideNote'
 import { SectionBreak } from '@/components/blog/SectionBreak'
 import { FailureNote } from '@/components/blog/FailureNote'
 import { WhatIGotWrong, WhatEngineersUse, TheProblemSolved, ConceptStressTest } from '@/components/blog/LearningBlocks'
-import { GlossaryTerm } from '@/components/blog/GlossaryTerm'
 import { CorrectionMark } from '@/components/blog/CorrectionMark'
 import { HeadingAnchor } from '@/components/article/HeadingAnchor'
 import { slugify, countWords } from '@/lib/reading'
@@ -243,8 +242,16 @@ export function CustomPortableText({
       sidenote: ({ children, value: v }) => (
         <SideNote note={v?.note}>{children}</SideNote>
       ),
+      // 6.2: ONE annotation system, two sources. A glossary match used to render its own
+      // hover card -- a second mechanism with a second treatment, so a reader met two
+      // annotation systems on one page and had to learn both. It is a sidenote now, in the
+      // same margin, differing by a colour and a label. The matching rule is untouched:
+      // lib/glossary.ts still marks the first prose occurrence per term per article, which
+      // is the brief's own "hybrid".
       glossary: ({ children, value: v }) => (
-        <GlossaryTerm slug={v?.slug} term={v?.term} definition={v?.definition}>{children}</GlossaryTerm>
+        <SideNote note={v?.definition} kind="glossary" href={v?.slug ? `/glossary#${v.slug}` : undefined}>
+          {children}
+        </SideNote>
       ),
       // 3B. Applied server-side by applyCorrectionMarks, the same way glossary marks are.
       correction: ({ children, value: v }) => (

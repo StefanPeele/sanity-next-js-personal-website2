@@ -42,12 +42,15 @@ interface Note {
   top: number
   text: string
   kind: string
+  /** Glossary notes carry a link to their full entry; hand-authored ones do not. */
+  href: string | null
 }
 
-export function MarginNotes({ label = 'Note', moreLabel = 'More', closeLabel = 'Close' }: {
+export function MarginNotes({ label = 'Note', moreLabel = 'More', closeLabel = 'Close', glossaryLabel = 'Full entry in the glossary' }: {
   label?: string
   moreLabel?: string
   closeLabel?: string
+  glossaryLabel?: string
 }) {
   const [notes, setNotes] = useState<Note[]>([])
   const [open, setOpen] = useState<Note | null>(null)
@@ -69,7 +72,14 @@ export function MarginNotes({ label = 'Note', moreLabel = 'More', closeLabel = '
       const text = el.getAttribute('data-sidenote-text') ?? ''
       if (!text) return
       const anchorTop = el.getBoundingClientRect().top + window.scrollY - hostTop
-      next.push({ id: el.getAttribute('data-sidenote-id') ?? '', anchorTop, top: anchorTop, text, kind: el.getAttribute('data-sidenote-kind') ?? 'note' })
+      next.push({
+        id: el.getAttribute('data-sidenote-id') ?? '',
+        anchorTop,
+        top: anchorTop,
+        text,
+        kind: el.getAttribute('data-sidenote-kind') ?? 'note',
+        href: el.getAttribute('data-sidenote-href'),
+      })
     })
     setNotes(next)
   }, [])
@@ -189,7 +199,7 @@ export function MarginNotes({ label = 'Note', moreLabel = 'More', closeLabel = '
       <div ref={hostRef} className="margin-notes" aria-hidden="true" data-print-hide>
         {notes.map((n) => (
           <div key={n.id} className="margin-note" style={{ top: n.top }} data-sidenote-kind={n.kind}>
-            <span className="margin-note-label meta-label">{label}</span>
+            <span className="margin-note-label meta-label">{n.kind === 'glossary' ? 'Definition' : label}</span>
             <p className="margin-note-text">{n.text}</p>
             <button
               type="button"
@@ -219,6 +229,14 @@ export function MarginNotes({ label = 'Note', moreLabel = 'More', closeLabel = '
               </button>
             </div>
             <p className="font-sans text-sm text-stone-200 leading-relaxed">{open.text}</p>
+            {open.href && (
+              // 6.2: a glossary note is a definition that lives somewhere. The inline mark
+              // used to carry this link in a hover card; the window carries it now, which is
+              // the one place with room for it.
+              <a href={open.href} className={`inline-block mt-3 font-sans text-xs text-stone-300 underline underline-offset-4 rounded-sm ${FOCUS}`}>
+                {glossaryLabel}
+              </a>
+            )}
           </div>
         </div>,
         document.body,

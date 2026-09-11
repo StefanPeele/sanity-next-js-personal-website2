@@ -127,6 +127,32 @@ try {
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.waitForTimeout(300)
 
+  console.log(String.fromCharCode(10) + 'B2. 6.2: a glossary match is a SIDENOTE, not a second system')
+  const gl = await page.evaluate(() => {
+    const anchors = Array.from(document.querySelectorAll('[data-sidenote-id]'))
+    const glossary = anchors.filter((a) => a.getAttribute('data-sidenote-kind') === 'glossary')
+    const notes = Array.from(document.querySelectorAll('.margin-note'))
+    return {
+      legacyHoverCards: document.querySelectorAll('.glossary-term').length,
+      glossaryAnchors: glossary.length,
+      glossaryText: glossary[0]?.getAttribute('data-sidenote-text')?.slice(0, 50) ?? null,
+      glossaryHref: glossary[0]?.getAttribute('data-sidenote-href') ?? null,
+      glossaryNotes: notes.filter((n) => n.getAttribute('data-sidenote-kind') === 'glossary').length,
+      labels: [...new Set(notes.map((n) => n.querySelector('.margin-note-label')?.textContent))],
+      markColours: [...new Set(Array.from(document.querySelectorAll('.sidenote-mark'))
+        .map((m) => getComputedStyle(m).borderBottomColor))],
+    }
+  })
+  console.log(`  ${JSON.stringify(gl)}`)
+  check(gl.legacyHoverCards === 0, 'the old .glossary-term hover card is gone entirely', `${gl.legacyHoverCards}`)
+  check(gl.glossaryAnchors > 0, 'a glossary term is matched in the prose', `${gl.glossaryAnchors}`)
+  check(gl.glossaryNotes > 0, 'and it renders as a note in the SAME margin', `${gl.glossaryNotes}`)
+  check(gl.labels.length === 2 && gl.labels.includes('Definition') && gl.labels.includes('Note'),
+    'the two SOURCES are labelled apart — Note and Definition', gl.labels.join(' / '))
+  check(gl.markColours.length === 2, 'and their inline marks differ by colour, not by mechanism',
+    gl.markColours.join(' | '))
+  check(!!gl.glossaryHref, 'the glossary note carries a link to its full entry', String(gl.glossaryHref))
+
   console.log(String.fromCharCode(10) + 'C2. 6.3: the TOC is sticky, and yields when a note lands on it')
   // Both of these were found by measuring rather than by reading the code. Wrapping the
   // <aside> for the margin column silently removed the sticky element's travel -- `position:

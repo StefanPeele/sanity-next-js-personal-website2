@@ -122,18 +122,9 @@ main#content[data-width='wide']     { max-width: 44rem; }
 [data-article] .heading-anchor:hover { opacity: 1; }
 
 /* Glossary terms */
-[data-article] .glossary-term {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: help;
-  text-decoration: underline dotted;
-  text-decoration-color: rgba(251, 191, 36, 0.6);
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1px;
-}
+/* .glossary-term is gone: 6.2 unified the two annotation systems, so a glossary match is a
+   sidenote now and uses .sidenote-mark with its own colour. The rule that styled it was left
+   behind by the component. */
 
 /* Read-aloud: the paragraph currently being spoken */
 [data-article] .sp-reading-now {

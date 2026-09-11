@@ -98,6 +98,12 @@ const bodyA = [
     markDefs: [{ _type: 'link', _key: 'lk-1', href: 'https://www.rfc-editor.org/rfc/rfc826' }],
   },
 
+  // 6.2. A sentence whose term matches the draft glossary entry below, so the unified
+  // annotation can be measured. Deliberately NOT inside a correction anchor: glossary marks
+  // are applied first and correction marks skip spans that already carry one, so a term
+  // sitting inside an anchor would silently stop that correction from marking.
+  para('Traffic that has nowhere else to go floods the whole broadcast domain, which is the behaviour this fixture uses to exercise glossary-derived sidenotes.'),
+
   block('h3', [span('Heading three')]),
   para('A third level, for subsections inside a section.'),
 
@@ -264,7 +270,19 @@ async function mutate(mutations) {
   return j
 }
 
-const ids = FIXTURES.map((f) => f._id)
+// A draft-only glossary entry, for the same reason the posts are drafts: a published one
+// would appear on the live /glossary route. In draft mode it is matched by
+// applyGlossaryMarks exactly as a real one would be.
+const GLOSSARY_FIXTURE = {
+  _id: 'drafts.fixture-glossary-broadcast-domain',
+  _type: 'glossaryTerm',
+  term: 'broadcast domain',
+  slug: { _type: 'slug', current: 'fixture-broadcast-domain' },
+  definition: 'The set of devices a broadcast frame reaches. One VLAN is one broadcast domain; a router bounds it, a switch does not.',
+}
+
+// The glossary entry is deleted with the posts, or --delete leaves an orphan behind.
+const ids = [...FIXTURES, GLOSSARY_FIXTURE].map((f) => f._id)
 
 if (MODE === 'delete') {
   const res = await mutate(ids.map((id) => ({ delete: { id } })))
@@ -294,7 +312,7 @@ if (MODE !== 'apply') {
   process.exit(0)
 }
 
-const res = await mutate(FIXTURES.map((doc) => ({ createOrReplace: doc })))
+const res = await mutate([...FIXTURES, GLOSSARY_FIXTURE].map((doc) => ({ createOrReplace: doc })))
 console.log('\nwrote:', JSON.stringify(res.results?.map((r) => r.id) ?? res))
 
 // Prove the safety claim rather than asserting it.

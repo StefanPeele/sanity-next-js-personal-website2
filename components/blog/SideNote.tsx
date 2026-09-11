@@ -21,9 +21,11 @@ interface SideNoteProps {
   note?: string
   /** 6.2: 'note' is hand-authored, 'glossary' is derived from a definition. */
   kind?: 'note' | 'glossary'
+  /** Where the full entry lives. Only glossary notes have one; it surfaces in 6.5's window. */
+  href?: string
 }
 
-export function SideNote({ children, note, kind = 'note' }: SideNoteProps) {
+export function SideNote({ children, note, kind = 'note', href }: SideNoteProps) {
   const [open, setOpen] = useState(false)
   const noteId = useId()
 
@@ -35,6 +37,7 @@ export function SideNote({ children, note, kind = 'note' }: SideNoteProps) {
       data-sidenote-id={noteId}
       data-sidenote-text={note}
       data-sidenote-kind={kind}
+      data-sidenote-href={href || undefined}
     >
       <button
         type="button"
