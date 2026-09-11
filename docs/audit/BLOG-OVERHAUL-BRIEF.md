@@ -62,6 +62,9 @@ around a wrong premise; name it.
 - **Independently verified by the `verifier` subagent** before `OVERHAUL-PROGRESS.md` marks
   an item done. Invoke it for anything that ships code or changes a rendered number; skip it
   for pure documentation commits, where it is overhead without benefit.
+  **Write the claim WIDER than the change** — name the surfaces it touches, not only the
+  fields it edits. Both defects the verifier has found existed because the claim scoped out
+  the surface where the bug lived.
   **Give it the CLAIM, never the implementation** — knowing how a thing was built biases how
   it gets tested, and that is the failure mode this project keeps producing. It designs its
   own measurement and must not reuse the harness that produced the original number.

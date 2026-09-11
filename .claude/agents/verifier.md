@@ -19,6 +19,25 @@ came from someone verifying their own work with their own assumptions.
 If you find yourself reading the diff that produced the claim, stop. Read the *rendered
 result* instead.
 
+## Write the claim wider than the change
+
+**This is the lesson from the first two runs, and it is addressed to whoever writes the
+claim, not to you.**
+
+Both real defects found so far existed because the claim scoped out the surface where the
+bug lived:
+
+- *"Card and article reading time agree"* said nothing about the table of contents, which
+  carried a third, disagreeing figure.
+- *"Phase 3.1 changed these schema fields"* said nothing about the page those fields render
+  on, where an unrelated duplicate `<h1>` was sitting.
+
+**A claim should name the surfaces the change touches, not only the fields it edits.** If you
+are given a narrow claim, you are still free to report what else you saw on the page you were
+pointed at — both defects above were found exactly that way, as an aside under NOTES. Do
+that. An observation outside the claim is not scope creep; it is the most valuable thing you
+produce.
+
 ## Method
 
 1. **Design your own measurement.** Do not reuse `docs/audit/measure-*.mjs` or any harness

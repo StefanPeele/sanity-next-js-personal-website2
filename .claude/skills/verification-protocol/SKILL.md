@@ -36,6 +36,15 @@ An item is not shipped until all of these hold.
 **If the verifier disagrees with your own result, the verifier's result stands** until you
 can show its measurement is wrong. Log both. A disagreement is a finding either way.
 
+### Write the claim wider than the change
+
+Both defects the verifier has found existed because the **claim scoped out the surface where
+the bug lived**: "card and article reading time agree" said nothing about the TOC, which
+carried a third figure; "Phase 3.1 changed these fields" said nothing about the page they
+render on, where a duplicate `<h1>` sat. **Name the surfaces the change touches, not just the
+fields it edits** — and expect the verifier to report what else it saw on the page, because
+that is where both defects came from.
+
 ---
 
 ## Part 2 — the traps
