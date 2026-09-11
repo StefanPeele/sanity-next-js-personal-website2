@@ -195,3 +195,111 @@ impersonating taxonomy pills, and fix the arrow's spacing rather than making it 
 
 Not applied — the brief says report first, and two of these depend on 2.5's decisions about
 the pills and the kicker.
+
+---
+
+## 2.6 The "AI-looking" problem — diagnosed
+
+The brief calls this the single most important aesthetic item, states a theory — *"every
+element on the cards carries similar weight with similar spacing, so nothing leads"* — and
+asks me to test it, say so if it is wrong, and give the real one.
+
+### The theory is right about the card and wrong about the page
+
+Those are two different measurements and they point in opposite directions.
+
+**At page level, we lead harder than almost anyone** (§1.1): lead:body **5.14×**, second
+highest of thirteen measured pages, ahead of Quanta, Increment, The Atlantic and the FT.
+Nothing about the page is timid.
+
+**At card level, we have the smallest contrast in the set.** Measured with
+`docs/audit/measure-cards.mjs` — every text node inside one post card, its size, weight and
+the gap above it:
+
+| Site | Card | Distinct sizes | **Spread (max:min)** | Title | **Title:excerpt** |
+| --- | --- | --- | --- | --- | --- |
+| **Ours** | 389×533 | 20 / 14 / 12 | **1.67× — lowest** | **20px w400** Lora | **1.43× — lowest** |
+| 404 Media | 393×522 | 26.5 / 17.6 / 14.1 | 1.88× | 26.5px w400 Space Grotesk | 1.51× |
+| Quanta | 260×399 | 18 / 13 / 10 / 9 | 2.00× | 18px **w700** Noe Display | 1.38× |
+| Defector | 284×381 | 24 / 12 | 2.00× | 24px **w700** degular | — (no excerpt) |
+| Ars Technica | 1152×324 | 39.1 / 18 / 14 / 12 | **3.26×** | 39.1px **w700** Faustina | 2.17× |
+
+So the real diagnosis is narrower and more useful than the theory as stated:
+
+> **The page shouts and the card mumbles.** Two levers are sitting unused on the card —
+> **size spread** and **weight** — and we are last in the set on both.
+
+Three of the four references set the card title at **w700**. Ours is **w400**. The one that
+also uses w400 — 404 Media — compensates with a much larger size (26.5px) and a display
+face. We do neither.
+
+**Defector is the instructive counter-example.** It runs only **two** sizes on a card and
+still achieves a 2.0× spread, because it carries no excerpt at all. Contrast came from
+*removing* the middle term, not from adding sizes. That is the opposite of the instinct to
+fix this by introducing more steps.
+
+### Rendered options
+
+Four, against production, CSS injected at runtime — no application code changed, the same
+technique `docs/audit/decisions/` used. `docs/audit/render-card-options.mjs`, captured at
+1440 / 768 / 390 in `docs/audit/screenshots/card-options/`.
+
+| Option | Title | Pill row | Measured spread |
+| --- | --- | --- | --- |
+| **A** baseline | 20px w400 | unchanged | 1.67× |
+| **B** | **24px w600** | unchanged | **2.00×** |
+| **C** | **24px w600** | first pill becomes a mono kicker, rest hidden | **2.00×** |
+| **D** | 28px w600 | same as C | 2.33× |
+
+### Recommendation: C
+
+**24px, weight 600, and the category pill restyled as a kicker above the headline.**
+
+Why C over B: the pill and the title were competing. Turning the bordered pill into a
+12px mono uppercase kicker directly above the headline is the structure §1.2 measured at
+404 Media, Defector, Ars and NYT — kicker, headline, excerpt, footer — and it removes a
+bordered box from the one place a card needs its title to win.
+
+Why C over D: 28px is a 2.33× spread, past Quanta and Defector and short of only Ars, which
+runs a 1152px-wide full-bleed card we do not have. At 390 the 28px title wraps to five
+lines on the longer post. 24px holds at three.
+
+**Specific values**, all existing Tailwind steps:
+
+```
+h3:  text-xl font-serif            ->  text-2xl font-serif font-semibold
+     (20px w400)                        (24px w600)
+pill: font-sans text-xs px-3 py-1.5 rounded-full border [inline colour]
+     ->  meta-label, coloured with the lane colour it already has, no border, no fill
+```
+
+The lane colour is **already in the data** — `articleTypeMeta().color` — and the card
+already uses it, but only on the badge floating over the image. A kicker in that colour
+costs nothing new.
+
+### One thing the render exposed that was not in the brief
+
+With the kicker in mono uppercase, **"3 MIN" on the same row now reads as a second kicker.**
+Both are 12px mono uppercase, both grey, sitting at opposite ends of one line. The eye pairs
+them.
+
+That strengthens §2.4's recommendation independently: reading time should become
+**14px sans sentence case, "3 min read"**, so it stops impersonating a kicker. C and that
+change belong in the same commit — shipping C alone would make the reading-time problem
+more visible, not less.
+
+### Two corrections to my own §2.4 note
+
+1. I wrote that `"Read →"` is a literal glyph with a plain space. **On the card it is not** —
+   it is `<ArrowRight size={14} className="group-hover:translate-x-0.5 …" />`, a lucide icon
+   with a real gap and a hover translate, already correct. The literal-glyph version is on
+   the **hero** (`blog/page.tsx`, `{copy.featured.readLabel} →`). I generalised from one
+   instance to both; only the hero needs fixing.
+2. I described the card meta row as carrying up to three pills plus reading time. On the
+   live posts it renders **one** pill — the lane pill is absent because `articleType` does
+   not resolve to a lane for these posts. The three-pill case is possible, not current.
+   Worth knowing before optimising for crowding that is not there.
+
+**Not applied.** All four options are rendered and committed; the change itself is one line
+of Tailwind on the `h3` plus a pill restyle, and it should land together with the
+reading-time fix rather than alone.

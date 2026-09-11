@@ -1,61 +1,69 @@
 # Resume state
 
-Written: 2026-09-11T00:20Z
-Why the session ended: **Phase 0 complete and pushed; Phase 1 not started.** This was not
-an overnight run — it was the session that installed the brief and cleared Phase 0.
+Written: 2026-09-11T03:20Z
+Why the session ended: **still running at the time of writing** — this file is kept current
+so it is never stale, per the runner contract.
 
 ## Exactly where I stopped
 
-Phase 0, all five items, done and pushed (`b6c07c2`). Production deploy was in flight at
-the time of writing; `/api/health` reports the live commit.
+**Phase 0: complete, deployed, verified live** (`2724d3e`, `b6c07c2`, Sanity txn
+`mIRMU65sT5gw12rzV1sPip`).
 
-Phase 1 (research → `docs/audit/EDITORIAL-RESEARCH.md`) has **not been started**. No file
-exists for it yet.
+**Phase 1: complete.** All nine sub-sections in `docs/audit/EDITORIAL-RESEARCH.md` (1014
+lines). Thirteen sites measured live, three recorded as blocked, five sources fetched.
+Reusable harnesses committed: `measure-reference-site.mjs`, `measure-metadata.mjs`,
+`measure-sidenotes.mjs`, `capture-change.mjs`.
+
+**Phase 2: in progress.**
+
+- **2.1 shipped and verified live** (`1d0869b`, `8141a9f`) — the section is called Blog, in
+  code *and* in the Studio documents.
+- **2.2, 2.3, 2.4 proposed** in `docs/audit/PROPOSALS.md`, not applied.
+- **2.5 and 2.6 not started.**
 
 ## The single next action
 
-Start Phase 1.1 — editorial index formats — and create
-`docs/audit/EDITORIAL-RESEARCH.md`. Phase 1 is research only; no code. The brief is
-explicit that everything from Phase 2 on depends on it and that it is the phase most
-likely to be rushed.
+**Phase 2.6** — the "AI-looking" problem, which the brief calls the most important aesthetic
+item in it. The page-level half is already done and is in `EDITORIAL-RESEARCH.md` §1.1: the
+diagnosis is *the second tier*, not uniformity. What remains is the card-level measurement
+the brief asks for — measure type sizes and spacing on a post card, compare against three
+reference sites' cards, then propose values and render before/after at 1440/768/390.
+
+Then 2.5, which depends on it.
 
 ## What is half-done and needs care
 
-Nothing is half-done. Working tree is clean, everything is pushed.
+Nothing is half-done. Working tree clean, everything pushed, 34/34 green.
 
-Two things to know before touching the blog:
+Two things a fresh session must know:
 
-- **The Playwright suite is 34 tests, not 33.** Phase 0.1 added
-  `reading time agrees between every card and its article`. The brief's §1 has been
-  updated to say 34. A future session seeing 34 should not investigate.
-- **`wordCountField` in `sanity/lib/queries.ts` is load-bearing.** It is interpolated into
-  both `postCardFields` and `postBySlugQuery` and is the only reading-time input on the
-  site. The comment above it explains why the obvious simplification is wrong. Do not
-  replace it with `length(string::split(pt::text(body), " "))`.
+- **The suite is 34 tests.** The brief's §1 says so.
+- **`wordCountField` in `sanity/lib/queries.ts` is load-bearing** and the comment above it
+  explains why the obvious simplification is wrong.
 
 ## What I learned tonight that is not yet in the docs
 
-- **The Sanity write token works** — `editor` role, verified against
-  `/v2025-02-27/users/me`. My memory said it was invalid; that was stale. Content fixes
-  can be scripted and do not need Stefan in Studio. Both Phase 0 content fixes were
-  applied this way (transaction `mIRMU65sT5gw12rzV1sPip`).
-- **`MSYS_NO_PATHCONV=1` is mandatory** when passing a route like `/blog` as an argument
-  to a node script from Git Bash. Without it the shell rewrites it to
-  `C:/Program Files/Git/blog` and Playwright reports "Cannot navigate to invalid URL",
-  which looks like a code bug.
-- **Local screenshots carry a false artifact.** Running on `127.0.0.1:3000` shows a
-  "Sanity Live couldn't connect — your origin is blocked by CORS policy" toast in the
-  bottom-right of every capture. Local only. It is visible in
-  `docs/audit/screenshots/phase-0/`.
-- **A new class of measurement failure, logged as artifact #19.** Every previous artifact
-  in this project was a false positive — a measurement inventing a defect. Phase 0.1 was
-  the opposite: on 2026-09-08 I *cleared* a real bug because one spot check passed.
-  Disproving one instance of a claim is not disproving the claim. When the report is
-  "these two disagree", measure both on the same object and compare directly.
+All of it *is* in the docs now — `EDITORIAL-RESEARCH.md` for findings, the brief's §1 for
+hazards, `OVERHAUL-PROGRESS.md` for premises killed. The three worth repeating here:
 
-## What is deferred, with reasons
+1. **A Sanity patch plus `npm run build` is not enough.** `.next/cache/fetch-cache` survives
+   a rebuild and will serve pre-change content while the dataset already returns the new
+   value on both `api` and `apicdn`. It looks exactly like a failed patch.
+2. **Kill the server BEFORE `rm -rf .next`.** Rebuilding under a live `next start` gives
+   *"MIME type ('text/plain') is not executable"* and false failures on untouched routes.
+   Third appearance of the stale-server family in this project.
+3. **My own greps keep being too narrow.** Phase 2.1's first pattern required quotes tight
+   around the word and missed six strings, three of them user-visible — the RSS feed title,
+   the OG image, and the JSON-LD name.
 
-Recorded in `OVERHAUL-PROGRESS.md` under *Deferred / out of scope*: the four 8px `/graph`
-node labels, a seventh chip definition on the portfolio side, five sans micro-labels in
-`CinematicGallery.tsx`, and the hardcoded "Featured" string that Phase 2.5 should move
-into Studio.
+## The standing disagreements with the brief, all flagged not acted on
+
+| Brief says | Measured | Where |
+| --- | --- | --- |
+| "Featured becomes a true newspaper kicker" | It is a status *flag*; kicker/label/tag/badge are four forms | §1.2 |
+| Kicker size "as a ratio" | Constant 10–15px everywhere | §1.2 |
+| 14px floor for all meta including kickers | 12px is inside the measured 10–15px band | 2.4 |
+| "Read →" gets a button treatment | Essay-camp sites put no button on a card; nesting one inside a card-link is a duplicate target | 2.4 |
+| Prose measure "is currently 65 characters and that is correct" | **56** — the narrowest of five long-form sites | §1.5 |
+| Comment labels have little prior art | Conventional Comments is a published standard | §1.7 |
+| 8.8 as part of the comment system | Build it first and independently; `lib/glossary.ts` already does the hard part | §1.9 |
