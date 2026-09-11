@@ -10,6 +10,7 @@ import { SectionBreak } from '@/components/blog/SectionBreak'
 import { FailureNote } from '@/components/blog/FailureNote'
 import { WhatIGotWrong, WhatEngineersUse, TheProblemSolved, ConceptStressTest } from '@/components/blog/LearningBlocks'
 import { GlossaryTerm } from '@/components/blog/GlossaryTerm'
+import { CorrectionMark } from '@/components/blog/CorrectionMark'
 import { HeadingAnchor } from '@/components/article/HeadingAnchor'
 import { slugify, countWords } from '@/lib/reading'
 import type { PathSegment } from '@sanity/client/csm'
@@ -244,6 +245,12 @@ export function CustomPortableText({
       ),
       glossary: ({ children, value: v }) => (
         <GlossaryTerm slug={v?.slug} term={v?.term} definition={v?.definition}>{children}</GlossaryTerm>
+      ),
+      // 3B. Applied server-side by applyCorrectionMarks, the same way glossary marks are.
+      correction: ({ children, value: v }) => (
+        <CorrectionMark n={v?.n} kind={v?.kind} now={v?.now} was={v?.was} creditTo={v?.creditTo} creditUrl={v?.creditUrl} date={v?.date}>
+          {children}
+        </CorrectionMark>
       ),
     },
 

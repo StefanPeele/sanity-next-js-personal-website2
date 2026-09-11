@@ -13,7 +13,7 @@ import type { BlogIndexQueryResult } from '@/sanity.types'
 import { DEFAULT_BLOG_PAGE, type BlogPageCopy } from '@/lib/cms/defaults/blogPage'
 import { type VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { Icon } from '@/lib/cms/icons'
-import { auraProps, effectiveReviewStatus, materialRevision, REVIEW_STATUS, reviewFlags } from '@/lib/status'
+import { auraProps, effectiveReviewStatus, REVIEW_STATUS, reviewFlags, revisionState } from '@/lib/status'
 import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
 import { ArrowRight } from 'lucide-react'
 // components/blog/BlogDirectory.tsx
@@ -101,7 +101,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
   // out posts whose only status is a revision.
   const statusById = useMemo(() => {
     const m = new Map<string, string[]>()
-    posts.forEach((p) => m.set(p._id, effectiveReviewStatus(p.reviewStatus, materialRevision(p.lastRevised, p.publishedAt))))
+    posts.forEach((p) => m.set(p._id, effectiveReviewStatus(p.reviewStatus, revisionState(p.lastRevised, p.correctionKinds, p.publishedAt).flag)))
     return m
   }, [posts])
 

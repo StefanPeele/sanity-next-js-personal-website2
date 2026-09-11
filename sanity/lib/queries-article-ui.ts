@@ -5,7 +5,7 @@ const v = `_key, key, label, short, description, banner, color, dots`
 
 export const articleUiQuery = defineQuery(`
   *[_type == "articleUi"][0]{
-    header{ backLabel, readTimeLabel, sourcesLabel, updatedLabel, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },
+    header{ backLabel, readTimeLabel, sourcesLabel, revisedLabels{ corrected, clarified, updated }, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },
     toc{ title, mobileTitle, minutesSuffix },
     readerMenu{
       buttonLabel, closeLabel,
@@ -19,7 +19,7 @@ export const articleUiQuery = defineQuery(`
     },
     blocks{
       tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,
-      sourcesHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent
+      sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent
     },
     credibility{
       "maturity": maturity[]{ ${v} }, "load": load[]{ ${v} },

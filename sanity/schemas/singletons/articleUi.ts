@@ -25,7 +25,7 @@ export default defineType({
     obj('header', 'Header', [
       str('backLabel', 'Back link label'),
       str('readTimeLabel', 'Read time ({n} = minutes)'),
-      str('sourcesLabel', 'Sources count ({n})'), str('updatedLabel', 'Last updated ({date})'),
+      str('sourcesLabel', 'Sources count ({n})'), obj('revisedLabels', 'Revision labels', [str('corrected', 'Corrected ({date})'), str('clarified', 'Clarified ({date})'), str('updated', 'Updated ({date})')]),
       str('cardsLabel', 'Key terms count ({n})'),
       obj('reviewBadges', 'Review badges', [str('seekingReview', 'Seeking review'), str('peerReviewed', 'Peer reviewed')]),
     ], { group: 'header' }),
@@ -44,7 +44,7 @@ export default defineType({
       str('tldrHeading', 'TL;DR heading'), str('tldrSub', 'TL;DR subheading'),
       str('prerequisitesHeading', 'Prerequisites heading'), str('objectivesHeading', 'Objectives heading'),
       str('checkpointHeading', 'Checkpoint heading'), str('conceptCardsHeading', 'Key terms heading'),
-      str('sourcesHeading', 'Sources heading'), str('credibilityHeading', 'Credibility heading'),
+      str('sourcesHeading', 'Sources heading'), str('correctionsHeading', 'Corrections heading'), str('credibilityHeading', 'Credibility heading'),
       str('backlinksHeading', 'Backlinks heading'),
       str('askHeading', 'Ask heading'), str('askPlaceholder', 'Ask placeholder'), str('askButton', 'Ask button'),
       str('noContent', 'Empty body text'),

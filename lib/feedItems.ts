@@ -7,7 +7,7 @@
 // the transform therefore used to crash the whole suite at collection time.
 import { portableTextToHtml } from '@/lib/portableTextToHtml'
 import { portableTextToPlain } from '@/lib/reading'
-import { effectiveReviewStatus, materialRevision, statusPlainText } from '@/lib/status'
+import { effectiveReviewStatus, revisionState, statusPlainText } from '@/lib/status'
 import { absoluteUrl, articleTypeMeta } from '@/lib/site'
 import type { FeedQueryResult } from '@/sanity.types'
 
@@ -38,8 +38,8 @@ export function toFeedItems(posts: FeedQueryResult | null | undefined): FeedItem
       // Phase 3.3's feed tier. Prefixed into the summary rather than added as a field
       // nothing reads: RSS and JSON Feed have no slot for an epistemic status, so the
       // only way a subscriber sees it is in text they already read.
-      const revised = materialRevision(p.lastRevised, p.publishedAt)
-      const status = statusPlainText(effectiveReviewStatus(p.reviewStatus, revised))
+      const revision = revisionState(p.lastRevised, p.correctionKinds, p.publishedAt)
+      const status = statusPlainText(effectiveReviewStatus(p.reviewStatus, revision.flag))
       return {
         id: p._id,
         title: p.title ?? 'Untitled',
@@ -49,7 +49,7 @@ export function toFeedItems(posts: FeedQueryResult | null | undefined): FeedItem
         // _updatedAt alone re-surfaces the post for a typo fix. The changelog date is the
         // only one that means a material revision; _updatedAt stays as the fallback so an
         // unrevised post still carries a sane timestamp.
-        updatedAt: revised ?? p._updatedAt,
+        updatedAt: revision.date ?? p._updatedAt,
         summary: status ? `[${status}] ${summary}` : summary,
         status,
         html: portableTextToHtml(p.body, url),

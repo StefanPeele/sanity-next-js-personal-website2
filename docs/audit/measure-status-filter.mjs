@@ -91,15 +91,19 @@ try {
   const facets = r.chips.slice(1) // chip 0 is "All"
   console.log(`  chips: ${r.chips.map((c) => c.text).join(' | ')}`)
   // kitchen-sink: peer-reviewed, fact-checked, seeking-review, open-to-comment + derived
-  // revised = 5. minimal: seeking-review = 1. So seeking-review should count 2.
+  // the derived revision flag = 5. minimal: seeking-review = 1, so seeking-review counts 2.
   check(facets.length === 5, 'one chip per status actually present', `${facets.length}`)
   check(facets.every((c) => c.icon), 'every chip carries the same icon the card mark uses', '')
   const seeking = facets.find((c) => /seeking/i.test(c.text))
   check(!!seeking && /\b2\b/.test(seeking.text), 'seeking-review counts 2 — both fixtures carry it', seeking && seeking.text)
   const peer = facets.find((c) => /peer reviewed/i.test(c.text))
   check(!!peer && /\b1\b/.test(peer.text), 'peer-reviewed counts 1', peer && peer.text)
-  const revised = facets.find((c) => /revised/i.test(c.text))
-  check(!!revised, 'the DERIVED revised status is offered as a filter, not just rendered', revised && revised.text)
+  // 3B: the fixture has a correction, so the derived flag is Corrected, not the old
+  // collapsed Revised. Filtering on it must be possible, or the one status a reader most
+  // wants to search for is the one they cannot.
+  const revised = facets.find((c) => /corrected/i.test(c.text))
+  check(!!revised, 'the DERIVED revision status is offered as a filter, not just rendered', revised && revised.text)
+  check(!facets.some((c) => /revised/i.test(c.text)), 'the collapsed word "Revised" is not a facet', '')
 
   // -- filtering actually narrows ----------------------------------------------
   console.log('\nC. selecting a status narrows the list')

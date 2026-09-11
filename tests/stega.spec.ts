@@ -37,7 +37,7 @@ test('enumKey makes the lookup work again', () => {
 test('enumKey handles the values that actually shipped', () => {
   for (const v of ['speculative', 'working-theory', 'confident', 'fresh', 'tested',
     'production-proven', 'peer-reviewed', 'fact-checked', 'seeking-review',
-    'open-to-comment', 'revised', 'light', 'technical', 'dense', 'reference']) {
+    'open-to-comment', 'corrected', 'clarified', 'updated', 'light', 'technical', 'dense', 'reference']) {
     expect(enumKey(encode(v)), `${v} survived encoding`).toBe(v)
   }
 })
@@ -49,8 +49,8 @@ test('enumKey returns undefined for absent values rather than an empty key', () 
 })
 
 test('enumKeys cleans every item of an array', () => {
-  const flags = ['peer-reviewed', 'fact-checked', 'revised'].map(encode)
-  expect(enumKeys(flags)).toEqual(['peer-reviewed', 'fact-checked', 'revised'])
+  const flags = ['peer-reviewed', 'fact-checked', 'corrected'].map(encode)
+  expect(enumKeys(flags)).toEqual(['peer-reviewed', 'fact-checked', 'corrected'])
   expect(enumKeys(null)).toEqual([])
   // A null inside the array must not become an empty string that matches nothing.
   expect(enumKeys(['peer-reviewed', null])).toEqual(['peer-reviewed'])
@@ -108,7 +108,9 @@ test('draft mode renders every status badge on the fixture post', async ({ page 
     // "FACT CHECKED" while the source string is "Fact checked". Comparing against the
     // source case-sensitively fails and looks exactly like a missing badge.
     const text = (await page.locator('body').innerText()).toLowerCase()
-    for (const badge of ['peer reviewed', 'fact checked', 'seeking peer review', 'open to comment', 'revised', 'working theory', 'lab tested']) {
+    // 'corrected', not 'revised': 3B split the one word into three, and the fixture carries
+    // a correction. Seeing "revised" here again would mean the collapse came back.
+    for (const badge of ['peer reviewed', 'fact checked', 'seeking peer review', 'open to comment', 'corrected', 'working theory', 'lab tested']) {
       expect(text, `"${badge}" badge missing under draft mode — a stega-broken lookup looks exactly like this`).toContain(badge)
     }
     // And the value removed from confidenceLevel in Phase 3.1 must not come back.

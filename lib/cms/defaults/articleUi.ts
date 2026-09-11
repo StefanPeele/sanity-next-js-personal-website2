@@ -6,9 +6,14 @@ export const DEFAULT_ARTICLE_UI = {
     backLabel: 'Blog',
     readTimeLabel: '{n} min read',
     sourcesLabel: '{n} sources',
-    // 3.7. Shown only when the changelog says the post was materially revised, never on
-    // every Studio save -- see lastRevisedAt() in lib/status.ts.
-    updatedLabel: 'Updated {date}',
+    // 3.7 + 3B. Shown only when the post was materially revised -- never on every Studio
+    // save, see revisionState() in lib/status.ts. THREE verbs, because journalism separates
+    // updating for errors from updating for events and "Updated" hides which one happened.
+    revisedLabels: {
+      corrected: 'Corrected {date}',
+      clarified: 'Clarified {date}',
+      updated: 'Updated {date}',
+    },
     cardsLabel: '{n} key terms',
     reviewBadges: { seekingReview: 'Seeking review', peerReviewed: 'Peer reviewed' },
   },
@@ -32,6 +37,7 @@ export const DEFAULT_ARTICLE_UI = {
     checkpointHeading: 'Check what you already know',
     conceptCardsHeading: 'Key terms',
     sourcesHeading: 'Sources',
+    correctionsHeading: 'Corrections',
     credibilityHeading: 'How this was checked',
     backlinksHeading: 'Referenced by',
     askHeading: 'Ask this article',

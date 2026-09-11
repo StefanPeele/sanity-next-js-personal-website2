@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { vercelStegaCombine } from '@vercel/stega'
 import { toFeedItems } from '../lib/feedItems'
-import { effectiveReviewStatus, lastRevisedAt, materialRevision } from '../lib/status'
+import { effectiveReviewStatus, lastRevisedAt, materialRevision, revisionState } from '../lib/status'
 
 // The feed tier of 3.3, and the last-updated rule of 3.7.
 //
@@ -85,23 +85,54 @@ test('lastRevisedAt ignores entries that are not a real date', () => {
   expect(lastRevisedAt([{ date: '2026-09-01T14:00:00Z' }])).toBe('2026-09-01')
 })
 
-test('revised is derived from the changelog, never from the author checking a box', () => {
-  expect(effectiveReviewStatus(['peer-reviewed'], '2026-09-01')).toEqual(['peer-reviewed', 'revised'])
+test('the revision flag is derived, never from the author checking a box', () => {
+  expect(effectiveReviewStatus(['peer-reviewed'], 'updated')).toEqual(['peer-reviewed', 'updated'])
   expect(effectiveReviewStatus(['peer-reviewed'], null)).toEqual(['peer-reviewed'])
-  // Old data with a hand-set 'revised' and no changelog loses the badge. That is the
+  // Old data with a hand-set value from the derived tier loses the badge. That is the
   // intended trade: there is no record of what changed, so there is no claim to make.
+  expect(effectiveReviewStatus(['peer-reviewed', 'corrected'], null)).toEqual(['peer-reviewed'])
+  // And the legacy collapsed value 3B replaced is dropped too, not passed through to
+  // callers that have no entry for it.
   expect(effectiveReviewStatus(['peer-reviewed', 'revised'], null)).toEqual(['peer-reviewed'])
+  expect(effectiveReviewStatus(['peer-reviewed', 'expert-verified'], null)).toEqual(['peer-reviewed'])
   // And it is not duplicated when both are present.
-  expect(effectiveReviewStatus(['revised'], '2026-09-01')).toEqual(['revised'])
+  expect(effectiveReviewStatus(['corrected'], 'corrected')).toEqual(['corrected'])
+})
+
+// ── 3B: three words, not one ─────────────────────────────────────────────────
+
+test('a changelog with no corrections is an update, not a correction', () => {
+  expect(revisionState('2026-09-01', null, '2026-08-01')).toEqual({ date: '2026-09-01', flag: 'updated' })
+  expect(revisionState('2026-09-01', [], '2026-08-01')).toEqual({ date: '2026-09-01', flag: 'updated' })
+})
+
+test('anything wrong outranks everything else — one flag, by severity', () => {
+  // The whole point of splitting `revised` into three: a dozen harmless updates must not
+  // bury the one thing that was actually wrong.
+  expect(revisionState('2026-09-01', ['update', 'update', 'correction'], '2026-08-01').flag).toBe('corrected')
+  expect(revisionState('2026-09-01', ['update', 'clarification'], '2026-08-01').flag).toBe('clarified')
+  expect(revisionState('2026-09-01', ['correction', 'clarification'], '2026-08-01').flag).toBe('corrected')
+})
+
+test('no material revision means no flag at all', () => {
+  expect(revisionState(null, ['correction'], '2026-08-01')).toEqual({ date: null, flag: null })
+  // Backdated: the guard still applies, corrections included.
+  expect(revisionState('2026-07-01', ['correction'], '2026-08-01')).toEqual({ date: null, flag: null })
+})
+
+test('stega-encoded correction kinds still resolve', () => {
+  expect(revisionState('2026-09-01', [encode('correction')], '2026-08-01').flag).toBe('corrected')
 })
 
 test('a feed item is only marked modified when it was materially revised', () => {
   const unrevised = toFeedItems([post()] as Row)[0]
   expect(unrevised.updatedAt).toBe('2026-09-09T00:00:00Z') // falls back to _updatedAt
-  const revised = toFeedItems([post({ lastRevised: '2026-09-01' })] as Row)[0]
+  const revised = toFeedItems([post({ publishedAt: '2026-08-01T00:00:00Z', lastRevised: '2026-09-01' })] as Row)[0]
   expect(revised.updatedAt).toBe('2026-09-01')
-  // and the derived `revised` reaches the feed's status text
-  expect(revised.status).toBe('Revised')
+  // and the derived flag reaches the feed's status text
+  expect(revised.status).toBe('Updated')
+  const corrected = toFeedItems([post({ publishedAt: '2026-08-01T00:00:00Z', lastRevised: '2026-09-01', correctionKinds: ['correction'] })] as Row)[0]
+  expect(corrected.status).toBe('Corrected')
 })
 
 // ── The material-revision guard ───────────────────────────────────────────────
@@ -130,6 +161,6 @@ test('the feed applies the same guard as the page', () => {
   expect(back.updatedAt).toBe('2026-09-09T00:00:00Z')
   // Genuine revision: badge and date both follow.
   const real = toFeedItems([post({ publishedAt: '2026-08-01T00:00:00Z', lastRevised: '2026-09-01' })] as Row)[0]
-  expect(real.status).toBe('Revised')
+  expect(real.status).toBe('Updated')
   expect(real.updatedAt).toBe('2026-09-01')
 })

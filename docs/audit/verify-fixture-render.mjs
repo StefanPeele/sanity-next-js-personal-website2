@@ -119,7 +119,10 @@ try {
   ]) check(label, has(html, needle))
 
   console.log('\n=== PHASE 3.1 — status flags, two applied at once ===')
-  for (const [label, needle] of [['Peer reviewed badge', 'Peer reviewed'], ['Fact checked badge', 'Fact checked'], ['Revised badge', 'Revised']])
+  // 3B replaced the single 'Revised' with three words -- the fixture carries a correction,
+  // so the derived flag is 'Corrected'. "Revised" appearing here again would mean the
+  // collapse came back.
+  for (const [label, needle] of [['Peer reviewed badge', 'Peer reviewed'], ['Fact checked badge', 'Fact checked'], ['Corrected badge', 'Corrected']])
     check(label, has(text, needle))
   check('confidence "Working theory" renders', has(text, 'Working theory'))
   check('maturity "Lab tested" renders', has(text, 'Lab tested'))

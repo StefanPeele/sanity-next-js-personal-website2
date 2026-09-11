@@ -38,9 +38,29 @@ export interface StatusMeta {
 
 /** Render order wherever several apply at once. Strongest claim first. */
 export const REVIEW_FLAG_ORDER = [
-  'peer-reviewed', 'fact-checked', 'seeking-review', 'open-to-comment', 'revised',
+  'peer-reviewed', 'fact-checked', 'seeking-review', 'open-to-comment',
+  // The revision tier (3B). `revised` used to be one value and collapsed three different
+  // admissions into it. The Washington Post separates updating for EVENTS from updating for
+  // ERRORS, and journalism already has three words for it, so this uses three:
+  //   corrected  -- it was wrong
+  //   clarified  -- it was right but misleading
+  //   updated    -- it was right and things have changed since
+  // Exactly ONE of the three ever applies, because unlike peer-reviewed/fact-checked they
+  // are a severity scale on one axis, not independent facts. See revisionState().
+  'corrected', 'clarified', 'updated',
 ] as const
 export type ReviewFlag = (typeof REVIEW_FLAG_ORDER)[number]
+
+/**
+ * The revision tier, derived from the changelog and the corrections list — never chosen in
+ * Studio. Exported so the schema's picker can subtract them rather than re-listing the
+ * selectable values by hand, which is how the two drift apart.
+ */
+export const DERIVED_FLAGS = ['corrected', 'clarified', 'updated'] as const
+export type RevisionFlag = (typeof DERIVED_FLAGS)[number]
+export type SelectableFlag = Exclude<ReviewFlag, RevisionFlag>
+export const SELECTABLE_FLAGS = REVIEW_FLAG_ORDER
+  .filter((f): f is SelectableFlag => !(DERIVED_FLAGS as readonly string[]).includes(f))
 
 // peer-reviewed and fact-checked are deliberately NOT one scale and are not shaded as
 // stronger/weaker. Fact-checking is CLAIM-level (were these statements true); peer review
@@ -50,7 +70,9 @@ export const REVIEW_STATUS: Record<string, StatusMeta> = {
   'fact-checked':    { label: 'Fact checked',        short: 'Checked',   icon: 'check',       color: 'text-blue-400', rgb: '96 165 250',    bg: 'border-blue-500/30 bg-blue-950/10' },
   'seeking-review':  { label: 'Seeking peer review', short: 'Seeking',   icon: 'search',      color: 'text-amber-400', rgb: '251 191 36',   bg: 'border-amber-500/30 bg-amber-950/10' },
   'open-to-comment': { label: 'Open to comment',     short: 'Open',      icon: 'message-square', color: 'text-stone-300', rgb: '214 211 209', bg: 'border-stone-500/30 bg-stone-950/30' },
-  'revised':         { label: 'Revised',             short: 'Revised',   icon: 'rotate-ccw',  color: 'text-stone-300', rgb: '214 211 209',   bg: 'border-stone-500/30 bg-stone-950/30' },
+  'corrected':       { label: 'Corrected',           short: 'Corrected', icon: 'alert-circle', color: 'text-rose-400', rgb: '251 113 133',  bg: 'border-rose-500/30 bg-rose-950/10' },
+  'clarified':       { label: 'Clarified',           short: 'Clarified', icon: 'info',        color: 'text-sky-400',   rgb: '56 189 248',   bg: 'border-sky-500/30 bg-sky-950/10' },
+  'updated':         { label: 'Updated',             short: 'Updated',   icon: 'rotate-ccw',  color: 'text-stone-300', rgb: '214 211 209',  bg: 'border-stone-500/30 bg-stone-950/30' },
 }
 
 /** How sure the author is. Nothing about who checked it — that is reviewStatus. */
@@ -160,12 +182,40 @@ export function lastRevisedAt(changelog: readonly { date?: string | null }[] | n
  */
 export function effectiveReviewStatus(
   values: readonly (string | null)[] | null | undefined,
-  lastRevised: string | null | undefined,
+  revision: RevisionFlag | null | undefined,
 ): string[] {
-  // A hand-set 'revised' is dropped even when it is present in old data. It is no longer
-  // settable, and honouring it would reintroduce the disagreement this removes.
-  const keys = enumKeys(values).filter((v) => v !== 'revised')
-  return lastRevised ? [...keys, 'revised'] : keys
+  // Only values that are IN the vocabulary and are selectable survive. That drops two
+  // things at once: any hand-set value from the derived tier, and legacy values like the
+  // old collapsed 'revised' that 3B replaced. Both are no longer settable, and both would
+  // otherwise be returned to callers that have no entry for them.
+  const selectable = SELECTABLE_FLAGS as readonly string[]
+  const keys = enumKeys(values).filter((v) => selectable.includes(v))
+  return revision ? [...keys, revision] : keys
+}
+
+/**
+ * Which of the three revision words applies, and from when (3B).
+ *
+ * Journalism separates updating for ERRORS from updating for EVENTS, and `revised` collapsed
+ * them. Exactly one of the three ever applies, by severity: if anything in the piece was
+ * WRONG, that is the honest headline even when a dozen harmless updates came after it.
+ *
+ * `kinds` is every correction's kind; `lastRevised` is the newest date across the changelog
+ * AND the corrections, because both are material revisions. Every surface calls this so the
+ * card, the header and the feed cannot disagree about which word applies.
+ */
+export function revisionState(
+  lastRevised: string | null | undefined,
+  kinds: readonly (string | null)[] | null | undefined,
+  publishedAt: string | null | undefined,
+): { date: string | null; flag: RevisionFlag | null } {
+  const date = materialRevision(lastRevised, publishedAt)
+  if (!date) return { date: null, flag: null }
+  const k = new Set(enumKeys(kinds))
+  // A changelog entry with no corrections at all is an update: something changed, nothing
+  // was admitted wrong.
+  const flag: RevisionFlag = k.has('correction') ? 'corrected' : k.has('clarification') ? 'clarified' : 'updated'
+  return { date, flag }
 }
 
 /**

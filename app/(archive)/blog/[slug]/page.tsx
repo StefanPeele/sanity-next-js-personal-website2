@@ -12,6 +12,7 @@ import { ArticleToc } from '@/components/article/ArticleToc'
 import { ReadingProgressBar } from '@/components/article/ReadingProgressBar'
 import { heroImageUrl } from '@/components/article/heroImage'
 import { SourcesList } from '@/components/blog/SourcesList'
+import { CorrectionsList } from '@/components/blog/CorrectionsList'
 import { CredibilitySection } from '@/components/blog/CredibilitySection'
 import { ConceptCards } from '@/components/blog/LearningBlocks'
 import { BlogArticleHeader } from '@/components/blog/BlogArticleHeader'
@@ -26,8 +27,9 @@ import { SITE, absoluteUrl, articleTypeMeta } from '@/lib/site'
 import { formatDate } from '@/lib/dates'
 import { readingTime } from '@/lib/reading'
 import { reviewerDisplay, reviewerSummary } from '@/lib/reviewers'
-import { effectiveReviewStatus, lastRevisedAt, materialRevision } from '@/lib/status'
+import { effectiveReviewStatus, lastRevisedAt, revisionState } from '@/lib/status'
 import { applyGlossaryMarks } from '@/lib/glossary'
+import { applyCorrectionMarks } from '@/lib/corrections'
 import { articleToMarkdown, buildStudyDeck, collectQuizzes, countStudyCards } from '@/lib/anki'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -91,9 +93,16 @@ export default async function BlogPostPage({ params }: Props) {
   // 3.7. Derived from the changelog, never _updatedAt -- a typo fix must not announce a
   // revision. `revised` in the status list is the same signal, so it is derived here too
   // and every surface below reads `reviewStatus`, not post.reviewStatus.
-  const lastRevised = materialRevision(lastRevisedAt(post.changelog), post.publishedAt)
-  const updatedDate = lastRevised ? formatDate(lastRevised, 'long', '') : null
-  const reviewStatus = effectiveReviewStatus(post.reviewStatus, lastRevised)
+  // 3B: corrections are material revisions too, so the date spans both arrays, and WHICH of
+  // the three words applies (corrected / clarified / updated) comes from the correction
+  // kinds rather than being collapsed into one "revised".
+  const revision = revisionState(
+    lastRevisedAt([...(post.changelog ?? []), ...(post.corrections ?? [])]),
+    (post.corrections ?? []).map((c) => c.kind ?? null),
+    post.publishedAt,
+  )
+  const updatedDate = revision.date ? formatDate(revision.date, 'long', '') : null
+  const reviewStatus = effectiveReviewStatus(post.reviewStatus, revision.flag)
   // 3.6. Titles only, for the Contents column. The full citations stay in SourcesList at
   // the bottom of the article; the column links to them by index.
   const sourceTitles = (post.sources ?? []).map((sc) => sc.title ?? 'Untitled source')
@@ -103,7 +112,11 @@ export default async function BlogPostPage({ params }: Props) {
   const tags = ((post.tags ?? []) as unknown as Tag[]).filter((t) => t?.title)
   const categories = (post.categories ?? []).filter((c): c is string => !!c)
 
-  const body = applyGlossaryMarks(post.body ?? [], post.glossary) as unknown as PortableTextBlock[]
+  // 3B runs AFTER the glossary pass and skips spans the glossary already marked, so a
+  // corrected passage containing a glossary term does not nest two buttons.
+  const marked = applyCorrectionMarks(applyGlossaryMarks(post.body ?? [], post.glossary), post.corrections)
+  const body = marked.blocks as unknown as PortableTextBlock[]
+  const corrections = marked.corrections
 
   const quizzes = collectQuizzes(post.body, post.checkpoint)
   const conceptCards = (post.conceptCards ?? []).map((c) => ({ _key: c._key, front: c.front ?? '', back: c.back ?? '' })).filter((c) => c.front && c.back)
@@ -178,6 +191,7 @@ export default async function BlogPostPage({ params }: Props) {
           conceptCardCount={conceptCards.length}
           reviewStatus={reviewStatus}
           updatedDate={updatedDate}
+          revisionFlag={revision.flag}
           labels={ui.header}
           lanes={taxonomy.articleLanes}
         />
@@ -232,6 +246,11 @@ export default async function BlogPostPage({ params }: Props) {
             {(post.sources?.length ?? 0) > 0 && (
               <SourcesList heading={B.sourcesHeading} sources={(post.sources ?? []).map((s) => ({ ...s, title: s.title ?? 'Untitled source', url: s.url ?? undefined, author: s.author ?? undefined, type: s.type ?? undefined, description: s.description ?? undefined }))} />
             )}
+
+            {/* 3B. Before the credibility section: a reader who has just finished the piece
+                should meet what was wrong with it before the apparatus about how it was
+                checked. */}
+            <CorrectionsList corrections={corrections} heading={B.correctionsHeading} />
 
             {hasCredibility && (
               <CredibilitySection

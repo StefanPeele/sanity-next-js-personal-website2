@@ -328,3 +328,72 @@ html.sp-reduced-motion *::after {
 }
 @keyframes reader-menu-fade-in { from { opacity: 0 } to { opacity: 1 } }
 @media (min-width: 1024px) { .reader-menu-scrim { display: none } }
+
+/* ═══════════════════════════════════════════════════════════════
+   Corrections in place (3B)
+
+   A QUIET EDGE, not a highlight. The corrected passage is the CORRECT text -- it is not a
+   warning and must not read as one. A left rule plus a faint tint marks it as annotated
+   without shouting; the marker beside it carries the interaction.
+
+   The passage is not a button. Wrapping a sentence in a button makes the whole sentence one
+   tab stop and one announced control; the small [cN] marker is the control instead.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-article] .correction-passage {
+  border-left: 2px solid rgba(251, 113, 133, 0.45);
+  padding-left: 0.4em;
+  margin-left: -0.05em;
+  background: linear-gradient(90deg, rgba(251, 113, 133, 0.07), transparent 60%);
+  /* box-decoration-break so a passage wrapping across lines keeps its rule on the first
+     line only rather than growing a new one on every line. */
+  -webkit-box-decoration-break: clone;
+          box-decoration-break: slice;
+}
+[data-article] .correction-passage[data-correction-kind='clarification'] {
+  border-left-color: rgba(56, 189, 248, 0.45);
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.07), transparent 60%);
+}
+[data-article] .correction-passage[data-correction-kind='update'] {
+  border-left-color: rgba(214, 211, 209, 0.35);
+  background: linear-gradient(90deg, rgba(214, 211, 209, 0.06), transparent 60%);
+}
+
+[data-article] .correction-marker {
+  font-family: var(--font-mono), "IBM Plex Mono", ui-monospace, monospace;
+  /* 0.7em of a ~18px measure is ~12.6px, which clears the 12px floor from Phase 1. Marker
+     text is sized relative to the prose so it stays proportional at every reader font size. */
+  font-size: 0.7em;
+  line-height: 1;
+  vertical-align: super;
+  margin-left: 0.15em;
+  padding: 0.15em 0.3em;
+  color: rgb(251, 113, 133);
+  background: rgba(251, 113, 133, 0.12);
+  border: 1px solid rgba(251, 113, 133, 0.3);
+  cursor: pointer;
+  white-space: nowrap;
+}
+[data-article] .correction-marker:hover {
+  background: rgba(251, 113, 133, 0.22);
+}
+
+[data-article] .correction-card {
+  position: absolute;
+  left: 0;
+  top: 1.6em;
+  z-index: 40;
+  display: block;
+  width: min(22rem, calc(100vw - 3rem));
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.5rem;
+  background: #14141a;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+  text-align: left;
+  /* The card is inside a <span> in prose, so it inherits the paragraph's line-height and
+     indent unless they are reset here. */
+  line-height: 1.5;
+  text-indent: 0;
+  white-space: normal;
+}

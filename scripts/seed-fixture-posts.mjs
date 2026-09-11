@@ -55,6 +55,10 @@ const bodyA = [
     markDefs: [{ _type: 'sidenote', _key: sidenoteKey, note: 'This is the sidenote. On a wide screen it sits in the margin; below lg it collapses behind its marker. Tufte CSS runs the margin column at 0.50x the measure and the note at 0.79x the body size.' }],
   },
 
+  // 3B. Three anchorable passages, one per correction kind, plus one anchor that will NOT
+  // match so the "passage not found" path is exercised on a real render.
+  para('The standard Ethernet MTU is 1500 bytes on this link. Spanning tree converges in about 30 seconds with the default timers, and the switch fabric is rated for 176 Gbps.'),
+
   block('h3', [span('Heading three')]),
   para('A third level, for subsections inside a section.'),
 
@@ -149,6 +153,30 @@ const FIXTURES = [
     reviewers: [
       { _type: 'reviewer', _key: 'rev-named', name: 'Dana Okafor', role: 'Senior Network Engineer', organization: 'Fixture Networks', quote: 'The spanning tree section matches what I see in production, and the failure case is the one people actually hit.', date: '2026-08-14', linkedIn: 'https://www.linkedin.com/in/example-fixture', anonymous: false },
       { _type: 'reviewer', _key: 'rev-anon', name: 'Should Never Render', role: 'Infrastructure Engineer', organization: 'Should Never Render Ltd', linkedIn: 'https://www.linkedin.com/in/should-never-render', quote: 'The layer 2 explanation is accurate.', date: '2026-08-20', anonymous: true },
+    ],
+    corrections: [
+      { _type: 'correction', _key: 'co1', kind: 'correction', date: '2026-08-22',
+        anchor: 'The standard Ethernet MTU is 1500 bytes',
+        was: 'The standard Ethernet MTU is 9000 bytes',
+        now: '1500 is the standard MTU; 9000 is a jumbo frame and is not the default anywhere.',
+        creditTo: 'A reader who noticed', creditUrl: 'https://example.com/reader' },
+      { _type: 'correction', _key: 'co2', kind: 'clarification', date: '2026-08-28',
+        anchor: 'Spanning tree converges in about 30 seconds',
+        was: 'Spanning tree converges in 30 seconds',
+        now: 'That is classic STP with default timers. RSTP converges in under a second, which the original wording did not make clear.',
+        creditTo: 'Another reader' },
+      { _type: 'correction', _key: 'co3', kind: 'update', date: '2026-09-01',
+        anchor: 'the switch fabric is rated for 176 Gbps',
+        was: 'the switch fabric is rated for 88 Gbps',
+        now: 'The lab switch was replaced in September; the figure is for the new one.' },
+      // Deliberately broken anchor: the passage was edited after the correction was
+      // written. This must render at the foot WITH a "passage not found" note, never
+      // silently vanish.
+      { _type: 'correction', _key: 'co4', kind: 'correction', date: '2026-09-01',
+        anchor: 'a passage that no longer exists in this post',
+        was: 'Something that used to be here.',
+        now: 'Kept so the unanchored path is visible on a real render.',
+        creditTo: 'The fixture' },
     ],
     changelog: [
       { _type: 'changelogEntry', _key: 'cl1', date: '2026-08-22', description: 'Corrected the unknown-unicast description after review.' },

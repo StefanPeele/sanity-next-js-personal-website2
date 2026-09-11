@@ -6,7 +6,7 @@ import { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from '@/lib/cms/defaults/artic
 import type { VocabEntry } from '@/lib/cms/defaults/taxonomy'
 import { heroImageUrl } from '@/components/article/heroImage'
 import { FOCUS } from '@/lib/ui'
-import { reviewFlags } from '@/lib/status'
+import { reviewFlags, type RevisionFlag } from '@/lib/status'
 // components/blog/BlogArticleHeader.tsx
 // Text-first article header, left-aligned to the prose measure.
 //
@@ -21,10 +21,12 @@ interface BlogArticleHeaderProps {
   /** Already formatted with lib/dates formatDate. */
   publishDate: string
   /**
-   * 3.7. Already formatted, and already decided: the page passes this ONLY when the
-   * changelog records a material revision. Never `_updatedAt`, which fires on a typo fix.
+   * 3.7 + 3B. Already formatted, and already decided: the page passes these ONLY when there
+   * is a material post-publication revision. Never `_updatedAt`, which fires on a typo fix.
+   * `revisionFlag` picks the verb — a post that was WRONG says "Corrected", not "Updated".
    */
   updatedDate?: string | null
+  revisionFlag?: RevisionFlag | null
   readTime: number
   categories: string[]
   articleType?: string | null
@@ -42,6 +44,7 @@ export function BlogArticleHeader({
   title,
   publishDate,
   updatedDate,
+  revisionFlag,
   readTime,
   categories,
   articleType,
@@ -69,7 +72,9 @@ export function BlogArticleHeader({
     publishDate,
     // Beside the published date, not replacing it. A reader who wants to know how old the
     // thinking is needs both -- "updated last month" hides a post first written in 2019.
-    ...(updatedDate ? [labels.updatedLabel.replace('{date}', updatedDate)] : []),
+    // The badge row above carries the strongest REVIEW claim; the revision is a different
+    // axis and belongs here, next to the date it is about.
+    ...(updatedDate && revisionFlag ? [labels.revisedLabels[revisionFlag].replace('{date}', updatedDate)] : []),
     n(labels.readTimeLabel, readTime),
     ...(sourceCount > 0 ? [n(labels.sourcesLabel, sourceCount)] : []),
     ...(conceptCardCount > 0 ? [n(labels.cardsLabel, conceptCardCount)] : []),

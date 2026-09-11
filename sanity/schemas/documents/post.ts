@@ -1,11 +1,11 @@
 import { defineField, defineType } from 'sanity'
-import { REVIEW_FLAG_ORDER, REVIEW_STATUS, reviewFlags, type ReviewFlag } from '../../../lib/status'
+import { REVIEW_STATUS, SELECTABLE_FLAGS, reviewFlags, type SelectableFlag } from '../../../lib/status'
 // sanity/schemas/documents/post.ts
 
 /** What each review flag means, for the Studio picker only. The LABELS come from
  *  REVIEW_STATUS so the picker and the badge can never disagree; only the explanation is
  *  local, because a reader never sees it. */
-const REVIEW_HINTS: Record<Exclude<ReviewFlag, 'revised'>, string> = {
+const REVIEW_HINTS: Record<SelectableFlag, string> = {
   'peer-reviewed': 'a qualified person assessed the reasoning',
   'fact-checked': 'claims verified against sources',
   'seeking-review': 'want qualified eyes on this',
@@ -523,11 +523,12 @@ export default defineType({
         // now cannot drift apart: adding a value to lib/status.ts adds it here, and the
         // label a Studio author picks is the label a reader sees, plus the hint below.
         //
-        // 'revised' is filtered out because it is NOT selectable. It is derived from the
-        // Changelog, whose date and description are both required -- see lastRevisedAt().
-        // A checkbox let a post claim a revision with no record of what changed, and let
-        // the badge and the changelog disagree.
-        list: REVIEW_FLAG_ORDER.filter((f) => f !== 'revised').map((f) => ({
+        // SELECTABLE_FLAGS subtracts the derived revision tier (corrected / clarified /
+        // updated) rather than re-listing the selectable values here, so adding a value to
+        // lib/status.ts cannot leave this picker behind. Those three come from the
+        // Corrections and Changelog fields -- see revisionState(). A checkbox let a post
+        // claim a revision with no record of what changed.
+        list: SELECTABLE_FLAGS.map((f) => ({
           title: `${REVIEW_STATUS[f].label} — ${REVIEW_HINTS[f]}`,
           value: f,
         })),
@@ -586,6 +587,64 @@ export default defineType({
               return anonymous
                 ? { title: subtitle ? `Anonymous — ${subtitle}` : 'Anonymous reviewer', subtitle: 'Name not published' }
                 : { title, subtitle }
+            },
+          },
+        },
+      ],
+    }),
+
+    // ── Corrections in place (3B) ────────────────────────────────────────
+    // The difference from Changelog: a changelog entry says "this post changed"; a
+    // correction says "this SENTENCE was wrong, here is what it said, and here is who
+    // caught it" -- and it is marked at the passage, not only at the foot.
+    defineField({
+      name: 'corrections',
+      title: 'Corrections',
+      type: 'array',
+      group: 'credibility',
+      description: `
+        Correct in the open rather than editing silently. Each entry marks a passage in the body and renders beside it, plus in a permanent list at the foot.
+        Three kinds, because they are three different admissions and collapsing them into "revised" hides which one happened:
+        CORRECTION — it was wrong. CLARIFICATION — it was right but misleading. UPDATE — it was right and things have since changed.
+        Fix the body text as well: the Was field preserves what it said, so the wrong version does not stay in the prose teaching the error.
+      `,
+      of: [
+        {
+          type: 'object',
+          name: 'correction',
+          fields: [
+            defineField({
+              name: 'anchor',
+              title: 'Passage it applies to',
+              type: 'string',
+              description: 'Paste the exact text from the body, AS IT READS NOW (the corrected wording). It is matched literally, once, on the first occurrence. Leave empty and the correction still appears at the foot, just not in place.',
+            }),
+            defineField({
+              name: 'kind',
+              title: 'Kind',
+              type: 'string',
+              initialValue: 'correction',
+              options: {
+                list: [
+                  { title: 'Correction — it was wrong', value: 'correction' },
+                  { title: 'Clarification — it was misleading', value: 'clarification' },
+                  { title: 'Update — it has changed since', value: 'update' },
+                ],
+              },
+              validation: (r) => r.required(),
+            }),
+            defineField({ name: 'was', title: 'What it said', type: 'text', rows: 2, description: 'The original wording. Kept so the record is recoverable — it is NOT shown struck through in the prose, because putting the wrong version back in the body at full weight teaches it to the next reader.', validation: (r) => r.required() }),
+            defineField({ name: 'now', title: 'What changed, and why', type: 'text', rows: 2, description: 'One or two sentences. What was wrong and what is right.', validation: (r) => r.required() }),
+            defineField({ name: 'creditTo', title: 'Who caught it', type: 'string', description: 'The point of the feature. "Corrected 12 Sep 2026 — thanks to Jane Doe." Leave empty only if you found it yourself.' }),
+            defineField({ name: 'creditUrl', title: 'Their link', type: 'url' }),
+            defineField({ name: 'date', title: 'Date', type: 'date', validation: (r) => r.required() }),
+            defineField({ name: 'sourceComment', title: 'Source comment', type: 'string', description: 'Optional reference to the comment that raised it. Corrections are never generated from comments automatically — a comment claims something is wrong, a correction admits it was, and that promotion is your judgement.' }),
+          ],
+          preview: {
+            select: { kind: 'kind', date: 'date', now: 'now', creditTo: 'creditTo' },
+            prepare({ kind, date, now, creditTo }) {
+              const label = { correction: 'Correction', clarification: 'Clarification', update: 'Update' }[kind as string] ?? 'Correction'
+              return { title: `${label} — ${date ?? 'no date'}`, subtitle: creditTo ? `${now ?? ''} · thanks to ${creditTo}` : (now ?? '') }
             },
           },
         },

@@ -3179,10 +3179,33 @@
               },
               "optional": true
             },
-            "updatedLabel": {
+            "revisedLabels": {
               "type": "objectAttribute",
               "value": {
-                "type": "string"
+                "type": "object",
+                "attributes": {
+                  "corrected": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    },
+                    "optional": true
+                  },
+                  "clarified": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    },
+                    "optional": true
+                  },
+                  "updated": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    },
+                    "optional": true
+                  }
+                }
               },
               "optional": true
             },
@@ -3608,6 +3631,13 @@
               "optional": true
             },
             "sourcesHeading": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
+            "correctionsHeading": {
               "type": "objectAttribute",
               "value": {
                 "type": "string"
@@ -4261,6 +4291,14 @@
               {
                 "type": "string",
                 "value": "rotate-ccw"
+              },
+              {
+                "type": "string",
+                "value": "alert-circle"
+              },
+              {
+                "type": "string",
+                "value": "info"
               },
               {
                 "type": "string",
@@ -9342,6 +9380,106 @@
                 "value": {
                   "type": "string",
                   "value": "reviewer"
+                }
+              }
+            },
+            "rest": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "optional": true
+      },
+      "corrections": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "anchor": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "kind": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "union",
+                  "of": [
+                    {
+                      "type": "string",
+                      "value": "correction"
+                    },
+                    {
+                      "type": "string",
+                      "value": "clarification"
+                    },
+                    {
+                      "type": "string",
+                      "value": "update"
+                    }
+                  ]
+                },
+                "optional": true
+              },
+              "was": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "now": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "creditTo": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "creditUrl": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "date": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "sourceComment": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "_type": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string",
+                  "value": "correction"
                 }
               }
             },

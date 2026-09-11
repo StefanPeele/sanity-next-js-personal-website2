@@ -5,7 +5,7 @@ import {
   ArrowDown, ArrowLeftRight, ArrowRight, Award, Book, BookOpen, Camera, Check, ExternalLink,
   FileText, Gift, GitBranch, GraduationCap, Layers, Leaf, Library, Lightbulb, ListOrdered, Mail,
   MessageSquare, Mic, Network, Newspaper, RotateCcw, Route, Rss, Search, Settings2, Sprout, TreePine, Type, Video,
-  AlertTriangle, ClipboardList, Diamond, Factory, Link2, Sparkles, Wrench, Zap,
+  AlertTriangle, AlertCircle, ClipboardList, Diamond, Factory, Info, Link2, Sparkles, Wrench, Zap,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -21,6 +21,10 @@ export const ICONS = {
   route: Route,
   'list-ordered': ListOrdered,
   'rotate-ccw': RotateCcw,
+  // 3B's three revision kinds need three distinct SHAPES, not three colours -- same rule
+  // as 3.3's marks: a greyscale reader must still tell a correction from an update.
+  'alert-circle': AlertCircle,
+  info: Info,
   mail: Mail,
   rss: Rss,
   search: Search,
