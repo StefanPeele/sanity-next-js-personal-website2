@@ -54,7 +54,8 @@ around a wrong premise; name it.
 - `npm run check` must exit 0 with **zero warnings**. Not "zero errors" — zero
   warnings. Remove orphaned code rather than suppressing it.
 - Clean build (`rm -rf .next && npm run build`) before any e2e run that matters.
-- Full Playwright suite including axe and CSP. **The suite reports 33 tests.** If it
+- Full Playwright suite including axe and CSP. **The suite reports 34 tests** as of Phase 0.1,
+  which added the reading-time agreement test; it was 33 when this brief was written. If it
   reports any other number, investigate before proceeding — do not re-run until it
   agrees. A suite that silently skips tests is worse than one that fails.
 - Verify **live on production** after every deploy, not just locally. Poll until the

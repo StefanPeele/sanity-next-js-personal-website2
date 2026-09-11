@@ -24,7 +24,7 @@ import { getCopy, getSettings, getTaxonomy } from '@/lib/cms/loaders'
 import { DEFAULT_ARTICLE_UI } from '@/lib/cms/defaults/articleUi'
 import { SITE, absoluteUrl, articleTypeMeta } from '@/lib/site'
 import { formatDate } from '@/lib/dates'
-import { countWords, portableTextToPlain, readingTime } from '@/lib/reading'
+import { readingTime } from '@/lib/reading'
 import { applyGlossaryMarks } from '@/lib/glossary'
 import { articleToMarkdown, buildStudyDeck, collectQuizzes, countStudyCards } from '@/lib/anki'
 import { notFound } from 'next/navigation'
@@ -74,8 +74,10 @@ export default async function BlogPostPage({ params }: Props) {
   const post = data as Post | null
   if (!post) notFound()
 
-  const plain = portableTextToPlain(post.body)
-  const wordCount = countWords(plain)
+  // Reading time comes from the query's wordCount, the same field the cards read.
+  // This page used to recount locally, which is how /blog said 17 min and this page
+  // said 18 for the same post. One number, one source. See wordCountField.
+  const wordCount = post.wordCount ?? 0
   const readTime = readingTime(wordCount)
   const publishDate = formatDate(post.publishedAt, 'long', 'Unpublished')
   const title = post.title ?? 'Untitled'

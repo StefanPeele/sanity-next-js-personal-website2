@@ -170,3 +170,35 @@ test('first post has no critical/serious accessibility violations', async ({ pag
   expect(blocking, blocking.map((v) => `${v.id}: ${v.help} (${v.nodes.length} nodes)`).join('\n')).toEqual([])
 })
 })
+
+test('reading time agrees between every card and its article', async ({ page }) => {
+  // /blog said "17 min read" while the article said "18 min read" for the same post:
+  // the cards read a GROQ wordCount and the article recounted the body in JS, and the
+  // two spellings disagreed. Both now read one field. This asserts they cannot drift
+  // apart again silently.
+  //
+  // innerText, never markup -- grepping raw HTML for /\d+ min/ matches Tailwind
+  // classes like `min-h-[480px]`, which manufactured a phantom figure once already.
+  await page.goto('/blog')
+  const cards = await page.locator('a[href^="/blog/"]').evaluateAll((els) => {
+    const out: Record<string, string> = {}
+    for (const el of els) {
+      const href = el.getAttribute('href')
+      const m = ((el as HTMLElement).innerText || '').match(/(\d+)\s*min/i)
+      if (href && m && !out[href]) out[href] = m[1]
+    }
+    return out
+  })
+
+  const entries = Object.entries(cards)
+  expect(entries.length, 'no post card on /blog exposed a reading time').toBeGreaterThan(0)
+
+  for (const [href, cardMinutes] of entries) {
+    await page.goto(href)
+    const body = await page.locator('body').innerText()
+    const found = [...body.matchAll(/(\d+)\s*min\s*read/gi)].map((m) => m[1])
+    expect(found.length, `${href} rendered no "N min read"`).toBeGreaterThan(0)
+    expect(new Set(found).size, `${href} renders disagreeing figures: ${found.join(', ')}`).toBe(1)
+    expect(found[0], `card says ${cardMinutes} min, ${href} says ${found[0]} min`).toBe(cardMinutes)
+  }
+})

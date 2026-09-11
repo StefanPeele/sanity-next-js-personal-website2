@@ -11,6 +11,24 @@ const imageFields = `
   "metadata": asset->metadata { lqip, dimensions }
 `
 
+// The ONE reading-time input. Every surface that shows "N min read" — card, hero,
+// article, series total — reads this field; nothing recomputes it locally.
+//
+// It mirrors lib/reading.ts exactly, and must keep doing so: per block, concatenate
+// the children's text and split on spaces. Verified equal to
+// countWords(portableTextToPlain(body)) for every post in both perspectives
+// (765 / 3908 / 414). tests/smoke.spec.ts asserts card and article agree.
+//
+// Do NOT "simplify" this to length(string::split(pt::text(body), " ")). That was the
+// previous spelling and it undercounts, because pt::text() joins blocks with "\n\n"
+// and string::split only splits on the literal space -- so every block boundary is
+// missed. It read 3840 where the article read 3908, which is 17 min against 18 on
+// the same post. A newline-aware variant overshoots for the mirror-image reason.
+const wordCountField = `
+  "wordCount": coalesce(math::sum(body[_type == "block" && defined(children)]{
+    "w": length(string::split(array::join(children[].text, ""), " "))
+  }.w), 0)`
+
 const postCardFields = `
   _id,
   title,
@@ -22,9 +40,7 @@ const postCardFields = `
   "categories": categories[]->title,
   "tags": tags[]->{ _id, title, "slug": slug.current },
   articleType,
-  // length() on a string counts characters, not words — dividing that by 220 wpm
-  // reported a 750-word post as a 22 minute read. Split on spaces for a word count.
-  "wordCount": length(string::split(pt::text(body), " ")),
+  ${wordCountField},
   "series": series->{ title, "slug": slug.current }
 `
 
@@ -338,6 +354,7 @@ export const postBySlugQuery = defineQuery(`
     "mainImageAlt": coalesce(mainImage.alt, mainImage.asset->altText),
     "lqip": mainImage.asset->metadata.lqip,
     body, excerpt, tldr,
+    ${wordCountField},
     "categories": categories[]->title,
     "tags": tags[]->{ _id, title, "slug": slug.current }[defined(_id)],
     articleType, confidenceLevel, maturityIndicator, cognitiveLoad, recommendedTheme,
