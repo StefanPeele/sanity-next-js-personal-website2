@@ -2,7 +2,8 @@ import { sanityFetch } from '@/sanity/lib/live'
 import { commentsForPostQuery } from '@/sanity/lib/queries'
 import { CommentThread, type PublicComment } from '@/components/blog/CommentThread'
 import { CommentForm } from '@/components/blog/CommentForm'
-import { commentAuthor, isRemoved, COMMENT_LIMITS } from '@/lib/comments'
+import { commentAuthor, isRemoved, pluralise, COMMENT_LIMITS } from '@/lib/comments'
+import { FOCUS } from '@/lib/ui'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 // components/blog/CommentsSection.tsx — Phase 8. SERVER component.
 //
@@ -52,12 +53,15 @@ export async function CommentsSection({
   slug,
   copy,
   page = COMMENT_LIMITS.pageSize,
+  anchor,
 }: {
   postId: string
   slug: string
   copy: ArticleUiCopy['comments']
   /** How many ROOTS to show. The ?comments= param raises it; see CommentThread. */
   page?: number
+  /** 8.4. Set when the reader arrived from a margin note's "Respond" link. */
+  anchor?: string
 }) {
   const size = Math.min(Math.max(page, COMMENT_LIMITS.pageSize), 200)
   const { data } = await sanityFetch({
@@ -74,7 +78,7 @@ export async function CommentsSection({
       <div className="flex flex-wrap items-baseline gap-4 mb-2">
         <h2 id="comments-heading" className="section-label">{copy.heading}</h2>
         {total > 0 && (
-          <span className="font-sans text-xs text-stone-400">{copy.countLabel.replace('{n}', String(total))}</span>
+          <span className="font-sans text-xs text-stone-400">{pluralise(copy.countLabel, total)}</span>
         )}
       </div>
       {/* The invitation, not a disclaimer. §2 of the brief: the blog "exists to invite
@@ -85,7 +89,21 @@ export async function CommentsSection({
 
       <div className="mt-12 pt-8 border-t border-edge-faint">
         <h3 className="section-label mb-5">{copy.formHeading}</h3>
-        <CommentForm postId={postId} slug={slug} copy={copy} />
+        {anchor && (
+          // Said out loud. A form that silently attaches a response to a passage the reader
+          // cannot see is a form that files their words somewhere they did not choose.
+          <p className="mb-4 font-sans text-sm text-stone-400">
+            {copy.respondingToNote}{' '}
+            <a href={`#sn-${anchor}`} className={`text-stone-300 underline underline-offset-4 rounded-sm ${FOCUS}`}>
+              {copy.onSidenoteLabel}
+            </a>
+            {' · '}
+            <a href="#comments" className={`text-stone-400 underline underline-offset-4 rounded-sm ${FOCUS}`}>
+              {copy.respondingToNoteClear}
+            </a>
+          </p>
+        )}
+        <CommentForm postId={postId} slug={slug} copy={copy} anchor={anchor} />
       </div>
     </section>
   )

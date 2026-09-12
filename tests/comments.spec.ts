@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import fs from 'node:fs'
-import { COMMENT_LABELS, COMMENT_STATUSES, REMOVAL_TEXT, commentAuthor, isRemoved } from '../lib/comments'
+import { COMMENT_LABELS, COMMENT_STATUSES, REMOVAL_TEXT, commentAuthor, isRemoved, pluralise } from '../lib/comments'
 
 // Phase 8. The contract that matters is not how a comment looks — it is what never leaves
 // the server. A comment system stores an email address for every person who writes one, and
@@ -109,4 +109,13 @@ test('the schema offers exactly the labels and statuses the code knows about', (
   expect(schema).toContain("from '@/lib/comments'")
   expect(schema).toContain('COMMENT_LABELS.map')
   expect(schema).toContain('COMMENT_STATUSES.map')
+})
+
+test('a count never reads "1 responses"', () => {
+  const t = '{n} response|{n} responses'
+  expect(pluralise(t, 1)).toBe('1 response')
+  expect(pluralise(t, 2)).toBe('2 responses')
+  expect(pluralise(t, 0)).toBe('0 responses')
+  // A string with no pipe still works, so the convention is opt-in per field.
+  expect(pluralise('{n} responses', 1)).toBe('1 responses')
 })

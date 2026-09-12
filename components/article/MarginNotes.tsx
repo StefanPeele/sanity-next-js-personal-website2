@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { FOCUS } from '@/lib/ui'
+import { pluralise } from '@/lib/comments'
 import { learnMore } from '@/app/actions/learnMore'
 
 type LearnMoreItem = { title: string; author: string; why: string }
@@ -39,6 +40,12 @@ const GAP = 16
 
 interface Note {
   id: string
+  /**
+   * 8.4. The STABLE markDef key, which is what a comment anchors to. `id` above is a
+   * useId() and is per-render wiring between the prose and this column; it is useless as an
+   * anchor because it changes every time the page renders.
+   */
+  key: string | null
   /** Where the anchor is. Never changes between passes. */
   anchorTop: number
   /** Where the note is actually placed, after the push-down. */
@@ -59,6 +66,10 @@ export function MarginNotes({
   generatedLabel = 'Suggested by a model, not by Stefan — look these up rather than trusting them',
   /** False when ANTHROPIC_API_KEY is unset: the control does not render at all. */
   learnMoreEnabled = false,
+  respondLabel = 'Respond to this note',
+  responsesLabel = '{n} responses',
+  /** 8.4. How many published comments are anchored to each sidenote key. */
+  responseCounts = {},
 }: {
   label?: string
   moreLabel?: string
@@ -68,6 +79,9 @@ export function MarginNotes({
   loadingLabel?: string
   generatedLabel?: string
   learnMoreEnabled?: boolean
+  respondLabel?: string
+  responsesLabel?: string
+  responseCounts?: Record<string, number>
 }) {
   const [notes, setNotes] = useState<Note[]>([])
   const [open, setOpen] = useState<Note | null>(null)
@@ -94,6 +108,7 @@ export function MarginNotes({
       const anchorTop = el.getBoundingClientRect().top + window.scrollY - hostTop
       next.push({
         id: el.getAttribute('data-sidenote-id') ?? '',
+        key: el.getAttribute('data-sidenote-key'),
         anchorTop,
         top: anchorTop,
         text,
@@ -234,6 +249,16 @@ export function MarginNotes({
           <div key={n.id} className="margin-note" style={{ top: n.top }} data-sidenote-kind={n.kind}>
             <span className="margin-note-label meta-label">{n.kind === 'glossary' ? 'Definition' : label}</span>
             <p className="margin-note-text">{n.text}</p>
+            {/* 8.4. TEXT, not a control. This column is aria-hidden -- it is a second visual
+                presentation of note text that is already in the prose -- so anything
+                focusable in here would be reachable by keyboard and invisible to a screen
+                reader, which is worse than not having it. The way IN is the window below,
+                which is a real dialog and is not hidden. */}
+            {n.key && (responseCounts[n.key] ?? 0) > 0 && (
+              <span className="margin-note-responses meta-label">
+                {pluralise(responsesLabel, responseCounts[n.key])}
+              </span>
+            )}
             <button
               type="button"
               className={`margin-note-more ${FOCUS}`}
@@ -291,6 +316,19 @@ export function MarginNotes({
                   </div>
                 )}
               </div>
+            )}
+
+            {/* 8.4's way in. A plain link, so it works with no JavaScript, is addressable,
+                and survives a reload: the article reads ?respond= on the server and hands the
+                key to the comment form. No client state is shared between this column and a
+                form at the other end of the page. */}
+            {open.key && (
+              <a
+                href={`?respond=${encodeURIComponent(open.key)}#comments`}
+                className={`inline-block mt-3 mr-4 font-sans text-xs text-stone-300 underline underline-offset-4 rounded-sm ${FOCUS}`}
+              >
+                {respondLabel}
+              </a>
             )}
 
             {open.href && (

@@ -1,7 +1,7 @@
 import '@/styles/article.css'
 import { client } from '@/sanity/lib/client'
 import { sanityFetch } from '@/sanity/lib/live'
-import { postBySlugQuery, postSlugsQuery } from '@/sanity/lib/queries'
+import { commentAnchorCountsQuery, postBySlugQuery, postSlugsQuery } from '@/sanity/lib/queries'
 import { articleUiQuery } from '@/sanity/lib/queries-article-ui'
 import type { PostBySlugQueryResult } from '@/sanity.types'
 import { CustomPortableText } from '@/components/CustomPortableText'
@@ -44,7 +44,7 @@ import { CommentsSection } from '@/components/blog/CommentsSection'
 
 // searchParams for ?comments=N, the thread's "show older" link. A plain link rather than a
 // fetch: it is rare, it works without JS, and it keeps a long thread addressable.
-type Props = { params: Promise<{ slug: string }>; searchParams?: Promise<{ comments?: string }> }
+type Props = { params: Promise<{ slug: string }>; searchParams?: Promise<{ comments?: string; respond?: string }> }
 type Post = NonNullable<PostBySlugQueryResult>
 type Tag = { _id?: string; title: string | null; slug: string | null }
 
@@ -74,7 +74,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params, searchParams }: Props) {
   const { slug } = await params
-  const commentPage = Number((await searchParams)?.comments) || undefined
+  const sp = await searchParams
+  const commentPage = Number(sp?.comments) || undefined
+  // 8.4. A margin note's "Respond" link is a plain href carrying the sidenote's stable key.
+  // Read here on the SERVER so the form arrives pre-anchored with no JavaScript involved and
+  // the state survives a reload.
+  const respondTo = typeof sp?.respond === 'string' ? sp.respond.slice(0, 64) : undefined
   const [{ data }, ui, taxonomy, settings] = await Promise.all([
     sanityFetch({ query: postBySlugQuery, params: { slug } }),
     getCopy(articleUiQuery, DEFAULT_ARTICLE_UI),
@@ -83,6 +88,19 @@ export default async function BlogPostPage({ params, searchParams }: Props) {
   ])
   const post = data as Post | null
   if (!post) notFound()
+
+  // 8.4. How many published responses each margin note has. Fetched here rather than inside
+  // the comments section because the margin column renders in the OTHER grid column, above
+  // it -- the page is the only place that sees both.
+  const { data: anchorRows } = await sanityFetch({
+    query: commentAnchorCountsQuery,
+    params: { postId: post._id },
+    stega: false,
+  })
+  const anchorCounts = (anchorRows ?? []).reduce<Record<string, number>>((acc, r) => {
+    if (r.anchor) acc[r.anchor] = (acc[r.anchor] ?? 0) + 1
+    return acc
+  }, {})
 
   // Reading time comes from the query's wordCount, the same field the cards read.
   // This page used to recount locally, which is how /blog said 17 min and this page
@@ -288,7 +306,7 @@ export default async function BlogPostPage({ params, searchParams }: Props) {
                 newsletter: a reader who has just finished should meet the conversation about
                 the piece before they are asked to subscribe to the next one. */}
             <div data-print-hide>
-              <CommentsSection postId={post._id} slug={slug} copy={ui.comments} page={commentPage} />
+              <CommentsSection postId={post._id} slug={slug} copy={ui.comments} page={commentPage} anchor={respondTo} />
             </div>
 
             <div className="mt-16" data-print-hide>
@@ -306,7 +324,12 @@ export default async function BlogPostPage({ params, searchParams }: Props) {
                 on the SERVER: ANTHROPIC_API_KEY is not a public env var, so a client
                 component cannot see it, and a button that always failed would be worse than
                 no button. */}
-            <MarginNotes learnMoreEnabled={Boolean(process.env.ANTHROPIC_API_KEY)} />
+            <MarginNotes
+              learnMoreEnabled={Boolean(process.env.ANTHROPIC_API_KEY)}
+              respondLabel={ui.comments.respondToNoteLabel}
+              responsesLabel={ui.comments.noteResponsesLabel}
+              responseCounts={anchorCounts}
+            />
           </div>
         </div>
       </div>

@@ -88,6 +88,22 @@ export const COMMENT_LIMITS = {
 } as const
 
 /**
+ * Substitute {n} and pick a form, so a count never reads "1 responses".
+ *
+ * The convention is `singular|plural` in ONE Studio string rather than two fields: an
+ * author editing "responses" should not have to find a second box to keep "response" in
+ * step with it, and a string with no pipe just works as it always did.
+ *
+ * Scoped to the comment counts on purpose. Other counts on this site have the same wart
+ * ("1 sources"), and fixing those is a copy pass across several singletons rather than
+ * something to smuggle into Phase 8.
+ */
+export function pluralise(template: string, n: number): string {
+  const [one, many] = template.split('|')
+  return (n === 1 ? one : (many ?? one)).replace('{n}', String(n))
+}
+
+/**
  * The display name a READER may see. Never the email, under any circumstance.
  *
  * Redaction happens here and is called on the server, so an anonymous commenter's name

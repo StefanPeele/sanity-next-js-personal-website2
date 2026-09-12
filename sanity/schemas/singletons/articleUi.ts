@@ -58,7 +58,7 @@ export default defineType({
     ], { group: 'blocks' }),
     obj('comments', 'Comments', [
       str('heading', 'Section heading'), str('lede', 'Invitation under the heading'),
-      str('countLabel', 'Count ({n})'), str('empty', 'Empty state'),
+      str('countLabel', 'Count -- "{n} response|{n} responses"'), str('empty', 'Empty state'),
       str('formHeading', 'Form heading'), str('labelPrompt', 'Label prompt'),
       str('namePlaceholder', 'Name placeholder'), str('anonymousLabel', 'Anonymous toggle'),
       str('emailPlaceholder', 'Email placeholder'), str('emailHint', 'What the email is for'),
@@ -69,6 +69,8 @@ export default defineType({
       str('anonymousName', 'Name shown for anonymous'),
       str('pendingNote', 'After submitting, before confirming'),
       str('onSidenoteLabel', 'Badge for a margin-note response'),
+      str('respondToNoteLabel', 'Respond, in a margin note'), str('noteResponsesLabel', 'Margin note count -- "{n} response|{n} responses"'),
+      str('respondingToNote', 'Form note when answering a margin note'), str('respondingToNoteClear', 'Clear that and answer the article'),
     ], { group: 'blocks' }),
     obj('credibility', 'Credibility labels', [
       vocab('maturity', 'Maturity'), vocab('load', 'Cognitive load'),

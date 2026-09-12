@@ -67,7 +67,7 @@ export const DEFAULT_ARTICLE_UI = {
   comments: {
     heading: 'Responses',
     lede: 'Corrections and disagreement are the most useful things you can leave here.',
-    countLabel: '{n} responses',
+    countLabel: '{n} response|{n} responses',
     empty: 'No responses yet. If something here is wrong, incomplete, or unclear, say so.',
     formHeading: 'Leave a response',
     labelPrompt: 'What kind of response is this?',
@@ -85,6 +85,12 @@ export const DEFAULT_ARTICLE_UI = {
     anonymousName: 'Anonymous',
     pendingNote: 'Check your inbox — one click and it is posted. This is the only time you will be asked.',
     onSidenoteLabel: 'On a margin note',
+    // 8.4. The margin column is aria-hidden, so the count is text there and the link lives
+    // in the note's window, which is a real dialog.
+    respondToNoteLabel: 'Respond to this note',
+    noteResponsesLabel: '{n} response|{n} responses',
+    respondingToNote: 'Responding to a margin note.',
+    respondingToNoteClear: 'Respond to the article instead',
   },
   credibility: {
     maturity: [

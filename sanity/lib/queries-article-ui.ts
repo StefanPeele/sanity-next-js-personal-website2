@@ -28,7 +28,8 @@ export const articleUiQuery = defineQuery(`
     comments{
       heading, lede, countLabel, empty, formHeading, labelPrompt, namePlaceholder, anonymousLabel,
       emailPlaceholder, emailHint, bodyPlaceholder, submitLabel, submittingLabel, replyLabel,
-      cancelLabel, allLabel, moreLabel, anonymousName, pendingNote, onSidenoteLabel
+      cancelLabel, allLabel, moreLabel, anonymousName, pendingNote, onSidenoteLabel,
+      respondToNoteLabel, noteResponsesLabel, respondingToNote, respondingToNoteClear
     },
     credibility{
       "maturity": maturity[]{ ${v} }, "load": load[]{ ${v} },

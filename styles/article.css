@@ -915,6 +915,15 @@ body.a11y-big-focus *:focus-visible {
   overflow: hidden;
 }
 
+/* 8.4. The response count on a margin note. Text, never a control: this column is
+   aria-hidden, so anything focusable in it would be reachable by keyboard and invisible to
+   a screen reader. The way in is the note's window, which is a real dialog. */
+.margin-note-responses {
+  display: block;
+  margin-top: 0.4rem;
+  color: #a8a29e;
+}
+
 .margin-note-more {
   margin-top: 0.35rem;
   font-family: var(--font-sans), system-ui, sans-serif;

@@ -600,3 +600,11 @@ export const commentsNeedingAttentionQuery = defineQuery(`
     _id, label, authorName, anonymous, body, createdAt, "post": post->title
   }
 `)
+
+// 8.4. Which sidenotes have been responded to, for the margin column's count. Deliberately
+// its own query rather than a field on the thread query: the margin renders in the TOC
+// column, above and outside the comments section, and the page needs the counts before it
+// renders either.
+export const commentAnchorCountsQuery = defineQuery(`
+  *[_type == "comment" && post._ref == $postId && status == "published" && defined(anchor)]{ anchor }
+`)

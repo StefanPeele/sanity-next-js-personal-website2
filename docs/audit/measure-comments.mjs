@@ -70,10 +70,16 @@ async function fireWebhook(doc) {
   return { status: res.status, body: await res.json().catch(() => null) }
 }
 
+// 8.4 is measured on the FIXTURE, which is a draft, because it is the only document on this
+// site carrying sidenotes. Same preview-secret dance the other draft harnesses use.
+const SECRET_ID = 'sanity-preview-url-secret.comments-harness'
+const previewSecret = createHmac('sha256', String(Date.now())).update('comments').digest('hex').slice(0, 48)
+
 async function cleanup() {
   await mutate([
     { delete: { query: `*[_type == "comment" && (body match "${MARK}*" || email == "${EMAIL}")]` } },
     { delete: { query: `*[_type == "rateBucket"]` } },
+    { delete: { id: SECRET_ID } },
   ])
   const left = await groq(`count(*[_type == "comment" && (body match "${MARK}*" || email == "${EMAIL}")])`)
   console.log(`\n  cleanup: ${left} probe comments remain (must be 0)`)
@@ -85,6 +91,7 @@ const browser = await chromium.launch()
 try {
   const postId = await groq(`*[_type == "post" && slug.current == $s][0]._id`, { s: SLUG })
   if (!postId) throw new Error(`no post with slug ${SLUG}`)
+  await mutate([{ createOrReplace: { _id: SECRET_ID, _type: 'sanity.previewUrlSecret', secret: previewSecret, studioUrl: '/studio' } }])
 
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
   const page = await ctx.newPage()
@@ -197,6 +204,170 @@ try {
   await page.waitForTimeout(600)
   await page.screenshot({ path: path.join(OUT, 'comments-1440.jpg'), type: 'jpeg', quality: 80 })
 
+  console.log('\n## Threading: one level, enforced at WRITE time (8.3)\n')
+  //
+  // The rule is that a reply to a reply is re-parented to the ROOT, so the stored data can
+  // never form a tree and no future query has to flatten one. A rendering-time flatten
+  // would leave the data able to nest and the next person to write a query would get it
+  // wrong -- which is why this is measured in the DOCUMENTS, not in the DOM.
+  //
+  // The address has now confirmed once, so everything below publishes immediately. That is
+  // the trust rule from 8.1 doing its job and it is asserted rather than assumed.
+  const rootId = stored._id
+  const postReply = async (parentId, mark) => {
+    // Clear the rate buckets between posts. Three in ten minutes is the limit and it is
+    // tested on its own below; here it would just be noise in a threading test.
+    await mutate([{ delete: { query: `*[_type == "rateBucket"]` } }])
+    await page.goto(ARTICLE, { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2600)
+    await page.waitForTimeout(3400)
+    return page.evaluate(async ([pid, m, email]) => {
+      const f = document.querySelector('#comments form')
+      // The reply form is rendered inline by the thread, but posting through the foot form
+      // with a parentId is the same server path and does not depend on a click target.
+      const hidden = document.createElement('input')
+      hidden.type = 'hidden'; hidden.name = 'parentId'; hidden.value = pid
+      f.appendChild(hidden)
+      f.querySelector('textarea[name="body"]').value = m
+      f.querySelector('input[name="email"]').value = email
+      f.querySelector('input[name="name"]').value = 'Probe Person'
+      f.requestSubmit()
+    }, [parentId, mark, EMAIL])
+  }
+
+  await postReply(rootId, `${MARK} reply one`)
+  await page.waitForTimeout(4500)
+  const reply1 = await groq(`*[_type == "comment" && body match $b][0]{ _id, status, "parentId": parent._ref }`, { b: `${MARK} reply one*` })
+  check(!!reply1, 'a reply is written', reply1 ? `status=${reply1.status}` : 'nothing')
+  check(reply1?.status === 'published', 'and a trusted address publishes immediately, with no second email', reply1?.status)
+  check(reply1?.parentId === rootId, 'the reply is parented to the comment it answers')
+
+  await postReply(reply1._id, `${MARK} reply two`)
+  await page.waitForTimeout(4500)
+  const reply2 = await groq(`*[_type == "comment" && body match $b][0]{ _id, "parentId": parent._ref }`, { b: `${MARK} reply two*` })
+  check(!!reply2, 'a reply to a reply is written')
+  check(reply2?.parentId === rootId,
+    'and it is RE-PARENTED to the root, not nested under the reply -- one level, in the data',
+    `parent=${reply2?.parentId === rootId ? 'root' : reply2?.parentId}`)
+  // The depth invariant stated as a property rather than as one case: no comment anywhere
+  // may have a parent that itself has a parent.
+  const nested = await groq(`count(*[_type == "comment" && defined(parent) && defined(parent->parent)])`)
+  check(nested === 0, 'no comment in the dataset has a grandparent', `${nested} found`)
+
+  console.log('\n## Rate limiting is DURABLE (8.7)\n')
+  await mutate([{ delete: { query: `*[_type == "rateBucket"]` } }])
+  let refusedAt = 0
+  for (let i = 1; i <= 4; i++) {
+    await page.goto(ARTICLE, { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2400)
+    await page.waitForTimeout(3300)
+    await page.evaluate(([m, email, i]) => {
+      const f = document.querySelector('#comments form')
+      f.querySelector('textarea[name="body"]').value = `${m} rate ${i}`
+      f.querySelector('input[name="email"]').value = email
+      f.requestSubmit()
+    }, [MARK, EMAIL, i])
+    await page.waitForTimeout(3500)
+    const msg = await page.evaluate(() => document.getElementById('comments')?.innerText ?? '')
+    if (/three comments in ten minutes/i.test(msg) && !refusedAt) refusedAt = i
+  }
+  check(refusedAt === 4, 'the fourth comment in ten minutes is refused, the first three are not', `refused at #${refusedAt || 'never'}`)
+  const buckets = await groq(`*[_type == "rateBucket"]{ count, key }`)
+  check(buckets.length > 0, 'and the bucket is a DOCUMENT, so it survives a cold start', JSON.stringify(buckets))
+  check(!buckets.some((b) => /\d+\.\d+\.\d+\.\d+/.test(b.key ?? '')), 'keyed by a hash, never by an address')
+
+  console.log('\n## Sidenote-anchored comments (8.4)\n')
+  //
+  // The premise this rests on is that a sidenote has a STABLE key. It nearly did not: the
+  // only identifier on the anchor was a useId(), which is per-render wiring between the
+  // prose and the margin column and changes every time the page renders. A comment anchored
+  // to one would have pointed at nothing on the next deploy. `data-sidenote-key` is the
+  // markDef's own key and is what these assertions are about.
+  // Measured on the FIXTURE, in draft mode, because it is the only document on this site
+  // with sidenotes -- the published probe article has none, and the first version of this
+  // section ran there and reported "0 anchors" while three of its assertions PASSED anyway.
+  // `[].every()` is true. An assertion that cannot fail on an empty set is not an assertion,
+  // and the precondition below is what stops that happening again.
+  const fixturePath = '/blog/fixture-kitchen-sink'
+  await page.goto(`${BASE}/api/draft-mode/enable?sanity-preview-secret=${previewSecret}&sanity-preview-pathname=${encodeURIComponent(fixturePath)}`,
+    { waitUntil: 'domcontentloaded' })
+  await page.waitForTimeout(3000)
+  const onFixture = new URL(page.url()).pathname === fixturePath
+  check(onFixture, 'draft mode lands on the fixture, which is the only document with sidenotes', page.url())
+
+  const keys = onFixture ? await page.evaluate(() => Array.from(document.querySelectorAll('[data-sidenote-key]')).map((el) => ({
+    key: el.getAttribute('data-sidenote-key'),
+    id: el.id,
+  }))) : []
+  check(keys.length > 0, 'sidenote anchors carry a stable key', `${keys.length} anchors`)
+  check(keys.length > 0 && keys.every((k) => k.key && !k.key.startsWith('«') && !/^:r/.test(k.key)),
+    'and it is NOT a React useId -- those change on every render', keys[0] ? keys[0].key : 'none')
+  check(keys.length > 0 && keys.every((k) => k.id === `sn-${k.key}`),
+    'each anchor is addressable as #sn-<key>, so a backlink can land on it')
+
+  // The key must be the same on a SECOND render. This is the whole claim, and one render
+  // cannot make it.
+  await page.goto(`${BASE}${fixturePath}?again=1`, { waitUntil: 'domcontentloaded' })
+  await page.waitForTimeout(2800)
+  const keysAgain = await page.evaluate(() => Array.from(document.querySelectorAll('[data-sidenote-key]')).map((el) => el.getAttribute('data-sidenote-key')))
+  check(keysAgain.length > 0 && JSON.stringify(keysAgain) === JSON.stringify(keys.map((k) => k.key)),
+    'and the SAME keys come back on a second render of the same article',
+    `${keysAgain.length} keys`)
+
+  const fixtureId = await groq(`*[_id == "drafts.fixture-kitchen-sink"][0]._id`)
+  const anchorKey = keys[0]?.key
+  if (anchorKey && fixtureId) {
+    await mutate([{ delete: { query: `*[_type == "rateBucket"]` } }])
+    // Arrive the way a reader arrives: the margin note's Respond link is a plain href.
+    await page.goto(`${BASE}${fixturePath}?respond=${encodeURIComponent(anchorKey)}#comments`, { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2600)
+    const formText = await page.evaluate(() => document.getElementById('comments')?.innerText ?? '')
+    check(/margin note/i.test(formText), 'arriving with ?respond= tells the reader which note they are answering',
+      formText.split('\n').find((l) => /margin note/i.test(l)))
+    const hiddenAnchor = await page.evaluate(() => {
+      const forms = Array.from(document.querySelectorAll('#comments form'))
+      const f = forms[forms.length - 1]
+      return f?.querySelector('input[name="anchor"]')?.value ?? null
+    })
+    check(hiddenAnchor === anchorKey, 'and the form carries the anchor with no JavaScript involved', hiddenAnchor)
+
+    await page.waitForTimeout(3300)
+    await page.evaluate(([m, email]) => {
+      const forms = Array.from(document.querySelectorAll('#comments form'))
+      const f = forms[forms.length - 1]
+      f.querySelector('textarea[name="body"]').value = `${m} anchored to a margin note`
+      f.querySelector('input[name="email"]').value = email
+      f.requestSubmit()
+    }, [MARK, EMAIL])
+    await page.waitForTimeout(4500)
+    const anchored = await groq(`*[_type == "comment" && body match $b][0]{ anchor, status }`, { b: `${MARK} anchored*` })
+    check(anchored?.anchor === anchorKey, 'the comment stores the sidenote key', anchored?.anchor)
+
+    await fireWebhook({ _type: 'comment', post: { _ref: fixtureId } })
+    await page.goto(`${BASE}${fixturePath}`, { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(3200)
+    const back = await page.evaluate((key) => {
+      const el = document.getElementById('comments')
+      const link = el?.querySelector(`a[href="#sn-${key}"]`)
+      const margin = document.querySelector('.margin-note-responses')
+      return { hasBacklink: !!link, marginText: margin?.textContent ?? null }
+    }, anchorKey)
+    check(back.hasBacklink, 'the comment renders a backlink to the passage, not just a label')
+    check(back.marginText !== null && /1/.test(back.marginText),
+      'and the margin note shows the response count', back.marginText)
+    // The count is TEXT in an aria-hidden column. A focusable element in there would be
+    // reachable by keyboard and invisible to a screen reader, which is worse than absent.
+    const focusableInMargin = await page.evaluate(() =>
+      document.querySelectorAll('.margin-notes a, .margin-notes button:not(.margin-note-more)').length)
+    check(focusableInMargin === 0, 'and nothing new is focusable inside the aria-hidden margin column',
+      `${focusableInMargin} focusable`)
+  } else {
+    check(false, 'a sidenote exists to anchor to', 'none found — 8.4 unmeasured, NOT passed')
+  }
+  // Back to the published article for everything that follows.
+  await page.goto(ARTICLE, { waitUntil: 'domcontentloaded' })
+  await page.waitForTimeout(2500)
+
   console.log('\n## The moderation webhook reaches the article\n')
   const hook = await fireWebhook({ _type: 'comment', post: { _ref: postId } })
   check(hook.status === 200, 'a signed comment webhook is accepted', JSON.stringify(hook.body ?? hook))
@@ -209,7 +380,7 @@ try {
     JSON.stringify(noise.body?.paths))
 
   console.log('\n## Anonymity\n')
-  await mutate([{ patch: { query: `*[_type == "comment" && email == "${EMAIL}"]`, set: { anonymous: true, authorName: 'Real Name Do Not Show' } } }])
+  await mutate([{ patch: { id: rootId, set: { anonymous: true, authorName: 'Real Name Do Not Show' } } }])
   await fireWebhook({ _type: 'comment', post: { _ref: postId } })
   await page.goto(ARTICLE, { waitUntil: 'domcontentloaded' })
   await page.waitForTimeout(3000)
@@ -221,14 +392,14 @@ try {
 
   console.log('\n## Removal states are visibly distinct (8.5)\n')
   for (const [status, expected] of [['removed', 'Removed by Stefan'], ['withdrawn', 'Withdrawn by the commenter']]) {
-    await mutate([{ patch: { query: `*[_type == "comment" && email == "${EMAIL}"]`, set: { status } } }])
+    await mutate([{ patch: { id: rootId, set: { status } } }])
     await fireWebhook({ _type: 'comment', post: { _ref: postId } })
     await page.goto(ARTICLE, { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2600)
     const t = await page.evaluate(() => document.getElementById('comments')?.innerText ?? '')
     const h = await page.content()
     check(t.includes(expected), `${status} reads "${expected}"`)
-    check(!h.includes(MARK), `and the ${status} body is not in the payload at all`)
+    check(!h.includes(`${MARK} this is a probe comment`), `and the ${status} body is not in the payload at all`)
   }
 
   await ctx.close()

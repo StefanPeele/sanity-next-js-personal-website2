@@ -50,7 +50,13 @@ function Comment({
         {!removed && <LabelChip value={c.label} />}
         <span className="font-sans text-sm text-stone-300">{c.author}</span>
         {c.date && <span className="font-mono text-xs text-stone-400">{formatDate(c.date, 'long', '')}</span>}
-        {c.anchor && <span className="meta-label text-stone-400">{copy.onSidenoteLabel}</span>}
+        {/* A LINK, not a label. The passage is the reason the comment exists, and the
+            sidenote anchor carries a stable id for exactly this. */}
+        {c.anchor && (
+          <a href={`#sn-${c.anchor}`} className={`meta-label text-stone-400 hover:text-stone-200 underline underline-offset-4 rounded-sm ${FOCUS}`}>
+            {copy.onSidenoteLabel}
+          </a>
+        )}
       </div>
 
       {removed ? (

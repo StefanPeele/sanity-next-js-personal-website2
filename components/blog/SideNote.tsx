@@ -23,9 +23,20 @@ interface SideNoteProps {
   kind?: 'note' | 'glossary'
   /** Where the full entry lives. Only glossary notes have one; it surfaces in 6.5's window. */
   href?: string
+  /**
+   * Phase 8.4. The markDef's `_key` -- STABLE across renders, builds and deploys, because it
+   * comes from the document (or, for a glossary match, from a deterministic
+   * `gl-<slug>-<n>`).
+   *
+   * This is NOT `data-sidenote-id` below, and the difference is the whole reason this prop
+   * exists. That one is a useId(), which is per-render wiring between the prose and the
+   * margin column and changes every time. A comment anchored to a useId would point at
+   * nothing the next time the page rendered, so a comment anchors to THIS.
+   */
+  anchorKey?: string
 }
 
-export function SideNote({ children, note, kind = 'note', href }: SideNoteProps) {
+export function SideNote({ children, note, kind = 'note', href, anchorKey }: SideNoteProps) {
   const [open, setOpen] = useState(false)
   const noteId = useId()
 
@@ -33,7 +44,11 @@ export function SideNote({ children, note, kind = 'note', href }: SideNoteProps)
 
   return (
     <span
-      className="sidenote-anchor relative inline"
+      // The id a comment's backlink lands on, so "on a margin note" is a link rather than a
+      // label. scroll-mt matches every other anchor target on the page.
+      id={anchorKey ? `sn-${anchorKey}` : undefined}
+      className="sidenote-anchor relative inline scroll-mt-28"
+      data-sidenote-key={anchorKey || undefined}
       data-sidenote-id={noteId}
       data-sidenote-text={note}
       data-sidenote-kind={kind}

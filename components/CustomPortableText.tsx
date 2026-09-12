@@ -257,7 +257,7 @@ export function CustomPortableText({
         <em className="italic font-serif text-stone-300">{children}</em>
       ),
       sidenote: ({ children, value: v }) => (
-        <SideNote note={v?.note}>{children}</SideNote>
+        <SideNote note={v?.note} anchorKey={v?._key}>{children}</SideNote>
       ),
       // 6.2: ONE annotation system, two sources. A glossary match used to render its own
       // hover card -- a second mechanism with a second treatment, so a reader met two
@@ -266,7 +266,7 @@ export function CustomPortableText({
       // lib/glossary.ts still marks the first prose occurrence per term per article, which
       // is the brief's own "hybrid".
       glossary: ({ children, value: v }) => (
-        <SideNote note={v?.definition} kind="glossary" href={v?.slug ? `/glossary#${v.slug}` : undefined}>
+        <SideNote note={v?.definition} kind="glossary" anchorKey={v?._key} href={v?.slug ? `/glossary#${v.slug}` : undefined}>
           {children}
         </SideNote>
       ),
