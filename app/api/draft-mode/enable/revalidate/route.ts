@@ -1,4 +1,4 @@
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { type NextRequest, NextResponse } from 'next/server'
 import { parseBody } from 'next-sanity/webhook'
 import { client } from '@/sanity/lib/client'
@@ -108,21 +108,49 @@ export async function POST(req: NextRequest) {
     // already been verified at this point, so only Sanity can reach here, and a deletion is
     // rare enough that the cost is irrelevant next to serving content that no longer exists.
     if (!body?._type) {
+      revalidateTag('sanity', { expire: 0 })
       revalidatePath('/', 'layout')
       return NextResponse.json({
         revalidated: true,
-        paths: ['/ (layout — full revalidation)'],
+        paths: ['/ (layout — full revalidation)', "tag:sanity"],
         note: 'No _type in the payload. Treated as a delete, which is the only thing that sends one.',
       })
     }
+
+    /* ── THE LEVER THAT ACTUALLY CLEARS SANITY DATA ────────────────────────────
+       `revalidatePath` invalidates a route's RENDER cache. The data behind it lives in
+       Next's Data Cache, and next-sanity tags every `sanityFetch` with `sanity` by default
+       -- its own types say so, and name this as the hook for "custom fallback revalidation
+       strategies". Without this line a webhook could revalidate the right path and the page
+       would still re-render from the same cached query result.
+
+       That is not theoretical. On production a comment deleted from Sanity stayed on the
+       live article through 90 seconds of polling AND a fresh deployment, while both the
+       Sanity API and its CDN returned zero rows for the page's exact query. Vercel's Data
+       Cache survives deploys, so only a tag or path revalidation ever clears it.
+
+       It is called for every webhook whose type RENDERS somewhere -- including one with no
+       `_type` at all, which is exactly what a delete sends. It is deliberately NOT called
+       for `rateBucket` and `blocklist`, whose rules have no paths: a rateBucket is written
+       on every comment attempt including every refused one, so tagging there would let a
+       spam wave invalidate the whole site's data once per attempt. The path revalidation
+       below stays; it is the cheaper, more precise one, and this is the floor beneath it. */
 
     const { _type, slug } = body
     const rule = RULES[_type]
 
     if (!rule) {
       revalidatePath('/', 'layout')
-      return NextResponse.json({ revalidated: true, paths: ['/ (layout — full revalidation)'], note: `Unknown type: ${_type}` })
+      return NextResponse.json({ revalidated: true, paths: ['/ (layout — full revalidation)', 'tag:sanity'], note: `Unknown type: ${_type}` })
     }
+
+    // Only for a type that renders. An empty `paths` means "this document appears nowhere",
+    // and it must stay cheap.
+    //
+    // `{ expire: 0 }` is the second argument Next 16 requires: revalidateTag(tag, profile).
+    // The signature changed from Next 15's single-argument form, and the compiler catches it
+    // -- worth knowing before copying a revalidateTag call out of any older example.
+    if (rule.paths.length > 0) revalidateTag('sanity', { expire: 0 })
 
     const paths = new Set<string>()
     for (const p of rule.paths) {
@@ -172,7 +200,11 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ revalidated: true, type: _type, paths: [...paths] })
+    return NextResponse.json({
+      revalidated: true,
+      type: _type,
+      paths: rule.paths.length > 0 ? [...paths, 'tag:sanity'] : [...paths],
+    })
   } catch (err) {
     console.error('Revalidation error:', err)
     return NextResponse.json({ message: 'Internal server error', error: String(err) }, { status: 500 })
