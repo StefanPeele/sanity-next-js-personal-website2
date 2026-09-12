@@ -1,9 +1,17 @@
 # Phase 8 — Comments. The design, before the build.
 
-**Status: proposal.** Nothing in this document has been built. §8 of the brief calls this
-"the largest item" and says to treat it as its own project with its own risk profile, so
-this is the project plan: every decision the brief left open, answered, with the
-measurements that answer them.
+**Status: designed, and MOSTLY BUILT.** This started as the project plan and the plan
+survived contact; it is kept as written so the reasoning is still readable, with the build
+state marked below. §8 of the brief calls this "the largest item" and says to treat it as
+its own project with its own risk profile.
+
+| | State |
+| --- | --- |
+| 8.1 identity, 8.2 labels, 8.3 threading, 8.4 sidenote scope, 8.5 removal states, 8.6 storage, 8.7 spam layers 1-4 | **Built**, `2b9e08c` and `9dba7ad`. 52/52 on `docs/audit/measure-comments.mjs` |
+| A commenter withdrawing their own comment (part of 8.5) | **Not built** — see the section near the end, which says why waiting is better than any of the obvious mechanisms |
+| The Studio "needs attention" view and the one-click block (8.7's workflow) | **Not built.** The query exists and is bounded; the desk view is not |
+| Promoting a Correction comment into a 3B correction | **Deliberately not built.** The most interesting thing here and the most likely to be designed wrong before there is one real correction to look at |
+| Any of it in production | **Blocked** — Vercel deploy rate limit, see `OVERHAUL-PROGRESS.md` |
 
 Research is §1.7 of `EDITORIAL-RESEARCH.md` and is not repeated here. Where this document
 disagrees with it, it says so.
