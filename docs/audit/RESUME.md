@@ -60,11 +60,16 @@ against a quota that is already gone.
   headings are `h5`). `scripts/migrate-heading-levels.mjs` fixes it, dry-run by default, and
   is deliberately NOT applied because it changes how a published article looks.
 
+- **Phase 9 — answered.** 9.1 verified with evidence (20 pass, 1 not establishable from
+  here); 9.2-9.5 proposed in `PROPOSALS.md`.
+
 ## The single next action
 
-**9.2 — propose the digest schema.** A Sanity document type Stefan composes by hand, with
-entries that are his posts, external links with a note on why they matter, or neither.
-Then Phase 11.
+**Phase 11 — "What I'd add"**, the last unread section of the brief. Read it and work it.
+
+Then the two things no harness can finish: **verify Phase 8 on production** once the deploy
+quota clears, and **drive the toolbar and the sidenotes with a real screen reader**, which
+`A11Y-AUDIT.md` names as the largest remaining gap in Phase 10.
 
 The one part of Phase 10 a harness cannot do: **drive the toolbar and the sidenotes with a
 real screen reader.** The audit says so plainly in its own "not covered" section. It is the

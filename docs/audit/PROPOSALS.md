@@ -892,3 +892,119 @@ been exercised by a real person, and the first real signup is the real test.
 host. Locally that means clicking a confirm link bounces you to stefanpeele.com. Correct in
 production, confusing in development, and worth knowing before someone reports it as a bug.
 The comment confirm route added in Phase 8 inherits the same behaviour.
+
+---
+
+# Phase 9.2–9.5 — the digest. Schema, sending, and why the archive is the point.
+
+## 9.2 The schema
+
+One document type, `digest`, composed by hand. Three entry kinds, because the brief names
+three and they genuinely differ in what they need — a post entry needs no link or title
+(they come from the reference), an external entry needs both, and a note entry needs
+neither.
+
+```
+digest
+  title          string     "Digest 004 — what fails at 1500 bytes"
+  slug           slug       from the title
+  intro          text       two or three sentences, in your voice, before the list
+  sentAt         datetime   READ-ONLY, written by the send. Its presence IS "sent"
+  recipientCount number     READ-ONLY, how many it went to. A record, not a target
+  entries        array of:
+      postEntry      post → reference        note (text)
+      linkEntry      title, url, source, note (text)
+      noteEntry      heading, body (text)
+  archived       boolean    default true — see 9.5
+```
+
+**`note` is required on every kind, and that is the whole design.** The brief's model is
+"link, short note, why it matters", and the note is the only part a reader cannot get
+anywhere else. A digest that is a list of links is an RSS feed with extra steps. Make the
+field required and the document type enforces the format.
+
+**`sentAt` is the state machine.** No `status` enum: a digest is a draft until it has a
+`sentAt`, and sent after. One field, no way for two fields to disagree, and no way to mark
+something sent that was not.
+
+**`source` on a link entry** is the publication or the person — "Julia Evans", "APNIC Blog".
+It is what makes a list of five links scannable, and it is the one thing a URL does not
+give you at a glance.
+
+**Deliberately not in the schema:** categories, tags, segments, scheduled-send, A/B anything.
+9.4 says subscribers get what you send, and every one of those fields is a decision you would
+have to make every time you write one.
+
+## 9.3 Sending — a Studio action, not a CLI or a route
+
+Three options, and the brief asks for a recommendation.
+
+| | Studio action | CLI command | Protected route |
+| --- | --- | --- | --- |
+| Where you already are when you finish writing | **Yes — the Studio** | No, a terminal | No, a browser tab |
+| Needs a machine with the repo checked out | No | **Yes** | No |
+| Can it see the document you are looking at | **Yes, directly** | Only by slug, retyped | Only by slug, retyped |
+| Confirmation before sending to everyone | **A dialog, with the count in it** | A `--confirm` flag you will learn to type by reflex | A form, which is a dialog with extra steps |
+| Auditable | The action writes `sentAt` | Same | Same |
+
+**A Studio action.** The document you just wrote is the one thing you have in front of you,
+and every other option makes you name it again somewhere else. The `blockCommenter` action
+built in Phase 8.7 is the same shape and can be copied almost directly: a confirm dialog, a
+mutation, a state flag.
+
+The dialog must carry the number. **"Send to 41 confirmed subscribers?"** is a different
+question from "Send?", and it is the last chance to notice that the number is 0 because the
+query was wrong, or 4,000 because it was not filtered.
+
+### The preview path the brief asks for
+
+**A test send to one address, from the same action, using exactly the same rendering code.**
+Not a preview PAGE — a preview page is a different renderer and would drift. A "Send test to
+me" button beside "Send", which posts to the same handler with a single-recipient override.
+
+The thing being previewed is an HTML EMAIL, and the only honest preview of an HTML email is
+an HTML email in a real client. Dark mode, Outlook, a phone — none of that is visible in a
+browser tab.
+
+### One thing to build before any of it
+
+**Sending is the first irreversible action on this site.** Everything else — a comment, a
+correction, a published post — can be undone. A digest that has gone to every subscriber has
+gone. So:
+
+- the action refuses if `sentAt` is already set, with the date in the message
+- it writes `sentAt` and `recipientCount` in the same transaction that sends
+- it sends in batches with the existing `List-Unsubscribe` header the newsletter already
+  sets, since an unsubscribe link in the footer is a legal requirement and 9.1 confirmed it
+  works on both GET and POST
+
+## 9.5 The archive — yes, and for a better reason than SEO
+
+The brief says "many newsletters do, and it gives search engines something to index" and
+asks for reasoning. The SEO argument is the weakest one available here and I would not ship
+it on that basis.
+
+**The real argument: an archive is what makes subscribing a decision rather than a leap.**
+Right now the newsletter form asks for an address and offers, in return, a description of
+what the emails will be like. An archive replaces that description with the emails
+themselves. It is the same argument as the corrections page in Phase 3B — showing the record
+is more persuasive than describing it.
+
+Three consequences worth stating:
+
+**It changes what a digest has to be.** A page anyone can read is held to a different
+standard than a note to 40 people who already opted in. That is a good pressure and it is
+the main cost: you cannot write a lazy one.
+
+**It needs a per-digest `archived` boolean, defaulting to true.** Most should be public; the
+occasional one should not have to be.
+
+**`/blog/digests` rather than `/digests`**, because it is writing, it belongs to the archive
+shell, and it gets the reading toolbar for free. One index and one page per digest, the same
+shape the series pages already use.
+
+### What I would not do
+
+A "subscribe to get the next one" box on an archived digest that is two years old. It reads
+as a growth tactic on a page whose job is to be honest about what the thing is. The footer
+form is already on every page.
