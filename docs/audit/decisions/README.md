@@ -8,7 +8,7 @@
 >
 > | | Status |
 > | --- | --- |
-> | **Decision 1 — the h1 measure** | **DONE.** Option **C** shipped. `lg:w-[52rem] lg:max-w-none` is on the `<h1>` in `components/blog/BlogArticleHeader.tsx:126`. Verified in the file, not assumed. Nothing here is outstanding. |
+> | **Decision 1 — the h1 measure** | **SUPERSEDED by 7.4** (2026-09-12). Option C shipped and then stopped meaning anything: 7.2 widened the parent to the same 52rem, so the override was removed. Re-measured against three titles; see `PROPOSALS.md`. |
 > | **Decision 2 — chrome in the reading column** | **SUPERSEDED by Phase 5.** Its recommendation (Config 2) should **not** be implemented as written. |
 >
 > ### Why Decision 2 is superseded rather than simply done
@@ -56,7 +56,20 @@ Every option below is a real screenshot of the real article, not a mockup.
 
 ---
 
-## Decision 1 — the h1 measure (D4)  ·  **DONE, option C shipped**
+## Decision 1 — the h1 measure (D4)  ·  **SUPERSEDED by Phase 7.4, 2026-09-12**
+
+> **Everything below is still accurate about the layout it was measured against, and that
+> layout is gone.** 7.2 widened the header block from 36rem to 52rem, which is exactly the
+> width option C gave the h1 by hand — so `lg:w-[52rem] lg:max-w-none` became a restatement
+> of its own container and has been removed. The title keeps the width it was measured at
+> and now inherits it.
+>
+> It also measured **one** title, and its own closing caveat says why that was not enough.
+> 7.4 re-measures four options against all three published titles (43, 69 and 77 characters)
+> and recommends the **full reading column at 48px**, which saves a line on two of the three
+> and costs one on none. See `PROPOSALS.md` and `screenshots/phase-7/h1-*`.
+
+### The original, as measured against the 36rem layout
 
 **First, a correction.** My proposal said to add `text-balance`. It is already there:
 `styles/index.css:21` applies `text-wrap: balance` to every `h1`–`h6`. That is why option B

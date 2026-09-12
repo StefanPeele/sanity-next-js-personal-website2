@@ -716,3 +716,139 @@ Standard moves from 57.2 to **67.1** — squarely mid-band, and stable across ev
 ## Consequence for the reader's Width control
 
 `ch` makes the three settings mean something they do not mean today. Right now Width changes the pixel column and therefore the CPL, and Text size *also* changes the CPL — two controls with one effect, pulling against each other. After this, Text size changes **only** the size and Width changes **only** the measure. That is a better contract than the one being replaced, and it is the real argument for `ch` over picking a better rem.
+
+---
+
+# Phase 7.3 — the hero image. The fold decides it, not the width.
+
+`docs/audit/render-hero-h1-options.mjs`, run 2026-09-12 against the shipped 7.2 layout.
+Seven options, synthesised in the page rather than shipped as code, measured at 1440 / 768 /
+390. Frames are `hero-<opt>-<bp>.jpg`; raw numbers in `hero-h1-options.json`.
+
+## The thing that decides this, stated before the table
+
+7.3 asks for a hero that is **"significantly larger, up to full-bleed"** and, in the same
+item, says the first line of prose **"should improve, not worsen."** Those two instructions
+pull against each other, because the hero keeps its aspect ratio: every pixel of width buys
+0.56 pixels of height, and all of it lands on top of the prose.
+
+**Width and the fold cannot both improve — unless the RATIO changes.** That is the finding,
+and it is why the options below include three the brief did not list.
+
+## Every option, at 1440 (viewport 1000)
+
+| Option | Hero | First prose | Against the fold |
+| --- | --- | --- | --- |
+| **A — as shipped after 7.2** (52rem) | 832 × 440 | 911 | 89px above |
+| **B — the full reading column** | 964 × 509 | 981 | 19px above |
+| **C — the full container** (spans the margin column) | 1232 × 651 | 1122 | **122px below** |
+| **D — full-bleed to the viewport** | 1440 × 761 | 1232 | **232px below** |
+| **E — full-bleed, cropped 21:9** | 1440 × 617 | 1089 | **89px below** |
+| **F — the full reading column, cropped 21:9** | 964 × 413 | **885** | **115px above** |
+| **G — unchanged width, cropped 21:9** | 832 × 357 | 828 | 172px above |
+
+C and D are the two the brief names as the ambitious end of the range, and both put the
+article below the fold — D by 232px, which is a quarter of the viewport. E is full-bleed and
+still 89px below. **Every option that reaches the viewport edge fails the fold test.**
+
+## The recommendation: F
+
+**F is the only option that satisfies both halves of the instruction.** It is 132px wider
+than what ships today (+16%), it aligns the hero with the `full` tier that body figures and
+code blocks already use — so the hero stops being a width that exists nowhere else on the
+page — and the first line of prose lands **26px higher than it does now**.
+
+It improves the fold at every breakpoint, not just the one it was chosen for:
+
+| | 1440 | 768 | 390 |
+| --- | --- | --- | --- |
+| A, today | 911 | 1164 | 994 |
+| **F** | **885** | **1092** | **960** |
+| gain | 26px | **72px** | **34px** |
+
+390 is the number the brief cares most about, and it is the one place where nothing else can
+help: the column is viewport-bound, so B and C are literally identical to A there. Only the
+crop moves it.
+
+## Three things this does not fix, and one it could make worse
+
+**The fold at 390 is not the hero's fault.** At 390 the hero is 181px tall and the prose
+starts at 994 — so roughly 810px of navbar, back-link, chips, title and metadata precede it.
+F takes 34px off that. Getting the prose above an 844px fold would need another ~150px, and
+it is not in the hero. **The brief's own figure of 911 at 390 is stale**: it is 994 today,
+and it was 994 before 7.2 as well — the 390 column never changed. I have not found what moved
+it between the brief being written and now; I am flagging the discrepancy rather than
+claiming an improvement I did not make.
+
+**A 21:9 crop discards about 40% of a 16:9 frame, and it will decapitate somebody.** The
+hero today renders at the image's own ratio — measured 832×440, 832×406 and 832×303 on the
+three published posts, so there is no consistent hero shape at all right now. A fixed ratio
+is an improvement in its own right, but only if the crop is aimed. Sanity stores a hotspot
+per image and the header currently ignores it: `heroImageUrl()` appends
+`w=1600&auto=format&q=75` and nothing else. **F should ship as a CDN crop driven by the
+hotspot** (`&h=&fit=crop` plus `fp-x`/`fp-y`), not as a CSS `object-fit: cover`. The CDN
+version also ships ~40% fewer pixels for the same rendered box. That needs the hotspot fields
+added to the article query, which is why F is a proposal and not already committed.
+
+**If you would rather have the image than the fold**, B is the honest second choice: the same
++132px of width at the natural ratio, still 19px above the fold at 1440, and no crop and no
+hotspot work. It buys nothing at 768 or 390.
+
+## What I would not do
+
+C, D and E. Full-bleed is the option the brief is most curious about and it is the one the
+measurements are most hostile to: D pushes the opening paragraph 232px below the fold at
+1440, and E — the cropped full-bleed, the best-behaved of the three — is still 89px below,
+which is exactly as far below as A is above. Full-bleed on this page costs the reader the
+first paragraph.
+
+---
+
+# Phase 7.4 — the h1, re-measured against the 7.2 layout
+
+**The originals are superseded.** `decisions/README.md` Decision 1 chose option C,
+`lg:w-[52rem] lg:max-w-none`, to let the h1 escape a 36rem parent. 7.2 made that parent
+52rem, so option C became a restatement of its own container and the override has been
+removed — the title keeps exactly the width it was measured at and simply inherits it now.
+Decision 1 is answered and closed; these are the options that exist after it.
+
+That document also measured against **one** title, and its own closing caveat says why that
+was not enough: *"a much longer title would still wrap to 4 lines at 832px — this fixes the
+measure, not every possible title."* So this run measures all three published titles.
+
+| Option | short (43 chars) | mid (69) | long (77) |
+| --- | --- | --- | --- |
+| **A — as shipped** (832, 48px) | **2 lines** | 2 lines | **3 lines** |
+| **B — the full reading column** (964, 48px) | **1 line** | 2 lines | **2 lines** |
+| **C — flush with the prose** (671, 48px) | 2 lines | **3 lines** | 3 lines |
+| **D — 832 at 40px**, lg and up | 1 line | 2 lines | 2 lines |
+
+## The recommendation: B
+
+**B saves a line on two titles out of three and never costs one.** A breaks the 43-character
+title across two lines, which is a title short enough to be a single line at this size and is
+the clearest wrapping defect on the page; B sets it in one. On the 77-character title B saves
+a line the same way Decision 1's option C did, at the next size up.
+
+It is also the same move as 7.3's recommendation, for the same reason: the title joins the
+`full` tier that the reading column, the figures and the code blocks already use, instead of
+sitting at a width nothing else on the page shares.
+
+**D matches B line-for-line** and buys 16px more of fold at 1440, at the cost of a fifth of
+the display type. Decision 1 said the same thing about the old D and it is still true: take
+it only if you want the header compressed.
+
+**C is the option to reject.** Making the title flush with the prose measure costs a line on
+the two longer titles and reads as a title that ran out of room, not as one that was set.
+
+## One caveat, measured
+
+Below `lg` all four options are identical — the header block is viewport-bound at 768 and 390,
+so nothing here moves tablet or mobile. C is the single exception and it is a regression: it
+holds 671px at 768 where the others take the full 720, costing a line on the long title.
+
+**The first run of this harness reported D wrapping to 5 and 6 lines at 390.** That was an
+artifact of my synthesis, not of the option — I applied the 40px unconditionally where the
+real option is gated at `lg`, so I had made the title *bigger* at 390, where it ships at
+30px. The numbers above are from a corrected run. Recording it because a proposal's numbers
+are worth exactly as much as the method that produced them.

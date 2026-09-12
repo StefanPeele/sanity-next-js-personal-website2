@@ -56,9 +56,11 @@ Session count: 2
 | **3.6 Sources in the Contents column** | `41e45f8` | **yes** — "2 sources", closed, 2 links, both anchors resolve, at 1440 **and** 390 | self | Column shows count + linked titles, anchored to `#source-N` in the existing body list. One canonical rendering, two volumes |
 | **3.7 Last updated** | `41e45f8` | **yes** — header reads "August 1, 2026 · Updated September 1, 2026" at both breakpoints | self + 12 unit tests | Derived from `changelog[].date`. No new field, and **not** `_updatedAt` |
 
-| **Stega audit — every fetch, measured** | `d42823c` | pending — needs a build | pending verifier | The glossary regex was not the last. `probe-stega-fields.mjs` measures which fields Sanity actually encodes rather than inferring it from `filterDefault`. **Eight** more sites, two shapes: the known LOOKUP shape, and a new FACET shape where `new Set` fails to dedupe because each document's copy of a value carries its own payload. Worst case: `/resume` lost its **entire skills section** in preview |
+| **Stega audit — every fetch, measured** | `d42823c` | pending deploy | **verifier — PASS on 7 of 8, 1 UNVERIFIABLE** (the resume skills surface has no content in the dataset at all). It built its own draft fixtures for glossary, garden and library, measured, and proved the deletion | The glossary regex was not the last. `probe-stega-fields.mjs` measures which fields Sanity actually encodes rather than inferring it from `filterDefault`. **Eight** more sites, two shapes: the known LOOKUP shape, and a new FACET shape where `new Set` fails to dedupe because each document's copy of a value carries its own payload. Worst case: `/resume` lost its **entire skills section** in preview |
 
 | **7.1 + 7.2 The article stops being a 576px strip** | `b8a1621` | pending deploy | **verifier — PASS on 5 of 6 sub-claims, 1 UNVERIFIABLE.** Measured 59.5 / 66.78 / 73.0 CPL against my 59.6 / 67.0 / 73.2, by its own method; independently re-measured PRODUCTION at **57.0 exactly**, pixel-fixed across all three width settings, which confirms the premise the brief's amendment rested on | Three tiers: prose 671, wide 832, full 964 at 1440. Every heading h2-h6 measured at exactly 250.39-921.61px, identical to the reference paragraph |
+
+| **7.5 Reading time moves + 7.6 progress bar** | `1a73ad6`, fix `c7d028c` | pending deploy | pending verifier — **23/23** on `measure-progress-readout.mjs`, which drives the real switches and navigates rather than photographing | Time out of the header, above Contents, and LIVE once 3% in: "9 min left · 50% read". Bar 4px with an off switch. Position resumes, opt-in |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:
@@ -247,7 +249,9 @@ been applied — Phase 1 is research only.
 | **8.6 storage** | §1.7 | **Sanity + Resend**, not self-hosted. Vercel cannot host Remark42 |
 | **8.5 wording** | §1.7 | Reddit's `[removed]` / `[deleted]` distinction, in plainer words. "Deleted by Author" is ambiguous |
 | **8.8 sequencing** | §1.9 | **Build it first and independently of comments.** `lib/glossary.ts` already implements the hard part |
-| **7.1 measure** | §1.5 | **Flagged, not acted on.** The measure is 56 characters, not 65. Phase 7 should re-decide with the corrected number |
+| **7.1 measure** | §1.5 | **DONE — shipped in `b8a1621`.** 56.0 measured, 67.0 shipped, verified independently at 66.78 |
+| **7.3 hero** | `PROPOSALS.md` + `screenshots/phase-7/hero-*` | **Option F** — the full reading column, cropped to 21:9. The only one of seven that is both significantly larger AND lands the prose HIGHER (26px at 1440, 72px at 768, 34px at 390). Every full-bleed option puts the opening paragraph below the fold; D by 232px. Needs the image hotspot wired up first |
+| **7.4 h1** | `PROPOSALS.md` + `screenshots/phase-7/h1-*` | **Option B** — the full reading column at 48px. Saves a line on two of the three published titles and costs one on none. Decision 1's option C is now a restatement of its own container and has been removed; **Decision 1 is superseded** |
 
 ## Heading-pipeline audit — every published document, before and after
 
@@ -366,6 +370,31 @@ enough is systematically early**, which is worth knowing for how future briefs a
 | 3B numbering | Oldest first, and stable | A number that moves when a new correction is added breaks any link a reader has already shared | `numberCorrections()` |
 | 3.7 is `Revised` the same signal | **Yes.** Derived from the changelog and **removed from the Studio options list** | Two independently settable sources for one fact will disagree. A post could claim it was revised while showing no record of what changed. Cost: a post with a hand-set `revised` and no changelog loses the badge — correctly, because there is no evidence for it | `effectiveReviewStatus()`; re-add the enum value to overrule |
 
+## Verifier run 5 — the stega audit, wide claim (2026-09-12)
+
+PASS on 7 of the 8 named surfaces. It did not reuse `probe-stega-fields.mjs`; it queried the
+dataset directly with an explicit `raw` perspective for ground truth, then diffed draft
+against published `innerText` in a browser. Where a surface had no content — glossary,
+garden, library — it **created its own draft-only fixtures, measured, and proved the
+deletion**, which is more than the claim asked for.
+
+- `/resume` skills is **UNVERIFIABLE**: the dataset has no skills content, draft or
+  published, so the surface does not exist to be measured. The fix is real and the code path
+  is right; nobody has yet shown it rendering.
+- Its out-of-claim finding, **investigated and dismissed**: it reported that `/blog`'s chip
+  row omits "Lab Notes" and "Perspective" while cards clearly show them. Those are **lanes,
+  not categories** — a different facet — and the chip row it measured is the category row,
+  which is correct. It correctly noted the behaviour is identical in published mode and so
+  is not a stega defect.
+- But checking it surfaced something real from the other direction, logged under *Deferred*:
+  **there is no lane row in the filter panel at all.** Lanes are filterable by `?lane=`, they
+  produce an active-filter label, and Clear resets them — but the only way to set one is from
+  a lane section heading or a card pill, never from Filters, which offers category, tag,
+  status and sort.
+- It could not find the fixture at `/blog/fixture-kitchen-sink` and worked around it. That
+  slug does exist and is seeded by `scripts/seed-fixture-posts.mjs`; its query was shaped
+  wrong. Noting it so the next reader does not conclude the fixture is missing.
+
 ## What verifier run 4 found outside its claim (7.1 + 7.2, 2026-09-11)
 
 - **The fixture had no lists.** The document whose whole job is to carry every block type
@@ -423,6 +452,8 @@ enough is systematically early**, which is worth knowing for how future briefs a
 | Item | Why | Trigger to revisit |
 | --- | --- | --- |
 | **0.5** `/graph` node labels at 8px | SVG attribute, not a class; needs label-collision work in the force layout | Any `/graph` work |
+| **No lane row in `/blog`'s filter panel** | Found while checking a verifier's out-of-claim report. `?lane=` is a real filter with an active label and a working Clear, but Filters offers only category / tag / status / sort — a lane can be set from a section heading or a card pill and nowhere else. Phase 4 is closed and this is not Phase 7's subject | Any return to the directory, or the first time someone cannot find the lane filter |
+| **The hero ignores the image hotspot** | `heroImageUrl()` appends `w=1600&auto=format&q=75` and nothing else, so any fixed-ratio crop would be centre-cropped. Harmless today because the hero renders at each image's own ratio — measured 832x440, 832x406 and 832x303 across the three published posts | 7.3's option F, which is a crop and needs the hotspot to be safe |
 | Seventh chip definition, portfolio side | `photography/page.tsx:72,86`; `buttonClass()` would take it | Any portfolio pass |
 | Five sans micro-labels in `CinematicGallery` | `.meta-label` is the mono primitive | — |
 | "Featured" copy hardcoded in JSX | Phase 2.5 rebuilds the element and should move the string then | Phase 2.5 |
