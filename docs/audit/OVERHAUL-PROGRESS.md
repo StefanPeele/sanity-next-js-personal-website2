@@ -54,6 +54,8 @@ Session count: 1
 | **3.6 Sources in the Contents column** | `41e45f8` | **yes** — "2 sources", closed, 2 links, both anchors resolve, at 1440 **and** 390 | self | Column shows count + linked titles, anchored to `#source-N` in the existing body list. One canonical rendering, two volumes |
 | **3.7 Last updated** | `41e45f8` | **yes** — header reads "August 1, 2026 · Updated September 1, 2026" at both breakpoints | self + 12 unit tests | Derived from `changelog[].date`. No new field, and **not** `_updatedAt` |
 
+| **Stega audit — every fetch, measured** | `d42823c` | pending — needs a build | pending verifier | The glossary regex was not the last. `probe-stega-fields.mjs` measures which fields Sanity actually encodes rather than inferring it from `filterDefault`. **Eight** more sites, two shapes: the known LOOKUP shape, and a new FACET shape where `new Set` fails to dedupe because each document's copy of a value carries its own payload. Worst case: `/resume` lost its **entire skills section** in preview |
+
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:
 `measure-reference-site.mjs`, `measure-metadata.mjs`, `measure-sidenotes.mjs`, plus

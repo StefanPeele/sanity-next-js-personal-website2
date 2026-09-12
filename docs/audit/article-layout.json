@@ -1,0 +1,416 @@
+{
+  "cplRows": [
+    {
+      "bp": 1440,
+      "width": "narrow",
+      "size": "15",
+      "paragraphs": 58,
+      "cpl": 59.6,
+      "proseWidth": 483,
+      "mainWidth": 964,
+      "clamped": false,
+      "fontSize": 15,
+      "firstProseY": 905
+    },
+    {
+      "bp": 1440,
+      "width": "narrow",
+      "size": "19",
+      "paragraphs": 58,
+      "cpl": 59.6,
+      "proseWidth": 611,
+      "mainWidth": 964,
+      "clamped": false,
+      "fontSize": 19,
+      "firstProseY": 911
+    },
+    {
+      "bp": 1440,
+      "width": "narrow",
+      "size": "21",
+      "paragraphs": 58,
+      "cpl": 59.6,
+      "proseWidth": 676,
+      "mainWidth": 964,
+      "clamped": false,
+      "fontSize": 21,
+      "firstProseY": 914
+    },
+    {
+      "bp": 1440,
+      "width": "standard",
+      "size": "15",
+      "paragraphs": 58,
+      "cpl": 67,
+      "proseWidth": 530,
+      "mainWidth": 964,
+      "clamped": false,
+      "fontSize": 15,
+      "firstProseY": 905
+    },
+    {
+      "bp": 1440,
+      "width": "standard",
+      "size": "19",
+      "paragraphs": 58,
+      "cpl": 67,
+      "proseWidth": 671,
+      "mainWidth": 964,
+      "clamped": false,
+      "fontSize": 19,
+      "firstProseY": 911
+    },
+    {
+      "bp": 1440,
+      "width": "standard",
+      "size": "21",
+      "paragraphs": 58,
+      "cpl": 67,
+      "proseWidth": 742,
+      "mainWidth": 964,
+      "clamped": false,
+      "fontSize": 21,
+      "firstProseY": 914
+    },
+    {
+      "bp": 1440,
+      "width": "wide",
+      "size": "15",
+      "paragraphs": 58,
+      "cpl": 73.2,
+      "proseWidth": 606,
+      "mainWidth": 964,
+      "clamped": false,
+      "fontSize": 15,
+      "firstProseY": 905
+    },
+    {
+      "bp": 1440,
+      "width": "wide",
+      "size": "19",
+      "paragraphs": 58,
+      "cpl": 73.2,
+      "proseWidth": 767,
+      "mainWidth": 964,
+      "clamped": false,
+      "fontSize": 19,
+      "firstProseY": 911
+    },
+    {
+      "bp": 1440,
+      "width": "wide",
+      "size": "21",
+      "paragraphs": 58,
+      "cpl": 73.2,
+      "proseWidth": 848,
+      "mainWidth": 964,
+      "clamped": false,
+      "fontSize": 21,
+      "firstProseY": 914
+    },
+    {
+      "bp": 768,
+      "width": "narrow",
+      "size": "15",
+      "paragraphs": 58,
+      "cpl": 59.6,
+      "proseWidth": 483,
+      "mainWidth": 720,
+      "clamped": false,
+      "fontSize": 15,
+      "firstProseY": 1130
+    },
+    {
+      "bp": 768,
+      "width": "narrow",
+      "size": "19",
+      "paragraphs": 58,
+      "cpl": 59.6,
+      "proseWidth": 611,
+      "mainWidth": 720,
+      "clamped": false,
+      "fontSize": 19,
+      "firstProseY": 1130
+    },
+    {
+      "bp": 768,
+      "width": "narrow",
+      "size": "21",
+      "paragraphs": 58,
+      "cpl": 59.6,
+      "proseWidth": 676,
+      "mainWidth": 720,
+      "clamped": false,
+      "fontSize": 21,
+      "firstProseY": 1130
+    },
+    {
+      "bp": 768,
+      "width": "standard",
+      "size": "15",
+      "paragraphs": 58,
+      "cpl": 67,
+      "proseWidth": 530,
+      "mainWidth": 720,
+      "clamped": false,
+      "fontSize": 15,
+      "firstProseY": 1130
+    },
+    {
+      "bp": 768,
+      "width": "standard",
+      "size": "19",
+      "paragraphs": 58,
+      "cpl": 67,
+      "proseWidth": 671,
+      "mainWidth": 720,
+      "clamped": false,
+      "fontSize": 19,
+      "firstProseY": 1130
+    },
+    {
+      "bp": 768,
+      "width": "standard",
+      "size": "21",
+      "paragraphs": 58,
+      "cpl": 64.3,
+      "proseWidth": 720,
+      "mainWidth": 720,
+      "clamped": true,
+      "fontSize": 21,
+      "firstProseY": 1130
+    },
+    {
+      "bp": 768,
+      "width": "wide",
+      "size": "15",
+      "paragraphs": 58,
+      "cpl": 73.2,
+      "proseWidth": 606,
+      "mainWidth": 720,
+      "clamped": false,
+      "fontSize": 15,
+      "firstProseY": 1130
+    },
+    {
+      "bp": 768,
+      "width": "wide",
+      "size": "19",
+      "paragraphs": 58,
+      "cpl": 70.2,
+      "proseWidth": 720,
+      "mainWidth": 720,
+      "clamped": true,
+      "fontSize": 19,
+      "firstProseY": 1130
+    },
+    {
+      "bp": 768,
+      "width": "wide",
+      "size": "21",
+      "paragraphs": 58,
+      "cpl": 64.3,
+      "proseWidth": 720,
+      "mainWidth": 720,
+      "clamped": true,
+      "fontSize": 21,
+      "firstProseY": 1130
+    },
+    {
+      "bp": 390,
+      "width": "narrow",
+      "size": "15",
+      "paragraphs": 58,
+      "cpl": 43.8,
+      "proseWidth": 342,
+      "mainWidth": 342,
+      "clamped": true,
+      "fontSize": 15,
+      "firstProseY": 960
+    },
+    {
+      "bp": 390,
+      "width": "narrow",
+      "size": "19",
+      "paragraphs": 58,
+      "cpl": 34.1,
+      "proseWidth": 342,
+      "mainWidth": 342,
+      "clamped": true,
+      "fontSize": 19,
+      "firstProseY": 960
+    },
+    {
+      "bp": 390,
+      "width": "narrow",
+      "size": "21",
+      "paragraphs": 58,
+      "cpl": 30.5,
+      "proseWidth": 342,
+      "mainWidth": 342,
+      "clamped": true,
+      "fontSize": 21,
+      "firstProseY": 960
+    },
+    {
+      "bp": 390,
+      "width": "standard",
+      "size": "15",
+      "paragraphs": 58,
+      "cpl": 43.8,
+      "proseWidth": 342,
+      "mainWidth": 342,
+      "clamped": true,
+      "fontSize": 15,
+      "firstProseY": 960
+    },
+    {
+      "bp": 390,
+      "width": "standard",
+      "size": "19",
+      "paragraphs": 58,
+      "cpl": 34.1,
+      "proseWidth": 342,
+      "mainWidth": 342,
+      "clamped": true,
+      "fontSize": 19,
+      "firstProseY": 960
+    },
+    {
+      "bp": 390,
+      "width": "standard",
+      "size": "21",
+      "paragraphs": 58,
+      "cpl": 30.5,
+      "proseWidth": 342,
+      "mainWidth": 342,
+      "clamped": true,
+      "fontSize": 21,
+      "firstProseY": 960
+    },
+    {
+      "bp": 390,
+      "width": "wide",
+      "size": "15",
+      "paragraphs": 58,
+      "cpl": 43.8,
+      "proseWidth": 342,
+      "mainWidth": 342,
+      "clamped": true,
+      "fontSize": 15,
+      "firstProseY": 960
+    },
+    {
+      "bp": 390,
+      "width": "wide",
+      "size": "19",
+      "paragraphs": 58,
+      "cpl": 34.1,
+      "proseWidth": 342,
+      "mainWidth": 342,
+      "clamped": true,
+      "fontSize": 19,
+      "firstProseY": 960
+    },
+    {
+      "bp": 390,
+      "width": "wide",
+      "size": "21",
+      "paragraphs": 58,
+      "cpl": 30.5,
+      "proseWidth": 342,
+      "mainWidth": 342,
+      "clamped": true,
+      "fontSize": 21,
+      "firstProseY": 960
+    }
+  ],
+  "tierRows": [
+    {
+      "bp": 1440,
+      "viewport": 1440,
+      "container": 1280,
+      "offMeasure": [],
+      "offMeasureCount": 0,
+      "main": 964,
+      "prose": 671,
+      "wide": 832,
+      "full": 964,
+      "figure": 964,
+      "quote": 832,
+      "apparatus": 832,
+      "mainBox": {
+        "left": 104,
+        "right": 1068,
+        "width": 964
+      },
+      "tocBox": {
+        "left": 1116,
+        "right": 1336,
+        "width": 220
+      },
+      "docScrollX": 0,
+      "overflowing": [],
+      "scrollers": []
+    },
+    {
+      "bp": 768,
+      "viewport": 768,
+      "container": 768,
+      "offMeasure": [],
+      "offMeasureCount": 0,
+      "main": 720,
+      "prose": 671,
+      "wide": 720,
+      "full": 720,
+      "figure": 720,
+      "quote": 720,
+      "apparatus": 720,
+      "mainBox": {
+        "left": 24,
+        "right": 744,
+        "width": 720
+      },
+      "tocBox": {
+        "left": 0,
+        "right": 0,
+        "width": 0
+      },
+      "docScrollX": 0,
+      "overflowing": [],
+      "scrollers": [
+        "span.text-stone-400 958px"
+      ]
+    },
+    {
+      "bp": 390,
+      "viewport": 390,
+      "container": 390,
+      "offMeasure": [],
+      "offMeasureCount": 0,
+      "main": 342,
+      "prose": 342,
+      "wide": 342,
+      "full": 342,
+      "figure": 342,
+      "quote": 342,
+      "apparatus": 342,
+      "mainBox": {
+        "left": 24,
+        "right": 366,
+        "width": 342
+      },
+      "tocBox": {
+        "left": 0,
+        "right": 0,
+        "width": 0
+      },
+      "docScrollX": 0,
+      "overflowing": [],
+      "scrollers": [
+        "span.text-stone-400 958px",
+        "span.text-emerald-300 496px"
+      ]
+    }
+  ]
+}

@@ -201,8 +201,14 @@ export default async function BlogPostPage({ params }: Props) {
           lanes={taxonomy.articleLanes}
         />
 
-        <div className="relative max-w-6xl mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12 mt-12 md:mt-16">
-          <main id="content" className="max-w-[36rem] mx-auto w-full transition-[max-width] duration-300" data-width="standard">
+        {/* 7.2. max-w-6xl was 1152px, and inside it the reading column was capped at 36rem
+            -- so at 1440 the prose sat in a 576px strip with 430px of empty page on either
+            side of it. 80rem widens the page; main#content drops its own cap and fills the
+            grid column, and styles/article.css decides what sits at which of the three
+            widths inside it. This grid and the header's MUST stay identical or the title
+            and the prose stop sharing a left edge. */}
+        <div className="relative max-w-[80rem] mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12 mt-12 md:mt-16">
+          <main id="content" className="mx-auto w-full" data-width="standard">
             <ArticleToc copy={ui} variant="mobile" reviewedBy={reviewedBy} sources={sourceTitles} />
 
             {post.series && <SeriesBanner series={post.series} currentSlug={slug} seriesOrder={post.seriesOrder} labels={ui.seriesBanner} />}

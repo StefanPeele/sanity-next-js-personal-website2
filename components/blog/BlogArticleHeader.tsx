@@ -85,8 +85,16 @@ export function BlogArticleHeader({
       {/* Mirrors the reading grid in [slug]/page.tsx so the header lines up with the prose
           column. Centring on the viewport instead leaves it ~130px right of the body text,
           because the grid reserves a 220px column for the table of contents. */}
-      <div className="relative max-w-6xl mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12">
-        <div className="w-full max-w-[36rem] mx-auto">
+      {/* 7.2. Mirrors the article grid exactly -- same max-width, same padding, same
+          columns, same gap -- so the header and the reading column sit on one axis and the
+          margin column starts at the same x on both.
+          The inner block widens from 36rem to 52rem, the same `wide` tier the apparatus
+          below the article uses. Header and prose are CONCENTRIC, not flush: measured at
+          1440 the header runs 170-1002 and the prose 250-921, both centred on 586. The
+          title deliberately overhangs the prose on both sides; it does not share its left
+          edge, and a future change that expects it to will be wrong. */}
+      <div className="relative max-w-[80rem] mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12">
+        <div className="w-full max-w-[52rem] mx-auto">
         <Link
           href="/blog"
           className={`inline-flex items-center gap-2 min-h-[24px] py-1 text-stone-300 hover:text-white font-sans text-sm transition-colors mb-7 ${FOCUS} rounded-sm`}
@@ -117,13 +125,14 @@ export function BlogArticleHeader({
           </div>
         )}
 
-        {/* D4: the h1 alone breaks out of the 36rem prose measure at lg. `text-wrap: balance`
-            (styles/index.css) can only pick better breaks inside the width it is given, and 576px
-            is too narrow for a display title at 48px -- it split "Week / 2:" across a line. An
-            explicit width is required because max-width would still resolve to the parent's 576px.
-            Measured: 4 lines/192px -> 3 lines/144px at 1440, no overflow, tablet and mobile
-            unchanged because it is gated at lg. */}
-        <h1 className="text-3xl md:text-4xl lg:text-5xl lg:w-[52rem] lg:max-w-none font-serif font-bold text-white mb-5 leading-tight tracking-tight">
+        {/* D4 gave the h1 an explicit `lg:w-[52rem]` so it could break out of a 36rem parent
+            -- 576px is too narrow for a display title at 48px and `text-wrap: balance` can
+            only pick better breaks inside the width it is given. 7.2 widened the parent to
+            that same 52rem, so the override is now a restatement of its own container and
+            is gone. The title keeps the width it was measured at (4 lines/192px -> 3
+            lines/144px at 1440); it simply inherits it now. 7.4 re-renders the h1 options
+            against this layout. */}
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-white mb-5 leading-tight tracking-tight">
           {title}
         </h1>
 
@@ -145,7 +154,7 @@ export function BlogArticleHeader({
               height={900}
               priority
               unoptimized
-              sizes="(min-width: 768px) 36rem, 100vw"
+              sizes="(min-width: 768px) 52rem, 100vw"
               placeholder={lqip ? 'blur' : 'empty'}
               blurDataURL={lqip ?? undefined}
               className="w-full h-auto rounded-lg border border-edge"

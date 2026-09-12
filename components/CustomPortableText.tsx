@@ -67,6 +67,23 @@ function buildHeadingMeta(blocks: AnyBlock[]): Map<string, { id: string; words: 
   return meta
 }
 
+/**
+ * 7.2's break-out wrapper.
+ *
+ * styles/article.css gives every direct child of [data-article] the prose measure and
+ * widens the ones carrying data-span. The blocks below render components whose root
+ * element this file does not own, so the attribute has to go on a wrapper. It is a plain
+ * div on purpose: margins collapse through it, so the vertical rhythm is exactly what it
+ * was. Making [data-article] a grid instead would have stopped adjacent margins collapsing
+ * and silently turned every 80px heading gap into 104px.
+ *
+ * Outside an article the attribute matches nothing, which is correct -- garden notes and
+ * glossary definitions have no measure to break out of.
+ */
+function Span({ width, children }: { width: 'wide' | 'full'; children: React.ReactNode }) {
+  return <div data-span={width}>{children}</div>
+}
+
 export function CustomPortableText({
   id = null,
   type = null,
@@ -265,6 +282,7 @@ export function CustomPortableText({
     types: {
       image: ({ value: v }: { value: Image & { alt?: string; caption?: string; keepColor?: boolean } }) => (
         <figure
+          data-span="full"
           className="my-16 rounded-xl overflow-hidden border border-edge-faint shadow-2xl bg-surface"
           {...(v?.keepColor === false ? { 'data-desaturate': '' } : {})}
         >
@@ -295,27 +313,31 @@ export function CustomPortableText({
       },
 
       code: ({ value: v }: { value: { code?: string; language?: string; filename?: string; highlightedLines?: number[] } }) => (
-        <CodeBlock value={v} />
+        <Span width="full"><CodeBlock value={v} /></Span>
       ),
 
       // ── Interactive blog features ──────────────────────────────
-      knowledgeQuiz:    ({ value: v }) => <KnowledgeQuiz value={v} />,
-      layerExplorer:    ({ value: v }) => <LayerExplorer value={v} />,
-      packetAnimator:   ({ value: v }) => <PacketAnimator value={v} />,
-      wiresharkCallout: ({ value: v }) => <WiresharkCallout value={v} />,
+      // full, not wide: these are diagrams and terminal output, and they are the blocks
+      // that suffered most at 576px.
+      knowledgeQuiz:    ({ value: v }) => <Span width="full"><KnowledgeQuiz value={v} /></Span>,
+      layerExplorer:    ({ value: v }) => <Span width="full"><LayerExplorer value={v} /></Span>,
+      packetAnimator:   ({ value: v }) => <Span width="full"><PacketAnimator value={v} /></Span>,
+      wiresharkCallout: ({ value: v }) => <Span width="full"><WiresharkCallout value={v} /></Span>,
 
       // ── Editorial features ─────────────────────────────────────
       sectionBreak: ({ value: v }) => {
         const m = headingMeta?.get(v?._key)
-        return <SectionBreak value={v} id={m?.id} words={m?.words} />
+        return <Span width="wide"><SectionBreak value={v} id={m?.id} words={m?.words} /></Span>
       },
-      failureNote:  ({ value: v }) => <FailureNote value={v} />,
+      failureNote:  ({ value: v }) => <Span width="wide"><FailureNote value={v} /></Span>,
 
       // ── Learning blocks ────────────────────────────────────────
-      whatIGotWrong:    ({ value: v }) => <WhatIGotWrong value={v} />,
-      whatEngineersUse: ({ value: v }) => <WhatEngineersUse value={v} />,
-      theProblemSolved: ({ value: v }) => <TheProblemSolved value={v} />,
-      conceptStressTest:({ value: v }) => <ConceptStressTest value={v} />,
+      // wide, not full: every one of these is a panel of running text, and text at the
+      // full column width would be longer per line than the prose it interrupts.
+      whatIGotWrong:    ({ value: v }) => <Span width="wide"><WhatIGotWrong value={v} /></Span>,
+      whatEngineersUse: ({ value: v }) => <Span width="wide"><WhatEngineersUse value={v} /></Span>,
+      theProblemSolved: ({ value: v }) => <Span width="wide"><TheProblemSolved value={v} /></Span>,
+      conceptStressTest:({ value: v }) => <Span width="wide"><ConceptStressTest value={v} /></Span>,
     },
   }
 

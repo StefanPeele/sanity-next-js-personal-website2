@@ -16,8 +16,18 @@
    breakpoint, so a responsive pre-hydration value could only ever be a flash. */
 [data-article] {
   --article-fs: 1.1875rem;
+  /* The prose size, applied as a real font-size and not only as a variable. Everything in
+     the column already sets its own size, so this changes almost nothing that renders --
+     it exists so that `ch` on this element resolves against the reader's prose size. See
+     the three-widths block below. The one thing it does change is the pull quote, which is
+     sized in `em` and was therefore 18.4px against 19px prose: SMALLER than the text it is
+     meant to lift out of. It now sits above it and scales with it. */
+  font-size: var(--article-fs);
   position: relative;
-  transition: background-color 0.5s ease, color 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease;
+  /* --measure is a registered <length>, so it animates: one transition here moves every
+     block in the column together when the reader changes Width. It replaces the
+     transition that used to sit on main#content's own max-width. */
+  transition: background-color 0.5s ease, color 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease, --measure 0.3s ease;
 }
 
 [data-article] p {
@@ -42,14 +52,77 @@
   margin-bottom: calc(1.5em * var(--a11y-ps, 1));
 }
 
-/* Reading width — set on <main id="content"> by the toolbar.
-   Measured on production at the 19px default: 8.86px per character, so these land at
-   61 / 65 / 79 characters. Standard sits close to the 66-character optimum and is the
-   number to protect; the proposal's 40rem was calculated when prose was still 15px and
-   would push standard to 72 for no gain, so only narrow moved (32rem was 58, under 60). */
-main#content[data-width='narrow']   { max-width: 34rem; }
-main#content[data-width='standard'] { max-width: 36rem; }
-main#content[data-width='wide']     { max-width: 44rem; }
+/* ── Three widths (7.1 measure + 7.2 break-out) ────────────────────────────────
+   The reading column used to be ONE width: main#content at 34/36/44rem, and everything
+   -- prose, figures, code, the apparatus at the foot -- sat inside it. That is the
+   "collapsed into a narrow centre strip" 7.2 names. It is now three:
+
+     text   var(--measure)   the prose measure, in ch, at the reader's own size
+     wide   var(--wide)      52rem -- pull quotes, section breaks, learning panels,
+                             and every apparatus block below the article
+     full   100%             figures, code, diagrams: the whole reading column
+
+   WHY ch, and why on [data-article]. 7.1 measured every fixed width and none of them
+   works: 44rem is a well-judged 69.6 characters at the 19px default and 86 -- past Gwern
+   -- for a reader who shrinks the text. The reader has seven text sizes, so a column
+   chosen for one of them is wrong for the other six. `ch` scales with the text and holds
+   67.1 characters at 15px, 19px and 21px alike while the pixel width moves 568 -> 719 ->
+   795. It only does that if the element carrying the ch is itself at the prose size,
+   which is what `font-size: var(--article-fs)` below is for -- without it the unit
+   resolves against the inherited 16px and scales with nothing.
+
+   WHY @property. The measure has to apply to children that carry their OWN font sizes:
+   an h2 is 38px, a paragraph 19px. An unregistered custom property is substituted as
+   TOKENS, so `56ch` re-resolves against each child and the h2 gets a column 2.13x the
+   paragraph's -- measured, docs/audit/probe-ch-inherit.mjs. Registering it as a <length>
+   makes it compute at [data-article], where the font size is right, and inherit as
+   pixels. Same probe: h2 and p both land on 573.55px.
+   ──────────────────────────────────────────────────────────────────────────── */
+@property --measure {
+  syntax: '<length>';
+  inherits: true;
+  /* 576px, not 36rem. An initial-value must be COMPUTATIONALLY INDEPENDENT -- convertible
+     to a computed value from itself alone -- and rem depends on the root font size, so the
+     whole @property rule is invalid and silently dropped with it. Measured: the rule was
+     present in the built CSS, getComputedStyle returned the literal "56ch" rather than a
+     pixel length, and every heading resolved the measure against its OWN size: h2 1343px,
+     h3 1060px, h6 628px, one column per heading level. 576px is the same length. */
+  initial-value: 576px;
+}
+
+main#content {
+  /* No max-width of its own any more: it fills its grid column, and the three tiers
+     below decide what sits at which width inside it. */
+  --wide: min(100%, 52rem);
+}
+
+/* Apparatus -- the table of contents on mobile, the series banner, TL;DR, prerequisites,
+   sources, corrections, credibility, backlinks, Ask, newsletter. Wider than the prose,
+   narrower than a figure. These are lists and cards, not paragraphs, so `wide` reads
+   correctly where it would be too long for running text. */
+main#content > :not([data-article]) {
+  max-width: var(--wide);
+  margin-inline: auto;
+}
+
+[data-article] {
+  /* 51 / 56 / 64ch. Measured CPL, not extrapolated: 59.6 / 67.1 / 73.3, identical at
+     every one of the reader's seven text sizes. See docs/audit/prose-width.json. */
+  --measure: 56ch;
+}
+main#content[data-width='narrow'] [data-article]   { --measure: 51ch; }
+main#content[data-width='standard'] [data-article] { --measure: 56ch; }
+main#content[data-width='wide'] [data-article]     { --measure: 64ch; }
+
+[data-article] > * {
+  max-width: var(--measure);
+  margin-inline: auto;
+}
+/* wide: the pull quote is the one block style that breaks out. */
+[data-article] > blockquote,
+[data-article] > [data-span='wide'] { max-width: var(--wide); }
+/* full: figures, code and the interactive diagrams take the whole column. */
+[data-article] > [data-span='full'] { max-width: none; }
 
 /* Dropcap — first paragraph of the body only, inherits the theme colour */
 [data-article] > p:first-of-type::first-letter {
@@ -203,7 +276,12 @@ main#content[data-width='wide']     { max-width: 44rem; }
   word-spacing: 0.18em !important;
   line-height: 2.1 !important;
 }
-[data-article-root].a11y-dyslexia [data-article] p { margin-bottom: 1.6em !important; max-width: 65ch !important; }
+/* The 65ch that used to sit here is gone. It was written when main#content capped the
+   column at 576px, so it never bound on anything and was dead. After 7.2 it WOULD bind --
+   at 65ch of 19px it is 779px, wider than the measure, which is the wrong direction for a
+   reader who turned this mode on. The measure already scales with the text size; dyslexia
+   mode keeps the looser rhythm and inherits the column. */
+[data-article-root].a11y-dyslexia [data-article] p { margin-bottom: 1.6em !important; }
 [data-article-root].a11y-dyslexia h1,
 [data-article-root].a11y-dyslexia h2,
 [data-article-root].a11y-dyslexia h3,
@@ -276,6 +354,8 @@ html.sp-reduced-motion *::after {
   [data-article] .article-link[href^='http']::after { content: ' (' attr(href) ')'; font-size: 0.8em; color: #555555; }
   [data-article] .heading-anchor { display: none !important; }
   main#content { max-width: none !important; }
+  /* Print takes the paper's width, not the reader's measure. */
+  [data-article] > *, main#content > :not([data-article]) { max-width: none !important; }
   pre { white-space: pre-wrap !important; word-break: break-word; border: 1px solid #cccccc; }
 }
 
