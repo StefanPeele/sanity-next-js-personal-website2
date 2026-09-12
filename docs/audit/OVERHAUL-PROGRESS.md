@@ -344,6 +344,11 @@ enough is systematically early**, which is worth knowing for how future briefs a
 
 | Item | What I decided | Why | How to overrule |
 | --- | --- | --- | --- |
+| The two portfolio-side chip/label conversions | **Left undone**, though they need no deploy, no decision and no screen reader | An auditor flagged them as startable, which is true. But the Deferred table's own trigger is "any portfolio pass" and this is a BLOG brief; both are visible redesigns of `/photography`, not tidy-ups. A cleanup that changes how a page looks is a design decision wearing a chore's clothes | Say so, or do a portfolio pass |
+| `scripts/migrate-heading-levels.mjs` | **Written, not run** | It fixes the last open accessibility finding, and it changes how a published article LOOKS — h5 renders at 19/20px, h2 at 32/38px. That is a call about your writing | Run it with `--apply` |
+
+| Item | What I decided | Why | How to overrule |
+| --- | --- | --- | --- |
 | 0.1 which path was right | Made GROQ correct and authoritative | The article's count was the accurate one | `wordCountField` in `sanity/lib/queries.ts` |
 | Brief edited | §1 test count 33 → 34 | 0.1 added a test | — |
 | 1.x method | Measured live sites rather than describing them | "What are the actual values" is the brief's own standard | — |
@@ -506,8 +511,8 @@ finish and a 200 is not evidence that it did) and counts a second, independent w
 | **A commenter cannot withdraw their own comment (8.5)** | The `withdrawn` status, its wording and its rendering are all built and verified; the only way to REACH it is Stefan setting it in the Studio. So the one label whose whole purpose is to say "the commenter took this back" can currently only be applied on their behalf. Every obvious mechanism is worse than waiting — see the section in `PHASE-8-COMMENTS.md` | A decision on which mechanism. Or the first person who asks for their comment to be taken down |
 | **No lane row in `/blog`'s filter panel** | Found while checking a verifier's out-of-claim report. `?lane=` is a real filter with an active label and a working Clear, but Filters offers only category / tag / status / sort — a lane can be set from a section heading or a card pill and nowhere else. Phase 4 is closed and this is not Phase 7's subject | Any return to the directory, or the first time someone cannot find the lane filter |
 | **The hero ignores the image hotspot** | `heroImageUrl()` appends `w=1600&auto=format&q=75` and nothing else, so any fixed-ratio crop would be centre-cropped. Harmless today because the hero renders at each image's own ratio — measured 832x440, 832x406 and 832x303 across the three published posts | 7.3's option F, which is a crop and needs the hotspot to be safe |
-| Seventh chip definition, portfolio side | `photography/page.tsx:72,86`; `buttonClass()` would take it | Any portfolio pass |
-| Five sans micro-labels in `CinematicGallery` | `.meta-label` is the mono primitive | — |
+| Seventh chip definition, portfolio side | `photography/page.tsx:72,86`; `buttonClass()` would take it. **Re-examined 2026-09-12 and deliberately still deferred**: the chips use `bg-white text-black` when active and `buttonClass`'s chip state is a bordered fill, so the swap is a visible redesign of a page this brief does not cover. The trigger below has not fired | Any portfolio pass |
+| Five sans micro-labels in `CinematicGallery` | `.meta-label` is the mono primitive. Same re-examination, same answer: it changes the typeface on a portfolio page | Any portfolio pass |
 | "Featured" copy hardcoded in JSX | Phase 2.5 rebuilds the element and should move the string then | Phase 2.5 |
 
 ## Environment notes found this session
