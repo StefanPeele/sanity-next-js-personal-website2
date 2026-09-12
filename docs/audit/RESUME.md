@@ -42,24 +42,54 @@ verified.
   comment, the Studio "needs attention" view and one-click block, and promoting a Correction
   into a 3B correction (deliberately deferred).
 
-## Production is at `31475ac`. ONE code change is waiting on a rate limit.
+## Production is at `dd56ff7`, and everything in the brief is deployed
 
-Not deployed: `73610ee`, which makes a comment webhook that names no post revalidate the
-whole `/blog/[slug]` route. Verified two ways this time — the commit status says rate
-limited AND **no deployment record exists at all**, where the earlier (wrong) claim had a
-record showing success.
+`gh api .../deployments` plus its `/statuses` is the authoritative record — **not**
+`gh api .../commits/<sha>/status`, which reported a rate limit that was not the deployment's
+state and cost an hour. Check the first one.
 
-**The consequence, while it waits:** deleting a comment in the Studio will leave it on the
-article. **Removing one by setting its `status` works fine** — that is the designed path from
-8.5, its payload carries the document, and it revalidates correctly today. So there is a
-working way to moderate; just do not hard-delete until this ships.
+## THE SANITY WEBHOOK DOES NOT REACH PRODUCTION. It is Stefan's to fix, and it is the one open defect.
+
+Measured three independent ways on 2026-09-12:
+
+- `/blog` is prerendered on the CDN, and both the `post` rule and the `comment` rule in the
+  handler revalidate it — so its CDN `age` header is a witness to whether a delivery arrived.
+  Mutating a comment, then a post, and watching it: age climbed **523 → 675** and
+  **678 → 831** across 150 seconds each. A delivery that arrives resets it to zero. Neither
+  did.
+- An edit to a published post's excerpt reached `/blog` but **never reached the article in
+  240 seconds**, while the Sanity API and its CDN both served the new value immediately.
+- A request signed with the `SANITY_REVALIDATE_SECRET` from `.env.local` is **accepted by a
+  local server (200) and rejected by production (401)** — identical payload, identical
+  signing. So the signing is correct, production's secret IS set, and it is a **different
+  value** from the one in `.env.local`.
+
+Which failure it is cannot be determined from here: both API tokens return
+`401 — requires grant sanity.project.webhooks/read`, and the Vercel CLI is not logged in.
+
+**What Stefan needs to check**, Sanity dashboard → API → Webhooks:
+
+1. Does a webhook exist, is it **enabled**, and does its URL end
+   `/api/draft-mode/enable/revalidate` on `stefanpeele.com`?
+2. Its **delivery log answers everything at a glance**: 401s mean the secret, 404s mean the
+   URL, *no attempts at all* means the trigger or the filter.
+3. Triggers must include **Create, Update AND Delete**. The filter must be empty.
+4. Its secret must equal Vercel's `SANITY_REVALIDATE_SECRET` for the Production environment.
+   If either is regenerated, update `.env.local` to match so local probes stay meaningful.
+
+**It is no longer urgent, and that is the whole point of `dd56ff7`.** Until that commit a
+webhook that never arrived meant content was stale *for ever*. It now has a five-minute
+floor. The webhook is the fast path, not the only path.
 
 ## The rest of production is CURRENT. An earlier claim in this file that it was not was wrong.
 
 `/api/health` reports HEAD, and `gh api .../deployments` shows an unbroken run of successful
 Production deploys. Phase 8, 9.1, Phase 10 and Phase 11 are all live and were verified there:
-**`measure-comments.mjs` runs 53/56 against `https://stefanpeele.com`**, the three failures
-being only that a locally-signed webhook is rejected by production's own secret.
+**`measure-comments.mjs` runs 53/56 against `https://stefanpeele.com`**. The three
+failures are a locally-signed webhook being rejected by production, and this file used to
+call that *"only"*. It was not only anything — it was the visible edge of the defect above,
+written off as a test artefact for most of a session. **A probe that fails against
+production and passes locally is a finding until it is explained.**
 
 **How the wrong claim happened, because it cost an hour and nearly ended the session early.**
 `gh api .../commits/<sha>/status` returned *"Deployment rate limited — retry in 24 hours"* for
@@ -83,40 +113,24 @@ it disagreed — twice. Check that one.
 
 ## The single next action
 
-Three things remain, and none of them is a phase:
+Nothing in the brief is unworked. Four things remain and **every one of them needs Stefan**:
 
-1. **Verify Phase 8 and everything after `a34ebc3` on production.** BLOCKED on the Vercel
-   deploy quota until roughly 2026-09-13. Nothing built after Phase 7 has ever run there.
-2. **Drive the toolbar and the sidenotes with a real screen reader.** `A11Y-AUDIT.md` names
-   this as the largest remaining gap and it needs a person, not a harness.
-3. **Stefan's decisions** on what is waiting in `PROPOSALS.md` — 2.2-2.6, 7.3, 7.4, the
-   digest, and whether to run `scripts/migrate-heading-levels.mjs`, which changes how a
-   published article looks.
+1. **Fix the Sanity webhook** (the section above). Until then every content change takes up
+   to five minutes to appear instead of seconds.
+2. **A real Resend delivery to a real mailbox.** Every probe used `@example.invalid`. The
+   email path is exercised end to end but has never actually delivered to anyone.
+3. **Drive the toolbar and the sidenotes with a real screen reader.** `A11Y-AUDIT.md` names
+   this as the largest remaining gap in Phase 10; it needs a person, not a harness.
+4. **Decisions on `PROPOSALS.md`** — 2.2–2.6, 7.3, 7.4, the digest, and whether to run
+   `scripts/migrate-heading-levels.mjs`, which changes how a published article *looks*.
 
-The one part of Phase 10 a harness cannot do: **drive the toolbar and the sidenotes with a
-real screen reader.** The audit says so plainly in its own "not covered" section. It is the
-highest-risk claim in the brief and it needs a person.
+**The comment system is now verified on production, including the case that failed all
+session.** A comment created in Sanity appears on the live article and one deleted in Sanity
+disappears from it, with no webhook and no in-process revalidation: **17s and 308s**. The
+second is the 300s floor working exactly as designed.
 
-**Verify Phase 8 on production** as soon as the deploy quota clears — that is blocked, not
-next.
-
-Nothing about the comment system has been seen anywhere but locally. Two things must be
-true in production before it can be called shipped, and neither is checkable from here:
-
-1. `RESEND_API_KEY` must be able to send to a real address. Locally every probe used an
-   `@example.invalid` address and the email path was exercised but never delivered.
-2. **The Sanity webhook must be firing.** A moderator's removal reaches the article ONLY
-   through `/api/draft-mode/enable/revalidate`, and the comment rule added to it has been
-   tested locally with a hand-signed request. If that webhook is not configured in the
-   Sanity dashboard, removing a comment will appear to do nothing.
-
-Everything else in §8 that is startable without a deploy is listed above under "not built".
-The Studio "needs attention" view is the most useful of the three and needs no decision from
-Stefan; the other two need one.
-
-**Phases 9, 10 and 11 have never been started** and do not need a deploy to begin.
-
-**8.8 is MOVED** and is already done — it became Phase 3B.
+Of the three §8 items left unbuilt, the Studio "needs attention" view is the most useful and
+needs no decision from Stefan. The other two do.
 
 ## Things a fresh session will otherwise re-derive
 
@@ -223,6 +237,30 @@ Two harnesses added this session:
   changing the width setting and every text size returns the previous column — which looks
   exactly like a `ch` measure holding perfectly. This one fails towards a FALSE PASS, which
   is the rarer and more dangerous direction. Settle ~400ms.
+
+- **Read the library's source before building a fix on how you think it behaves.**
+  `revalidateTag('sanity')` was a no-op and **three consecutive fixes were built on it**.
+  next-sanity tags each fetch `sanity:<syncTag>`, one per document; the bare string is only
+  applied if the caller passes it. Next matches tags exactly, never by prefix. The handler
+  looked correct locally because `revalidatePath` was silently doing all of the work. Twenty
+  seconds in `node_modules/next-sanity/dist/live.js` would have saved three deploys.
+- **A cache with no expiry turns a missed invalidation into permanent wrongness.**
+  next-sanity's production default is `revalidate: false`. 31 of 36 prerendered routes had
+  `initialRevalidateSeconds: false`. "Stale for an hour" is a caching decision; "stale until
+  the next deploy" is a bug, and the two are one config value apart.
+- **Fresh HTML is not fresh data.** The article page is `x-vercel-cache: MISS` — rendered on
+  every single request — and was still serving content the CMS had changed. Nothing about the
+  page looked cached, which is why this survived so long. Check the Data Cache separately.
+- **Watch the surface the change is supposed to reach, not a nearby one.** The index and the
+  article disagreed for an hour: one test watched `/blog`, the other watched the article, and
+  the two readings supported opposite conclusions about the same webhook.
+- **`age` on a CDN response is a witness to invalidation.** For any prerendered page, mutate,
+  then watch `age`: monotonic climb means nothing revalidated it. It needs no secret, no
+  dashboard and no page content, and it settled in 150 seconds what page-content polling had
+  not settled in hours.
+- **Before concluding a surface did not update, prove the surface renders that field.**
+  `[].every()` is true and a marker that a page never prints is the same shape of vacuous
+  pass. Assert the field is present *before* asserting it changed.
 
 ## Standing instructions from Stefan
 

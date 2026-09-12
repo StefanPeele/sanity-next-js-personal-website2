@@ -533,3 +533,29 @@ finish and a 200 is not evidence that it did) and counts a second, independent w
   new value on both `api` and `apicdn`. It looks exactly like a failed patch.
 - **Kill the server BEFORE `rm -rf .next`.** Rebuilding underneath a live `next start`
   produces *"MIME type ('text/plain') is not executable"* and four false failures.
+
+## `dd56ff7` — Sanity data was cached for ever in production
+
+Chasing "deleting a comment never reaches the live article" past three failed fixes found
+that the bug was never about comments.
+
+**Defect 1 — no expiry anywhere.** next-sanity's production default is `revalidate: false`.
+Every `sanityFetch` was cached indefinitely and only a `revalidatePath` from the Sanity
+webhook could clear it. 31 of 36 prerendered routes had `initialRevalidateSeconds: false`.
+`sanity/lib/live.ts` now sets `fetchOptions.revalidate` to 300 in production; after the fix
+7 routes never expire and all 7 are favicon/robots/manifest assets that should not.
+
+**Defect 2 — `revalidateTag('sanity')` matched nothing**, and three fixes to the webhook
+handler had been built on it. The tags next-sanity writes are `sanity:<syncTag>`, one per
+document from the content source map. Next matches tags exactly. The dead calls are gone,
+along with the reasoning that rested on them.
+
+**The webhook itself does not reach production at all**, proven by a CDN `age` header that
+climbed monotonically through a comment mutation and a post mutation, and by production
+returning 401 to a payload a local server accepts. That is a dashboard setting only Stefan
+can check; `RESUME.md` carries the four-item checklist.
+
+**Verified on production after deploying:** a comment created in Sanity appeared on the live
+article in 17s and one deleted in Sanity disappeared in 308s — the 300s floor, working —
+with no webhook and no in-process revalidation. The case that failed all session now passes.
+Suite 128.
