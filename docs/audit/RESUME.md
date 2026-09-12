@@ -1,8 +1,10 @@
 # Resume state
 
 Written: 2026-09-12, at the end of a session that worked every phase in the brief.
-Why the session ended: **every remaining item is blocked** — the production deploy on a
-Vercel rate limit, the screen-reader pass on needing a person, and the proposals on Stefan.
+Why the session ended: **every remaining item needs Stefan** — the Sanity webhook is a
+dashboard setting, a real Resend delivery needs a mailbox, the screen-reader pass needs a
+person, and the proposals are his calls about his own published writing. Nothing is blocked
+on a deploy: production is at HEAD.
 Kept current throughout rather than written at the end.
 
 ## Exactly where I stopped
@@ -63,30 +65,38 @@ verified.
   OUTPUT, not the source: the config can be present and still not reach the routes. Its
   negative control was run.
 
-## Production is at `74a642d`. Every reader-facing change is live and verified.
+## Production is at `1f0af58`. Nothing is blocked and nothing is undeployed.
 
-Two commits are pushed and NOT deployed — `ccb6237` and `c0bdf23` — because the Vercel deploy
-quota is exhausted ("retry in 24 hours"). **Neither touches a production surface:** `ccb6237`
-is the harness and the test spec, `c0bdf23` is this file. Everything that changes what a
-reader gets is live:
+Every commit from this session is live, including the ones an earlier version of this section
+called "quota-blocked". They were not.
 
 | Commit | What | Verified on production |
 | --- | --- | --- |
 | `dd56ff7` | the revalidate floor — Sanity data no longer cached for ever | comment created in Sanity appeared in **17s**; deleted in Sanity disappeared in **308s** |
 | `368342d` | the service worker's static cache capped at 150 | live `/sw.js` carries `MAX_STATIC` and `trimStatic`, 6893 bytes |
-| `4c38d0e` | `tests/caching.spec.ts` + the sweep | all 17 public routes and 5 feeds healthy |
-| `74a642d` | RESUME and CLAUDE.md corrections | docs only |
+| `4c38d0e` | `tests/caching.spec.ts` + the production sweep | all 17 public routes and 5 feeds healthy |
+| `74a642d` · `ccb6237` · `c0bdf23` · `1f0af58` | docs, the harness fix, the test spec | no production surface |
 
-**How this was established, because the same evidence was read wrongly once before.** The
-commit-status endpoint says *"Deployment rate limited — retry in 24 hours"* — and that alone
-proves nothing, which is the mistake logged as artifact #30. What makes it true this time is
-that `gh api .../deployments` shows **no record for either commit in any environment**, while
-it does show `74a642d` as `success`. **Two independent sources agreeing is the bar.** When
-they disagreed, the deployments record was the correct one.
+A third, independent confirmation that `dd56ff7` works — response headers on the live site
+rather than the build manifest:
 
-`gh api .../deployments` plus its `/statuses` is the authoritative record — **not**
-`gh api .../commits/<sha>/status`, which reported a rate limit that was not the deployment's
-state and cost an hour. Check the first one.
+```
+/blog           X-Nextjs-Prerender: 1   X-Nextjs-Stale-Time: 300   X-Vercel-Cache: PRERENDER
+/blog/feed.xml  Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400
+```
+
+**THE MISTAKE THIS SECTION USED TO MAKE, because it is a subtle one and it nearly cost the
+next session a day.** It said the Vercel deploy quota was exhausted and named two commits as
+blocked. The evidence looked airtight and was gathered the right way — artifact #30's lesson
+is that the commit-status endpoint's *"Deployment rate limited — retry in 24 hours"* proves
+nothing alone, so two agreeing sources were demanded, and `gh api .../deployments` did show no
+record for `ccb6237` or `c0bdf23`.
+
+**Both sources were read for the wrong shas.** Vercel skips superseded intermediate commits
+and builds the tip. A superseded commit legitimately has no deployment record and nothing is
+wrong. Git history is cumulative, so deploying the tip deployed both of them — their content
+was live the entire time it was being described as blocked. **The sha that decides is always
+`HEAD`.** See artifact #37.
 
 ## THE SANITY WEBHOOK DOES NOT REACH PRODUCTION. It is Stefan's to fix, and it is the one open defect.
 
