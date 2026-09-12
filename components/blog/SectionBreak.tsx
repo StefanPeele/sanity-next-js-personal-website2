@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { useArticleReducedMotion } from '@/components/article/ArticleProvider'
 import { HeadingAnchor } from '@/components/article/HeadingAnchor'
+import { enumKey } from '@/lib/stega'
 // components/blog/SectionBreak.tsx
 // Chapter card between major acts of an article. The cinematic variant renders a
 // real h2 (with the id assigned by CustomPortableText) so it joins the TOC.
@@ -19,7 +20,11 @@ interface SectionBreakProps {
 }
 
 export function SectionBreak({ value, id, words }: SectionBreakProps) {
-  const { title, teaser, style = 'cinematic' } = value
+  // enumKey: `style` here is the sectionBreak object's own field, not a Portable Text
+  // block style (those measure clean). Encoded, it is neither 'subtle' nor 'cinematic', so a
+  // break the author set to subtle rendered as the full cinematic card in every preview.
+  const { title, teaser } = value
+  const style = enumKey(value.style) ?? 'cinematic'
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-20% 0px -20% 0px' })
   const reduced = useArticleReducedMotion()

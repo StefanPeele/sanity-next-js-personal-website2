@@ -11,6 +11,7 @@ import { getCopy } from '@/lib/cms/loaders'
 import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
 import { QUIET_LINK } from '@/lib/ui'
+import { enumKey, facetKeys } from '@/lib/stega'
 // app/(archive)/glossary/page.tsx
 // Every glossary term, A–Z, filterable by category. Terms also power the hover
 // cards inside articles (lib/glossary.ts).
@@ -31,7 +32,9 @@ export default async function GlossaryPage() {
     term: t.term!,
     slug: t.slug!,
     definition: t.definition!,
-    category: t.category ?? null,
+    // enumKey: this becomes a FACET KEY below and is compared against the selected chip.
+    // Raw, every term in draft mode is its own category. See lib/stega.ts.
+    category: enumKey(t.category) ?? null,
     aliases: (t.aliases ?? []).filter((a): a is string => !!a),
     longDefinition: t.longDefinition?.length
       ? <CustomPortableText value={t.longDefinition as unknown as PortableTextBlock[]} paragraphClasses="mb-4 font-sans text-base text-stone-300 leading-relaxed" />
@@ -40,7 +43,7 @@ export default async function GlossaryPage() {
     relatedNotes: ((t.relatedNotes ?? []) as unknown as Array<{ title: string | null; slug: string | null } | null>).filter((n): n is { title: string | null; slug: string | null } => !!n),
   }))
 
-  const categories = Array.from(new Set(entries.map((e) => e.category).filter((c): c is string => !!c))).sort()
+  const categories = facetKeys(entries.map((e) => e.category))
 
   return (
     <div className="relative min-h-screen text-stone-300">

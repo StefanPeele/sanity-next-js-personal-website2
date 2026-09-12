@@ -10,6 +10,7 @@ import { formatDate } from '@/lib/dates'
 import type { GardenNoteView, GardenTag } from './types'
 import { Icon } from '@/lib/cms/icons'
 import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
+import { enumKey } from '@/lib/stega'
 // components/garden/GardenClient.tsx
 // Interactive garden index: status legend, growth timeline, recently tended,
 // search, tag filter (synced to ?tag=), and expandable note cards whose titles
@@ -133,7 +134,7 @@ function NoteCard({
               <div className="flex flex-wrap items-center gap-4 mt-5 pt-4 border-t border-edge-faint">
                 {note.origin && (
                   <span className="meta-label text-stone-400">
-                    {ORIGIN_LABELS[note.origin] ?? note.origin}
+                    {ORIGIN_LABELS[enumKey(note.origin) ?? ''] ?? note.origin}
                   </span>
                 )}
                 <span className="meta-label text-stone-400">

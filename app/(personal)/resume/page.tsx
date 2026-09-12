@@ -13,6 +13,7 @@ import { personalPagesQuery } from '@/sanity/lib/queries-services'
 import { DEFAULT_PERSONAL_PAGES } from '@/lib/cms/defaults/personalPages'
 import { getSettings } from '@/lib/cms/loaders'
 import { FOCUS } from '@/lib/ui'
+import { enumKey } from '@/lib/stega'
 
 export async function generateMetadata(): Promise<Metadata> {
   const h = (await getCopy(personalPagesQuery, DEFAULT_PERSONAL_PAGES)).resume.header
@@ -98,7 +99,11 @@ export default async function ResumePage() {
   const lastUpdated = formatDate(page?._updatedAt, 'short', 'Recently')
 
   const skillGroups = (copy.skillCategoryOrder.length ? copy.skillCategoryOrder : CATEGORY_ORDER)
-    .map((cat) => ({ cat, items: skills.filter((s) => (s.category ?? 'Other') === cat) }))
+    // enumKey: skillCategoryOrder is Studio COPY (fetched stega-free through getCopy) while
+    // s.category comes from the skill document and carries the draft-mode payload. Comparing
+    // them raw matched nothing, every group emptied, and the .filter below then removed the
+    // whole skills section from the resume -- visible only in preview. See lib/stega.ts.
+    .map((cat) => ({ cat, items: skills.filter((s) => (enumKey(s.category) ?? 'Other') === cat) }))
     .filter((g) => g.items.length > 0)
   const earned = certifications.filter((c) => c.status === 'earned')
   const inProgress = certifications.filter((c) => c.status === 'in-progress')

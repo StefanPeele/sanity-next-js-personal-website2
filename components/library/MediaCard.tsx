@@ -5,13 +5,16 @@ import type { LibraryItem } from './types'
 import { MEDIA_ICON_FALLBACK, MEDIA_ICONS, MEDIA_LABELS, RATING_CONFIG } from './types'
 import { Icon } from '@/lib/cms/icons'
 import { FOCUS } from '@/lib/ui'
+import { enumKey } from '@/lib/stega'
 import { ChevronRight } from 'lucide-react'
 // components/library/MediaCard.tsx
 // One library entry. Renders the one-sentence take, key idea, pull quote,
 // highlights (disclosure), rating, progress and the posts/notes it influenced.
 
 export function MediaCard({ item, size = 'normal' }: { item: LibraryItem; size?: 'large' | 'normal' }) {
-  const ratingConfig = item.rating ? RATING_CONFIG[item.rating] : null
+  // enumKey: `rating` is encoded in draft mode (measured), and a miss here removes the
+  // rating badge entirely rather than degrading it.
+  const ratingConfig = RATING_CONFIG[enumKey(item.rating) ?? ''] ?? null
   const large = size === 'large'
   const posts = item.influencedPosts ?? []
   const notes = item.influencedNotes ?? []

@@ -17,6 +17,7 @@ import { absoluteUrl, articleTypeMeta, SITE } from '@/lib/site'
 import type { GardenNote } from '@/components/garden/types'
 import { Icon } from '@/lib/cms/icons'
 import { FOCUS, QUIET_LINK, buttonClass } from '@/lib/ui'
+import { enumKey } from '@/lib/stega'
 // app/(archive)/garden/[slug]/page.tsx
 // A single garden note. Body rendered on the server with [[wiki links]] resolved.
 
@@ -105,7 +106,7 @@ export default async function NotePage({ params }: { params: Params }) {
             </span>
             {note.origin && (
               <span className="meta-label text-stone-400">
-                {ORIGIN_LABELS[note.origin] ?? note.origin}
+                {ORIGIN_LABELS[enumKey(note.origin) ?? ''] ?? note.origin}
               </span>
             )}
             <span className="meta-label text-stone-400">{minutes} min read</span>

@@ -11,6 +11,7 @@ import { knowledgePagesQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_KNOWLEDGE_PAGES } from '@/lib/cms/defaults/knowledgePages'
 import { navHref } from '@/lib/cms/defaults/navigation'
 import { QUIET_LINK } from '@/lib/ui'
+import { enumKey } from '@/lib/stega'
 // app/(archive)/library/page.tsx
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,7 +27,7 @@ export default async function LibraryPage() {
 
   const finished = items.filter((i) => i.status === 'finished').length
   const current = items.filter((i) => i.status === 'current').length
-  const changedThinking = items.filter((i) => i.rating === 'changed-thinking').length
+  const changedThinking = items.filter((i) => enumKey(i.rating) === 'changed-thinking').length
   const influenced = items.filter((i) => (i.influencedPosts?.length ?? 0) + (i.influencedNotes?.length ?? 0) > 0).length
 
   return (

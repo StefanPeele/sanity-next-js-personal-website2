@@ -60,6 +60,9 @@ export function CredibilitySection({
   heading = DEFAULT_ARTICLE_UI.blocks.credibilityHeading,
   labels = DEFAULT_ARTICLE_UI.credibility,
 }: CredibilitySectionProps) {
+  // The key MUST arrive cleaned. This falls back to the hardcoded label when it misses, so
+  // a raw enum here did not look broken -- it silently ignored the Studio-authored label and
+  // showed the built-in one instead, which is the hardest version of this bug to notice.
   const lbl = (list: { key: string; label: string }[], key: string | undefined, fallback: string) => list.find((e) => e.key === key)?.label ?? fallback
 
   // Sanity returns null for unset array fields — coerce to empty array
@@ -107,12 +110,12 @@ export function CredibilitySection({
           )}
           {maturity && (
             <span className="meta-label px-3 py-1.5 rounded-sm border border-edge text-stone-400">
-              {lbl(labels.maturity, maturityIndicator, maturity.label)}
+              {lbl(labels.maturity, enumKey(maturityIndicator), maturity.label)}
             </span>
           )}
           {load && (
             <span className="meta-label px-3 py-1.5 rounded-sm border border-edge text-stone-400">
-              {lbl(labels.load, cognitiveLoad, load.label)}
+              {lbl(labels.load, enumKey(cognitiveLoad), load.label)}
             </span>
           )}
         </div>

@@ -17,6 +17,7 @@ import { articleUiQuery, blogPageQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_BLOG_PAGE } from '@/lib/cms/defaults/blogPage'
 import { DEFAULT_ARTICLE_UI } from '@/lib/cms/defaults/articleUi'
 import { FOCUS } from '@/lib/ui'
+import { facetKeys } from '@/lib/stega'
 // app/(archive)/blog/page.tsx
 // Supports ?category= ?lane= ?tag= ?sort= (handled client-side in BlogDirectory).
 
@@ -41,9 +42,10 @@ export default async function BlogPage() {
   const currentlyReading = data?.currentlyReading ?? []
   const recentNotes = (data?.recentNotes ?? []).filter((n) => n.slug)
 
-  const allCategories: string[] = Array.from(
-    new Set(posts.flatMap((p) => (p.categories ?? []).filter((c): c is string => Boolean(c)))),
-  ).sort()
+  // facetKeys, not `new Set`. These chips write their value into ?category=, and the
+  // directory filters with enumKeys() on the other side — so a raw Set here produced one
+  // chip PER POST in draft mode and none of them matched anything. See lib/stega.ts.
+  const allCategories: string[] = facetKeys(posts.flatMap((p) => p.categories ?? []))
 
   const totalCount = posts.length + (featuredPost ? 1 : 0)
   const latestDate = formatDate(posts[0]?.publishedAt ?? featuredPost?.publishedAt, 'short') || null

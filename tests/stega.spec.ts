@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import crypto from 'node:crypto'
 import fs from 'node:fs'
 import { vercelStegaCombine } from '@vercel/stega'
-import { enumKey, enumKeys } from '../lib/stega'
+import { enumKey, enumKeys, facetKeys } from '../lib/stega'
 
 // Draft mode is the one context the rest of this suite never enters, and it is where an
 // entire class of bug lives: Sanity encodes a field's source path INTO the string as
@@ -54,6 +54,43 @@ test('enumKeys cleans every item of an array', () => {
   expect(enumKeys(null)).toEqual([])
   // A null inside the array must not become an empty string that matches nothing.
   expect(enumKeys(['peer-reviewed', null])).toEqual(['peer-reviewed'])
+})
+
+// ── Facets: the second shape of the same bug ─────────────────────────────────
+// The lookup case (above) is one string against a fixed table. The FACET case is many
+// documents' copies of the same string collapsed into a chip row, and it is worse, because
+// the payload encodes each string's OWN source path — so two posts that both say
+// "Networking" carry DIFFERENT invisible characters and `new Set` does not merge them.
+// Measured 2026-09-11 on /blog, /glossary and /resume, all three of which did this.
+
+test('a raw Set does not dedupe the same value from two documents — the negative control', () => {
+  // Two documents, one category. Different source paths, so different payloads.
+  const fromPostA = vercelStegaCombine('Networking', { origin: 'sanity.io', href: '/studio/a' })
+  const fromPostB = vercelStegaCombine('Networking', { origin: 'sanity.io', href: '/studio/b' })
+  expect(fromPostA).not.toBe(fromPostB)
+  expect(new Set([fromPostA, fromPostB]).size).toBe(2)
+})
+
+test('facetKeys collapses them to one clean chip', () => {
+  const encoded = ['Networking', 'Networking', 'Security'].map((v, i) =>
+    vercelStegaCombine(v, { origin: 'sanity.io', href: `/studio/${i}` }))
+  expect(facetKeys(encoded)).toEqual(['Networking', 'Security'])
+})
+
+test('a facet chip and the filter it drives agree', () => {
+  // The whole failure in one assertion: the chip writes its value into the URL and the
+  // directory filters with enumKeys on the other side. Both sides must be clean or the row
+  // is inert.
+  const posts = [{ categories: ['Networking', 'Security'].map((v) => vercelStegaCombine(v, { origin: 'sanity.io', href: '/studio/p1' })) }]
+  const chips = facetKeys(posts.flatMap((p) => p.categories))
+  const active = chips[0] // what ?category= receives when the reader clicks the first chip
+  expect(posts.filter((p) => enumKeys(p.categories).includes(active))).toHaveLength(1)
+})
+
+test('facetKeys drops empties and sorts, so the chip row is stable', () => {
+  expect(facetKeys(['b', null, 'a', undefined, '', 'a'])).toEqual(['a', 'b'])
+  expect(facetKeys(null)).toEqual([])
+  expect(facetKeys(undefined)).toEqual([])
 })
 
 // ── Layer 2: the end-to-end render, under real draft mode ────────────────────

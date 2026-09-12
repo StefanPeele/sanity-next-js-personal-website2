@@ -236,7 +236,9 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
   const renderCard = (post: DirectoryPost) => {
           const isRead = mounted && post.slug ? readPosts.has(post.slug) : false
           const minutes = readingTime(post.wordCount ?? 0)
-          const firstCat = post.categories?.[0] ?? undefined
+          // enumKey: this is compared against `active` below to highlight the card's own
+          // category when it is the one being filtered on, and `active` comes from the URL.
+          const firstCat = enumKey(post.categories?.[0])
           const meta = articleTypeMeta(post.articleType)
           // null for a post with no status, which is most of them -- no data-aura is
           // emitted and the tile renders exactly as it did before 3.4.

@@ -38,3 +38,21 @@ export function enumKeys(values?: readonly (string | null)[] | null): string[] {
   if (!Array.isArray(values)) return []
   return values.map((v) => enumKey(v)).filter((v): v is string => !!v)
 }
+
+/**
+ * Clean, de-duplicate and sort a list of CMS strings into FACET KEYS.
+ *
+ * A facet is built by collecting the same value off many documents — every post's
+ * categories, every term's category, every skill's category — and `new Set` on the raw
+ * values does not collapse them, because the payload encodes each string's OWN source path
+ * and two documents never share one. Measured 2026-09-11: `new Set` over the categories of
+ * N posts returns N chips, not one per category, and the chip then writes its encoded value
+ * into the URL, where the clean-side filter it is compared against matches nothing. So the
+ * facet row is simultaneously duplicated and inert, and only in draft mode.
+ *
+ * This exists so the three facet sites spell it once instead of three times.
+ */
+export function facetKeys(values?: readonly (string | null | undefined)[] | null): string[] {
+  if (!Array.isArray(values)) return []
+  return [...new Set(values.map((v) => enumKey(v)).filter((v): v is string => !!v))].sort()
+}
