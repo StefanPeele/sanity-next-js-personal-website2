@@ -416,6 +416,14 @@ try {
     'a comment webhook with NO post._ref still revalidates every article -- which is what a delete sends',
     (del.body?.paths ?? []).join(', '))
 
+  // The shape that broke it. A delete sends no `_type`, and the handler used to answer 400
+  // and revalidate NOTHING -- which is why a deleted comment stayed on the live article
+  // through 90 seconds of polling and a fresh deployment.
+  const noType = await fireWebhook({ _id: 'some-deleted-doc' })
+  check(noType.status === 200 && noType.body?.revalidated === true,
+    'a payload with NO _type revalidates instead of returning 400 -- that is what a DELETE sends',
+    `HTTP ${noType.status} ${JSON.stringify(noType.body?.paths ?? noType.body)}`)
+
   const noise = await fireWebhook({ _type: 'rateBucket' })
   check(Array.isArray(noise.body?.paths) && noise.body.paths.length === 0,
     'a rateBucket write revalidates NOTHING -- or every refused spam attempt revalidates the whole site',

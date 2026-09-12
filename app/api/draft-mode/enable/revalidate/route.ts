@@ -95,8 +95,25 @@ export async function POST(req: NextRequest) {
     if (!isValidSignature) {
       return NextResponse.json({ message: 'Invalid webhook signature' }, { status: 401 })
     }
+    // A MISSING `_type` IS NOT A BAD REQUEST. It is almost certainly a DELETE.
+    //
+    // This used to return 400 and revalidate nothing, which is how deleting a comment left
+    // it on the live article for ever. Measured against the deployed site: a comment created
+    // in Sanity appeared in 2 seconds and deleting it did not remove it in 90, because the
+    // delete payload never got past this line. Vercel's Data Cache survives deployments, so
+    // nothing else was going to clear it either.
+    //
+    // The handler cannot know the document's type after it is gone, so it does what it
+    // already does for a type it does not recognise: revalidate everything. A signature has
+    // already been verified at this point, so only Sanity can reach here, and a deletion is
+    // rare enough that the cost is irrelevant next to serving content that no longer exists.
     if (!body?._type) {
-      return NextResponse.json({ message: 'Bad request — missing _type' }, { status: 400 })
+      revalidatePath('/', 'layout')
+      return NextResponse.json({
+        revalidated: true,
+        paths: ['/ (layout — full revalidation)'],
+        note: 'No _type in the payload. Treated as a delete, which is the only thing that sends one.',
+      })
     }
 
     const { _type, slug } = body
