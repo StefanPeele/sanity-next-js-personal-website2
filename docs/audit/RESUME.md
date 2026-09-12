@@ -29,10 +29,17 @@ stale — the point of this file is that it is useful at any moment, not only at
 **PHASE 7 IS COMPLETE**, pushed and deployed; production served `5f15fd0` when it was
 verified.
 
-- **Phase 8 — designed** (`629686c`, `docs/audit/PHASE-8-COMMENTS.md`) and the **first slice
-  built** (`2b9e08c`): schema, server action, confirm route, Studio desk group, redacted
-  read query, rendered thread, durable rate limiter, blocklist. 32/32 on
-  `measure-comments.mjs`. **Committed but NOT yet pushed or deployed.**
+- **Phase 8 — designed** (`629686c`, `docs/audit/PHASE-8-COMMENTS.md`) and **largely built**:
+  `2b9e08c` (schema, server action, confirm route, desk group, redacted read query, rendered
+  thread, durable rate limiter, blocklist) and `9dba7ad` (8.4, sidenote-anchored comments).
+  **52/52** on `measure-comments.mjs`, which drives the real form, the real confirm link, a
+  real signed webhook and draft mode. Suite 127. **Never deployed — see the block below.**
+
+  Built: 8.1 identity, 8.2 labels, 8.3 threading, 8.4 sidenote scope, 8.5 removal states,
+  8.6 storage, 8.7 spam layers 1-4.
+  Not built, each with its reasoning written down: a commenter withdrawing their own
+  comment, the Studio "needs attention" view and one-click block, and promoting a Correction
+  into a 3B correction (deliberately deferred).
 
 ## BLOCKED: production cannot be deployed until roughly 2026-09-13
 
@@ -62,14 +69,26 @@ true in production before it can be called shipped, and neither is checkable fro
    tested locally with a hand-signed request. If that webhook is not configured in the
    Sanity dashboard, removing a comment will appear to do nothing.
 
-Then the rest of §8, in the order PHASE-8-COMMENTS.md sets out: labels and their filter row
-are done; next is **sidenote anchoring** (8.4), which reuses Phase 6's expansion window
-rather than adding a floating element. Deliberately NOT next, and the document says why:
-promoting a Correction comment into a 3B correction, which is the most interesting thing
-here and the most likely to be designed wrong before there is a single real correction to
-look at.
+Everything else in §8 that is startable without a deploy is listed above under "not built".
+The Studio "needs attention" view is the most useful of the three and needs no decision from
+Stefan; the other two need one.
+
+**Phases 9, 10 and 11 have never been started** and do not need a deploy to begin.
 
 **8.8 is MOVED** and is already done — it became Phase 3B.
+
+## Things a fresh session will otherwise re-derive
+
+- **`npm run check` exits 0 with zero warnings**, and the React Compiler lint is strict: it
+  rejects `Date.now()` in render and `setState` synchronously inside an effect. Both were hit
+  building the comment form, and both fixes were improvements rather than suppressions.
+- **`.next/cache/fetch-cache` is a product concern, not just a testing one.** A published
+  comment did not appear on the article because the fetch cache held the pre-comment result.
+  Anything that writes content a page reads must `revalidatePath`.
+- **Types missing from the webhook's RULES table fall through to a FULL SITE revalidation.**
+  `rateBucket` and `blocklist` are in there with empty path lists for exactly that reason.
+- **The dataset is 516 documents.** Every probe that seeds is expected to return it to 516,
+  and `probe-comment-scale.mjs --delete` cleans up after an interrupted run.
 
 ## What is already true and should not be re-derived
 
