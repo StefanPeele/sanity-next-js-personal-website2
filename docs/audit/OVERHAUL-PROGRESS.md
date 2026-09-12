@@ -559,3 +559,33 @@ can check; `RESUME.md` carries the four-item checklist.
 article in 17s and one deleted in Sanity disappeared in 308s — the 300s floor, working —
 with no webhook and no in-process revalidation. The case that failed all session now passes.
 Suite 128.
+
+## `368342d` and the sweep after it
+
+**The service worker's static cache had no ceiling.** `/_next/static/**` is cache-first,
+correctly — those URLs are content-hashed — but every deploy mints a new set and nothing
+deleted the old one. Measured on production: 26 assets, 1.7 MB per deploy per reader, ~34 MB
+after twenty. When an origin hits the browser's storage limit the browser evicts the whole
+origin, so this would eventually have destroyed the offline articles the cache exists to
+protect. Capped at 150 entries, verified by driving the real worker in a real browser
+(`docs/audit/measure-sw-cache.mjs`, 5/5: 215 entries → 150, newest survives).
+
+**`tests/caching.spec.ts`** guards the staleness defect at the level that matters — the build
+output, not the source, since the config can be present and still not reach the routes. Its
+negative control was run: injecting `initialRevalidateSeconds: false` for `/blog` fails the
+test by name.
+
+**Hypotheses checked and cleared, recorded so they are not re-chased:**
+
+- The service worker serves articles network-first; stale markup is never served online.
+- The four token/email lookups that gate a mutation all use `getWriteClient()`
+  (`useCdn: false`). The `client` identifier in those files is a local shadow, not the
+  CDN-backed read client — the grep alone was misleading.
+- `?comments=` survives NaN, negatives, `Infinity`, fractions and repeated params.
+- The OG image route and `sitemap.xml` are dynamic; the feeds are bounded at 3600s.
+- `robots.txt` disallows `/studio`, `/api`, `/_next`; `/studio` and `/offline` are `noindex`.
+- 16 of 17 public routes render with exactly one `<h1>` and a `#content` landmark. The
+  seventeenth was `/paths`, which does not exist — CLAUDE.md's architecture map still lists
+  it under `app/(archive)/`, and that line is now wrong.
+
+**One content finding:** `/test` is live and indexable. Left for Stefan; see `RESUME.md`.

@@ -121,7 +121,14 @@ Nothing in the brief is unworked. Four things remain and **every one of them nee
    email path is exercised end to end but has never actually delivered to anyone.
 3. **Drive the toolbar and the sidenotes with a real screen reader.** `A11Y-AUDIT.md` names
    this as the largest remaining gap in Phase 10; it needs a person, not a harness.
-4. **Decisions on `PROPOSALS.md`** — 2.2–2.6, 7.3, 7.4, the digest, and whether to run
+4. **`/test` is a live, indexable page.** A `page` document titled "test", slug `test`,
+   created 2026-03-26 and still published. It returns 200, carries `robots: index, follow`
+   and is listed in `sitemap.xml`. It is CONTENT, not a defect — the code is doing exactly
+   what a page document asks for — so it is left for Stefan to delete rather than deleted
+   here. The other five `page` documents (`blog`, `resume`, `projects`, `photography`,
+   `services`) duplicate real routes and are correctly inert: the schema now rejects
+   reserved slugs, `[slug]` 404s them and the sitemap filters them out.
+5. **Decisions on `PROPOSALS.md`** — 2.2–2.6, 7.3, 7.4, the digest, and whether to run
    `scripts/migrate-heading-levels.mjs`, which changes how a published article *looks*.
 
 **The comment system is now verified on production, including the case that failed all
