@@ -1,8 +1,9 @@
 # Resume state
 
-Written: 2026-09-11, mid-session.
-Why the session ended: **still running at the time of writing.** Kept current so it is never
-stale — the point of this file is that it is useful at any moment, not only at the end.
+Written: 2026-09-12, at the end of a session that worked every phase in the brief.
+Why the session ended: **every remaining item is blocked** — the production deploy on a
+Vercel rate limit, the screen-reader pass on needing a person, and the proposals on Stefan.
+Kept current throughout rather than written at the end.
 
 ## Exactly where I stopped
 
