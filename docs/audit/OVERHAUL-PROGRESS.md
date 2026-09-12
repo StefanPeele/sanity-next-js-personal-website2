@@ -1,7 +1,7 @@
 # Blog Overhaul — Progress
 
 Last updated: 2026-09-12T01:40Z
-Current phase: **Phase 7 COMPLETE.** 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
+Current phase: **Phase 8 — design proposed, build not started.** Phase 7 COMPLETE. 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
 live on production; 7.3 and 7.4 are *render the options* items and their options are rendered,
 measured and proposed. Phases 0-6 complete. **Phase 8 (comments) is now unblocked.**
 Session count: 2
@@ -251,6 +251,7 @@ been applied — Phase 1 is research only.
 | **8.8 sequencing** | §1.9 | **Build it first and independently of comments.** `lib/glossary.ts` already implements the hard part |
 | **7.1 measure** | §1.5 | **DONE — shipped in `b8a1621`.** 56.0 measured, 67.0 shipped, verified independently at 66.78 |
 | **7.3 hero** | `PROPOSALS.md` + `screenshots/phase-7/hero-*` | **Option F** — the full reading column, cropped to 21:9. The only one of seven that is both significantly larger AND lands the prose HIGHER (26px at 1440, 72px at 768, 34px at 390). Every full-bleed option puts the opening paragraph below the fold; D by 232px. Needs the image hotspot wired up first |
+| **Phase 8, all of it** | `PHASE-8-COMMENTS.md` | **Sanity, measured not assumed.** A thread at 833 comments is 241ms and 341KB via CDN, so pagination is part of the design rather than an optimisation; the index count query degrades 237ms → 635ms for 5x the data and must be denormalised; moderation is FLAT at ~170ms whatever the archive grows to. Five labels not four. "Removed by Stefan" / "Withdrawn by the commenter". And `rateLimit` is per-instance on Vercel, so an open comment box needs a durable limiter first |
 | **7.4 h1** | `PROPOSALS.md` + `screenshots/phase-7/h1-*` | **Option B** — the full reading column at 48px. Saves a line on two of the three published titles and costs one on none. Decision 1's option C is now a restatement of its own container and has been removed; **Decision 1 is superseded** |
 
 ## Heading-pipeline audit — every published document, before and after
