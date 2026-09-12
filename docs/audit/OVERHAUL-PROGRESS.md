@@ -1,7 +1,8 @@
 # Blog Overhaul — Progress
 
 Last updated: 2026-09-12T01:40Z
-Current phase: **Phase 8 — designed and the first slice built.** Phase 7 COMPLETE and live. 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
+Current phase: **Phase 8 complete but for two documented gaps; 9.1 answered. Phase 10 next.**
+Phase 7 COMPLETE and live. 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
 live on production; 7.3 and 7.4 are *render the options* items and their options are rendered,
 measured and proposed. Phases 0-6 complete. **Phase 8 (comments) is now unblocked.**
 Session count: 2
@@ -63,6 +64,9 @@ Session count: 2
 | **7.5 Reading time moves + 7.6 progress bar** | `1a73ad6`, fix `c7d028c` | **yes** — 23/23 re-run against production | pending verifier — **23/23** on `measure-progress-readout.mjs`, which drives the real switches and navigates rather than photographing | Time out of the header, above Contents, and LIVE once 3% in: "9 min left · 50% read". Bar 4px with an off switch. Position resumes, opt-in |
 
 | **Phase 8 — comments, first slice** | `2b9e08c` | pending deploy | pending verifier — **32/32** on `measure-comments.mjs`, which drives the real form and the real confirm link | Schema, action, confirm route, desk group, redacted read query, rendered thread. Three bugs found by building it, all of which would have shipped: a confirmed comment never appeared (fetch cache), every rate-limit write would have revalidated the whole site, and the label did not survive a fast submit |
+
+| **Phase 8 — 8.4, 8.7, and the rest** | `9dba7ad`, `de6a46e` | blocked — see *Blocked* | pending verifier — **56/56** on `measure-comments.mjs` | Sidenote-anchored comments on a STABLE key (the only identifier was a useId, which changes every render). Studio opens on "Needs attention"; one click blocks a commenter, and the harness tests the behaviour rather than the button: a blocked address writes nothing and is never told |
+| **9.1 Does subscription work?** | `de6a46e` | **yes, against the live site's own flow** | self — **20 pass, 1 not establishable** | It works: stored in Sanity, double opt-in, unsubscribe on GET *and* POST (RFC 8058 one-click is a POST). What I cannot see from here is whether Resend DELIVERS; the steps to check that are printed by the harness |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:

@@ -57,7 +57,15 @@ against a quota that is already gone.
 
 ## The single next action
 
-**Verify Phase 8 on production** once the quota clears — then continue §8.
+**Phase 10 — the accessibility audit**, which needs no deploy and is the item with the most
+new surface to audit: Phase 8 just added a form, a native radio group, a filter row, a link
+inside a dialog and three removal states, and §10 names comments in its scope explicitly.
+Write `docs/audit/A11Y-AUDIT.md`.
+
+Then 9.2 (propose the digest schema) and Phase 11.
+
+**Verify Phase 8 on production** as soon as the deploy quota clears — that is blocked, not
+next.
 
 Nothing about the comment system has been seen anywhere but locally. Two things must be
 true in production before it can be called shipped, and neither is checkable from here:
