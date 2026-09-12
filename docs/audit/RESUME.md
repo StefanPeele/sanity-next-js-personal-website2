@@ -34,9 +34,23 @@ verified.
   read query, rendered thread, durable rate limiter, blocklist. 32/32 on
   `measure-comments.mjs`. **Committed but NOT yet pushed or deployed.**
 
+## BLOCKED: production cannot be deployed until roughly 2026-09-13
+
+**Vercel returned "Deployment rate limited — retry in 24 hours."** The account's daily build
+quota is exhausted. `a34ebc3` (Phase 7 complete) is the last commit that reached production;
+it is live, operational and verified. Everything after it is committed and pushed to GitHub
+and **has never run in production**.
+
+The health endpoint reports the LIVE commit, so a stuck deploy and a failed one look
+identical from there. `gh api repos/StefanPeele/sanity-next-js-personal-website2/commits/<sha>/status`
+is where the reason was; check that FIRST next time rather than polling for sixteen minutes.
+
+**Until it clears, batch commits and push once.** Every push burns another build attempt
+against a quota that is already gone.
+
 ## The single next action
 
-**Push, deploy, and verify Phase 8 on production** — then continue §8.
+**Verify Phase 8 on production** once the quota clears — then continue §8.
 
 Nothing about the comment system has been seen anywhere but locally. Two things must be
 true in production before it can be called shipped, and neither is checkable from here:

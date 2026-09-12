@@ -314,6 +314,11 @@ enough is systematically early**, which is worth knowing for how future briefs a
 
 | Item | Blocked on what | What I tried | What would unblock it |
 | --- | --- | --- | --- |
+| **Deploying anything after `a34ebc3`** | **Vercel build rate limit — "Deployment rate limited — retry in 24 hours."** Hit 2026-09-12. `a34ebc3` (Phase 7 complete) is the last commit that reached production and it is live and verified; `cc88130` and everything after is on GitHub and NOT deployed | Polled `/api/health` for 16 minutes across two runs before checking the commit status on GitHub, which is where the reason actually was. The health endpoint reports the LIVE commit, so a stuck deploy and a failed one look identical from there — check `gh api repos/.../commits/<sha>/status` first next time | Time. It clears on its own. Until then **batch commits and push once**, because every push burns another build attempt against a quota that is already exhausted |
+| **Verifying Phase 8 on production** | The same rate limit | Everything Phase 8 does is verified locally (32/32) against a real build, a real browser, real Sanity documents and a real signed webhook | The deploy. Two things are then checkable that are not checkable locally: that `RESEND_API_KEY` delivers to a real address, and that the Sanity webhook is actually configured — a moderator's removal reaches the article ONLY through it |
+
+| Item | Blocked on what | What I tried | What would unblock it |
+| --- | --- | --- | --- |
 | Stratechery, Economist, WSJ measurements | Bot blocking (403/403/401) | Real UA, full Chromium | Nothing worth doing. Recorded as blocked in §1.1 |
 | Wikipedia hovercard timing | Selector found no in-article links on the live page | Two selector strategies | Cited MediaWiki docs instead; Gwern's measured 847ms is the better reference anyway |
 
