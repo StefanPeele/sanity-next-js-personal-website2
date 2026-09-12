@@ -21,32 +21,32 @@ stale — the point of this file is that it is useful at any moment, not only at
   key. `docs/audit/probe-stega-fields.mjs` measures which fields Sanity actually encodes.
 - **Phase 7.1 + 7.2 — shipped together**, `b8a1621`. The measure is `ch` on `[data-article]`
   via a REGISTERED `<length>` property; the column around it is three tiers.
-- **Phase 7.5 (reading time moves) and 7.6 (progress bar) — written, NOT yet built or
-  measured.** See below.
+- **Phase 7.5 + 7.6 — shipped**, `1a73ad6` with fix `c7d028c`. 23/23 on
+  `measure-progress-readout.mjs`, re-run against production.
+- **Phase 7.3 and 7.4 — options rendered, measured and proposed** (`5f15fd0`). Both are
+  *render the options* items, not ship items. Recommendations are in `PROPOSALS.md`.
+
+**PHASE 7 IS COMPLETE.** Everything is pushed and deployed; production serves `5f15fd0`.
 
 ## The single next action
 
-**Build, then measure 7.5 and 7.6, then run `docs/audit/render-hero-h1-options.mjs` for 7.3
-and 7.4.**
+**Phase 8 — comments.** It is the largest item in the brief and was gated on Phases 0-7
+being shipped and verified, which they now are.
 
-7.5 and 7.6 are written and pass `npm run check`, but the running server is the build from
-7.2, so nothing about them has been seen yet. The build was held back on purpose: two
-verifier subagents were measuring the 7.2 build at the time and rebuilding underneath them
-would have invalidated their run.
+Read §8 in full before touching anything. The decisions are already made there and should
+not be re-litigated: email-verified identity, no accounts, no third-party login. §1.7 of
+`EDITORIAL-RESEARCH.md` recommends **Sanity + Resend** for storage rather than self-hosting,
+because Vercel cannot host Remark42, and Reddit's `[removed]` / `[deleted]` distinction for
+the moderation wording.
 
-What 7.5/7.6 changed, so it can be checked rather than re-derived:
-- the reading time is out of the article header and above the Contents column, in BOTH
-  variants, and becomes live once the reader is 3% in — "11 min left · 42% read".
-- the progress bar is 4px, not 2px, and has an off switch.
-- scroll position is written continuously per slug (`lib/articleStorage.ts`, beside the
-  manual bookmark, NOT a second map) and restored only when the reader opts in.
-- two new switches in the reader menu's "Your place" group; copy in the `articleUi`
-  singleton. `npm run typegen` has been run.
+Two things already in the repo that 8 should build on rather than around:
+- the subscribe flow (`app/actions/subscribe.ts`, `app/api/subscribe/*`) is already an
+  email-verification round trip with a confirm link — the same shape 8.1 asks for.
+- `sanity/lib/writeClient.ts` and `SANITY_API_WRITE_TOKEN` already work; the server actions
+  pattern (zod + honeypot + `rateLimit`, returning `{ status, message }`) is established in
+  `app/actions/booking.ts`.
 
-Then 7.3 and 7.4, which are both *render the options* items rather than ship items.
-`docs/audit/render-hero-h1-options.mjs` is written and syntax-checked but has never been
-run. Run it AFTER the build, because 7.5 removed a line from the header and every
-first-prose-y number moves with it.
+**8.8 is MOVED** — read that item before planning, it is not a comments task.
 
 ## What is already true and should not be re-derived
 

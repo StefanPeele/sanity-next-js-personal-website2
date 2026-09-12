@@ -1,9 +1,9 @@
 # Blog Overhaul — Progress
 
 Last updated: 2026-09-12T01:40Z
-Current phase: **Phase 7 in progress.** 7.1 + 7.2 shipped (`b8a1621`) and verified; 7.5 + 7.6
-shipped (`1a73ad6`), not yet measured; 7.3 and 7.4 are *render the options* items and are
-next. Phases 0-6 complete. Phase 8 (comments) is gated on all of Phase 7.
+Current phase: **Phase 7 COMPLETE.** 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
+live on production; 7.3 and 7.4 are *render the options* items and their options are rendered,
+measured and proposed. Phases 0-6 complete. **Phase 8 (comments) is now unblocked.**
 Session count: 2
 
 ## Shipped
@@ -56,11 +56,11 @@ Session count: 2
 | **3.6 Sources in the Contents column** | `41e45f8` | **yes** — "2 sources", closed, 2 links, both anchors resolve, at 1440 **and** 390 | self | Column shows count + linked titles, anchored to `#source-N` in the existing body list. One canonical rendering, two volumes |
 | **3.7 Last updated** | `41e45f8` | **yes** — header reads "August 1, 2026 · Updated September 1, 2026" at both breakpoints | self + 12 unit tests | Derived from `changelog[].date`. No new field, and **not** `_updatedAt` |
 
-| **Stega audit — every fetch, measured** | `d42823c` | pending deploy | **verifier — PASS on 7 of 8, 1 UNVERIFIABLE** (the resume skills surface has no content in the dataset at all). It built its own draft fixtures for glossary, garden and library, measured, and proved the deletion | The glossary regex was not the last. `probe-stega-fields.mjs` measures which fields Sanity actually encodes rather than inferring it from `filterDefault`. **Eight** more sites, two shapes: the known LOOKUP shape, and a new FACET shape where `new Set` fails to dedupe because each document's copy of a value carries its own payload. Worst case: `/resume` lost its **entire skills section** in preview |
+| **Stega audit — every fetch, measured** | `d42823c` | deployed in `5f15fd0`; the behaviour is draft-mode-only and was verified locally | **verifier — PASS on 7 of 8, 1 UNVERIFIABLE** (the resume skills surface has no content in the dataset at all). It built its own draft fixtures for glossary, garden and library, measured, and proved the deletion | The glossary regex was not the last. `probe-stega-fields.mjs` measures which fields Sanity actually encodes rather than inferring it from `filterDefault`. **Eight** more sites, two shapes: the known LOOKUP shape, and a new FACET shape where `new Set` fails to dedupe because each document's copy of a value carries its own payload. Worst case: `/resume` lost its **entire skills section** in preview |
 
-| **7.1 + 7.2 The article stops being a 576px strip** | `b8a1621` | pending deploy | **verifier — PASS on 5 of 6 sub-claims, 1 UNVERIFIABLE.** Measured 59.5 / 66.78 / 73.0 CPL against my 59.6 / 67.0 / 73.2, by its own method; independently re-measured PRODUCTION at **57.0 exactly**, pixel-fixed across all three width settings, which confirms the premise the brief's amendment rested on | Three tiers: prose 671, wide 832, full 964 at 1440. Every heading h2-h6 measured at exactly 250.39-921.61px, identical to the reference paragraph |
+| **7.1 + 7.2 The article stops being a 576px strip** | `b8a1621` | **yes** — production measured at 59.6 / 67.1 / 73.3 CPL, identical at 15/19/21px, `--measure` computing to 671.234px, container 1280, column 964, prose 671, zero off-measure children, no h-scroll | **verifier — PASS on 5 of 6 sub-claims, 1 UNVERIFIABLE.** Measured 59.5 / 66.78 / 73.0 CPL against my 59.6 / 67.0 / 73.2, by its own method; independently re-measured PRODUCTION at **57.0 exactly**, pixel-fixed across all three width settings, which confirms the premise the brief's amendment rested on | Three tiers: prose 671, wide 832, full 964 at 1440. Every heading h2-h6 measured at exactly 250.39-921.61px, identical to the reference paragraph |
 
-| **7.5 Reading time moves + 7.6 progress bar** | `1a73ad6`, fix `c7d028c` | pending deploy | pending verifier — **23/23** on `measure-progress-readout.mjs`, which drives the real switches and navigates rather than photographing | Time out of the header, above Contents, and LIVE once 3% in: "9 min left · 50% read". Bar 4px with an off switch. Position resumes, opt-in |
+| **7.5 Reading time moves + 7.6 progress bar** | `1a73ad6`, fix `c7d028c` | **yes** — 23/23 re-run against production | pending verifier — **23/23** on `measure-progress-readout.mjs`, which drives the real switches and navigates rather than photographing | Time out of the header, above Contents, and LIVE once 3% in: "9 min left · 50% read". Bar 4px with an off switch. Position resumes, opt-in |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:
