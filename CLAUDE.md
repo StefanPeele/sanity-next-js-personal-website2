@@ -5,7 +5,7 @@
 - `app/layout.tsx` — HTML shell: fonts (`--font-serif` Lora, `--font-sans` Inter, `--font-mono` IBM Plex Mono), metadata, JSON-LD, `MotionProvider`, skip link, Sanity live/visual editing, Analytics + SpeedInsights.
 - `app/template.tsx` → `components/PageTransition.tsx` — CSS-only route enter animation (`motion-safe:animate-page-enter`).
 - `app/(personal)/` — portfolio shell (`Navbar`, `<main id="content">`, `Footer`): home, projects, resume, photography, services, generic `[slug]` pages.
-- `app/(archive)/` — knowledge shell (`BlogBackground`, `Navbar`, `Footer`; pages render their own `<main id="content">`): blog, garden, library, paths, feeds.
+- `app/(archive)/` — knowledge shell (`BlogBackground`, `Navbar`, `Footer`; pages render their own `<main id="content">`): blog, garden, glossary, library. The feeds (`feed.xml`, `feed.json`) live under `blog/`. There is no `paths` or `feeds` route.
 - `app/graph/` — knowledge graph (standalone page).
 - `app/api/` — health, subscribe (confirm/unsubscribe), draft-mode + revalidate webhook, airtable status.
 - `app/actions/` — server actions (`booking.ts`, `subscribe.ts`).

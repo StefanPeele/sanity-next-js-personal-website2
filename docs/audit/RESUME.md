@@ -34,15 +34,36 @@ verified.
   `2b9e08c` (schema, server action, confirm route, desk group, redacted read query, rendered
   thread, durable rate limiter, blocklist) and `9dba7ad` (8.4, sidenote-anchored comments).
   **52/52** on `measure-comments.mjs`, which drives the real form, the real confirm link, a
-  real signed webhook and draft mode. Suite 127. **Never deployed — see the block below.**
+  real signed webhook and draft mode. Suite 130. **Deployed, and verified on production** —
+  see the block below.
 
   Built: 8.1 identity, 8.2 labels, 8.3 threading, 8.4 sidenote scope, 8.5 removal states,
   8.6 storage, 8.7 spam layers 1-4.
-  Not built, each with its reasoning written down: a commenter withdrawing their own
-  comment, the Studio "needs attention" view and one-click block, and promoting a Correction
-  into a 3B correction (deliberately deferred).
+  Also built, and this file used to list both as unbuilt: the Studio **"Needs attention"
+  view** (`sanity/plugins/settings.tsx`, filtering `status == "pending"`) and **one-click
+  block** (`sanity/plugins/blockCommenter.tsx`, registered in `sanity.config.ts`), both
+  shipped in `de6a46e`.
+  Genuinely not built, each with its reasoning written down: a commenter withdrawing their
+  own comment, and promoting a Correction into a 3B correction (deliberately deferred).
 
-## Production is at `dd56ff7`, and everything in the brief is deployed
+- **The staleness fix — shipped**, `dd56ff7`. next-sanity's production default is
+  `revalidate: false`, so every `sanityFetch` was cached with NO expiry and 31 of 36
+  prerendered routes could only ever be cleared by a webhook that turned out not to arrive.
+  `sanity/lib/live.ts` now sets `fetchOptions.revalidate` to 300 in production; 7 routes
+  never expire and all 7 are static assets. The dead `revalidateTag('sanity')` calls went
+  with it — the tags are `sanity:<syncTag>`, so the bare string never matched anything, and
+  **three earlier fixes to the webhook handler had been built on that false premise.**
+  Verified on production: a comment created in Sanity appeared in 17s, one deleted in Sanity
+  disappeared in 308s — the case that had failed all session.
+- **The service worker's static cache — capped**, `368342d`. It had no ceiling: 1.7 MB of
+  content-hashed chunks per deploy, ~34 MB after twenty, and a browser evicts a whole origin
+  when it hits the storage limit, so this would have destroyed the offline articles it
+  exists to protect. 150 entries, verified against the real worker in a real browser.
+- **Regression guard — shipped**, `4c38d0e`. `tests/caching.spec.ts` asserts the BUILD
+  OUTPUT, not the source: the config can be present and still not reach the routes. Its
+  negative control was run.
+
+## Production is at `4c38d0e`, and everything in the brief is deployed
 
 `gh api .../deployments` plus its `/statuses` is the authoritative record — **not**
 `gh api .../commits/<sha>/status`, which reported a rate limit that was not the deployment's
@@ -136,8 +157,10 @@ session.** A comment created in Sanity appears on the live article and one delet
 disappears from it, with no webhook and no in-process revalidation: **17s and 308s**. The
 second is the 300s floor working exactly as designed.
 
-Of the three §8 items left unbuilt, the Studio "needs attention" view is the most useful and
-needs no decision from Stefan. The other two do.
+Two §8 items are genuinely unbuilt — a commenter withdrawing their own comment, and
+promoting a Correction into a 3B correction — and both need a decision from Stefan. This file
+used to send the next session at the "needs attention" view as unbuilt work that "needs no
+decision". It has been built since `de6a46e`. **Check the code before believing this file.**
 
 ## Things a fresh session will otherwise re-derive
 
@@ -188,8 +211,11 @@ Run with a server on `127.0.0.1:3000` serving the build you mean (check the CSS 
 | `docs/audit/measure-prose-width.mjs` | Real CPL for every candidate width × three text sizes × three breakpoints. Prints a table and writes `prose-width.json` |
 | `docs/audit/measure-sidenotes-margin.mjs` | 30: margin placement, the three 6.3 edge cases, the 6.5 window's focus trap, both 6.4 mobile options. **Not** `measure-sidenotes.mjs`, which is Phase 1.5 research on other sites |
 
-Suite: `npx playwright test` — **118 passing** across both projects (114 + 4 facet tests
-added with the stega audit).
+Suite: `npx playwright test` — **130 passing** across both projects. `npm run test:e2e` runs
+only the chromium project (91); the screenshots project (39) needs `--project=screenshots`,
+and a run that reports 91 has silently skipped the visual guard.
+
+| `docs/audit/measure-sw-cache.mjs` | Drives the REAL service worker in a real browser: takes the static cache past the cap and watches one further fetch trim it back, with the newest entry surviving. A unit test of a copy of the function would prove nothing about the file that ships |
 
 Two harnesses added this session:
 
