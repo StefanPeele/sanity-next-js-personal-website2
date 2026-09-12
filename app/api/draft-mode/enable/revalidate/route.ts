@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidatePath } from 'next/cache'
 import { type NextRequest, NextResponse } from 'next/server'
 import { parseBody } from 'next-sanity/webhook'
 import { client } from '@/sanity/lib/client'
@@ -108,40 +108,45 @@ export async function POST(req: NextRequest) {
     // already been verified at this point, so only Sanity can reach here, and a deletion is
     // rare enough that the cost is irrelevant next to serving content that no longer exists.
     if (!body?._type) {
-      revalidateTag('sanity', { expire: 0 })
       revalidatePath('/', 'layout')
       return NextResponse.json({
         revalidated: true,
-        paths: ['/ (layout — full revalidation)', "tag:sanity"],
+        paths: ['/ (layout — full revalidation)'],
         note: 'No _type in the payload. Treated as a delete, which is the only thing that sends one.',
       })
     }
 
-    /* ── THE LEVER THAT ACTUALLY CLEARS SANITY DATA ────────────────────────────
-       `revalidatePath` invalidates a route's RENDER cache. The data behind it lives in
-       Next's Data Cache, and next-sanity tags every `sanityFetch` with `sanity` by default
-       -- its own types say so, and name this as the hook for "custom fallback revalidation
-       strategies". Without this line a webhook could revalidate the right path and the page
-       would still re-render from the same cached query result.
+    /* ── WHY THERE IS NO revalidateTag HERE, AND WHY THERE USED TO BE ──────────
+       Three fixes in this handler were built on a false premise: that next-sanity tags
+       every fetch with the literal tag `sanity`, so `revalidateTag('sanity')` would clear
+       all Sanity data at once. It does not, and the call was a no-op for every one of them.
 
-       That is not theoretical. On production a comment deleted from Sanity stayed on the
-       live article through 90 seconds of polling AND a fresh deployment, while both the
-       Sanity API and its CDN returned zero rows for the page's exact query. Vercel's Data
-       Cache survives deploys, so only a tag or path revalidation ever clears it.
+       From next-sanity's own source (dist/live.js):
 
-       It is called for every webhook whose type RENDERS somewhere -- including one with no
-       `_type` at all, which is exactly what a delete sends. It is deliberately NOT called
-       for `rateBucket` and `blocklist`, whose rules have no paths: a rateBucket is written
-       on every comment attempt including every refused one, so tagging there would let a
-       spam wave invalidate the whole site's data once per attempt. The path revalidation
-       below stays; it is the cheaper, more precise one, and this is the floor beneath it. */
+           const cacheTags = [...tags, ...syncTags?.map((tag) => `sanity:${tag}`) || []]
+
+       The tags are `sanity:<syncTag>` — one per document touched by the query, from
+       Sanity's content source map — and the bare string `sanity` is only ever present if
+       the CALLER passes it. Nothing in this project does. Next matches cache tags exactly,
+       not by prefix, so `revalidateTag('sanity')` matched nothing and revalidated nothing.
+       The handler appeared to work locally because `revalidatePath` was doing all of it.
+
+       `revalidatePath` is enough, and it is enough for the DATA as well as the HTML: Next
+       attaches an implicit path tag to every fetch made while rendering a path, so
+       revalidating the path invalidates the queries behind it. Verified locally end to end
+       — comment written to Sanity, article unchanged, webhook delivered, article changed.
+
+       The floor beneath this is time, not tags: `sanity/lib/live.ts` now sets
+       `fetchOptions.revalidate`, because next-sanity's production default is `false` and
+       a webhook that never arrives otherwise means stale for ever rather than stale for
+       five minutes. That is the actual lesson of this endpoint. */
 
     const { _type, slug } = body
     const rule = RULES[_type]
 
     if (!rule) {
       revalidatePath('/', 'layout')
-      return NextResponse.json({ revalidated: true, paths: ['/ (layout — full revalidation)', 'tag:sanity'], note: `Unknown type: ${_type}` })
+      return NextResponse.json({ revalidated: true, paths: ['/ (layout — full revalidation)'], note: `Unknown type: ${_type}` })
     }
 
     // Only for a type that renders. An empty `paths` means "this document appears nowhere",
@@ -150,8 +155,6 @@ export async function POST(req: NextRequest) {
     // `{ expire: 0 }` is the second argument Next 16 requires: revalidateTag(tag, profile).
     // The signature changed from Next 15's single-argument form, and the compiler catches it
     // -- worth knowing before copying a revalidateTag call out of any older example.
-    if (rule.paths.length > 0) revalidateTag('sanity', { expire: 0 })
-
     const paths = new Set<string>()
     for (const p of rule.paths) {
       if (p === 'layout') {
@@ -203,7 +206,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       revalidated: true,
       type: _type,
-      paths: rule.paths.length > 0 ? [...paths, 'tag:sanity'] : [...paths],
+      paths: [...paths],
     })
   } catch (err) {
     console.error('Revalidation error:', err)
