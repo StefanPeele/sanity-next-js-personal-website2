@@ -53,6 +53,9 @@ import certification from '@/sanity/schemas/documents/certification'
 import education from '@/sanity/schemas/documents/education'
 import testimonial from '@/sanity/schemas/documents/testimonial'
 import subscriber from '@/sanity/schemas/documents/subscriber'
+import comment from '@/sanity/schemas/documents/comment'
+import rateBucket from '@/sanity/schemas/documents/rateBucket'
+import blocklist from '@/sanity/schemas/documents/blocklist'
 import { siteSingletons, siteTypes } from '@/sanity/schemas/site'
 import { articleUiSingletons, articleUiTypes } from '@/sanity/schemas/articleUi'
 import { servicesSingletons, servicesTypes } from '@/sanity/schemas/services'
@@ -89,6 +92,9 @@ export default defineConfig({
       education,
       testimonial,
       subscriber,
+      comment,
+      rateBucket,
+      blocklist,
       // Objects
       skill,
       milestone,

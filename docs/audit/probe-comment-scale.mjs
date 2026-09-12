@@ -64,18 +64,38 @@ async function time(label, query, { cdn = false, params = {} } = {}) {
   return { label, median: runs[1], n, kb: Math.round((bytes / 1024) * 10) / 10 }
 }
 
+// `_id match "prefix-*"`, NOT `_id in path("prefix-**")`.
+//
+// This is the bug that mattered most in this file. `**` in a Sanity path is a SEGMENT glob,
+// and ids like `drafts.scale-comment-0` are two segments -- `drafts` and `scale-comment-0` --
+// so `drafts.scale-comment-**` matched nothing. The delete removed nothing, the verification
+// used THE SAME PATTERN, counted the same nothing, and printed "0 probe documents remain
+// (must be 0)". 5,000 documents sat in the dataset behind a clean report until a different
+// query happened to count them.
+//
+// A check that shares its pattern with the operation it is checking is not a check.
+const MATCH = `_type == "comment" && _id match "${PREFIX}*"`
+
 async function existing() {
-  const q = `count(*[_id in path("${PREFIX}**")])`
-  const r = await fetch(`${API}/data/query/${D}?perspective=raw&query=${encodeURIComponent(q)}`, { headers: AUTH }).then((x) => x.json())
+  const r = await fetch(`${API}/data/query/${D}?perspective=raw&query=${encodeURIComponent(`count(*[${MATCH}])`)}`, { headers: AUTH }).then((x) => x.json())
   return r.result ?? 0
 }
 
 async function removeAll() {
-  // Delete by query, which Sanity supports directly and which cannot miss a document the
-  // way a list of ids built before the run can.
-  await mutate([{ delete: { query: `*[_id in path("${PREFIX}**")]` } }])
+  // In PASSES. A delete-by-query has a per-request ceiling -- measured at 1,000 here -- so
+  // one call does not finish the job and a 200 response is not evidence that it did.
+  for (let i = 0; i < 60; i++) {
+    const before = await existing()
+    if (before === 0) break
+    await mutate([{ delete: { query: `*[${MATCH}][0...1000]` } }])
+    const after = await existing()
+    if (after === before) { console.log(`  cleanup stalled at ${after}; delete them by hand`); break }
+  }
   const left = await existing()
-  console.log(`  cleanup: ${left} probe documents remain (must be 0)`)
+  // A second, INDEPENDENT count. If the id pattern is ever wrong again, the total will
+  // disagree with it and say so rather than quietly agreeing.
+  const total = await fetch(`${API}/data/query/${D}?perspective=raw&query=${encodeURIComponent('count(*[_type == "comment"])')}`, { headers: AUTH }).then((x) => x.json()).then((x) => x.result ?? 0)
+  console.log(`  cleanup: ${left} probe documents remain (must be 0); ${total} comment documents of any kind in the dataset`)
   return left
 }
 

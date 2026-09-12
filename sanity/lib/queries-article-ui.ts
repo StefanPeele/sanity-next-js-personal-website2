@@ -25,6 +25,11 @@ export const articleUiQuery = defineQuery(`
       tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,
       sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent
     },
+    comments{
+      heading, lede, countLabel, empty, formHeading, labelPrompt, namePlaceholder, anonymousLabel,
+      emailPlaceholder, emailHint, bodyPlaceholder, submitLabel, submittingLabel, replyLabel,
+      cancelLabel, allLabel, moreLabel, anonymousName, pendingNote, onSidenoteLabel
+    },
     credibility{
       "maturity": maturity[]{ ${v} }, "load": load[]{ ${v} },
       reviewersHeading, reviewedByLabel, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl

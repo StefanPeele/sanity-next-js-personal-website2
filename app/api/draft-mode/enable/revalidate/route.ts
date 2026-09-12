@@ -1,6 +1,7 @@
 import { revalidatePath } from 'next/cache'
 import { type NextRequest, NextResponse } from 'next/server'
 import { parseBody } from 'next-sanity/webhook'
+import { client } from '@/sanity/lib/client'
 // app/api/draft-mode/enable/revalidate/route.ts
 //
 // Sanity calls this endpoint via webhook on every document publish/unpublish.
@@ -19,6 +20,12 @@ type Rule = {
   paths: string[]
   /** Path template using the document slug, e.g. '/blog/:slug'. */
   withSlug?: string
+  /**
+   * Phase 8. The document has no slug of its own and lives under a POST -- resolve the
+   * post's slug from `post._ref` and revalidate the article. A comment is the first
+   * document type on this site whose page cannot be derived from its own fields.
+   */
+  viaPostRef?: boolean
 }
 
 const FEEDS = ['/sitemap.xml', '/blog/feed.xml', '/blog/feed.json']
@@ -55,6 +62,22 @@ const RULES: Record<string, Rule> = {
   certification: { paths: ['/resume', '/now'] },
   education: { paths: ['/resume'] },
   testimonial: { paths: ['/services'] },
+
+  // Phase 8. Moderating a comment in the Studio has to reach the article, and nothing
+  // else does it: the reader-facing paths revalidate themselves (the server action and the
+  // confirm route both call revalidatePath), but a removal happens in the Studio and only
+  // this webhook sees it.
+  comment: { paths: ['/blog'], viaPostRef: true },
+
+  // EMPTY ON PURPOSE, and this is the entry that matters most in this block.
+  //
+  // Types missing from RULES fall through to a full-site layout revalidation. A rateBucket
+  // is written on EVERY comment attempt, including every refused one, so without this line
+  // a spam wave would revalidate the entire site once per attempt -- the cheapest possible
+  // denial of service, self-inflicted, through the anti-spam machinery. Neither of these
+  // documents renders anywhere.
+  rateBucket: { paths: [] },
+  blocklist: { paths: [] },
 }
 
 export async function POST(req: NextRequest) {
@@ -64,7 +87,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'SANITY_REVALIDATE_SECRET is not set' }, { status: 500 })
     }
 
-    const { isValidSignature, body } = await parseBody<{ _type: string; slug?: { current?: string } }>(req, secret)
+    const { isValidSignature, body } = await parseBody<{
+      _type: string
+      slug?: { current?: string }
+      post?: { _ref?: string }
+    }>(req, secret)
     if (!isValidSignature) {
       return NextResponse.json({ message: 'Invalid webhook signature' }, { status: 401 })
     }
@@ -95,6 +122,18 @@ export async function POST(req: NextRequest) {
       const p = rule.withSlug.replace(':slug', current)
       revalidatePath(p)
       paths.add(p)
+    }
+
+    if (rule.viaPostRef && body.post?._ref) {
+      const postSlug = await client.fetch<string | null>(
+        `*[_id == $id][0].slug.current`,
+        { id: body.post._ref },
+        { perspective: 'published', useCdn: false },
+      )
+      if (postSlug) {
+        revalidatePath(`/blog/${postSlug}`)
+        paths.add(`/blog/${postSlug}`)
+      }
     }
 
     return NextResponse.json({ revalidated: true, type: _type, paths: [...paths] })

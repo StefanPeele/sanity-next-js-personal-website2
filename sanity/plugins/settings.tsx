@@ -64,6 +64,10 @@ export const pageStructure = (singletons: DocumentDefinition[]): StructureResolv
       ['Photography', ['gallery', 'category', 'testimonial']],
       ['Services', ['servicePackage', 'serviceAddOn']],
       ['Audience', ['subscriber']],
+      // Phase 8. Comments sit beside the audience rather than under Blog: moderating is a
+      // different job from writing, done at a different time, and burying it under the posts
+      // would mean opening a post to find out whether anything needs attention.
+      ['Comments', ['comment', 'blocklist', 'rateBucket']],
     ]
     const registered = new Set(S.documentTypeListItems().map((i) => i.getId()))
     const known = new Set([...singletons.map((s) => s.name), ...groups.flatMap(([, t]) => t)])

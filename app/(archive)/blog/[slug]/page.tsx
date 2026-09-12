@@ -38,10 +38,13 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { PortableTextBlock } from 'next-sanity'
 import { FOCUS } from '@/lib/ui'
+import { CommentsSection } from '@/components/blog/CommentsSection'
 // app/(archive)/blog/[slug]/page.tsx
 // Layout: progress bar → text header → [reading column | sticky TOC]. One TOC, one settings menu.
 
-type Props = { params: Promise<{ slug: string }> }
+// searchParams for ?comments=N, the thread's "show older" link. A plain link rather than a
+// fetch: it is rare, it works without JS, and it keeps a long thread addressable.
+type Props = { params: Promise<{ slug: string }>; searchParams?: Promise<{ comments?: string }> }
 type Post = NonNullable<PostBySlugQueryResult>
 type Tag = { _id?: string; title: string | null; slug: string | null }
 
@@ -69,8 +72,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function BlogPostPage({ params }: Props) {
+export default async function BlogPostPage({ params, searchParams }: Props) {
   const { slug } = await params
+  const commentPage = Number((await searchParams)?.comments) || undefined
   const [{ data }, ui, taxonomy, settings] = await Promise.all([
     sanityFetch({ query: postBySlugQuery, params: { slug } }),
     getCopy(articleUiQuery, DEFAULT_ARTICLE_UI),
@@ -279,6 +283,13 @@ export default async function BlogPostPage({ params }: Props) {
             <BacklinksSection backlinks={post.backlinks} heading={B.backlinksHeading} />
 
             {askEnabled && <AskArticle slug={slug} heading={B.askHeading} placeholder={B.askPlaceholder} buttonLabel={B.askButton} />}
+
+            {/* Phase 8. After the corrections and the credibility apparatus and before the
+                newsletter: a reader who has just finished should meet the conversation about
+                the piece before they are asked to subscribe to the next one. */}
+            <div data-print-hide>
+              <CommentsSection postId={post._id} slug={slug} copy={ui.comments} page={commentPage} />
+            </div>
 
             <div className="mt-16" data-print-hide>
               <NewsletterForm source={`article:${slug}`} copy={settings.newsletter} />

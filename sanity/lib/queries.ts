@@ -555,3 +555,48 @@ export const nowQuery = defineQuery(`{
   },
   "certifications": *[_type == "certification" && status == "in-progress"] { _id, title, issuer, progressPercent, targetDate }
 }`)
+
+// ── Comments (Phase 8) ───────────────────────────────────────────────
+//
+// `email`, `token` and `ipHash` are NEVER projected. Not because they would be hard to
+// remove later, but because a projection is the only place they could leak: the comment
+// list is rendered into an RSC payload, and this project has already shipped a version of
+// that mistake -- reviewer names were readable in view-source while no pixel showed them.
+// A field that is never selected cannot be leaked by a component that forgets.
+//
+// authorName is projected raw and redacted on the SERVER by commentAuthor(), because
+// `anonymous` has to be honoured even when a name was typed before the box was ticked.
+const commentFields = `
+  _id, label, authorName, anonymous, body, createdAt, publishedAt, status, anchor,
+  "parentId": parent._ref
+`
+
+// The article's thread. Roots only, newest first, each with its replies attached.
+//
+// PAGINATED, and that is part of the design rather than an optimisation. Measured: a post
+// carrying 833 comments returns 341KB in one response, which is arithmetic rather than a
+// Sanity limit -- 400 bytes of comment times the number of comments, true of any store.
+// At 20 roots a thread is ~15KB. See docs/audit/PHASE-8-COMMENTS.md.
+//
+// Removed and withdrawn comments are INCLUDED. 8.5 wants the row kept and the body
+// replaced, so a thread with holes stays honest and a reply underneath one still makes
+// sense; the body is dropped at render time by isRemoved(), not here, because the label and
+// the date remain true.
+export const commentsForPostQuery = defineQuery(`{
+  "roots": *[_type == "comment" && post._ref == $postId && status != "pending" && status != "spam" && !defined(parent)]
+    | order(coalesce(publishedAt, createdAt) desc)[$from...$to] {
+      ${commentFields},
+      "replies": *[_type == "comment" && parent._ref == ^._id && status != "pending" && status != "spam"]
+        | order(coalesce(publishedAt, createdAt) asc) { ${commentFields} }
+    },
+  "total": count(*[_type == "comment" && post._ref == $postId && status != "pending" && status != "spam" && !defined(parent)]),
+  "labelCounts": *[_type == "comment" && post._ref == $postId && status == "published"] { label }
+}`)
+
+// Moderation. Flat ~170ms however large the archive grows, because it is an ordered slice
+// with a limit -- measured at 1,000 and at 5,000 and unchanged between them.
+export const commentsNeedingAttentionQuery = defineQuery(`
+  *[_type == "comment" && status == "pending"] | order(createdAt desc)[0...50] {
+    _id, label, authorName, anonymous, body, createdAt, "post": post->title
+  }
+`)

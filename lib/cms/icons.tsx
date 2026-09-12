@@ -6,6 +6,7 @@ import {
   FileText, Gift, GitBranch, GraduationCap, Layers, Leaf, Library, Lightbulb, ListOrdered, Mail,
   MessageSquare, Mic, Network, Newspaper, RotateCcw, Route, Rss, Search, Settings2, Sprout, TreePine, Type, Video,
   AlertTriangle, AlertCircle, ClipboardList, Diamond, Factory, Info, Link2, Sparkles, Wrench, Zap,
+  HelpCircle, PlusCircle,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -54,6 +55,10 @@ export const ICONS = {
   sparkles: Sparkles,
   wrench: Wrench,
   zap: Zap,
+  // Phase 8's comment labels. Distinct SHAPES, not three shades of one -- the same rule
+  // 3.3 applies to status marks, because colour alone fails a greyscale reader.
+  'help-circle': HelpCircle,
+  'plus-circle': PlusCircle,
 } as const satisfies Record<string, LucideIcon>
 
 export type IconName = keyof typeof ICONS

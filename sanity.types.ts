@@ -677,6 +677,28 @@ export type ArticleUi = {
     askButton?: string
     noContent?: string
   }
+  comments?: {
+    heading?: string
+    lede?: string
+    countLabel?: string
+    empty?: string
+    formHeading?: string
+    labelPrompt?: string
+    namePlaceholder?: string
+    anonymousLabel?: string
+    emailPlaceholder?: string
+    emailHint?: string
+    bodyPlaceholder?: string
+    submitLabel?: string
+    submittingLabel?: string
+    replyLabel?: string
+    cancelLabel?: string
+    allLabel?: string
+    moreLabel?: string
+    anonymousName?: string
+    pendingNote?: string
+    onSidenoteLabel?: string
+  }
   credibility?: {
     maturity?: Array<
       {
@@ -821,6 +843,8 @@ export type NavLink = {
     | 'sparkles'
     | 'wrench'
     | 'zap'
+    | 'help-circle'
+    | 'plus-circle'
   newTab?: boolean
 }
 
@@ -1148,6 +1172,59 @@ export type Skill = {
     _type: 'block'
     _key: string
   }>
+}
+
+export type Blocklist = {
+  _id: string
+  _type: 'blocklist'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  email?: string
+  ipHash?: string
+  reason?: string
+  createdAt?: string
+}
+
+export type RateBucket = {
+  _id: string
+  _type: 'rateBucket'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  key?: string
+  count?: number
+  resetAt?: string
+  updatedAt?: string
+}
+
+export type CommentReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'comment'
+}
+
+export type Comment = {
+  _id: string
+  _type: 'comment'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  post?: PostReference
+  parent?: CommentReference
+  anchor?: string
+  label?: 'question' | 'correction' | 'addition' | 'disagreement' | 'praise'
+  authorName?: string
+  anonymous?: boolean
+  email?: string
+  body?: string
+  status?: 'pending' | 'published' | 'removed' | 'withdrawn' | 'spam'
+  moderatorNote?: string
+  token?: string
+  createdAt?: string
+  publishedAt?: string
+  ipHash?: string
 }
 
 export type Subscriber = {
@@ -2263,6 +2340,10 @@ export type AllSanitySchemaTypes =
   | Timeline
   | Milestone
   | Skill
+  | Blocklist
+  | RateBucket
+  | CommentReference
+  | Comment
   | Subscriber
   | Testimonial
   | SanityImageCrop
@@ -2303,7 +2384,7 @@ export type AllSanitySchemaTypes =
 
 // Source: sanity/lib/queries-article-ui.ts
 // Variable: articleUiQuery
-// Query: *[_type == "articleUi"][0]{    header{ backLabel, readTimeLabel, sourcesLabel, revisedLabels{ corrected, clarified, updated }, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },    toc{ title, mobileTitle, minutesSuffix, minutesLeftLabel, progressLabel },    readerMenu{      buttonLabel, closeLabel,      groupLabels{ theme, textSize, width, accessibility, spacing, density, share, listen, position, toolbar },      toolbarLabels{ hide, hideHint, restore },      themeLabels{ archive, slate, paper, terminal },      widthLabels{ narrow, standard, wide },      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset, linkUnderline, bigFocus, muteColour },      spacingLabels{ lineHeight, letterSpacing, wordSpacing, paraSpacing },      scaleSteps{ less, normal, more },      densityLabels{ comfortable, compact },      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },      listenLabels{ play, pause, resume, stop, unsupported, voice, speed, systemVoice },      bookmarkLabels{ save, saved, resume, clear, progressBar, resumeScroll }    },    blocks{      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,      sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent    },    credibility{      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },      reviewersHeading, reviewedByLabel, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl    },    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }  }
+// Query: *[_type == "articleUi"][0]{    header{ backLabel, readTimeLabel, sourcesLabel, revisedLabels{ corrected, clarified, updated }, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },    toc{ title, mobileTitle, minutesSuffix, minutesLeftLabel, progressLabel },    readerMenu{      buttonLabel, closeLabel,      groupLabels{ theme, textSize, width, accessibility, spacing, density, share, listen, position, toolbar },      toolbarLabels{ hide, hideHint, restore },      themeLabels{ archive, slate, paper, terminal },      widthLabels{ narrow, standard, wide },      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset, linkUnderline, bigFocus, muteColour },      spacingLabels{ lineHeight, letterSpacing, wordSpacing, paraSpacing },      scaleSteps{ less, normal, more },      densityLabels{ comfortable, compact },      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },      listenLabels{ play, pause, resume, stop, unsupported, voice, speed, systemVoice },      bookmarkLabels{ save, saved, resume, clear, progressBar, resumeScroll }    },    blocks{      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,      sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent    },    comments{      heading, lede, countLabel, empty, formHeading, labelPrompt, namePlaceholder, anonymousLabel,      emailPlaceholder, emailHint, bodyPlaceholder, submitLabel, submittingLabel, replyLabel,      cancelLabel, allLabel, moreLabel, anonymousName, pendingNote, onSidenoteLabel    },    credibility{      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },      reviewersHeading, reviewedByLabel, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl    },    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }  }
 export type ArticleUiQueryResult = {
   header: {
     backLabel: string | null
@@ -2425,6 +2506,28 @@ export type ArticleUiQueryResult = {
     askPlaceholder: string | null
     askButton: string | null
     noContent: string | null
+  } | null
+  comments: {
+    heading: string | null
+    lede: string | null
+    countLabel: string | null
+    empty: string | null
+    formHeading: string | null
+    labelPrompt: string | null
+    namePlaceholder: string | null
+    anonymousLabel: string | null
+    emailPlaceholder: string | null
+    emailHint: string | null
+    bodyPlaceholder: string | null
+    submitLabel: string | null
+    submittingLabel: string | null
+    replyLabel: string | null
+    cancelLabel: string | null
+    allLabel: string | null
+    moreLabel: string | null
+    anonymousName: string | null
+    pendingNote: string | null
+    onSidenoteLabel: string | null
   } | null
   credibility: {
     maturity: Array<{
@@ -2584,6 +2687,7 @@ export type KnowledgePagesQueryResult = {
         | 'gift'
         | 'git-branch'
         | 'graduation-cap'
+        | 'help-circle'
         | 'info'
         | 'layers'
         | 'leaf'
@@ -2596,6 +2700,7 @@ export type KnowledgePagesQueryResult = {
         | 'mic'
         | 'network'
         | 'newspaper'
+        | 'plus-circle'
         | 'rotate-ccw'
         | 'route'
         | 'rss'
@@ -2671,6 +2776,7 @@ export type KnowledgePagesQueryResult = {
         | 'gift'
         | 'git-branch'
         | 'graduation-cap'
+        | 'help-circle'
         | 'info'
         | 'layers'
         | 'leaf'
@@ -2683,6 +2789,7 @@ export type KnowledgePagesQueryResult = {
         | 'mic'
         | 'network'
         | 'newspaper'
+        | 'plus-circle'
         | 'rotate-ccw'
         | 'route'
         | 'rss'
@@ -3323,6 +3430,7 @@ export type NavigationQueryResult = {
       | 'gift'
       | 'git-branch'
       | 'graduation-cap'
+      | 'help-circle'
       | 'info'
       | 'layers'
       | 'leaf'
@@ -3335,6 +3443,7 @@ export type NavigationQueryResult = {
       | 'mic'
       | 'network'
       | 'newspaper'
+      | 'plus-circle'
       | 'rotate-ccw'
       | 'route'
       | 'rss'
@@ -3376,6 +3485,7 @@ export type NavigationQueryResult = {
       | 'gift'
       | 'git-branch'
       | 'graduation-cap'
+      | 'help-circle'
       | 'info'
       | 'layers'
       | 'leaf'
@@ -3388,6 +3498,7 @@ export type NavigationQueryResult = {
       | 'mic'
       | 'network'
       | 'newspaper'
+      | 'plus-circle'
       | 'rotate-ccw'
       | 'route'
       | 'rss'
@@ -3429,6 +3540,7 @@ export type NavigationQueryResult = {
       | 'gift'
       | 'git-branch'
       | 'graduation-cap'
+      | 'help-circle'
       | 'info'
       | 'layers'
       | 'leaf'
@@ -3441,6 +3553,7 @@ export type NavigationQueryResult = {
       | 'mic'
       | 'network'
       | 'newspaper'
+      | 'plus-circle'
       | 'rotate-ccw'
       | 'route'
       | 'rss'
@@ -3631,6 +3744,7 @@ export type ErrorPagesQueryResult = {
         | 'gift'
         | 'git-branch'
         | 'graduation-cap'
+        | 'help-circle'
         | 'info'
         | 'layers'
         | 'leaf'
@@ -3643,6 +3757,7 @@ export type ErrorPagesQueryResult = {
         | 'mic'
         | 'network'
         | 'newspaper'
+        | 'plus-circle'
         | 'rotate-ccw'
         | 'route'
         | 'rss'
@@ -3684,6 +3799,7 @@ export type ErrorPagesQueryResult = {
         | 'gift'
         | 'git-branch'
         | 'graduation-cap'
+        | 'help-circle'
         | 'info'
         | 'layers'
         | 'leaf'
@@ -3696,6 +3812,7 @@ export type ErrorPagesQueryResult = {
         | 'mic'
         | 'network'
         | 'newspaper'
+        | 'plus-circle'
         | 'rotate-ccw'
         | 'route'
         | 'rss'
@@ -5528,9 +5645,56 @@ export type NowQueryResult = {
   }>
 }
 
+// Source: sanity/lib/queries.ts
+// Variable: commentsForPostQuery
+// Query: {  "roots": *[_type == "comment" && post._ref == $postId && status != "pending" && status != "spam" && !defined(parent)]    | order(coalesce(publishedAt, createdAt) desc)[$from...$to] {        _id, label, authorName, anonymous, body, createdAt, publishedAt, status, anchor,  "parentId": parent._ref,      "replies": *[_type == "comment" && parent._ref == ^._id && status != "pending" && status != "spam"]        | order(coalesce(publishedAt, createdAt) asc) {   _id, label, authorName, anonymous, body, createdAt, publishedAt, status, anchor,  "parentId": parent._ref }    },  "total": count(*[_type == "comment" && post._ref == $postId && status != "pending" && status != "spam" && !defined(parent)]),  "labelCounts": *[_type == "comment" && post._ref == $postId && status == "published"] { label }}
+export type CommentsForPostQueryResult = {
+  roots: Array<{
+    _id: string
+    label: 'addition' | 'correction' | 'disagreement' | 'praise' | 'question' | null
+    authorName: string | null
+    anonymous: boolean | null
+    body: string | null
+    createdAt: string | null
+    publishedAt: string | null
+    status: 'pending' | 'published' | 'removed' | 'spam' | 'withdrawn' | null
+    anchor: string | null
+    parentId: string | null
+    replies: Array<{
+      _id: string
+      label: 'addition' | 'correction' | 'disagreement' | 'praise' | 'question' | null
+      authorName: string | null
+      anonymous: boolean | null
+      body: string | null
+      createdAt: string | null
+      publishedAt: string | null
+      status: 'pending' | 'published' | 'removed' | 'spam' | 'withdrawn' | null
+      anchor: string | null
+      parentId: string | null
+    }>
+  }>
+  total: number
+  labelCounts: Array<{
+    label: 'addition' | 'correction' | 'disagreement' | 'praise' | 'question' | null
+  }>
+}
+
+// Source: sanity/lib/queries.ts
+// Variable: commentsNeedingAttentionQuery
+// Query: *[_type == "comment" && status == "pending"] | order(createdAt desc)[0...50] {    _id, label, authorName, anonymous, body, createdAt, "post": post->title  }
+export type CommentsNeedingAttentionQueryResult = Array<{
+  _id: string
+  label: 'addition' | 'correction' | 'disagreement' | 'praise' | 'question' | null
+  authorName: string | null
+  anonymous: boolean | null
+  body: string | null
+  createdAt: string | null
+  post: string | null
+}>
+
 declare module '@sanity/client' {
   interface SanityQueries {
-    '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, revisedLabels{ corrected, clarified, updated }, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },\n    toc{ title, mobileTitle, minutesSuffix, minutesLeftLabel, progressLabel },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, spacing, density, share, listen, position, toolbar },\n      toolbarLabels{ hide, hideHint, restore },\n      themeLabels{ archive, slate, paper, terminal },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset, linkUnderline, bigFocus, muteColour },\n      spacingLabels{ lineHeight, letterSpacing, wordSpacing, paraSpacing },\n      scaleSteps{ less, normal, more },\n      densityLabels{ comfortable, compact },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported, voice, speed, systemVoice },\n      bookmarkLabels{ save, saved, resume, clear, progressBar, resumeScroll }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent\n    },\n    credibility{\n      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, reviewedByLabel, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
+    '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, revisedLabels{ corrected, clarified, updated }, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },\n    toc{ title, mobileTitle, minutesSuffix, minutesLeftLabel, progressLabel },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, spacing, density, share, listen, position, toolbar },\n      toolbarLabels{ hide, hideHint, restore },\n      themeLabels{ archive, slate, paper, terminal },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset, linkUnderline, bigFocus, muteColour },\n      spacingLabels{ lineHeight, letterSpacing, wordSpacing, paraSpacing },\n      scaleSteps{ less, normal, more },\n      densityLabels{ comfortable, compact },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported, voice, speed, systemVoice },\n      bookmarkLabels{ save, saved, resume, clear, progressBar, resumeScroll }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent\n    },\n    comments{\n      heading, lede, countLabel, empty, formHeading, labelPrompt, namePlaceholder, anonymousLabel,\n      emailPlaceholder, emailHint, bodyPlaceholder, submitLabel, submittingLabel, replyLabel,\n      cancelLabel, allLabel, moreLabel, anonymousName, pendingNote, onSidenoteLabel\n    },\n    credibility{\n      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, reviewedByLabel, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
     '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },\n    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount, findLabel, findPlaceholder, filtersLabel, seeAllLabel, riverHeading },\n    planned{ enabled, heading, note, label, treatment, items[]{ _key, topic, lane } }\n  }\n': BlogPageQueryResult
     '\n  *[_type == "knowledgePages"][0]{\n    garden{ header{ title, lede, metaTitle, metaDescription }, stats{ notes, evergreen, tags }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n      note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },\n    library{ header{ title, lede, metaTitle, metaDescription }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) }, filterLabels{ type, status, all, clear } },\n    glossary{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, termsCount },\n    series{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },\n    graph{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },\n      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },\n      linesNote, nodeListLabel, openHint, ariaSummary },\n    osi{ header{ title, lede, metaTitle, metaDescription }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }\n  }\n': KnowledgePagesQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, body, tldr, excerpt\n  }\n': ArticleTextQueryResult
@@ -5570,5 +5734,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "mediaItem"] | order(coalesce(finishedAt, startedAt, _createdAt) desc) {\n    _id, title, author, mediaType, status, url,\n    "coverUrl": coverImage.asset->url,\n    startedAt, finishedAt, progressPercent, category,\n    oneSentenceTake, rating, keyIdea, quote, abandonedReason,\n    highlights,\n    "influencedPosts": influencedPosts[]->{ title, "slug": slug.current }[defined(slug)],\n    "influencedNotes": influencedNotes[]->{ title, "slug": slug.current }[defined(slug)]\n  }\n': LibraryQueryResult
     '{\n  "posts": *[_type == "post" && defined(slug.current)] {\n    _id, title, "slug": slug.current, articleType, excerpt,\n    "prerequisiteIds": prerequisites[].post->_id,\n    "readDeeperId":    readNextGoDeeper->_id,\n    "readBroaderId":   readNextGoBroader->_id,\n    "readApplyId":     readNextApplyThis->_id,\n    "tagIds":          tags[]->_id,\n    "seriesId":        series->_id\n  },\n  "notes": *[_type == "note" && defined(slug.current)] {\n    _id, title, "slug": slug.current, status,\n    "relatedNoteIds": relatedNotes[]->_id,\n    "relatedPostIds": relatedPosts[]->_id,\n    "tagIds":         tags[]->_id\n  },\n  "tags": *[_type == "tag"] {\n    _id, title, "slug": slug.current, category\n  },\n  "library": *[_type == "mediaItem" && status in ["finished", "current", "reference"]] {\n    _id, title, mediaType, status,\n    "influencedPostIds": influencedPosts[]->_id,\n    "influencedNoteIds": influencedNotes[]->_id\n  },\n  "projects": *[_type == "project" && defined(slug.current)] {\n    _id, title, "slug": slug.current,\n    "relatedPostIds": relatedPosts[]->_id,\n    "relatedNoteIds": relatedNotes[]->_id\n  },\n  "series": *[_type == "series"] { _id, title, "slug": slug.current }\n}': GraphQueryResult
     '{\n  "home": *[_type == "home"][0]{ currently, location, _updatedAt },\n  "reading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc) {\n    _id, title, author, mediaType, progressPercent, url, "coverUrl": coverImage.asset->url\n  },\n  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...5] {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  },\n  "recentPosts": *[_type == "post" && defined(publishedAt)] | order(publishedAt desc)[0...3] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // The card carries the small status mark (Phase 3.3). Without this the index and the\n  // feeds had no status at all while the article had three tiers of it.\n  reviewStatus,\n  // 3.7 + 3B. The newest date across the changelog AND the corrections -- both are material\n  // revisions. Projected as one value rather than the whole arrays: the card needs the date\n  // and the kinds, not twenty revision notes per card.\n  // coalesce(..., []) because null + array is null in GROQ -- and a backtick in this\n  // comment would end the template literal the query lives in, which is how the first\n  // version of this line silently dropped 27 of 40 queries from typegen.\n  // A post with a changelog and no corrections would otherwise project no date at all.\n  "lastRevised": (coalesce(changelog[].date, []) + coalesce(corrections[].date, [])) | order(@ desc)[0],\n  "correctionKinds": corrections[].kind,\n  \n  "wordCount": coalesce(math::sum(body[_type == "block" && defined(children)]{\n    "w": length(string::split(array::join(children[].text, ""), " "))\n  }.w), 0),\n  "series": series->{ title, "slug": slug.current }\n },\n  "activeProjects": *[_type == "project" && !defined(duration.end)] | order(_updatedAt desc)[0...4] {\n    _id, title, "slug": slug.current, overview\n  },\n  "certifications": *[_type == "certification" && status == "in-progress"] { _id, title, issuer, progressPercent, targetDate }\n}': NowQueryResult
+    '{\n  "roots": *[_type == "comment" && post._ref == $postId && status != "pending" && status != "spam" && !defined(parent)]\n    | order(coalesce(publishedAt, createdAt) desc)[$from...$to] {\n      \n  _id, label, authorName, anonymous, body, createdAt, publishedAt, status, anchor,\n  "parentId": parent._ref\n,\n      "replies": *[_type == "comment" && parent._ref == ^._id && status != "pending" && status != "spam"]\n        | order(coalesce(publishedAt, createdAt) asc) { \n  _id, label, authorName, anonymous, body, createdAt, publishedAt, status, anchor,\n  "parentId": parent._ref\n }\n    },\n  "total": count(*[_type == "comment" && post._ref == $postId && status != "pending" && status != "spam" && !defined(parent)]),\n  "labelCounts": *[_type == "comment" && post._ref == $postId && status == "published"] { label }\n}': CommentsForPostQueryResult
+    '\n  *[_type == "comment" && status == "pending"] | order(createdAt desc)[0...50] {\n    _id, label, authorName, anonymous, body, createdAt, "post": post->title\n  }\n': CommentsNeedingAttentionQueryResult
   }
 }

@@ -61,6 +61,31 @@ export const DEFAULT_ARTICLE_UI = {
     askButton: 'Ask',
     noContent: 'No content yet.',
   },
+  // Phase 8. Every string a reader sees around the conversation, including the one that
+  // matters most: what the email is for. An open comment box that asks for an address and
+  // does not say why is asking for a reason not to comment.
+  comments: {
+    heading: 'Responses',
+    lede: 'Corrections and disagreement are the most useful things you can leave here.',
+    countLabel: '{n} responses',
+    empty: 'No responses yet. If something here is wrong, incomplete, or unclear, say so.',
+    formHeading: 'Leave a response',
+    labelPrompt: 'What kind of response is this?',
+    namePlaceholder: 'Your name',
+    anonymousLabel: 'Post without my name',
+    emailPlaceholder: 'Email',
+    emailHint: 'Never shown, never shared. Used once to confirm it is really you.',
+    bodyPlaceholder: 'What would you like to say?',
+    submitLabel: 'Post response',
+    submittingLabel: 'Posting…',
+    replyLabel: 'Reply',
+    cancelLabel: 'Cancel',
+    allLabel: 'All',
+    moreLabel: 'Show older responses',
+    anonymousName: 'Anonymous',
+    pendingNote: 'Check your inbox — one click and it is posted. This is the only time you will be asked.',
+    onSidenoteLabel: 'On a margin note',
+  },
   credibility: {
     maturity: [
       { key: 'fresh', label: 'Fresh' },
