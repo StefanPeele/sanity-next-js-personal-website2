@@ -16,12 +16,24 @@ import path from 'node:path'
 
 type Manifest = { routes?: Record<string, { initialRevalidateSeconds?: number | false }> }
 
-/** Assets and framework routes legitimately never expire -- they are immutable or empty. */
+/**
+ * Assets and framework routes legitimately never expire -- they are immutable or empty.
+ *
+ * The exclusion is by EXTENSION and is deliberately narrow. A blanket "any route with a dot"
+ * silently excused /blog/feed.xml, /blog/feed.json and /sitemap.xml -- three prerendered
+ * surfaces whose whole job is to carry content that changes with every post, and the exact
+ * three the test below benchmarks against while never inspecting them.
+ */
+const IMMUTABLE = new RegExp('[.](?:ico|png|jpg|svg|webmanifest|txt)$', 'i')
+
 function isContentRoute(route: string): boolean {
   if (route.startsWith('/_')) return false
-  if (/\.[a-z0-9]+$/i.test(route)) return false
+  if (IMMUTABLE.test(route)) return false
   return true
 }
+
+/** The syndication surfaces, named so a regression on them fails by name. */
+const SYNDICATION = ['/blog/feed.xml', '/blog/feed.json', '/sitemap.xml']
 
 test.describe('caching', () => {
   test('no content route is cached without an expiry', async () => {
@@ -39,6 +51,21 @@ test.describe('caching', () => {
 
     const frozen = content.filter(([, v]) => v.initialRevalidateSeconds === false).map(([route]) => route)
     expect(frozen, `these routes would serve build-time content for ever: ${frozen.join(', ')}`).toEqual([])
+  })
+
+  test('the feeds and the sitemap revalidate, and are the slowest thing here', async () => {
+    const file = path.join(process.cwd(), '.next', 'prerender-manifest.json')
+    const manifest = JSON.parse(fs.readFileSync(file, 'utf8')) as Manifest
+    const routes = manifest.routes ?? {}
+
+    for (const route of SYNDICATION) {
+      const entry = routes[route]
+      expect(entry, `${route} must be prerendered for this to mean anything`).toBeTruthy()
+      const seconds = entry?.initialRevalidateSeconds
+      expect(typeof seconds, `${route} must have a numeric expiry, not ${String(seconds)}`).toBe('number')
+      expect(seconds as number, `${route} would serve build-time content for ever`).toBeGreaterThan(0)
+      expect(seconds as number, `${route} is slower than an hour`).toBeLessThanOrEqual(3600)
+    }
   })
 
   test('every content route revalidates within an hour', async () => {

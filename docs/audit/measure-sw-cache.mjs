@@ -78,9 +78,15 @@ try {
 
   // The entry that was just added must survive -- trimming oldest-first must not evict the
   // thing the reader is loading right now.
+  //
+  // Match the EXACT url that was fetched. The first version of this took `u` and then ignored
+  // it, asking only whether some entry containing "trimprobe" survived -- which is a weaker
+  // claim than the one the check makes, and it showed up as an unused-argument warning. The
+  // lint warning and the weak assertion were the same defect.
   const newestKept = await page.evaluate(async (u) => {
     const keys = await (await caches.open('sp-static-v4')).keys()
-    return keys.some((k) => k.url.includes('trimprobe'))
+    const wanted = new URL(u, self.location.origin).href
+    return keys.some((k) => k.url === wanted)
   }, after.url)
   check('the just-fetched asset survives the trim', newestKept)
 
