@@ -1037,11 +1037,12 @@ in `#111` on white, and link hrefs are printed beside their links.
 
 **Two things still worth doing, neither a defect:**
 
-*Sidenotes as footnotes.* The brief asks for it. Today the margin column is hidden in print
-and the inline version is `lg:hidden`, so on paper a sidenote's text **disappears entirely** —
-the anchor remains with nothing attached. The fix is a print-only rule that reveals
-`.sidenote-inline`, which already exists and already carries the text. That is one rule, and
-it is the honest way to print a sidenote.
+*Sidenotes as footnotes.* **Done.** It was worse than a missing rule: the inline version was
+rendered only when the reader had expanded it, so the note text was not in the document at
+all and no CSS could have revealed it. It is now always rendered and hidden with the `hidden`
+attribute, and a print rule reveals it with `!important` — which has to beat both the `lg`
+media query and the user agent's own `[hidden]` rule. Verified on the fixture: 0 of 5 inline
+notes visible on screen at 1440, **5 of 5 visible in print** with the margin column hidden.
 
 *Sources.* The probe article has none, so this could not be checked. `SourcesList` is not
 marked `data-print-hide`, so it should print. Worth confirming against a post that has some.

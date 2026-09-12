@@ -66,13 +66,21 @@ export function SideNote({ children, note, kind = 'note', href, anchorKey }: Sid
         <sup className="font-mono text-xs text-amber-400/80 ml-0.5 select-none" aria-hidden="true">※</sup>
       </button>
 
-      {/* 6.4 option A. Hidden at lg, where the margin carries it instead. */}
-      {open && (
-        <span id={`${noteId}-inline`} className="sidenote-inline">
-          <span className="meta-label text-amber-400/80 block mb-1">Note</span>
-          <span className="font-sans text-xs text-stone-200 leading-relaxed block">{note}</span>
-        </span>
-      )}
+      {/* 6.4 option A. Hidden at lg, where the margin carries it instead.
+
+          ALWAYS RENDERED, hidden by the `hidden` attribute rather than by `open &&`.
+          It used to be conditional, which meant the note text was not in the document at all
+          unless the reader had expanded it -- so on PAPER a sidenote printed as an anchor
+          with nothing attached to it. The margin column is `data-print-hide`, the inline
+          version was absent, and the note simply vanished. No CSS rule can reveal an element
+          that was never rendered.
+
+          styles/article.css reveals this in print with `display: block !important`, which
+          beats both the lg media query and the user agent's `[hidden]` rule. */}
+      <span id={`${noteId}-inline`} className="sidenote-inline" hidden={!open}>
+        <span className="meta-label text-amber-400/80 block mb-1">Note</span>
+        <span className="font-sans text-xs text-stone-200 leading-relaxed block">{note}</span>
+      </span>
     </span>
   )
 }

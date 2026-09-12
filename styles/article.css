@@ -343,6 +343,13 @@ main#content[data-width='wide'] [data-article]     { --measure: 64ch; }
 @media (min-width: 1024px) {
   .sidenote-inline { display: none; }
 }
+/* On paper there is no margin column -- it is `data-print-hide` -- so the inline version IS
+   the note, and it has to appear whether or not the reader expanded it. `!important` because
+   this has to beat both the lg rule above and the user agent's `[hidden] { display: none }`.
+   Without it a printed sidenote was an anchor with nothing attached. */
+@media print {
+  .sidenote-inline { display: block !important; }
+}
 
 /* The margin column.
    ABSOLUTE, spanning the whole column, rather than sitting in flow after the table of

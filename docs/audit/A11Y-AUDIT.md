@@ -163,8 +163,17 @@ That is the single largest remaining gap in Phase 10 and it needs a person, not 
 adds a large number of headings and controls; the heading order and focus order at 50 comments
 have not been measured.
 
-**The margin column.** `.margin-notes` is `aria-hidden` by design — it is a second visual
-presentation of note text already in the prose — and the audit asserts nothing focusable is
-inside it (verified in Phase 8.4). What it does not establish is whether a screen-reader user
-*reaches the note text in the prose* at a sensible point. That is the same gap as the first
-item: it needs a real screen reader.
+**The margin column — and a question this raised that is worth chasing.** `.margin-notes` is
+`aria-hidden` by design, and the audit asserts nothing focusable is inside it (Phase 8.4).
+
+While fixing print (§11.3) it became clear the inline note — the version that is NOT
+aria-hidden — used to render only when the reader expanded it, and is `display: none` at
+`lg` regardless. So at desktop widths the note text was either absent from the document or
+hidden from the accessibility tree, while the only copy on screen sat in an `aria-hidden`
+column.
+
+It is now always in the document, hidden with the `hidden` attribute. That fixes print. It
+does **not** answer whether a screen-reader user can reach a sidenote at `lg`, and reasoning
+about the tree is what this audit has already said is not good enough for this component.
+**This is the most specific version of the screen-reader gap above, and the first thing to
+test when someone sits down with NVDA or VoiceOver.**
