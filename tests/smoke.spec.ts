@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
+import fs from 'node:fs'
 import { expect, test } from '@playwright/test'
 import { allPostSlugs, firstPostSlug } from './helpers'
 // tests/smoke.spec.ts
@@ -198,6 +199,22 @@ test('first post has no critical/serious accessibility violations', async ({ pag
   const blocking = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
   expect(blocking, blocking.map((v) => `${v.id}: ${v.help} (${v.nodes.length} nodes)`).join('\n')).toEqual([])
 })
+})
+
+// The THIRD surface. 0.1 reconciled the card and the article and stopped there; the Open
+// Graph card kept its own spelling of the word count and said 17 where the article said 18,
+// on the one surface nobody sees while logged in. It is a PNG, so the number cannot be read
+// back out of it -- this asserts the QUERY instead, which is where the divergence lived.
+test('the Open Graph card counts words the same way every other surface does', () => {
+  const og = fs.readFileSync('sanity/lib/queries-article.ts', 'utf8')
+  const head = og.indexOf('export const articleOgQuery')
+  expect(head, 'articleOgQuery not found').toBeGreaterThan(-1)
+  const body = og.slice(head, og.indexOf('`)', head))
+  expect(body, 'the OG query restates the word count instead of using the shared fragment')
+    .toContain('${wordCountField}')
+  // The exact expression 0.1 diagnosed. pt::text() joins blocks with a blank line and
+  // string::split only splits on a literal space, so every block boundary is missed.
+  expect(body).not.toContain('string::split(pt::text')
 })
 
 test('reading time agrees between every card and its article', async ({ page }) => {

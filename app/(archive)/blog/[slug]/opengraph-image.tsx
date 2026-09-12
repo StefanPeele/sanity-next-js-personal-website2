@@ -3,6 +3,7 @@ import { client } from '@/sanity/lib/client'
 import { articleOgQuery } from '@/sanity/lib/queries-article'
 import { ARTICLE_TYPES, SITE, articleTypeMeta } from '@/lib/site'
 import { formatDate } from '@/lib/dates'
+import { readingTime } from '@/lib/reading'
 // app/(archive)/blog/[slug]/opengraph-image.tsx
 // Branded OG card: lane colour from ARTICLE_TYPES, reading time, series part, site name.
 // Runs on the Node runtime (the stega-enabled client is not edge-safe).
@@ -23,7 +24,10 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
   const lane = articleTypeMeta(post?.articleType) ?? ARTICLE_TYPES['concept-deep-dive']
   const accent = lane.color
   const date = formatDate(post?.publishedAt, 'long')
-  const minutes = Math.max(1, Math.round((post?.wordCount ?? 0) / 220))
+  // readingTime(), not a fourth copy of the arithmetic. The number on this card disagreed
+  // with the article for months; the query was the cause, and restating the formula here is
+  // how the next divergence would happen.
+  const minutes = readingTime(post?.wordCount ?? 0)
   const series = post?.series?.title ? `${post.seriesOrder ? `Part ${post.seriesOrder} · ` : ''}${post.series.title}` : null
   const categories = (post?.categories ?? []).filter((c): c is string => !!c).slice(0, 2)
 

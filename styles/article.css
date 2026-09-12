@@ -214,6 +214,15 @@ main#content[data-width='wide'] [data-article]     { --measure: 64ch; }
    ═══════════════════════════════════════════════════════════════ */
 
 @media print {
+  /* THE ATTRIBUTE HAS TO HIDE SOMETHING. It is on eleven elements -- both tables of
+     contents, the heading anchors, the margin notes, the progress bar, the toolbar, Ask,
+     the checkpoint, the learning blocks, the comments and the newsletter form -- and until
+     this line the only rule that mentioned it set a COLOUR. Every one of them printed.
+     reader.css even carried a comment saying "`data-print-hide` already covers it".
+     Measured on an article in print emulation: the Contents column, the margin notes and
+     the whole comment section were all VISIBLE on paper. */
+  [data-print-hide] { display: none !important; }
+
   [data-print-hide],
   nav, footer, header nav,
     [data-article], [data-article] p, [data-article] li, [data-article] h1, [data-article] h2, [data-article] h3, [data-article] h4 {

@@ -24,7 +24,7 @@ const imageFields = `
 // and string::split only splits on the literal space -- so every block boundary is
 // missed. It read 3840 where the article read 3908, which is 17 min against 18 on
 // the same post. A newline-aware variant overshoots for the mirror-image reason.
-const wordCountField = `
+export const wordCountField = `
   "wordCount": coalesce(math::sum(body[_type == "block" && defined(children)]{
     "w": length(string::split(array::join(children[].text, ""), " "))
   }.w), 0)`

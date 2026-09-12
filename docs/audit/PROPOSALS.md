@@ -1008,3 +1008,135 @@ shape the series pages already use.
 A "subscribe to get the next one" box on an archived digest that is two years old. It reads
 as a growth tactic on a page whose job is to be honest about what the thing is. The footer
 form is already on every page.
+
+---
+
+# Phase 11 — "What I'd add". Eight items, measured where measurable.
+
+Three of these are claims about output that can be checked rather than argued, so they were
+checked first: `docs/audit/measure-phase-11.mjs`, raw in `docs/audit/phase-11.json`. Two of
+them turned up real defects, both now fixed. The other five are recommendations, and two of
+those are already done.
+
+## 11.3 Print — **it was badly broken, and it is fixed**
+
+The brief says "verify the printed output is actually good". It was not.
+
+`data-print-hide` is on **eleven** elements — both tables of contents, the heading anchors,
+the margin notes, the progress bar, the toolbar, Ask, the checkpoint, the learning blocks,
+the comments and the newsletter form. **The only CSS rule that mentioned the attribute set a
+colour.** Nothing hid anything. `styles/reader.css` even carried a comment saying
+"`data-print-hide` already covers it."
+
+Measured in print emulation: the Contents column, the margin notes and the entire comment
+section — form included — all rendered on paper.
+
+Fixed with the line that was missing: `[data-print-hide] { display: none !important }`.
+Re-measured, everything named above is now hidden, the prose prints at the full page width
+in `#111` on white, and link hrefs are printed beside their links.
+
+**Two things still worth doing, neither a defect:**
+
+*Sidenotes as footnotes.* The brief asks for it. Today the margin column is hidden in print
+and the inline version is `lg:hidden`, so on paper a sidenote's text **disappears entirely** —
+the anchor remains with nothing attached. The fix is a print-only rule that reveals
+`.sidenote-inline`, which already exists and already carries the text. That is one rule, and
+it is the honest way to print a sidenote.
+
+*Sources.* The probe article has none, so this could not be checked. `SourcesList` is not
+marked `data-print-hide`, so it should print. Worth confirming against a post that has some.
+
+## 11.8 Open Graph — **the card was showing the wrong number, and it is fixed**
+
+The card itself is good: lane kicker, categories, title, excerpt, byline, date, reading time,
+over the cover image. 200, 244KB PNG, `summary_large_image`.
+
+**But it said "17 MIN READ" where the article said 18.**
+
+`articleOgQuery` carried `length(string::split(pt::text(body), " "))` — the exact expression
+Phase 0.1 diagnosed as wrong and replaced everywhere else, because `pt::text()` joins blocks
+with a blank line and `string::split` only splits on a literal space, so every block boundary
+is missed. The note on `wordCountField` in `queries.ts` predicts the symptom word for word:
+*"It read 3840 where the article read 3908, which is 17 min against 18 on the same post."*
+
+**0.1 reconciled the index card and the article and stopped there.** The social card has been
+a third, disagreeing number ever since — on the one surface nobody ever sees while logged in.
+It now uses the shared fragment and the shared `readingTime()`, and `tests/smoke.spec.ts`
+asserts the query cannot restate the count again.
+
+The brief also asks whether to generate cards from the title and status rather than the cover
+image. **No.** The card already carries the status vocabulary as a kicker, and the cover image
+is what makes it look like a publication rather than a template. Revisit only if a post ever
+ships without a cover.
+
+## 11.4 RSS — **already good; leave it alone**
+
+| | Measured |
+| --- | --- |
+| Full content or excerpt | **Full.** `content:encoded` present; ~25KB of `content_html` per item against a 501-byte summary |
+| Does it carry status | **Yes** — the feed contains the plain-text status vocabulary (3.3's `statusPlainText`) |
+| Items | 3, in both XML and JSON Feed |
+
+The one open question is **sidenotes**, and it could not be answered: no published post has
+one. When one does, check whether the note text survives into `content_html`. If it does not,
+the fix is the same idea as print — a sidenote should degrade to a parenthetical or a
+footnote, never vanish. A careful reader consuming by RSS is exactly the reader a sidenote is
+written for.
+
+## 11.1 Reading time as a cost — **already addressed, by 7.5**
+
+The brief's instinct was right and Phase 7.5 acted on it: the figure is out of the article
+header and above the Contents column, where a reader meets it as they settle in rather than
+as a price quoted before they start. 7.6 went further and made it a *remaining* count once
+they are into the piece — "9 min left · 50% read".
+
+Nothing more to do. Removing it entirely would be worse: the objection was to its **position**,
+not its existence, and a reader deciding whether to start a long piece is owed the number.
+
+## 11.2 A changelog per post — **already built, twice**
+
+3.7 built `changelog[]` with dates and descriptions, surfaced in the Contents column. 3B built
+corrections in place, with credit and a permanent addressable list at the foot. Between them
+this item is done and then some.
+
+The only thing missing is the one 8.2 sets up: **a comment labelled Correction being promoted
+into the record**, which `PHASE-8-COMMENTS.md` deliberately defers until there is one real
+correction to look at.
+
+## 11.5 Reading position across devices — **no, and the reason is the interesting part**
+
+7.6 persists position per device, in `localStorage`, keyed by slug.
+
+Syncing it needs an identity, and the site now has exactly one: a verified email address from
+Phase 8. So it is *possible* — a `readingPosition` document keyed by an email hash.
+
+**I would not build it.** It turns a local convenience into an account system: a stranger's
+reading position becomes server-side data attached to their address, which is a privacy
+liability and a GDPR subject-access question, in exchange for resuming an article on a second
+device — something a reader does rarely and can do by scrolling. The feature's value is small
+and its obligations are not.
+
+**Revisit if** a reader ever asks for it, which is the only evidence that would change the
+calculus.
+
+## 11.6 A "start here" affordance — **yes, but not yet, and here is the trigger**
+
+With three posts this is solved by the index. The brief's own framing is right that fifty is
+different.
+
+The cheapest version already exists in the schema: `isFeatured`, plus the lane sections.
+**The trigger is not a post count, it is the moment the index stops fitting on one screen at
+1440** — that is when a reader starts needing a route through rather than a list. Measured
+today: the index is one screen.
+
+When it arrives, the right shape is a short curated list with a sentence each on *why* that
+post first, which is the same "note" discipline as the digest in 9.2. A "popular" list is the
+wrong answer for a site with no analytics and no wish for any.
+
+## 11.7 Series — **agreed: not yet**
+
+The brief says "probably not yet" and that is right. The presentation is built —
+`SeriesBanner`, `/blog/series`, prev/next, part numbering — and no series exists. Week 2 of
+the home lab has no Week 1.
+
+**The trigger is writing Week 1**, not building anything. The presentation is waiting.

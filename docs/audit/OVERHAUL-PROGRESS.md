@@ -1,9 +1,10 @@
 # Blog Overhaul — Progress
 
 Last updated: 2026-09-12T01:40Z
-Current phase: **Phase 10 audited and its code findings fixed.** Phases 0-7 complete; Phase 8
-complete but for two documented gaps; 9.1 answered. Remaining: 9.2, Phase 11, and a real
-screen-reader pass. 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
+Current phase: **Every phase in the brief has been worked.** 0-7 complete and live; 8 complete
+but for two documented gaps; 9 answered and proposed; 10 audited and its code findings fixed;
+11 evaluated with two defects found and fixed. Remaining: the production deploy (blocked), a
+real screen-reader pass, and Stefan's decisions on the proposals. 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
 live on production; 7.3 and 7.4 are *render the options* items and their options are rendered,
 measured and proposed. Phases 0-6 complete. **Phase 8 (comments) is now unblocked.**
 Session count: 2
@@ -70,6 +71,8 @@ Session count: 2
 | **9.1 Does subscription work?** | `de6a46e` | **yes, against the live site's own flow** | self — **20 pass, 1 not establishable** | It works: stored in Sanity, double opt-in, unsubscribe on GET *and* POST (RFC 8058 one-click is a POST). What I cannot see from here is whether Resend DELIVERS; the steps to check that are printed by the harness |
 
 | **Phase 10 — accessibility audit** | `pending commit` | blocked — see *Blocked* | self, with the false positive recorded | `docs/audit/A11Y-AUDIT.md`. **8 findings → 1**, and the last one is content. The serious one: the reader menu did NOTHING on /blog — an 18x18 trigger at x=0 and every accessibility toggle inert — because `styles/article.css` was article-only. Split into `styles/reader.css`; 87 assertions across the themes/toolbar/controls harnesses prove the article is unchanged |
+
+| **11.3 print + 11.8 Open Graph** | `pending commit` | blocked — see *Blocked* | self, both re-measured after the fix | Two real defects. `data-print-hide` was on ELEVEN elements and hid none of them, so the Contents column, the margin notes and the whole comment form printed. And the OG card said **17 min** where the article said 18 — `articleOgQuery` still used the exact expression 0.1 diagnosed and replaced, on the one surface nobody sees while logged in |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:
@@ -261,6 +264,7 @@ been applied — Phase 1 is research only.
 | **7.1 measure** | §1.5 | **DONE — shipped in `b8a1621`.** 56.0 measured, 67.0 shipped, verified independently at 66.78 |
 | **7.3 hero** | `PROPOSALS.md` + `screenshots/phase-7/hero-*` | **Option F** — the full reading column, cropped to 21:9. The only one of seven that is both significantly larger AND lands the prose HIGHER (26px at 1440, 72px at 768, 34px at 390). Every full-bleed option puts the opening paragraph below the fold; D by 232px. Needs the image hotspot wired up first |
 | **Phase 8, all of it** | `PHASE-8-COMMENTS.md` | **Sanity, measured not assumed.** A thread at 833 comments is 241ms and 341KB via CDN, so pagination is part of the design rather than an optimisation; the index count query degrades 237ms → 635ms for 5x the data and must be denormalised; moderation is FLAT at ~170ms whatever the archive grows to. Five labels not four. "Removed by Stefan" / "Withdrawn by the commenter". And `rateLimit` is per-instance on Vercel, so an open comment box needs a durable limiter first |
+| **Phase 11, all eight** | `PROPOSALS.md` | 11.3 and 11.8 were defects and are fixed. **11.1 and 11.2 are already done** (7.5 moved the reading time; 3.7 and 3B built the changelog). 11.4 RSS is already good — full content, carries status. **11.5 cross-device position: no** — it turns a local convenience into an account system. 11.6 and 11.7: yes, with triggers stated, neither of which is a post count |
 | **9.2-9.5 the digest** | `PROPOSALS.md` | One `digest` type, three entry kinds, and a REQUIRED note on every one — the note is the only part a reader cannot get from an RSS feed. `sentAt` is the state machine, so nothing can be marked sent that was not. Sending is a **Studio action** with the recipient count in the dialog, because it is the first irreversible action on this site. Archive: **yes**, but not for SEO — an archive is what makes subscribing a decision rather than a leap |
 | **7.4 h1** | `PROPOSALS.md` + `screenshots/phase-7/h1-*` | **Option B** — the full reading column at 48px. Saves a line on two of the three published titles and costs one on none. Decision 1's option C is now a restatement of its own container and has been removed; **Decision 1 is superseded** |
 

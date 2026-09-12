@@ -1,0 +1,37 @@
+{
+  "print": {
+    "navbar": "hidden",
+    "footer": "hidden",
+    "toolbar": "hidden",
+    "toc": "hidden",
+    "marginNotes": "hidden",
+    "comments": "hidden",
+    "newsletter": "present in flow",
+    "proseWidth": 964,
+    "proseColour": "rgb(17, 17, 17)",
+    "bodyBg": "rgb(255, 255, 255)",
+    "inlineSidenotes": 0,
+    "sidenoteAnchors": 0,
+    "sourcesHeading": false,
+    "linkHrefRule": true
+  },
+  "og": {
+    "status": 404,
+    "bytes": 32879,
+    "ogImage": "https://stefanpeele.com/blog/the-field-the-moment-and-what-it-means-for-us-networking-industry/opengraph-image-11ewb3?6bbfca73d47f0769",
+    "ogTitle": "The Field, The Moment, and What it Means for Us (Networking Industry)",
+    "twitterCard": "summary_large_image"
+  },
+  "rss": {
+    "xmlBytes": 38048,
+    "items": 3,
+    "hasContentEncoded": true,
+    "xmlItemBytes": 26415,
+    "jsonItems": 3,
+    "jsonHasContentHtml": true,
+    "jsonContentBytes": 25110,
+    "jsonSummaryBytes": 501,
+    "mentionsStatus": true,
+    "hasSidenoteText": false
+  }
+}

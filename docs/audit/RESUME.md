@@ -63,13 +63,23 @@ against a quota that is already gone.
 - **Phase 9 — answered.** 9.1 verified with evidence (20 pass, 1 not establishable from
   here); 9.2-9.5 proposed in `PROPOSALS.md`.
 
+- **Phase 11 — evaluated**, in `PROPOSALS.md`. Two of the eight were defects and are fixed:
+  print hid nothing, and the Open Graph card had been showing a different reading time from
+  the article since 0.1. Two more were already done by earlier phases.
+
+## EVERY PHASE IN THE BRIEF HAS NOW BEEN WORKED
+
 ## The single next action
 
-**Phase 11 — "What I'd add"**, the last unread section of the brief. Read it and work it.
+Three things remain, and none of them is a phase:
 
-Then the two things no harness can finish: **verify Phase 8 on production** once the deploy
-quota clears, and **drive the toolbar and the sidenotes with a real screen reader**, which
-`A11Y-AUDIT.md` names as the largest remaining gap in Phase 10.
+1. **Verify Phase 8 and everything after `a34ebc3` on production.** BLOCKED on the Vercel
+   deploy quota until roughly 2026-09-13. Nothing built after Phase 7 has ever run there.
+2. **Drive the toolbar and the sidenotes with a real screen reader.** `A11Y-AUDIT.md` names
+   this as the largest remaining gap and it needs a person, not a harness.
+3. **Stefan's decisions** on what is waiting in `PROPOSALS.md` — 2.2-2.6, 7.3, 7.4, the
+   digest, and whether to run `scripts/migrate-heading-levels.mjs`, which changes how a
+   published article looks.
 
 The one part of Phase 10 a harness cannot do: **drive the toolbar and the sidenotes with a
 real screen reader.** The audit says so plainly in its own "not covered" section. It is the
