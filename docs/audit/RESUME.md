@@ -65,38 +65,50 @@ verified.
   OUTPUT, not the source: the config can be present and still not reach the routes. Its
   negative control was run.
 
-## Production is at `1f0af58`. Nothing is blocked and nothing is undeployed.
+## Production is at `1f0af58`. Every code change is live; one docs commit is not.
 
-Every commit from this session is live, including the ones an earlier version of this section
-called "quota-blocked". They were not.
+**The one test that settles this, and the only one worth running:**
 
-| Commit | What | Verified on production |
+```
+git merge-base --is-ancestor <sha> <the sha /api/health reports>
+```
+
+If it is an ancestor, its content is live — whether or not it has a deployment record of its
+own. Git history is cumulative and Vercel skips superseded commits, so "no deployment record"
+and "not deployed" are different statements.
+
+| Commit | | |
 | --- | --- | --- |
-| `dd56ff7` | the revalidate floor — Sanity data no longer cached for ever | comment created in Sanity appeared in **17s**; deleted in Sanity disappeared in **308s** |
-| `368342d` | the service worker's static cache capped at 150 | live `/sw.js` carries `MAX_STATIC` and `trimStatic`, 6893 bytes |
-| `4c38d0e` | `tests/caching.spec.ts` + the production sweep | all 17 public routes and 5 feeds healthy |
-| `74a642d` · `ccb6237` · `c0bdf23` · `1f0af58` | docs, the harness fix, the test spec | no production surface |
+| `dd56ff7` the revalidate floor | ancestor of live | comment created in Sanity appeared in **17s**, deleted disappeared in **308s** |
+| `368342d` the service-worker cap | ancestor of live | live `/sw.js` carries `MAX_STATIC`, 6893 bytes |
+| `4c38d0e` the caching guard + sweep | ancestor of live | 17 routes and 5 feeds healthy |
+| `74a642d` `ccb6237` `c0bdf23` `1f0af58` | ancestor of live | docs, harness, test spec |
+| `b4ff8f3` this correction | **NOT live** | docs only — no production surface |
 
-A third, independent confirmation that `dd56ff7` works — response headers on the live site
-rather than the build manifest:
+A third, independent confirmation that `dd56ff7` works — live response headers rather than the
+build manifest:
 
 ```
 /blog           X-Nextjs-Prerender: 1   X-Nextjs-Stale-Time: 300   X-Vercel-Cache: PRERENDER
 /blog/feed.xml  Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400
 ```
 
-**THE MISTAKE THIS SECTION USED TO MAKE, because it is a subtle one and it nearly cost the
-next session a day.** It said the Vercel deploy quota was exhausted and named two commits as
-blocked. The evidence looked airtight and was gathered the right way — artifact #30's lesson
-is that the commit-status endpoint's *"Deployment rate limited — retry in 24 hours"* proves
-nothing alone, so two agreeing sources were demanded, and `gh api .../deployments` did show no
-record for `ccb6237` or `c0bdf23`.
+**`b4ff8f3` is genuinely deploy-blocked**: it is HEAD, not a superseded intermediate, its own
+commit status is `failure — "Deployment rate limited — retry in 24 hours"`, and no deployment
+record exists for it. It is documentation; nothing a reader touches is waiting on it.
 
-**Both sources were read for the wrong shas.** Vercel skips superseded intermediate commits
-and builds the tip. A superseded commit legitimately has no deployment record and nothing is
-wrong. Git history is cumulative, so deploying the tip deployed both of them — their content
-was live the entire time it was being described as blocked. **The sha that decides is always
-`HEAD`.** See artifact #37.
+**THE MISTAKE THIS SECTION MADE TWICE, in opposite directions, inside twenty minutes.** First
+it declared the quota exhausted and named `ccb6237`/`c0bdf23` as blocked. The method was
+artifact #30's — demand two agreeing sources, never trust the commit-status message alone —
+and both sources did agree. **Both were read for SUPERSEDED shas, which correctly have no
+record**, while the tip had deployed successfully four seconds after the push. Then it was
+corrected to "nothing is blocked", and three minutes later that became false too, because the
+quota really was reached at 20:04:56Z — `1f0af58` deployed at 20:01:50Z.
+
+Both readings were true when taken and wrong when written down. The lesson is not "check two
+sources"; that was already being done. It is: **run the ancestry test against what
+`/api/health` reports, and re-measure after the last push rather than restating an earlier
+observation.** See artifact #37.
 
 ## THE SANITY WEBHOOK DOES NOT REACH PRODUCTION. It is Stefan's to fix, and it is the one open defect.
 
