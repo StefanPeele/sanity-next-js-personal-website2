@@ -17,7 +17,13 @@ export const DEFAULT_ARTICLE_UI = {
     cardsLabel: '{n} key terms',
     reviewBadges: { seekingReview: 'Seeking review', peerReviewed: 'Peer reviewed' },
   },
-  toc: { title: 'Contents', mobileTitle: 'In this article', minutesSuffix: 'min' },
+  // 7.5 moved the reading time here and 7.6 makes it live. Three phrasings of one fact:
+  // the whole length before the reader starts, then what is left and how far in they are.
+  // {n} is substituted; leave it in place or the number disappears.
+  toc: {
+    title: 'Contents', mobileTitle: 'In this article', minutesSuffix: 'min',
+    minutesLeftLabel: '{n} min left', progressLabel: '{n}% read',
+  },
   readerMenu: {
     buttonLabel: 'Reading options',
     closeLabel: 'Close',
@@ -33,7 +39,11 @@ export const DEFAULT_ARTICLE_UI = {
     densityLabels: { comfortable: 'Comfortable', compact: 'Compact' },
     shareLabels: { copyLink: 'Copy link', copyMarkdown: 'Copy as Markdown', print: 'Print', studyDeck: 'Download study deck', share: 'Share', copied: 'Copied' },
     listenLabels: { play: 'Play', pause: 'Pause', resume: 'Resume', stop: 'Stop', unsupported: 'Read-aloud is not available in this browser.', voice: 'Voice', speed: 'Speed', systemVoice: 'System default' },
-    bookmarkLabels: { save: 'Save my place', saved: 'Place saved', resume: 'Go to saved place', clear: 'Clear' },
+    bookmarkLabels: {
+      save: 'Save my place', saved: 'Place saved', resume: 'Go to saved place', clear: 'Clear',
+      // 7.6. The bar is chrome a reader can refuse; resuming is help a reader has to ask for.
+      progressBar: 'Show the progress bar', resumeScroll: 'Reopen where I stopped',
+    },
   },
   blocks: {
     tldrHeading: 'TL;DR',

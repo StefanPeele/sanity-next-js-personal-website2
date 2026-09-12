@@ -22,6 +22,43 @@ type Props = {
    * rule 3.3 applies to status.
    */
   sources?: string[]
+  /**
+   * 7.5. The reading time, moved out of the article header. The brief's reasoning is that
+   * a figure in the header is a COST advertised before the reader has started, while the
+   * same figure above the Contents is orientation: it is read at the moment someone is
+   * deciding how to approach the piece, beside the section-by-section minutes that break
+   * the same number down. Zero or absent renders nothing.
+   *
+   * The label is `copy.header.readTimeLabel` -- the same Studio string the header used --
+   * rather than a new field, so the number cannot be phrased two ways on one page.
+   */
+  readTime?: number
+}
+
+/**
+ * The reading readout. Before the reader has started it is the length of the piece (7.5);
+ * once they are into it, it becomes what is LEFT and how far in they are (7.6).
+ *
+ * This is where 7.6's percentage lives. It is not beside the progress bar because a number
+ * legible next to a 4px bar needs its own floating element, and the article gains no
+ * floating widgets. Here it sits above the Contents column, beside the per-section minutes
+ * that break the same number down.
+ */
+function ReadTime({ copy, readTime, className }: { copy: ArticleUiCopy; readTime?: number; className: string }) {
+  const { progress, minutesLeft } = useArticle()
+  if (!readTime) return null
+  const pct = Math.round(progress * 100)
+  // 3%, not 0: a browser restoring a scroll position, or a click on a heading anchor, can
+  // put a reader a little way in without them having read anything, and flipping the label
+  // to "17 min left" at 1% would be a worse lie than the one it replaces.
+  const started = pct >= 3
+  const text = started
+    ? `${copy.toc.minutesLeftLabel.replace('{n}', String(minutesLeft))} · ${copy.toc.progressLabel.replace('{n}', String(pct))}`
+    : copy.header.readTimeLabel.replace('{n}', String(readTime))
+  // aria-live off on purpose: this changes on every scroll frame, and a live region would
+  // read the percentage aloud continuously. A screen-reader user has the progressbar role
+  // at the top of the page for the same fact, on demand.
+  return <p className={className}>{text}</p>
 }
 
 function SourcesBlock({ copy, sources, className }: { copy: ArticleUiCopy; sources: string[]; className: string }) {
@@ -79,7 +116,7 @@ function TocList({ copy }: { copy: ArticleUiCopy }) {
   )
 }
 
-export function ArticleToc({ copy, variant, reviewedBy, sources = [] }: Props) {
+export function ArticleToc({ copy, variant, reviewedBy, sources = [], readTime }: Props) {
   const { headings } = useArticle()
 
   if (variant === 'sidebar') {
@@ -96,6 +133,7 @@ export function ArticleToc({ copy, variant, reviewedBy, sources = [] }: Props) {
           {/* The "Reading options" chip used to sit here and no longer does -- Phase 5 moved
               it to the fixed rail. flex-wrap is kept because the heading still shares the row
               when a future control lands in it. */}
+          <ReadTime copy={copy} readTime={readTime} className="mb-2 shrink-0 font-sans text-sm text-stone-400" />
           <div className="flex flex-wrap items-center justify-between gap-2 mb-4 shrink-0">
             <h2 className="section-label min-w-0">{copy.toc.title}</h2>
           </div>
@@ -130,10 +168,14 @@ export function ArticleToc({ copy, variant, reviewedBy, sources = [] }: Props) {
   // headings rendered NO mobile Contents at all, so the 3.6 sources block was desktop-only
   // for it -- the exact breakpoint asymmetry the verifier caught once already with
   // reviewedBy.
-  if (!headings.length && !sources.length && !reviewedBy) return null
+  // readTime counts too. Without it a post with no headings and no sources would drop the
+  // figure entirely on mobile -- the breakpoint asymmetry the verifier has already caught
+  // twice on this component.
+  if (!headings.length && !sources.length && !reviewedBy && !readTime) return null
 
   return (
     <div className="lg:hidden mb-8" data-print-hide>
+      <ReadTime copy={copy} readTime={readTime} className="mb-2 font-sans text-sm text-stone-400" />
       {(
         <details className="rounded-xl border border-edge bg-surface-veil px-4 py-3" open={headings.length > 0 && headings.length <= 8} data-toc="mobile">
           <summary className={`cursor-pointer section-label list-none flex items-center justify-between ${FOCUS} rounded-sm`}>

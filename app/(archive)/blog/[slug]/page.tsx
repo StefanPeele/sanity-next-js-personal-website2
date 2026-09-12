@@ -186,7 +186,6 @@ export default async function BlogPostPage({ params }: Props) {
         <BlogArticleHeader
           title={title}
           publishDate={publishDate}
-          readTime={readTime}
           categories={categories}
           articleType={post.articleType}
           mainImageUrl={post.mainImageUrl}
@@ -209,7 +208,7 @@ export default async function BlogPostPage({ params }: Props) {
             and the prose stop sharing a left edge. */}
         <div className="relative max-w-[80rem] mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12 mt-12 md:mt-16">
           <main id="content" className="mx-auto w-full" data-width="standard">
-            <ArticleToc copy={ui} variant="mobile" reviewedBy={reviewedBy} sources={sourceTitles} />
+            <ArticleToc copy={ui} variant="mobile" reviewedBy={reviewedBy} sources={sourceTitles} readTime={readTime} />
 
             {post.series && <SeriesBanner series={post.series} currentSlug={slug} seriesOrder={post.seriesOrder} labels={ui.seriesBanner} />}
 
@@ -291,7 +290,7 @@ export default async function BlogPostPage({ params }: Props) {
               the same 220px column, the TOC pinned at the top and the notes flowing with
               their anchors beneath it. */}
           <div className="relative hidden lg:block">
-            <ArticleToc copy={ui} variant="sidebar" reviewedBy={reviewedBy} sources={sourceTitles} />
+            <ArticleToc copy={ui} variant="sidebar" reviewedBy={reviewedBy} sources={sourceTitles} readTime={readTime} />
             {/* 6.5's model-backed action renders only where it can work. The flag is read
                 on the SERVER: ANTHROPIC_API_KEY is not a public env var, so a client
                 component cannot see it, and a button that always failed would be worse than

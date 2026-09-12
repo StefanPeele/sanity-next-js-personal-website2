@@ -29,7 +29,10 @@ export default defineType({
       str('cardsLabel', 'Key terms count ({n})'),
       obj('reviewBadges', 'Review badges', [str('seekingReview', 'Seeking review'), str('peerReviewed', 'Peer reviewed')]),
     ], { group: 'header' }),
-    obj('toc', 'Contents', [str('title', 'Sidebar title'), str('mobileTitle', 'Mobile title'), str('minutesSuffix', 'Minutes suffix')], { group: 'header' }),
+    obj('toc', 'Contents', [
+      str('title', 'Sidebar title'), str('mobileTitle', 'Mobile title'), str('minutesSuffix', 'Minutes suffix'),
+      str('minutesLeftLabel', 'Minutes left ({n})'), str('progressLabel', 'Progress ({n})'),
+    ], { group: 'header' }),
     obj('readerMenu', 'Reading options menu', [
       str('buttonLabel', 'Button label'), str('closeLabel', 'Close button label'),
       obj('groupLabels', 'Group labels', ['theme', 'textSize', 'width', 'accessibility', 'spacing', 'density', 'share', 'listen', 'position', 'toolbar'].map((n) => str(n))),
@@ -42,7 +45,7 @@ export default defineType({
       obj('densityLabels', 'Index density', ['comfortable', 'compact'].map((n) => str(n))),
       obj('shareLabels', 'Share and export', ['copyLink', 'copyMarkdown', 'print', 'studyDeck', 'share', 'copied'].map((n) => str(n))),
       obj('listenLabels', 'Read aloud', ['play', 'pause', 'resume', 'stop', 'unsupported', 'voice', 'speed', 'systemVoice'].map((n) => str(n))),
-      obj('bookmarkLabels', 'Your place', ['save', 'saved', 'resume', 'clear'].map((n) => str(n))),
+      obj('bookmarkLabels', 'Your place', ['save', 'saved', 'resume', 'clear', 'progressBar', 'resumeScroll'].map((n) => str(n))),
     ], { group: 'menu' }),
     obj('blocks', 'Block headings and labels', [
       str('tldrHeading', 'TL;DR heading'), str('tldrSub', 'TL;DR subheading'),

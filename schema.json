@@ -3415,6 +3415,20 @@
                 "type": "string"
               },
               "optional": true
+            },
+            "minutesLeftLabel": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
+            "progressLabel": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
             }
           }
         },
@@ -3913,6 +3927,20 @@
                     "optional": true
                   },
                   "clear": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    },
+                    "optional": true
+                  },
+                  "progressBar": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    },
+                    "optional": true
+                  },
+                  "resumeScroll": {
                     "type": "objectAttribute",
                     "value": {
                       "type": "string"

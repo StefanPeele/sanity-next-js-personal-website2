@@ -9,6 +9,7 @@ import {
   ARTICLE_THEMES, DEFAULT_FONT_SIZE_INDEX, FONT_SIZES, READING_SCALES, READING_SCALE_KEYS,
   clampScale, isArticleTheme, isArticleWidth, isLightTheme, type ArticleTheme, type ArticleWidth,
 } from '@/lib/articleThemeStyles'
+import { readPosition, writePosition } from '@/lib/articleStorage'
 // components/article/ArticleProvider.tsx
 // Single source of truth for everything the article navigators share:
 //   - the heading list (collected ONCE from [data-article], ids already assigned server-side)
@@ -45,6 +46,19 @@ export interface ArticleSettings {
   muteColour: boolean
   /** 5.1's index-only control: how tightly the card grid packs. */
   density: 'comfortable' | 'compact'
+  /**
+   * 7.6. The progress bar's own off switch. The standing rule is that anything occupying
+   * persistent screen space carries one -- chrome accumulates, and a reader who finds a
+   * live bar at the top of the viewport distracting currently has no way to stop it.
+   * Defaults ON: it is information, and the brief asks for MORE of it, not less.
+   */
+  progressBar: boolean
+  /**
+   * 7.6. Resume where you stopped. Off by default, because silently moving a reader down a
+   * page they just opened is the kind of help that reads as a bug the first time it
+   * happens. A reader who wants it turns it on once.
+   */
+  resumeScroll: boolean
 }
 
 const DEFAULT_SETTINGS: ArticleSettings = {
@@ -67,6 +81,8 @@ const DEFAULT_SETTINGS: ArticleSettings = {
   bigFocus: false,
   muteColour: false,
   density: 'comfortable',
+  progressBar: true,
+  resumeScroll: false,
 }
 
 const STORAGE = {
@@ -85,6 +101,8 @@ const STORAGE = {
   bigFocus: 'sp_big_focus',
   muteColour: 'sp_mute_colour',
   density: 'sp_density',
+  progressBar: 'sp_progress_bar',
+  resumeScroll: 'sp_resume_scroll',
 } as const
 
 interface ArticleContextValue {
@@ -145,6 +163,11 @@ function readStoredSettings(fallbackTheme?: string | null): ArticleSettings {
       bigFocus: localStorage.getItem(STORAGE.bigFocus) === 'true',
       muteColour: localStorage.getItem(STORAGE.muteColour) === 'true',
       density: localStorage.getItem(STORAGE.density) === 'compact' ? 'compact' : 'comfortable',
+      // `!== 'false'`, not `=== 'true'`: this one defaults ON, so an absent key must read as
+      // true. Spelling it the other way would silently turn the bar off for every reader who
+      // has never opened the menu -- the same shape as the font-size bug above.
+      progressBar: localStorage.getItem(STORAGE.progressBar) !== 'false',
+      resumeScroll: localStorage.getItem(STORAGE.resumeScroll) === 'true',
       dyslexia: localStorage.getItem(STORAGE.dyslexia) === 'true',
       highContrast: localStorage.getItem(STORAGE.highContrast) === 'true',
       reducedMotion: localStorage.getItem(STORAGE.reducedMotion) === 'true',
@@ -321,6 +344,56 @@ export function ArticleProvider({
     }
   }, [headings])
 
+  // ── 7.6. Remember where the reader stopped, and offer it back ──
+  //
+  // The store is lib/articleStorage.ts, beside the manual bookmark, and NOT a second
+  // per-slug map invented here. This project has removed four separate copies of one table
+  // already; a fifth would have been written in this file.
+  useEffect(() => {
+    if (!hydrated || !slug) return
+    let timer = 0
+    const save = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      if (max <= 0) return
+      writePosition(slug, Math.min(1, Math.max(0, window.scrollY / max)))
+    }
+    const onScroll = () => {
+      window.clearTimeout(timer)
+      timer = window.setTimeout(save, 400)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('pagehide', save)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('pagehide', save)
+      window.clearTimeout(timer)
+      save()
+    }
+  }, [hydrated, slug])
+
+  // The restore. Deliberately narrow: only when the reader asked for it, only when they are
+  // still at the top -- so it cannot fight a back-button restoration or a fragment link --
+  // and only once per mount. It waits for fonts and images to settle, the same 800-900ms
+  // the heading offsets wait for and for the same reason: restoring against a pre-image
+  // layout lands in the wrong place.
+  const restoredRef = useRef('')
+  useEffect(() => {
+    if (!hydrated || !slug || !settings.resumeScroll) return
+    if (restoredRef.current === slug) return
+    if (window.location.hash) return
+    if (window.scrollY > 8) return
+    const frac = readPosition(slug)
+    if (frac === null) return
+    restoredRef.current = slug
+    const t = window.setTimeout(() => {
+      if (window.scrollY > 8) return
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      if (max <= 0) return
+      window.scrollTo({ top: Math.round(frac * max), behavior: 'instant' })
+    }, 900)
+    return () => window.clearTimeout(t)
+  }, [hydrated, slug, settings.resumeScroll])
+
   // ── Apply settings to the DOM + persist ─────────────────────────
   useEffect(() => {
     if (!hydrated) return
@@ -397,6 +470,8 @@ export function ArticleProvider({
       localStorage.setItem(STORAGE.bigFocus, String(settings.bigFocus))
       localStorage.setItem(STORAGE.muteColour, String(settings.muteColour))
       localStorage.setItem(STORAGE.density, settings.density)
+      localStorage.setItem(STORAGE.progressBar, String(settings.progressBar))
+      localStorage.setItem(STORAGE.resumeScroll, String(settings.resumeScroll))
     } catch { /* private mode */ }
     return () => {
       html.classList.remove('sp-reduced-motion')

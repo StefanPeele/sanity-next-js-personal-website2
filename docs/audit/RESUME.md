@@ -17,25 +17,36 @@ stale — the point of this file is that it is useful at any moment, not only at
   read-aloud voice and speed `1eb1ab0`, index toolbar and density `eb558ee`.
 - **Phase 6 — complete.** Design `0d2fa42`, margin notes `c93c366`, glossary unification
   `871d652`, Learn more `ac62224`.
-- **Phase 7 — 7.1 proposed and measured** (`a18c40a`), not shipped. 7.2–7.6 remain.
-
-Everything above is committed and pushed. `git status` is clean.
+- **Stega audit — shipped**, `d42823c`. Eight more places a draft-mode string was used as a
+  key. `docs/audit/probe-stega-fields.mjs` measures which fields Sanity actually encodes.
+- **Phase 7.1 + 7.2 — shipped together**, `b8a1621`. The measure is `ch` on `[data-article]`
+  via a REGISTERED `<length>` property; the column around it is three tiers.
+- **Phase 7.5 (reading time moves) and 7.6 (progress bar) — written, NOT yet built or
+  measured.** See below.
 
 ## The single next action
 
-**Phase 7.2 — widen everything around the prose**, and ship 7.1 with it.
+**Build, then measure 7.5 and 7.6, then run `docs/audit/render-hero-h1-options.mjs` for 7.3
+and 7.4.**
 
-They are one change: the prose column is bounded by `main#content`, so the measure cannot
-widen until the surrounding column does. §7.1's proposal is already measured and written up
-in `PROPOSALS.md` — narrow **51ch**, standard **56ch**, wide **64ch**, which hold 59.6 / 67.1
-/ 73.3 characters per line at *every* reader text size.
+7.5 and 7.6 are written and pass `npm run check`, but the running server is the build from
+7.2, so nothing about them has been seen yet. The build was held back on purpose: two
+verifier subagents were measuring the 7.2 build at the time and rebuilding underneath them
+would have invalidated their run.
 
-Two things that must be true for `ch` to work, both measured and both easy to get wrong:
-`--article-fs` is only a **variable** on `[data-article]` (the size is applied per block by a
-`text-[length:…]` utility), so the element carrying the `ch` width needs `font-size:
-var(--article-fs)` or the unit resolves against the inherited 16px and scales with nothing.
+What 7.5/7.6 changed, so it can be checked rather than re-derived:
+- the reading time is out of the article header and above the Contents column, in BOTH
+  variants, and becomes live once the reader is 3% in — "11 min left · 42% read".
+- the progress bar is 4px, not 2px, and has an off switch.
+- scroll position is written continuously per slug (`lib/articleStorage.ts`, beside the
+  manual bookmark, NOT a second map) and restored only when the reader opts in.
+- two new switches in the reader menu's "Your place" group; copy in the `articleUi`
+  singleton. `npm run typegen` has been run.
 
-`docs/audit/measure-prose-width.mjs` re-runs the whole comparison in one command.
+Then 7.3 and 7.4, which are both *render the options* items rather than ship items.
+`docs/audit/render-hero-h1-options.mjs` is written and syntax-checked but has never been
+run. Run it AFTER the build, because 7.5 removed a line from the header and every
+first-prose-y number moves with it.
 
 ## What is already true and should not be re-derived
 
@@ -73,7 +84,15 @@ Run with a server on `127.0.0.1:3000` serving the build you mean (check the CSS 
 | `docs/audit/measure-prose-width.mjs` | Real CPL for every candidate width × three text sizes × three breakpoints. Prints a table and writes `prose-width.json` |
 | `docs/audit/measure-sidenotes-margin.mjs` | 30: margin placement, the three 6.3 edge cases, the 6.5 window's focus trap, both 6.4 mobile options. **Not** `measure-sidenotes.mjs`, which is Phase 1.5 research on other sites |
 
-Suite: `npx playwright test` — **114 passing** across both projects.
+Suite: `npx playwright test` — **118 passing** across both projects (114 + 4 facet tests
+added with the stega audit).
+
+Two harnesses added this session:
+
+| `docs/audit/probe-stega-fields.mjs` | Which fields Sanity ACTUALLY encodes in draft mode, per query, measured rather than inferred from `filterDefault`. `--paths`, `--portable-text` |
+| `docs/audit/measure-article-layout.mjs` | 7.2 as shipped: CPL at 3 widths x 3 text sizes, the three tiers, overflow, collision, and that every unspanned prose child is on the measure |
+| `docs/audit/probe-ch-inherit.mjs` | That a registered `<length>` computes `ch` at its declaring element, with a negative control |
+| `docs/audit/render-hero-h1-options.mjs` | 7.3 and 7.4's options, synthesised in the page, with the fold measured for each |
 
 ## Traps this session added to the list
 
@@ -109,6 +128,18 @@ Suite: `npx playwright test` — **114 passing** across both projects.
 - **A Sanity string used to build a MATCHER must be stega-cleaned**, not just one used as a
   lookup key. The glossary built a regex from an encoded term and matched nothing in every
   draft preview since it shipped.
+- **`new Set` does not de-duplicate a CMS value across documents in draft mode.** The payload
+  encodes each string's OWN source path, so two posts that both say "Networking" are two
+  different strings. Three facet rows on this site were simultaneously duplicated and inert.
+  `facetKeys()` in `lib/stega.ts` is the one spelling.
+- **An `@property` `initial-value` must be COMPUTATIONALLY INDEPENDENT.** `36rem` is not —
+  rem depends on the root font size — so the whole rule is invalid and dropped in silence.
+  The symptom was every heading resolving a `ch` measure against its own font size while the
+  paragraphs were perfect. Use px.
+- **A width TRANSITION makes an unsettled measurement look flat.** Read too soon after
+  changing the width setting and every text size returns the previous column — which looks
+  exactly like a `ch` measure holding perfectly. This one fails towards a FALSE PASS, which
+  is the rarer and more dangerous direction. Settle ~400ms.
 
 ## Standing instructions from Stefan
 

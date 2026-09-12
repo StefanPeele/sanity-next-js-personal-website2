@@ -27,7 +27,6 @@ interface BlogArticleHeaderProps {
    */
   updatedDate?: string | null
   revisionFlag?: RevisionFlag | null
-  readTime: number
   categories: string[]
   articleType?: string | null
   mainImageUrl?: string | null
@@ -45,7 +44,6 @@ export function BlogArticleHeader({
   publishDate,
   updatedDate,
   revisionFlag,
-  readTime,
   categories,
   articleType,
   mainImageUrl,
@@ -75,7 +73,9 @@ export function BlogArticleHeader({
     // The badge row above carries the strongest REVIEW claim; the revision is a different
     // axis and belongs here, next to the date it is about.
     ...(updatedDate && revisionFlag ? [labels.revisedLabels[revisionFlag].replace('{date}', updatedDate)] : []),
-    n(labels.readTimeLabel, readTime),
+    // 7.5: the reading time is NOT here any more. It sits above the Contents column, so a
+    // reader meets it as they settle in rather than as a cost advertised before they start.
+    // See ArticleToc.
     ...(sourceCount > 0 ? [n(labels.sourcesLabel, sourceCount)] : []),
     ...(conceptCardCount > 0 ? [n(labels.cardsLabel, conceptCardCount)] : []),
   ]

@@ -35,6 +35,14 @@ const key = () => `fx${(k++).toString(36)}`
 const span = (text, marks = []) => ({ _type: 'span', _key: key(), text, marks })
 const block = (style, children, markDefs = []) => ({ _type: 'block', _key: key(), style, markDefs, children })
 const para = (text) => block('normal', [span(text)])
+// Lists. Added after an independent verifier reported the 7.2 measure claim UNVERIFIABLE
+// for lists: the document that exists to carry EVERY block type carried no body <ul> or
+// <ol> at all, and the only list elements on the page were the table of contents, the
+// sources and the corrections -- chrome, not prose. A fixture with a hole in it is worse
+// than no fixture, because the hole is invisible until something depends on it.
+const listItem = (text, kind) => ({ ...block('normal', [span(text)]), listItem: kind, level: 1 })
+const bullets = (...items) => items.map((t) => listItem(t, 'bullet'))
+const numbers = (...items) => items.map((t) => listItem(t, 'number'))
 
 // ── Fixture A — the kitchen sink ────────────────────────────────────────────
 const sidenoteKey = 'sn-latency'
@@ -117,6 +125,20 @@ const bodyA = [
   para('The Studio offers H1 to H6; the pipeline handled three of them.'),
 
   block('blockquote', [span('A blockquote. Also never rendered for a published post. It should read as a quotation without a left border, in stone-200 rather than stone-400.')]),
+
+  block('h2', [span('Lists, which this fixture did not have')]),
+  para('Both list styles, each long enough that an item wraps, so the measure can be checked on a list and not only on a paragraph.'),
+  ...bullets(
+    'A bulleted item short enough to sit on one line.',
+    'A second item, written long enough that it has to wrap onto a second line at every breakpoint, because a list that never wraps cannot show whether it is on the prose measure or on some wider column that happens to look similar at a glance.',
+    'A third, for rhythm.',
+  ),
+  para('And the numbered variant, which uses a different renderer.'),
+  ...numbers(
+    'Step one.',
+    'Step two, again long enough to wrap: the numbered list is a separate component from the bulleted one and the two have drifted apart before.',
+    'Step three.',
+  ),
 
   block('h2', [span('A figure, a code block and a section break')]),
 

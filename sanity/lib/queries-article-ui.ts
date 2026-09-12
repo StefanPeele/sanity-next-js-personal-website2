@@ -6,7 +6,7 @@ const v = `_key, key, label, short, description, banner, color, dots`
 export const articleUiQuery = defineQuery(`
   *[_type == "articleUi"][0]{
     header{ backLabel, readTimeLabel, sourcesLabel, revisedLabels{ corrected, clarified, updated }, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },
-    toc{ title, mobileTitle, minutesSuffix },
+    toc{ title, mobileTitle, minutesSuffix, minutesLeftLabel, progressLabel },
     readerMenu{
       buttonLabel, closeLabel,
       groupLabels{ theme, textSize, width, accessibility, spacing, density, share, listen, position, toolbar },
@@ -19,7 +19,7 @@ export const articleUiQuery = defineQuery(`
       densityLabels{ comfortable, compact },
       shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },
       listenLabels{ play, pause, resume, stop, unsupported, voice, speed, systemVoice },
-      bookmarkLabels{ save, saved, resume, clear }
+      bookmarkLabels{ save, saved, resume, clear, progressBar, resumeScroll }
     },
     blocks{
       tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,

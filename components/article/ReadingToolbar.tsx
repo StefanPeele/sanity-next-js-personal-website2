@@ -445,6 +445,11 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article' }: Read
           </Group>
 
           <Group label={L.groupLabels.position}>
+            {/* 7.6. Both switches live in "Your place" rather than in "This toolbar": the
+                bar and the resume are about where the reader is in the piece, not about the
+                rail. Progress bar defaults ON, resume defaults OFF -- see ArticleProvider. */}
+            <Switch label={L.bookmarkLabels.progressBar} checked={settings.progressBar} onChange={() => setSetting('progressBar', !settings.progressBar)} />
+            <Switch label={L.bookmarkLabels.resumeScroll} checked={settings.resumeScroll} onChange={() => setSetting('resumeScroll', !settings.resumeScroll)} />
             <Row label={saved ? L.bookmarkLabels.saved : L.bookmarkLabels.save} onClick={savePlace} done={saved} />
             {hasBookmark && <Row label={L.bookmarkLabels.resume} onClick={goToPlace} />}
             {hasBookmark && <Row label={L.bookmarkLabels.clear} onClick={clearPlace} />}

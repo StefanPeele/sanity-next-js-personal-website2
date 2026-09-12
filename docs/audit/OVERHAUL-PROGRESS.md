@@ -56,6 +56,8 @@ Session count: 1
 
 | **Stega audit — every fetch, measured** | `d42823c` | pending — needs a build | pending verifier | The glossary regex was not the last. `probe-stega-fields.mjs` measures which fields Sanity actually encodes rather than inferring it from `filterDefault`. **Eight** more sites, two shapes: the known LOOKUP shape, and a new FACET shape where `new Set` fails to dedupe because each document's copy of a value carries its own payload. Worst case: `/resume` lost its **entire skills section** in preview |
 
+| **7.1 + 7.2 The article stops being a 576px strip** | `b8a1621` | pending deploy | **verifier — PASS on 5 of 6 sub-claims, 1 UNVERIFIABLE.** Measured 59.5 / 66.78 / 73.0 CPL against my 59.6 / 67.0 / 73.2, by its own method; independently re-measured PRODUCTION at **57.0 exactly**, pixel-fixed across all three width settings, which confirms the premise the brief's amendment rested on | Three tiers: prose 671, wide 832, full 964 at 1440. Every heading h2-h6 measured at exactly 250.39-921.61px, identical to the reference paragraph |
+
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:
 `measure-reference-site.mjs`, `measure-metadata.mjs`, `measure-sidenotes.mjs`, plus
@@ -361,6 +363,21 @@ enough is systematically early**, which is worth knowing for how future briefs a
 | 4.6 delays | 350ms in, 180ms out | 350 is long enough that a pointer crossing the grid opens nothing (measured: 0 panels at 150ms, still 0 after leaving early) and short enough to feel deliberate | `OPEN_DELAY` / `CLOSE_DELAY` |
 | 3B numbering | Oldest first, and stable | A number that moves when a new correction is added breaks any link a reader has already shared | `numberCorrections()` |
 | 3.7 is `Revised` the same signal | **Yes.** Derived from the changelog and **removed from the Studio options list** | Two independently settable sources for one fact will disagree. A post could claim it was revised while showing no record of what changed. Cost: a post with a hand-set `revised` and no changelog loses the badge — correctly, because there is no evidence for it | `effectiveReviewStatus()`; re-add the enum value to overrule |
+
+## What verifier run 4 found outside its claim (7.1 + 7.2, 2026-09-11)
+
+- **The fixture had no lists.** The document whose whole job is to carry every block type
+  carried no body `<ul>` or `<ol>` at all, so the measure claim was **UNVERIFIABLE for
+  lists** — the only list elements on the page were the table of contents, the sources and
+  the corrections, which are chrome. A fixture with a hole in it is worse than no fixture,
+  because the hole is invisible until something depends on it. Both list styles are now in
+  `scripts/seed-fixture-posts.mjs`, each with an item long enough to wrap.
+- **A new measurement trap: a width TRANSITION makes an unsettled read look flat.** The
+  verifier had to wait 300ms after changing the width setting before the numbers meant
+  anything. Reading too early returns the previous column for every size, which looks
+  exactly like the `ch` measure working perfectly. My own harness waits 420ms; the trap is
+  that the failure mode here is a FALSE PASS, not a false failure, which is the rarer and
+  more dangerous direction.
 
 ## Premises that turned out wrong
 
