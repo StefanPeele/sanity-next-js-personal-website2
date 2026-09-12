@@ -284,6 +284,29 @@ The realistic bad day is a few hundred comments from a handful of addresses over
 
 ---
 
+## NOT BUILT, and it is part of 8.5 rather than an extra
+
+**A commenter cannot withdraw their own comment.** The status exists, the wording exists and
+the rendering is verified — but the only way to reach `withdrawn` today is for Stefan to set
+it in the Studio, which makes "Withdrawn by the commenter" a thing only the site author can
+say on the commenter's behalf. That is the opposite of the distinction 8.5 is asking for.
+
+It is not built because the obvious mechanisms are all worse than waiting:
+
+- **A link in the confirmation email** only reaches a first-time commenter. Everyone trusted
+  posts without an email, so the people most likely to want it are the people who would
+  never get it.
+- **A second, unspent `manageToken`** means every comment carries a live credential for
+  ever, in an inbox, that can alter the site. The confirm token is spent on use precisely so
+  that cannot happen.
+- **Remembering the commenter's own ids in `localStorage`** works and is what most systems
+  do, but it is per-device and silently fails for the person who wrote from their phone and
+  wants it gone from their laptop.
+
+The least-bad version is probably the third plus a "withdraw by email" fallback, and it
+wants a decision rather than a guess. Until then this is a gap, stated here rather than
+discovered later.
+
 ## What I would build first, and what I would not build at all
 
 **First, in one sitting:** the `comment` schema, the server action, the confirm route, the
