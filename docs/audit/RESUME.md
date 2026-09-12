@@ -63,7 +63,26 @@ verified.
   OUTPUT, not the source: the config can be present and still not reach the routes. Its
   negative control was run.
 
-## Production is at `4c38d0e`, and everything in the brief is deployed
+## Production is at `74a642d`. Every reader-facing change is live and verified.
+
+Two commits are pushed and NOT deployed — `ccb6237` and `c0bdf23` — because the Vercel deploy
+quota is exhausted ("retry in 24 hours"). **Neither touches a production surface:** `ccb6237`
+is the harness and the test spec, `c0bdf23` is this file. Everything that changes what a
+reader gets is live:
+
+| Commit | What | Verified on production |
+| --- | --- | --- |
+| `dd56ff7` | the revalidate floor — Sanity data no longer cached for ever | comment created in Sanity appeared in **17s**; deleted in Sanity disappeared in **308s** |
+| `368342d` | the service worker's static cache capped at 150 | live `/sw.js` carries `MAX_STATIC` and `trimStatic`, 6893 bytes |
+| `4c38d0e` | `tests/caching.spec.ts` + the sweep | all 17 public routes and 5 feeds healthy |
+| `74a642d` | RESUME and CLAUDE.md corrections | docs only |
+
+**How this was established, because the same evidence was read wrongly once before.** The
+commit-status endpoint says *"Deployment rate limited — retry in 24 hours"* — and that alone
+proves nothing, which is the mistake logged as artifact #30. What makes it true this time is
+that `gh api .../deployments` shows **no record for either commit in any environment**, while
+it does show `74a642d` as `success`. **Two independent sources agreeing is the bar.** When
+they disagreed, the deployments record was the correct one.
 
 `gh api .../deployments` plus its `/statuses` is the authoritative record — **not**
 `gh api .../commits/<sha>/status`, which reported a rate limit that was not the deployment's
