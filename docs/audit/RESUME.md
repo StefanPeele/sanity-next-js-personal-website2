@@ -42,19 +42,18 @@ verified.
   comment, the Studio "needs attention" view and one-click block, and promoting a Correction
   into a 3B correction (deliberately deferred).
 
-## BLOCKED: production cannot be deployed until roughly 2026-09-13
+## Production is CURRENT. An earlier claim in this file that it was not was wrong.
 
-**Vercel returned "Deployment rate limited — retry in 24 hours."** The account's daily build
-quota is exhausted. `a34ebc3` (Phase 7 complete) is the last commit that reached production;
-it is live, operational and verified. Everything after it is committed and pushed to GitHub
-and **has never run in production**.
+`/api/health` reports HEAD, and `gh api .../deployments` shows an unbroken run of successful
+Production deploys. Phase 8, 9.1, Phase 10 and Phase 11 are all live and were verified there:
+**`measure-comments.mjs` runs 53/56 against `https://stefanpeele.com`**, the three failures
+being only that a locally-signed webhook is rejected by production's own secret.
 
-The health endpoint reports the LIVE commit, so a stuck deploy and a failed one look
-identical from there. `gh api repos/StefanPeele/sanity-next-js-personal-website2/commits/<sha>/status`
-is where the reason was; check that FIRST next time rather than polling for sixteen minutes.
-
-**Until it clears, batch commits and push once.** Every push burns another build attempt
-against a quota that is already gone.
+**How the wrong claim happened, because it cost an hour and nearly ended the session early.**
+`gh api .../commits/<sha>/status` returned *"Deployment rate limited — retry in 24 hours"* for
+one commit, and I generalised it to every commit after it. **The commit-status webhook is not
+the deployment record.** `gh api .../deployments` plus its `/statuses` is authoritative, and
+it disagreed — twice. Check that one.
 
 - **Phase 10 — audited**, `docs/audit/A11Y-AUDIT.md`. 8 findings, 6 fixed, 1 was this audit's
   own false positive, 1 remains and is CONTENT (the published article's seven section

@@ -124,15 +124,34 @@ export async function POST(req: NextRequest) {
       paths.add(p)
     }
 
-    if (rule.viaPostRef && body.post?._ref) {
-      const postSlug = await client.fetch<string | null>(
-        `*[_id == $id][0].slug.current`,
-        { id: body.post._ref },
-        { perspective: 'published', useCdn: false },
-      )
+    if (rule.viaPostRef) {
+      const ref = body.post?._ref
+      const postSlug = ref
+        ? await client.fetch<string | null>(
+            `*[_id == $id][0].slug.current`,
+            { id: ref },
+            { perspective: 'published', useCdn: false },
+          )
+        : null
+
       if (postSlug) {
         revalidatePath(`/blog/${postSlug}`)
         paths.add(`/blog/${postSlug}`)
+      } else {
+        // A DELETE carries no document body, so there is no post._ref to resolve -- and
+        // without this branch, deleting a comment left it on the article for ever.
+        //
+        // Proven in production: a comment created directly in Sanity appeared on the live
+        // page in 7 SECONDS, and deleting it did not remove it after 10 minutes, two page
+        // requests per 15s, and a fresh deployment. Vercel's Data Cache survives deploys, so
+        // only a revalidation clears it, and the revalidation never fired.
+        //
+        // Revalidating the dynamic route rebuilds every article rather than one. That is the
+        // right trade: there is no way to know WHICH article a deleted comment belonged to,
+        // and comment deletions are rare -- the designed removal path sets `status` instead,
+        // which does carry the body and takes the branch above.
+        revalidatePath('/blog/[slug]', 'page')
+        paths.add('/blog/[slug] (every article — the payload named no post)')
       }
     }
 

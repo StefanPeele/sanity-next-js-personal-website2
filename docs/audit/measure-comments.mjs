@@ -407,6 +407,15 @@ try {
   check(!!hook.body?.paths?.some((p) => p.includes(SLUG)),
     'and it revalidates the ARTICLE, resolved from post._ref -- a comment has no slug of its own',
     (hook.body?.paths ?? []).join(', '))
+  // A DELETE payload carries no document body. Proven in production: deleting a comment left
+  // it on the live article indefinitely, because the rule had no post._ref to resolve and
+  // revalidated nothing -- and Vercel's Data Cache survives deployments, so it did not clear
+  // on its own or on a redeploy.
+  const del = await fireWebhook({ _type: 'comment' })
+  check(!!del.body?.paths?.some((p) => p.includes('[slug]')),
+    'a comment webhook with NO post._ref still revalidates every article -- which is what a delete sends',
+    (del.body?.paths ?? []).join(', '))
+
   const noise = await fireWebhook({ _type: 'rateBucket' })
   check(Array.isArray(noise.body?.paths) && noise.body.paths.length === 0,
     'a rateBucket write revalidates NOTHING -- or every refused spam attempt revalidates the whole site',

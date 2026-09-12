@@ -331,8 +331,9 @@ enough is systematically early**, which is worth knowing for how future briefs a
 
 | Item | Blocked on what | What I tried | What would unblock it |
 | --- | --- | --- | --- |
-| **Deploying anything after `a34ebc3`** | **Vercel build rate limit — "Deployment rate limited — retry in 24 hours."** Hit 2026-09-12. `a34ebc3` (Phase 7 complete) is the last commit that reached production and it is live and verified; `cc88130` and everything after is on GitHub and NOT deployed | Polled `/api/health` for 16 minutes across two runs before checking the commit status on GitHub, which is where the reason actually was. The health endpoint reports the LIVE commit, so a stuck deploy and a failed one look identical from there — check `gh api repos/.../commits/<sha>/status` first next time | Time. It clears on its own. Until then **batch commits and push once**, because every push burns another build attempt against a quota that is already exhausted |
-| **Verifying Phase 8 on production** | The same rate limit | Everything Phase 8 does is verified locally (32/32) against a real build, a real browser, real Sanity documents and a real signed webhook | The deploy. Two things are then checkable that are not checkable locally: that `RESEND_API_KEY` delivers to a real address, and that the Sanity webhook is actually configured — a moderator's removal reaches the article ONLY through it |
+| ~~Deploying after `a34ebc3`~~ **— WITHDRAWN, it was never true** | Nothing. **Everything is deployed**; production runs HEAD | I read `gh api .../commits/<sha>/status`, saw "Deployment rate limited — retry in 24 hours", and generalised one commit's failure to all of them. `gh api .../deployments` — the authoritative record — shows an unbroken run of successful Production deploys, and `/api/health` confirms it. **The commit-status webhook is not the deployment record.** Twice in one session it said `failure` for a commit that had in fact deployed | n/a. See *Premises that turned out wrong* |
+| **Whether Resend DELIVERS** | Needing a real mailbox | Everything on this side of the line is proven: stored, tokened, sent without throwing, confirm and unsubscribe both work (20/20 in `measure-newsletter.mjs`). Delivery is between Resend and a receiving mail server, and a probe address cannot receive mail | Stefan subscribing with an address he can read. The four steps are printed by the harness |
+| **A real screen-reader pass** | Needing a person | `measure-a11y.mjs` reasons from the accessibility tree and the DOM, which `A11Y-AUDIT.md` says plainly is not the experience | Someone with NVDA or VoiceOver. Start with a sidenote at `lg` — the most specific version of the gap |
 
 | Item | Blocked on what | What I tried | What would unblock it |
 | --- | --- | --- | --- |
@@ -455,6 +456,12 @@ probe now deletes in passes (a delete-by-query has a ~1,000 ceiling, so one call
 finish and a 200 is not evidence that it did) and counts a second, independent way.
 
 ## Premises that turned out wrong
+
+| Premise | What was actually true | How I found out |
+| --- | --- | --- |
+| **"Nothing after `a34ebc3` has run in production"** — written into RESUME.md and this file, and used to mark two of the three remaining items blocked | **Everything was deployed.** Production was already serving Phase 8, 9.1, Phase 10 and Phase 11. Only the last commit had genuinely been rate-limited, and even that deployed a few minutes later | The continuation auditor checked `gh api .../deployments` and `/api/health` rather than taking the doc on trust. I had checked ONE source — the commit-status webhook — seen "Deployment rate limited", and generalised it. **The commit-status webhook is not the deployment record**, and it said `failure` for commits that had in fact deployed, twice |
+| **"Deleting a comment revalidates its article"** | It does not. A DELETE webhook carries no document body, so there was no `post._ref` to resolve and the rule revalidated nothing | Proven on PRODUCTION: a comment created directly in Sanity appeared on the live page in **7 seconds**; deleting it left it there through ten minutes of polling and a fresh deployment. **Vercel's Data Cache survives deploys**, so only a revalidation clears it. Fixed: a comment webhook naming no post now revalidates the whole `/blog/[slug]` route |
+
 
 | Premise | What was actually true | How I found out |
 | --- | --- | --- |
