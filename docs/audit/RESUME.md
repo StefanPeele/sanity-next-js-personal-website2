@@ -26,27 +26,36 @@ stale — the point of this file is that it is useful at any moment, not only at
 - **Phase 7.3 and 7.4 — options rendered, measured and proposed** (`5f15fd0`). Both are
   *render the options* items, not ship items. Recommendations are in `PROPOSALS.md`.
 
-**PHASE 7 IS COMPLETE.** Everything is pushed and deployed; production serves `5f15fd0`.
+**PHASE 7 IS COMPLETE**, pushed and deployed; production served `5f15fd0` when it was
+verified.
+
+- **Phase 8 — designed** (`629686c`, `docs/audit/PHASE-8-COMMENTS.md`) and the **first slice
+  built** (`2b9e08c`): schema, server action, confirm route, Studio desk group, redacted
+  read query, rendered thread, durable rate limiter, blocklist. 32/32 on
+  `measure-comments.mjs`. **Committed but NOT yet pushed or deployed.**
 
 ## The single next action
 
-**Phase 8 — comments.** It is the largest item in the brief and was gated on Phases 0-7
-being shipped and verified, which they now are.
+**Push, deploy, and verify Phase 8 on production** — then continue §8.
 
-Read §8 in full before touching anything. The decisions are already made there and should
-not be re-litigated: email-verified identity, no accounts, no third-party login. §1.7 of
-`EDITORIAL-RESEARCH.md` recommends **Sanity + Resend** for storage rather than self-hosting,
-because Vercel cannot host Remark42, and Reddit's `[removed]` / `[deleted]` distinction for
-the moderation wording.
+Nothing about the comment system has been seen anywhere but locally. Two things must be
+true in production before it can be called shipped, and neither is checkable from here:
 
-Two things already in the repo that 8 should build on rather than around:
-- the subscribe flow (`app/actions/subscribe.ts`, `app/api/subscribe/*`) is already an
-  email-verification round trip with a confirm link — the same shape 8.1 asks for.
-- `sanity/lib/writeClient.ts` and `SANITY_API_WRITE_TOKEN` already work; the server actions
-  pattern (zod + honeypot + `rateLimit`, returning `{ status, message }`) is established in
-  `app/actions/booking.ts`.
+1. `RESEND_API_KEY` must be able to send to a real address. Locally every probe used an
+   `@example.invalid` address and the email path was exercised but never delivered.
+2. **The Sanity webhook must be firing.** A moderator's removal reaches the article ONLY
+   through `/api/draft-mode/enable/revalidate`, and the comment rule added to it has been
+   tested locally with a hand-signed request. If that webhook is not configured in the
+   Sanity dashboard, removing a comment will appear to do nothing.
 
-**8.8 is MOVED** — read that item before planning, it is not a comments task.
+Then the rest of §8, in the order PHASE-8-COMMENTS.md sets out: labels and their filter row
+are done; next is **sidenote anchoring** (8.4), which reuses Phase 6's expansion window
+rather than adding a floating element. Deliberately NOT next, and the document says why:
+promoting a Correction comment into a 3B correction, which is the most interesting thing
+here and the most likely to be designed wrong before there is a single real correction to
+look at.
+
+**8.8 is MOVED** and is already done — it became Phase 3B.
 
 ## What is already true and should not be re-derived
 

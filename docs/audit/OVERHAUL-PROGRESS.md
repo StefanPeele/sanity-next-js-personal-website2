@@ -1,7 +1,7 @@
 # Blog Overhaul — Progress
 
 Last updated: 2026-09-12T01:40Z
-Current phase: **Phase 8 — design proposed, build not started.** Phase 7 COMPLETE. 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
+Current phase: **Phase 8 — designed and the first slice built.** Phase 7 COMPLETE and live. 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
 live on production; 7.3 and 7.4 are *render the options* items and their options are rendered,
 measured and proposed. Phases 0-6 complete. **Phase 8 (comments) is now unblocked.**
 Session count: 2
@@ -61,6 +61,8 @@ Session count: 2
 | **7.1 + 7.2 The article stops being a 576px strip** | `b8a1621` | **yes** — production measured at 59.6 / 67.1 / 73.3 CPL, identical at 15/19/21px, `--measure` computing to 671.234px, container 1280, column 964, prose 671, zero off-measure children, no h-scroll | **verifier — PASS on 5 of 6 sub-claims, 1 UNVERIFIABLE.** Measured 59.5 / 66.78 / 73.0 CPL against my 59.6 / 67.0 / 73.2, by its own method; independently re-measured PRODUCTION at **57.0 exactly**, pixel-fixed across all three width settings, which confirms the premise the brief's amendment rested on | Three tiers: prose 671, wide 832, full 964 at 1440. Every heading h2-h6 measured at exactly 250.39-921.61px, identical to the reference paragraph |
 
 | **7.5 Reading time moves + 7.6 progress bar** | `1a73ad6`, fix `c7d028c` | **yes** — 23/23 re-run against production | pending verifier — **23/23** on `measure-progress-readout.mjs`, which drives the real switches and navigates rather than photographing | Time out of the header, above Contents, and LIVE once 3% in: "9 min left · 50% read". Bar 4px with an off switch. Position resumes, opt-in |
+
+| **Phase 8 — comments, first slice** | `2b9e08c` | pending deploy | pending verifier — **32/32** on `measure-comments.mjs`, which drives the real form and the real confirm link | Schema, action, confirm route, desk group, redacted read query, rendered thread. Three bugs found by building it, all of which would have shipped: a confirmed comment never appeared (fetch cache), every rate-limit write would have revalidated the whole site, and the label did not survive a fast submit |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:
@@ -410,6 +412,25 @@ deletion**, which is more than the claim asked for.
   exactly like the `ch` measure working perfectly. My own harness waits 420ms; the trap is
   that the failure mode here is a FALSE PASS, not a false failure, which is the rarer and
   more dangerous direction.
+
+## The measurement that lied, 2026-09-12
+
+Logged on its own because it is a different SHAPE from every other entry in this file, and
+worse than all of them.
+
+`probe-comment-scale.mjs` printed **"cleanup: 0 probe documents remain (must be 0)"** while
+**5,000 documents sat in the dataset**. `**` in a Sanity path is a segment glob, so
+`drafts.scale-comment-**` matched nothing: the delete removed nothing, and the verification
+used THE SAME PATTERN, counted the same nothing, and agreed with itself.
+
+Every other trap in this file is a measurement that reported something false about the
+product. This one reported something false about **itself**, and it did it while printing
+the exact words that were supposed to prove otherwise. It was found only because a different
+query — written for a different purpose — happened to count comments and returned 5,000.
+
+**A check that shares its pattern with the operation it is checking is not a check.** The
+probe now deletes in passes (a delete-by-query has a ~1,000 ceiling, so one call does not
+finish and a 200 is not evidence that it did) and counts a second, independent way.
 
 ## Premises that turned out wrong
 
