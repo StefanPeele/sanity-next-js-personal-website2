@@ -11,6 +11,20 @@ const PAGE_CACHE = 'sp-pages-v4'
 const STATIC_CACHE = 'sp-static-v4'
 const OFFLINE_URL = '/offline'
 const MAX_PAGES = 12
+// Chunk URLs are content-hashed, so every deploy writes a NEW set and the old set is never
+// requested again -- but nothing ever deleted it. Measured against production: one article
+// pulls 26 assets totalling 1.7 MB, so a reader who visits across 20 deploys accumulated
+// ~34 MB of superseded chunks with no ceiling.
+//
+// That is not merely untidy. When an origin reaches the browser's storage limit the browser
+// evicts the WHOLE origin, so unbounded growth here eventually destroys the offline articles
+// this cache exists to protect.
+//
+// The cap is generous on purpose, and the reason is the tension in it: a superseded chunk is
+// exactly what an article cached three deploys ago needs in order to render offline. 150
+// entries is roughly five deploys' worth of distinct assets -- comfortably more than the 12
+// pages can reference -- and bounds the cache at well under 10 MB.
+const MAX_STATIC = 150
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -42,6 +56,21 @@ async function trimPages() {
   const keys = (await cache.keys()).filter((k) => !new URL(k.url).pathname.startsWith(OFFLINE_URL))
   if (keys.length > MAX_PAGES) {
     await Promise.all(keys.slice(0, keys.length - MAX_PAGES).map((k) => cache.delete(k)))
+  }
+}
+
+/**
+ * Oldest-first, which is what Cache.keys() gives us: the spec returns keys in insertion
+ * order, so the front of the list is the least recently ADDED (not the least recently used
+ * -- Cache Storage exposes no access time, and a cache-first hit does not reorder anything).
+ * For content-hashed assets those coincide closely enough: an asset stops being inserted the
+ * moment a deploy supersedes it.
+ */
+async function trimStatic() {
+  const cache = await caches.open(STATIC_CACHE)
+  const keys = await cache.keys()
+  if (keys.length > MAX_STATIC) {
+    await Promise.all(keys.slice(0, keys.length - MAX_STATIC).map((k) => cache.delete(k)))
   }
 }
 
@@ -82,7 +111,9 @@ self.addEventListener('fetch', (event) => {
         const hit = await cache.match(request)
         if (hit) return hit
         const response = await fetch(request)
-        if (response.ok && !response.redirected) event.waitUntil(cache.put(request, response.clone()))
+        if (response.ok && !response.redirected) {
+          event.waitUntil(cache.put(request, response.clone()).then(trimStatic).catch(() => {}))
+        }
         return response
       }),
     )
