@@ -66,8 +66,9 @@
    works: 44rem is a well-judged 69.6 characters at the 19px default and 86 -- past Gwern
    -- for a reader who shrinks the text. The reader has seven text sizes, so a column
    chosen for one of them is wrong for the other six. `ch` scales with the text and holds
-   67.1 characters at 15px, 19px and 21px alike while the pixel width moves 568 -> 719 ->
-   795. It only does that if the element carrying the ch is itself at the prose size,
+   67.0 characters at 15px, 19px and 21px alike while the standard column's pixel width
+   moves 530 -> 671 -> 742. It only does that if the element carrying the ch is at the
+   prose size,
    which is what `font-size: var(--article-fs)` below is for -- without it the unit
    resolves against the inherited 16px and scales with nothing.
 
@@ -106,8 +107,10 @@ main#content > :not([data-article]) {
 }
 
 [data-article] {
-  /* 51 / 56 / 64ch. Measured CPL, not extrapolated: 59.6 / 67.1 / 73.3, identical at
-     every one of the reader's seven text sizes. See docs/audit/prose-width.json. */
+  /* 51 / 56 / 64ch. Measured on the SHIPPED page, not extrapolated from the proposal:
+     59.6 / 67.0 / 73.2 CPL at 1440, identical at every text size. An independent verifier
+     measuring by its own method got 59.5 / 66.78 / 73.0 and production at 57.0.
+     docs/audit/article-layout.json. */
   --measure: 56ch;
 }
 main#content[data-width='narrow'] [data-article]   { --measure: 51ch; }

@@ -352,12 +352,25 @@ export function ArticleProvider({
   useEffect(() => {
     if (!hydrated || !slug) return
     let timer = 0
+    // Nothing is written until the reader actually scrolls in THIS visit.
+    //
+    // Without this, opening an article and leaving without scrolling wrote a position of 0
+    // on the way out, which `writePosition` correctly treats as "no position" and deletes --
+    // so a reader who stopped at 45%, came back, glanced at the top and left again lost the
+    // place they had. A visit is not a reading session. Found by a harness whose own
+    // sequence was destroying its precondition; the sequence was wrong AND so was this.
+    //
+    // Scrolling deliberately back to the top still clears it, because that is a real scroll
+    // and means the reader restarted.
+    let moved = false
     const save = () => {
+      if (!moved) return
       const max = document.documentElement.scrollHeight - window.innerHeight
       if (max <= 0) return
       writePosition(slug, Math.min(1, Math.max(0, window.scrollY / max)))
     }
     const onScroll = () => {
+      moved = true
       window.clearTimeout(timer)
       timer = window.setTimeout(save, 400)
     }

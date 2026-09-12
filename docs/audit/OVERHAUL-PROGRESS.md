@@ -1,8 +1,10 @@
 # Blog Overhaul — Progress
 
-Last updated: 2026-09-11T07:15Z
-Current phase: **Phase 3 in progress — 3.1 and 3.2 shipped. Verification infrastructure built and retroactively tested.** Phase 2 complete — 2.1 shipped and live; 2.2–2.6 proposed, with options rendered where the brief asked. **Phase 3 is next and not started.**
-Session count: 1
+Last updated: 2026-09-12T01:40Z
+Current phase: **Phase 7 in progress.** 7.1 + 7.2 shipped (`b8a1621`) and verified; 7.5 + 7.6
+shipped (`1a73ad6`), not yet measured; 7.3 and 7.4 are *render the options* items and are
+next. Phases 0-6 complete. Phase 8 (comments) is gated on all of Phase 7.
+Session count: 2
 
 ## Shipped
 
