@@ -211,9 +211,11 @@ Run with a server on `127.0.0.1:3000` serving the build you mean (check the CSS 
 | `docs/audit/measure-prose-width.mjs` | Real CPL for every candidate width × three text sizes × three breakpoints. Prints a table and writes `prose-width.json` |
 | `docs/audit/measure-sidenotes-margin.mjs` | 30: margin placement, the three 6.3 edge cases, the 6.5 window's focus trap, both 6.4 mobile options. **Not** `measure-sidenotes.mjs`, which is Phase 1.5 research on other sites |
 
-Suite: `npx playwright test` — **130 passing** across both projects. `npm run test:e2e` runs
-only the chromium project (91); the screenshots project (39) needs `--project=screenshots`,
-and a run that reports 91 has silently skipped the visual guard.
+Suite: `npx playwright test` — **131 passing** across both projects. The split is
+deliberate, not an accident: `npm run test:e2e` runs only the chromium project (92) because
+`playwright.config.ts` has it `testIgnore` the visual baseline to stay fast, and
+`npm run screenshot` is the other half (39). Run BOTH before claiming the suite is green —
+a report of 92 is the fast half, not the whole.
 
 | `docs/audit/measure-sw-cache.mjs` | Drives the REAL service worker in a real browser: takes the static cache past the cap and watches one further fetch trim it back, with the newest entry surviving. A unit test of a copy of the function would prove nothing about the file that ships |
 
