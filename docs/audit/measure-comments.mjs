@@ -79,6 +79,7 @@ async function cleanup() {
   await mutate([
     { delete: { query: `*[_type == "comment" && (body match "${MARK}*" || email == "${EMAIL}")]` } },
     { delete: { query: `*[_type == "rateBucket"]` } },
+    { delete: { query: `*[_type == "blocklist" && email == "${EMAIL}"]` } },
     { delete: { id: SECRET_ID } },
   ])
   const left = await groq(`count(*[_type == "comment" && (body match "${MARK}*" || email == "${EMAIL}")])`)
@@ -367,6 +368,38 @@ try {
   // Back to the published article for everything that follows.
   await page.goto(ARTICLE, { waitUntil: 'domcontentloaded' })
   await page.waitForTimeout(2500)
+
+  console.log('\n## Blocking (8.7) -- the behaviour, not the button\n')
+  //
+  // The Studio action is one click; what matters is what the ACCEPT PATH does afterwards.
+  // A blocked address must be answered exactly like a successful post: it learns nothing,
+  // retries nothing, and moves on. An error message would be free tuning for whoever is
+  // trying to get through.
+  await mutate([
+    { delete: { query: `*[_type == "rateBucket"]` } },
+    { create: { _type: 'blocklist', email: EMAIL, reason: 'probe', createdAt: new Date().toISOString() } },
+  ])
+  const beforeBlocked = await groq(`count(*[_type == "comment" && email == $e])`, { e: EMAIL })
+  await page.goto(ARTICLE, { waitUntil: 'domcontentloaded' })
+  await page.waitForTimeout(2500)
+  await page.waitForTimeout(3300)
+  await page.evaluate(([m, email]) => {
+    const f = document.querySelector('#comments form')
+    f.querySelector('textarea[name="body"]').value = `${m} this must never be stored`
+    f.querySelector('input[name="email"]').value = email
+    f.requestSubmit()
+  }, [MARK, EMAIL])
+  await page.waitForTimeout(4000)
+  const afterBlocked = await groq(`count(*[_type == "comment" && email == $e])`, { e: EMAIL })
+  const blockedMsg = await page.evaluate(() => document.getElementById('comments')?.innerText ?? '')
+  check(afterBlocked === beforeBlocked, 'a blocked address writes NOTHING', `${beforeBlocked} → ${afterBlocked}`)
+  check(!/blocked|refused|not allowed/i.test(blockedMsg),
+    'and is never told it is blocked -- the reply is indistinguishable from success')
+  check(/posted|thanks/i.test(blockedMsg), 'it reads as a normal success',
+    blockedMsg.split('\n').filter((l) => /posted|thanks/i.test(l))[0])
+  await mutate([{ delete: { query: `*[_type == "blocklist" && email == "${EMAIL}"]` } }])
+  const blocklistLeft = await groq(`count(*[_type == "blocklist" && email == $e])`, { e: EMAIL })
+  check(blocklistLeft === 0, 'and unblocking is deleting one document', `${blocklistLeft} left`)
 
   console.log('\n## The moderation webhook reaches the article\n')
   const hook = await fireWebhook({ _type: 'comment', post: { _ref: postId } })

@@ -852,3 +852,43 @@ artifact of my synthesis, not of the option — I applied the 40px unconditional
 real option is gated at `lg`, so I had made the title *bigger* at 390, where it ships at
 30px. The numbers above are from a corrected run. Recording it because a proposal's numbers
 are worth exactly as much as the method that produced them.
+
+---
+
+# Phase 9.1 — does subscription work today? Yes, with one thing I cannot see from here.
+
+The brief asks for evidence or for instructions, and says not to guess. `docs/audit/measure-newsletter.mjs`
+drives the real form, reads the real document, and follows the real confirm and unsubscribe
+links. **20 checks pass, 1 is not establishable from here**, and the harness prints the steps
+for the one it cannot do.
+
+| Question the brief asks | Answer | Evidence |
+| --- | --- | --- |
+| Does the form submit? | **Yes** | One form on `/blog`, email required, honeypot present |
+| Is the address stored? | **Yes** | A `subscriber` document, created exactly one per submit |
+| Where? | **Sanity**, not Resend | `subscriber` documents; the Studio's "Audience" group |
+| Is there a confirmation email? | **The send is made and does not throw** | `RESEND_API_KEY` is set; the action awaits the send and would return an error state if it failed |
+| Double opt-in? | **Yes** | Stored as `pending`; the confirm link moves it to `confirmed` and records `confirmedAt`. An unrecognised token is refused |
+| Unsubscribe path? | **Yes, and it is better than the brief assumes** | `GET` and `POST` both return 200 and mark the document `unsubscribed`. POST matters: RFC 8058 one-click unsubscribe is a POST, and mail clients use it |
+
+**Unsubscribe is a legal requirement and it exists, works, and is reachable without
+JavaScript.** It also fails safely: an unrecognised token returns a page telling the reader
+to email Stefan directly rather than a blank 404.
+
+## The one thing I cannot establish from here
+
+**Whether Resend delivers.** Everything above proves the site does its half. Delivery is
+between Resend and the receiving mail server, and a probe address cannot receive mail. The
+harness prints the four steps to confirm it by hand; the short version is that the usual
+cause of silence is an unverified sending domain, and the usual cause of landing in spam is
+missing SPF and DKIM records, both of which Resend's dashboard lists.
+
+## Two observations outside the question
+
+**There are zero subscribers.** Not a defect — but it means nothing about this flow has ever
+been exercised by a real person, and the first real signup is the real test.
+
+**The confirm and unsubscribe routes redirect to `absoluteUrl()`**, which is the production
+host. Locally that means clicking a confirm link bounces you to stefanpeele.com. Correct in
+production, confusing in development, and worth knowing before someone reports it as a bug.
+The comment confirm route added in Phase 8 inherits the same behaviour.

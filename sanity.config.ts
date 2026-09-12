@@ -4,6 +4,7 @@ import {apiVersion, dataset, projectId, studioUrl} from '@/sanity/lib/api'
 import * as resolve from '@/sanity/plugins/resolve'
 import {pageStructure, singletonPlugin} from '@/sanity/plugins/settings'
 import { gardenToolPlugin } from '@/sanity/plugins/garden-tool'
+import { blockCommenterPlugin } from '@/sanity/plugins/blockCommenter'
 import page from '@/sanity/schemas/documents/page'
 import project from '@/sanity/schemas/documents/project'
 import duration from '@/sanity/schemas/objects/duration'
@@ -132,5 +133,6 @@ export default defineConfig({
     codeInput(),
     media(),
     gardenToolPlugin(),
+    blockCommenterPlugin(),
   ],
 })
