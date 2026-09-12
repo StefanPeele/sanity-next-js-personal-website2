@@ -1,8 +1,9 @@
 # Blog Overhaul — Progress
 
 Last updated: 2026-09-12T01:40Z
-Current phase: **Phase 8 complete but for two documented gaps; 9.1 answered. Phase 10 next.**
-Phase 7 COMPLETE and live. 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
+Current phase: **Phase 10 audited and its code findings fixed.** Phases 0-7 complete; Phase 8
+complete but for two documented gaps; 9.1 answered. Remaining: 9.2, Phase 11, and a real
+screen-reader pass. 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
 live on production; 7.3 and 7.4 are *render the options* items and their options are rendered,
 measured and proposed. Phases 0-6 complete. **Phase 8 (comments) is now unblocked.**
 Session count: 2
@@ -67,6 +68,8 @@ Session count: 2
 
 | **Phase 8 — 8.4, 8.7, and the rest** | `9dba7ad`, `de6a46e` | blocked — see *Blocked* | pending verifier — **56/56** on `measure-comments.mjs` | Sidenote-anchored comments on a STABLE key (the only identifier was a useId, which changes every render). Studio opens on "Needs attention"; one click blocks a commenter, and the harness tests the behaviour rather than the button: a blocked address writes nothing and is never told |
 | **9.1 Does subscription work?** | `de6a46e` | **yes, against the live site's own flow** | self — **20 pass, 1 not establishable** | It works: stored in Sanity, double opt-in, unsubscribe on GET *and* POST (RFC 8058 one-click is a POST). What I cannot see from here is whether Resend DELIVERS; the steps to check that are printed by the harness |
+
+| **Phase 10 — accessibility audit** | `pending commit` | blocked — see *Blocked* | self, with the false positive recorded | `docs/audit/A11Y-AUDIT.md`. **8 findings → 1**, and the last one is content. The serious one: the reader menu did NOTHING on /blog — an 18x18 trigger at x=0 and every accessibility toggle inert — because `styles/article.css` was article-only. Split into `styles/reader.css`; 87 assertions across the themes/toolbar/controls harnesses prove the article is unchanged |
 
 Phase 1 output: `docs/audit/EDITORIAL-RESEARCH.md`, 1014 lines. Raw measurement JSON and
 screenshots under `docs/audit/research/`. Three reusable harnesses added:

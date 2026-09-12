@@ -47,7 +47,9 @@ function SectionHeading({ id, children, cta }: { id: string; children: React.Rea
   return (
     <div className="flex items-end justify-between gap-4 mb-10">
       <h2 id={id} className="text-stone-50 text-2xl md:text-3xl font-serif font-bold">{children}</h2>
-      {cta && <Link href={cta.href} className={`font-sans text-sm text-stone-400 hover:text-white rounded-sm ${FOCUS}`}>{cta.label} →</Link>}
+      {/* py-1 is a touch target, not spacing: at text-sm this link was 20px tall against
+          WCAG 2.5.8's 24px minimum. Same fix, same reason, as QUIET_LINK in lib/ui.ts. */}
+      {cta && <Link href={cta.href} className={`py-1 font-sans text-sm text-stone-400 hover:text-white rounded-sm ${FOCUS}`}>{cta.label} →</Link>}
     </div>
   )
 }

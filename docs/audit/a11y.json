@@ -1,0 +1,286 @@
+{
+  "findings": [
+    {
+      "route": "article",
+      "area": "headings",
+      "detail": "1 skipped level(s): h1 → h5 at \"The First Transmission#\""
+    }
+  ],
+  "passes": [
+    {
+      "route": "home",
+      "area": "headings",
+      "detail": "exactly one h1 — \"Stefan Peele\""
+    },
+    {
+      "route": "home",
+      "area": "headings",
+      "detail": "10 headings, no skipped levels"
+    },
+    {
+      "route": "home",
+      "area": "landmarks",
+      "detail": "one <main>"
+    },
+    {
+      "route": "home",
+      "area": "contrast",
+      "detail": "every visible text node meets AA, composited"
+    },
+    {
+      "route": "home",
+      "area": "touch targets",
+      "detail": "none under 24x24 (AA); 26 under 44x44 (AAA)"
+    },
+    {
+      "route": "blog index",
+      "area": "headings",
+      "detail": "exactly one h1 — \"Blog\""
+    },
+    {
+      "route": "blog index",
+      "area": "headings",
+      "detail": "9 headings, no skipped levels"
+    },
+    {
+      "route": "blog index",
+      "area": "landmarks",
+      "detail": "one <main>"
+    },
+    {
+      "route": "blog index",
+      "area": "contrast",
+      "detail": "every visible text node meets AA, composited"
+    },
+    {
+      "route": "blog index",
+      "area": "touch targets",
+      "detail": "none under 24x24 (AA); 23 under 44x44 (AAA)"
+    },
+    {
+      "route": "article",
+      "area": "headings",
+      "detail": "exactly one h1 — \"The Field, The Moment, and What it Means\""
+    },
+    {
+      "route": "article",
+      "area": "landmarks",
+      "detail": "one <main>"
+    },
+    {
+      "route": "article",
+      "area": "contrast",
+      "detail": "every visible text node meets AA, composited"
+    },
+    {
+      "route": "article",
+      "area": "touch targets",
+      "detail": "none under 24x24 (AA); 29 under 44x44 (AAA)"
+    },
+    {
+      "route": "garden",
+      "area": "headings",
+      "detail": "exactly one h1 — \"Garden\""
+    },
+    {
+      "route": "garden",
+      "area": "headings",
+      "detail": "4 headings, no skipped levels"
+    },
+    {
+      "route": "garden",
+      "area": "landmarks",
+      "detail": "one <main>"
+    },
+    {
+      "route": "garden",
+      "area": "contrast",
+      "detail": "every visible text node meets AA, composited"
+    },
+    {
+      "route": "garden",
+      "area": "touch targets",
+      "detail": "none under 24x24 (AA); 24 under 44x44 (AAA)"
+    },
+    {
+      "route": "library",
+      "area": "headings",
+      "detail": "exactly one h1 — \"Library\""
+    },
+    {
+      "route": "library",
+      "area": "headings",
+      "detail": "4 headings, no skipped levels"
+    },
+    {
+      "route": "library",
+      "area": "landmarks",
+      "detail": "one <main>"
+    },
+    {
+      "route": "library",
+      "area": "contrast",
+      "detail": "every visible text node meets AA, composited"
+    },
+    {
+      "route": "library",
+      "area": "touch targets",
+      "detail": "none under 24x24 (AA); 24 under 44x44 (AAA)"
+    },
+    {
+      "route": "glossary",
+      "area": "headings",
+      "detail": "exactly one h1 — \"Glossary\""
+    },
+    {
+      "route": "glossary",
+      "area": "headings",
+      "detail": "4 headings, no skipped levels"
+    },
+    {
+      "route": "glossary",
+      "area": "landmarks",
+      "detail": "one <main>"
+    },
+    {
+      "route": "glossary",
+      "area": "contrast",
+      "detail": "every visible text node meets AA, composited"
+    },
+    {
+      "route": "glossary",
+      "area": "touch targets",
+      "detail": "none under 24x24 (AA); 22 under 44x44 (AAA)"
+    },
+    {
+      "route": "projects",
+      "area": "headings",
+      "detail": "exactly one h1 — \"Projects\""
+    },
+    {
+      "route": "projects",
+      "area": "headings",
+      "detail": "5 headings, no skipped levels"
+    },
+    {
+      "route": "projects",
+      "area": "landmarks",
+      "detail": "one <main>"
+    },
+    {
+      "route": "projects",
+      "area": "contrast",
+      "detail": "every visible text node meets AA, composited"
+    },
+    {
+      "route": "projects",
+      "area": "touch targets",
+      "detail": "none under 24x24 (AA); 23 under 44x44 (AAA)"
+    },
+    {
+      "route": "resume",
+      "area": "headings",
+      "detail": "exactly one h1 — \"Stefan\nPeele.\""
+    },
+    {
+      "route": "resume",
+      "area": "headings",
+      "detail": "8 headings, no skipped levels"
+    },
+    {
+      "route": "resume",
+      "area": "landmarks",
+      "detail": "one <main>"
+    },
+    {
+      "route": "resume",
+      "area": "contrast",
+      "detail": "every visible text node meets AA, composited"
+    },
+    {
+      "route": "resume",
+      "area": "touch targets",
+      "detail": "none under 24x24 (AA); 24 under 44x44 (AAA)"
+    },
+    {
+      "route": "blog index",
+      "area": "focus",
+      "detail": "44 focusable elements tabbed, every one shows a visible ring"
+    },
+    {
+      "route": "article",
+      "area": "focus",
+      "detail": "45 focusable elements tabbed, every one shows a visible ring"
+    },
+    {
+      "route": "blog index",
+      "area": "zoom 200%",
+      "detail": "no horizontal scroll"
+    },
+    {
+      "route": "blog index",
+      "area": "zoom 400%",
+      "detail": "no horizontal scroll"
+    },
+    {
+      "route": "article",
+      "area": "zoom 200%",
+      "detail": "no horizontal scroll"
+    },
+    {
+      "route": "article",
+      "area": "zoom 400%",
+      "detail": "no horizontal scroll"
+    }
+  ],
+  "summary": {
+    "home": {
+      "headings": 10,
+      "contrast": 0,
+      "small24": 0,
+      "small44": 26
+    },
+    "blog index": {
+      "headings": 9,
+      "contrast": 0,
+      "small24": 0,
+      "small44": 23
+    },
+    "article": {
+      "headings": 14,
+      "contrast": 0,
+      "small24": 0,
+      "small44": 29
+    },
+    "garden": {
+      "headings": 4,
+      "contrast": 0,
+      "small24": 0,
+      "small44": 24
+    },
+    "library": {
+      "headings": 4,
+      "contrast": 0,
+      "small24": 0,
+      "small44": 24
+    },
+    "glossary": {
+      "headings": 4,
+      "contrast": 0,
+      "small24": 0,
+      "small44": 22
+    },
+    "projects": {
+      "headings": 5,
+      "contrast": 0,
+      "small24": 0,
+      "small44": 23
+    },
+    "resume": {
+      "headings": 8,
+      "contrast": 0,
+      "small24": 0,
+      "small44": 24
+    }
+  }
+}

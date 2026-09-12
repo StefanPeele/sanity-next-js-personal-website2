@@ -1,3 +1,8 @@
+// The reader menu is the SAME component here as on an article (5.1), so it needs the same
+// stylesheet. Without it the trigger rendered as a bare 18x18 inline-block at the far left,
+// 3000px down the page, and every control in the menu -- including the accessibility
+// toggles -- set a class that nothing implemented.
+import '@/styles/reader.css'
 import { Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'

@@ -162,7 +162,10 @@ export function CommentForm({
           </div>
         </div>
 
-        <label className="flex items-center gap-2.5 font-sans text-sm text-stone-400">
+        {/* py-1 is the touch target. The LABEL is what activates the checkbox -- verified by
+            clicking 120px from the box -- so the label's box is the target WCAG measures, and
+            at text-sm it was 20px tall against a 24px minimum. */}
+        <label className="flex items-center gap-2.5 py-1 font-sans text-sm text-stone-400">
           <input type="checkbox" name="anonymous" className={`h-4 w-4 rounded border-edge bg-surface-veil ${FOCUS}`} />
           {copy.anonymousLabel}
         </label>

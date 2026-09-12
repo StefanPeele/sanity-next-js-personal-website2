@@ -28,7 +28,19 @@ export const FOCUS =
  * type face is deliberately NOT included: the same link is `font-sans text-sm` in a
  * section header and `meta-label` in a footer row, and that difference is real.
  */
-export const QUIET_LINK = `text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`
+/**
+ * Quiet nav links ("All posts →").
+ *
+ * `py-1` is a TOUCH TARGET, not spacing. At `text-sm` these are 20px tall, which is under
+ * WCAG 2.5.8's 24x24 minimum; 4px top and bottom takes the hit area to 28px. Vertical
+ * padding on an INLINE element grows the box without affecting the line height, so nothing
+ * moves -- measured at 1440, 768 and 390.
+ *
+ * WCAG exempts a link inline in a sentence, because its size follows the text it sits in.
+ * These are not that: they stand alone at the end of a row, and they were the most common
+ * finding in the Phase 10 audit.
+ */
+export const QUIET_LINK = `py-1 text-stone-400 hover:text-white transition-colors rounded-sm ${FOCUS}`
 
 type ButtonVariant = 'primary' | 'secondary' | 'chip'
 type ButtonSize = 'sm' | 'md' | 'lg'

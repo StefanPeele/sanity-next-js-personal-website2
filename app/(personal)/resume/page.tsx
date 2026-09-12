@@ -132,8 +132,10 @@ export default async function ResumePage() {
               {data?.home?.location && <span className="text-stone-400 print:text-gray-600"> · {data.home.location}</span>}
             </p>
             <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-sans text-sm text-stone-400 print:text-gray-700">
-              {copy.showEmail && <a href={`mailto:${siteSettings.email || SITE.email}`} className={`hover:text-white ${FOCUS}`}>{siteSettings.email || SITE.email}</a>}
-              {copy.showGithub && (siteSettings.github || SITE.handles.github) && <a href={siteSettings.github || SITE.handles.github} className={`hover:text-white ${FOCUS}`} target="_blank" rel="noopener noreferrer me">{(siteSettings.github || SITE.handles.github).replace(/^https?:\/\//, '')}</a>}
+              {/* py-1: these were 20px tall, under WCAG 2.5.8's 24px. They are the two
+                  things a recruiter actually taps on this page. */}
+              {copy.showEmail && <a href={`mailto:${siteSettings.email || SITE.email}`} className={`py-1 hover:text-white ${FOCUS}`}>{siteSettings.email || SITE.email}</a>}
+              {copy.showGithub && (siteSettings.github || SITE.handles.github) && <a href={siteSettings.github || SITE.handles.github} className={`py-1 hover:text-white ${FOCUS}`} target="_blank" rel="noopener noreferrer me">{(siteSettings.github || SITE.handles.github).replace(/^https?:\/\//, '')}</a>}
               <span className="hidden print:inline">{SITE.url.replace(/^https?:\/\//, '')}</span>
             </div>
           </header>

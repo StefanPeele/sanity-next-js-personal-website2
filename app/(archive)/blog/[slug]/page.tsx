@@ -1,3 +1,4 @@
+import '@/styles/reader.css'
 import '@/styles/article.css'
 import { client } from '@/sanity/lib/client'
 import { sanityFetch } from '@/sanity/lib/live'

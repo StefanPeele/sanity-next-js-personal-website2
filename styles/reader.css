@@ -1,0 +1,544 @@
+/* styles/reader.css
+   The READER's surfaces: themes, accessibility modes, and the reading toolbar.
+
+   Split out of styles/article.css on 2026-09-12, because these rules are not article-only
+   and article.css is. Phase 5.1 put the same toolbar on the blog index, but article.css is
+   imported only by the article page -- so on /blog the trigger rendered as a bare 18x18
+   inline-block at x=0, 3000px down the page, and the reader menu's controls did nothing at
+   all. Measured: selecting the light theme on /blog set `theme-paper` on the root and left
+   the background at rgb(10,10,10), against rgb(244,241,234) on an article.
+
+   That made the ACCESSIBILITY toggles inert on the index too -- high contrast, the dyslexia
+   font, the reading ruler, the larger focus ring. A reader who turned one on got nothing,
+   and nothing looked broken. This file is imported by both surfaces.
+
+   Importing article.css into the index instead would not have worked: it carries the 7.2
+   width system, whose `main#content > :not([data-article])` rule would have collapsed the
+   directory grid to 52rem.
+
+   Article-only rules stay in article.css: the measure, the prose, sidenotes and margin
+   notes, corrections, and print. */
+
+/* ═══════════════════════════════════════════════════════════════
+   THEMES AND ACCESSIBILITY MODES
+   Scoped to [data-article-root] -- the route-level, full-width, min-h-screen
+   wrapper -- not to [data-article], which is the prose element inside a 36rem
+   column. Theming the prose element made a non-default theme render as a hard
+   rounded rectangle floating in an unthemed page (D5).
+
+   Each theme restates the eight palette tokens from styles/index.css and little
+   else. Everything inside the article -- cards, the TOC, the reader menu, the
+   learning blocks, every border-edge and bg-surface-* -- follows automatically,
+   which is the reason the palette work came first. Prose colour still needs
+   naming here, because body text is not a token.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Terminal: phosphor green on near-black, monospace ────────── */
+[data-article-root].theme-terminal {
+  --surface:             #0d1117;
+  --surface-raised:      #0f1620;
+  --surface-veil:        rgb(0 255 65 / 0.03);
+  --surface-fill:        rgb(0 255 65 / 0.06);
+  --surface-fill-strong: rgb(0 255 65 / 0.12);
+  --edge-faint:          rgb(0 255 65 / 0.10);
+  --edge:                rgb(0 255 65 / 0.18);
+  --edge-strong:         rgb(0 255 65 / 0.35);
+  --edge-active:         rgb(0 255 65 / 0.60);
+
+  background-color: var(--surface);
+  color: rgb(0 255 65 / 0.85);
+}
+[data-article-root].theme-terminal [data-article] {
+  font-family: var(--font-mono), 'IBM Plex Mono', 'Courier New', monospace;
+}
+[data-article-root].theme-terminal [data-article] p { color: rgb(0 255 65 / 0.82); line-height: 1.8; letter-spacing: 0.025em; }
+[data-article-root].theme-terminal [data-article] h1,
+[data-article-root].theme-terminal [data-article] h2,
+[data-article-root].theme-terminal [data-article] h3,
+[data-article-root].theme-terminal [data-article] h4 { color: #00ff41; font-family: var(--font-mono), monospace; letter-spacing: 0.02em; }
+[data-article-root].theme-terminal [data-article] strong { color: #00ff41; font-weight: 700; }
+[data-article-root].theme-terminal [data-article] em { color: rgb(0 255 65 / 0.7); font-style: italic; }
+[data-article-root].theme-terminal [data-article] .article-link { color: #00ff41; background-image: linear-gradient(#00ff41, #00ff41); }
+[data-article-root].theme-terminal [data-article] .article-link:hover { color: #ffffff; background-image: linear-gradient(#ffffff, #ffffff); }
+[data-article-root].theme-terminal [data-article] code {
+  background-color: rgb(0 255 65 / 0.08) !important;
+  border-color: rgb(0 255 65 / 0.2) !important;
+  color: #00ff41 !important;
+  font-family: var(--font-mono), monospace !important;
+}
+[data-article-root].theme-terminal [data-article] blockquote { color: rgb(0 255 65 / 0.75); }
+[data-article-root].theme-terminal [data-article] li { color: rgb(0 255 65 / 0.8); }
+[data-article-root].theme-terminal ::selection { background-color: rgb(0 255 65 / 0.25); color: #0d1117; }
+/* Page chrome that is not prose: headings, meta and the TOC sit on the same ground. */
+[data-article-root].theme-terminal h1,
+[data-article-root].theme-terminal h2,
+[data-article-root].theme-terminal .section-label { color: #00ff41; }
+[data-article-root].theme-terminal .meta-label { color: rgb(0 255 65 / 0.55); }
+
+[data-article-root].theme-terminal [data-desaturate] img { filter: grayscale(60%) brightness(0.7) sepia(20%) hue-rotate(80deg); }
+[data-article-root].theme-terminal [data-desaturate]:hover img { filter: grayscale(40%) brightness(0.85) sepia(10%) hue-rotate(80deg); }
+
+
+/* ── Dyslexia: Lexend, looser tracking and leading ────────────── */
+[data-article-root].a11y-dyslexia,
+[data-article-root].a11y-dyslexia p,
+[data-article-root].a11y-dyslexia li,
+[data-article-root].a11y-dyslexia span {
+  font-family: var(--font-lexend, var(--font-sans)), system-ui, sans-serif !important;
+  letter-spacing: 0.06em !important;
+  word-spacing: 0.18em !important;
+  line-height: 2.1 !important;
+}
+/* The 65ch that used to sit here is gone. It was written when main#content capped the
+   column at 576px, so it never bound on anything and was dead. After 7.2 it WOULD bind --
+   at 65ch of 19px it is 779px, wider than the measure, which is the wrong direction for a
+   reader who turned this mode on. The measure already scales with the text size; dyslexia
+   mode keeps the looser rhythm and inherits the column. */
+[data-article-root].a11y-dyslexia [data-article] p { margin-bottom: 1.6em !important; }
+[data-article-root].a11y-dyslexia h1,
+[data-article-root].a11y-dyslexia h2,
+[data-article-root].a11y-dyslexia h3,
+[data-article-root].a11y-dyslexia h4 { font-family: var(--font-lexend, var(--font-sans)), system-ui, sans-serif !important; letter-spacing: 0.02em !important; line-height: 1.3 !important; }
+[data-article-root].a11y-dyslexia [data-article] { text-align: left !important; }
+
+/* ── High contrast: pure black ground, white text, yellow links ─ */
+[data-article-root].a11y-high-contrast {
+  --surface:             #000000;
+  --surface-raised:      #0a0a0a;
+  --surface-veil:        rgb(255 255 255 / 0.06);
+  --surface-fill:        rgb(255 255 255 / 0.10);
+  --surface-fill-strong: rgb(255 255 255 / 0.18);
+  --edge-faint:          rgb(255 255 255 / 0.30);
+  --edge:                rgb(255 255 255 / 0.50);
+  --edge-strong:         rgb(255 255 255 / 0.75);
+  --edge-active:         #ffffff;
+
+  background-color: var(--surface) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+[data-article-root].a11y-high-contrast p,
+[data-article-root].a11y-high-contrast li,
+[data-article-root].a11y-high-contrast span,
+[data-article-root].a11y-high-contrast h1,
+[data-article-root].a11y-high-contrast h2,
+[data-article-root].a11y-high-contrast h3,
+[data-article-root].a11y-high-contrast h4 { color: #ffffff !important; }
+[data-article-root].a11y-high-contrast .meta-label { color: #d4d4d4 !important; }
+[data-article-root].a11y-high-contrast .article-link { color: #ffff00 !important; text-decoration: underline !important; background-image: none !important; }
+[data-article-root].a11y-high-contrast code { background-color: #222222 !important; border-color: #555555 !important; color: #00ff00 !important; }
+[data-article-root].a11y-high-contrast blockquote { border-left-color: #ffff00 !important; color: #ffffff !important; }
+[data-article-root].a11y-high-contrast img { filter: none !important; border: 2px solid #ffffff !important; }
+[data-article-root].a11y-high-contrast ::selection { background-color: #ffffff !important; color: #000000 !important; }
+
+/* Reduced motion — the in-app toggle mirrors to <html class="sp-reduced-motion">
+   so widgets outside [data-article] can respond too. */
+html.sp-reduced-motion *,
+html.sp-reduced-motion *::before,
+html.sp-reduced-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CRT OVERLAY + CURSOR — desktop effects
+   ═══════════════════════════════════════════════════════════════ */
+
+
+
+
+/* ═══════════════════════════════════════════════════════════════
+   READER MENU — entrance, edge fade, scrim
+   The panel used to appear with no transition and no origin, so it read as a jump
+   cut rather than something opened from the chip. Both keyframes are zeroed by the
+   prefers-reduced-motion block in styles/index.css and by html.sp-reduced-motion.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Below lg the panel is a bottom sheet: it rises from the bottom edge. */
+@keyframes reader-menu-sheet-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* At lg it is a dropdown: it scales open from the chip that owns it. */
+@keyframes reader-menu-drop-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.reader-menu-panel {
+  animation: reader-menu-sheet-in 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* The panel scrolls, and it was clipping mid-glyph at its bottom edge with no hint
+     that anything followed. Fading the last 2rem reads as "more below". */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2rem), transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 calc(100% - 2rem), transparent 100%);
+}
+@media (min-width: 1024px) {
+  .reader-menu-panel {
+    transform-origin: top right;
+    animation-name: reader-menu-drop-in;
+  }
+}
+
+/* Mobile only: the sheet floated over fully legible body text with nothing behind it,
+   so it never read as modal. */
+.reader-menu-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  background: rgba(0, 0, 0, 0.4);
+  animation: reader-menu-fade-in 0.15s ease-out both;
+}
+@keyframes reader-menu-fade-in { from { opacity: 0 } to { opacity: 1 } }
+@media (min-width: 1024px) { .reader-menu-scrim { display: none } }
+
+/* ═══════════════════════════════════════════════════════════════
+   Phase 5.2 — two more themes, one of them light.
+
+   Both restate the nine palette tokens from styles/index.css rather than re-specifying the
+   selectors that use them. That is the whole reason a light theme is possible now and was
+   not before: the theme class lands on [data-article-root], the full-width route wrapper,
+   so the tokens reach page chrome and not just the prose rectangle.
+
+   The prose colours DO have to be restated, because CustomPortableText sets them with
+   Tailwind classes (text-stone-300 and friends) rather than reading a token. Anything below
+   that looks redundant is overriding a utility, not a token.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── slate: a softer dark ─────────────────────────────────────────────────────
+   Pure black behind near-white text causes halation — the glyphs appear to bleed outward.
+   It is worst for readers with astigmatism, which is most people who wear glasses. Lifting
+   the ground to #16161a and pulling the ink down from #e7e5e4 removes it while staying
+   unmistakably a dark theme. */
+[data-article-root].theme-slate {
+  --surface:             #16161a;
+  --surface-raised:      #1d1d22;
+  --surface-veil:        rgb(255 255 255 / 0.03);
+  --surface-fill:        rgb(255 255 255 / 0.06);
+  --surface-fill-strong: rgb(255 255 255 / 0.11);
+  --edge-faint:          rgb(255 255 255 / 0.06);
+  --edge:                rgb(255 255 255 / 0.12);
+  --edge-strong:         rgb(255 255 255 / 0.26);
+  --edge-active:         rgb(255 255 255 / 0.46);
+  background-color: var(--surface);
+}
+[data-article-root].theme-slate [data-article] p,
+[data-article-root].theme-slate [data-article] li { color: #d2cfcc; }
+[data-article-root].theme-slate [data-article] blockquote { color: #bdb9b5; }
+
+/* ── paper: the light mode ────────────────────────────────────────────────────
+   Warm cream, not white. Pure #fff at full brightness is its own glare, and the site's
+   type is a serif that sits better on a warm ground. Ink is #1c1a17 rather than #000 for
+   the same reason in reverse.
+
+   Contrast, measured rather than eyeballed: #1c1a17 on #f4f1ea is about 14.9:1, and the
+   quieter #4a453f is about 7.9:1 — both clear AAA for body text. The muted greys the dark
+   themes use (stone-400, #a8a29e) would land near 2.5:1 here, which is why every muted
+   colour is restated below instead of inherited. */
+[data-article-root].theme-paper {
+  --surface:             #f4f1ea;
+  --surface-raised:      #ffffff;
+  --surface-veil:        rgb(0 0 0 / 0.02);
+  --surface-fill:        rgb(0 0 0 / 0.05);
+  --surface-fill-strong: rgb(0 0 0 / 0.10);
+  --edge-faint:          rgb(0 0 0 / 0.07);
+  --edge:                rgb(0 0 0 / 0.14);
+  --edge-strong:         rgb(0 0 0 / 0.28);
+  --edge-active:         rgb(0 0 0 / 0.50);
+  background-color: var(--surface);
+  color: #1c1a17;
+}
+
+/* Prose */
+[data-article-root].theme-paper [data-article] p,
+[data-article-root].theme-paper [data-article] li { color: #26231f; }
+[data-article-root].theme-paper [data-article] h1,
+[data-article-root].theme-paper [data-article] h2,
+[data-article-root].theme-paper [data-article] h3,
+[data-article-root].theme-paper [data-article] h4,
+[data-article-root].theme-paper [data-article] h5,
+[data-article-root].theme-paper [data-article] h6 { color: #12100e; }
+[data-article-root].theme-paper [data-article] strong { color: #12100e; }
+[data-article-root].theme-paper [data-article] em { color: #3a352f; }
+[data-article-root].theme-paper [data-article] blockquote { color: #4a453f; }
+[data-article-root].theme-paper [data-article] .article-link { color: #1c1a17; }
+[data-article-root].theme-paper [data-article] .article-link:hover { color: #7c2d12; }
+[data-article-root].theme-paper [data-article] code {
+  background-color: rgb(0 0 0 / 0.05);
+  color: #7c2d12;
+  border-color: rgb(0 0 0 / 0.10);
+}
+[data-article-root].theme-paper ::selection { background-color: rgb(124 45 18 / 0.18); color: #12100e; }
+
+/* Page chrome. These are the Tailwind utilities the dark themes never had to fight, because
+   the palette agreed with them. On cream they are unreadable, so each is restated once. */
+[data-article-root].theme-paper h1,
+[data-article-root].theme-paper h2,
+[data-article-root].theme-paper h3,
+[data-article-root].theme-paper .section-label { color: #12100e; }
+[data-article-root].theme-paper .meta-label { color: #57534e; }
+[data-article-root].theme-paper .text-white,
+/* text-stone-50 measured at 1.13:1 on the cream ground -- the newsletter heading was
+   near-white on near-white and effectively invisible. Only EIGHT call sites use it, which is
+   exactly why it was missed by eye and caught by compositing every layer. */
+[data-article-root].theme-paper .text-stone-50,
+[data-article-root].theme-paper .text-stone-100,
+[data-article-root].theme-paper .text-stone-200,
+[data-article-root].theme-paper .text-stone-300 { color: #26231f; }
+/* stone-400 is the site's "quiet but readable" colour and is ~2.5:1 on cream. #57534e is
+   7.9:1 and keeps the same role. The 12px floor from Phase 1 only helps if the colour
+   holds up too. */
+[data-article-root].theme-paper .text-stone-400 { color: #57534e; }
+[data-article-root].theme-paper [data-desaturate] img { filter: grayscale(35%) contrast(1.05); }
+
+/* The correction marks (3B) read as rose/sky/stone against a dark ground. On cream the
+   light tints vanish, so each edge is deepened rather than left to fade out. */
+[data-article-root].theme-paper .correction-passage { border-left-color: rgba(190, 18, 60, 0.55); background: linear-gradient(90deg, rgba(190, 18, 60, 0.06), transparent 60%); }
+[data-article-root].theme-paper .correction-passage[data-correction-kind='clarification'] { border-left-color: rgba(2, 132, 199, 0.55); background: linear-gradient(90deg, rgba(2, 132, 199, 0.06), transparent 60%); }
+[data-article-root].theme-paper .correction-passage[data-correction-kind='update'] { border-left-color: rgba(87, 83, 78, 0.45); background: linear-gradient(90deg, rgba(87, 83, 78, 0.05), transparent 60%); }
+[data-article-root].theme-paper .correction-marker { color: #be123c; background: rgba(190, 18, 60, 0.10); border-color: rgba(190, 18, 60, 0.35); }
+[data-article-root].theme-paper .correction-card { background: #ffffff; border-color: rgb(0 0 0 / 0.14); box-shadow: 0 12px 32px rgb(0 0 0 / 0.16); }
+[data-article-root].theme-paper .correction-card .text-stone-200 { color: #26231f; }
+[data-article-root].theme-paper .correction-card .text-stone-300,
+[data-article-root].theme-paper .correction-card .text-stone-400 { color: #57534e; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Phase 5 — the reading toolbar
+
+   5.4 POSITION. A fixed rail on the right edge, vertically centred, OUTSIDE the reading
+   measure. The prose column is max-w-[36rem] inside max-w-6xl, so at 1440 there is ~530px
+   to the right of the text; the rail occupies 56px of it and can never overlap prose.
+
+   At narrow widths there is no margin, and 5.4 asks which of "fit" or "force the layout to
+   make room" applies. It FITS: the trigger docks to the bottom-right corner and the panel
+   opens as a bottom sheet. Forcing the layout would take 56px out of a 390px viewport
+   permanently, to serve a control that is shut most of the time.
+
+   GLASS, but only where it is safe. backdrop-filter over prose would blur the words behind
+   it; the rail sits in the margin, where there are none.
+   ═══════════════════════════════════════════════════════════════ */
+
+.reading-toolbar {
+  position: fixed;
+  z-index: 1001;
+  /* Mobile first: bottom-right corner, clear of the safe area on notched devices. */
+  right: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 1024px) {
+  .reading-toolbar {
+    /* The margin to the right of the prose column. Vertically centred so it is in the same
+       place whatever the scroll position -- a control that moves is a control you have to
+       look for. */
+    right: 1.25rem;
+    bottom: auto;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.reading-toolbar-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 44px: the smallest reliable touch target, and the collapsed state is the DEFAULT, so
+     this is the size that matters most. */
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  border: 1px solid var(--edge);
+  /* Solid first, then the glass. A browser without color-mix() drops the second declaration
+     and keeps the first; without the fallback it would drop to `transparent` and the one
+     control on the page would be an outline with an icon floating in it. */
+  background: var(--surface-raised);
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+          backdrop-filter: blur(10px) saturate(1.2);
+  color: #d6d3d1;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.35);
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+.reading-toolbar-trigger:hover {
+  color: #ffffff;
+  border-color: var(--edge-strong);
+}
+
+/* 5.3 "aware and retreating". Fades while the reader is actually reading, and comes back on
+   any pointer movement, scroll or focus. It never fades while open.
+
+   0.35 rather than 0: something that vanishes has to be rediscovered, and a reader who
+   cannot find the control they used a minute ago will not go looking twice. This is a
+   retreat, not a disappearance. */
+.reading-toolbar.is-idle .reading-toolbar-trigger {
+  opacity: 0.35;
+}
+.reading-toolbar .reading-toolbar-trigger {
+  opacity: 1;
+  transition: opacity 0.45s ease, color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+/* Focus always wins over the retreat: a keyboard user must never be fading. */
+.reading-toolbar:focus-within .reading-toolbar-trigger {
+  opacity: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reading-toolbar .reading-toolbar-trigger { transition: none; }
+}
+
+/* A light theme needs a light rail, or the one piece of chrome on the page is a dark blob. */
+[data-article-root].theme-paper .reading-toolbar-trigger {
+  border-color: rgb(0 0 0 / 0.16);
+  background: #ffffff;
+  background: color-mix(in srgb, #ffffff 78%, transparent);
+  color: #26231f;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.12);
+}
+[data-article-root].theme-paper .reading-toolbar-trigger:hover { color: #12100e; border-color: rgb(0 0 0 / 0.34); }
+[data-article-root].theme-paper .reader-menu-panel { background: #ffffff; color: #26231f; border-color: rgb(0 0 0 / 0.14); }
+[data-article-root].theme-paper .reader-menu-panel .text-stone-200,
+[data-article-root].theme-paper .reader-menu-panel .text-stone-300 { color: #26231f; }
+[data-article-root].theme-paper .reader-menu-panel .text-stone-400 { color: #57534e; }
+
+/* Print: the toolbar is chrome and never appears on paper. `data-print-hide` already covers
+   it, and this is belt and braces because a fixed element that escapes a print stylesheet
+   lands on every page. */
+@media print {
+  .reading-toolbar { display: none !important; }
+}
+
+/* The reading toolbar's panel anchor. Exists only so that POSITIONING and ANIMATION do not
+   share an element: `.reader-menu-panel` animates `transform`, and a keyframe declared
+   `both` holds its final transform forever, replacing any translate used to centre it. */
+.reader-menu-anchor { display: contents; }
+
+@media (min-width: 1024px) {
+  .reader-menu-anchor {
+    display: block;
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: 0.75rem;
+  }
+}
+
+/* ── The light theme beyond the article ───────────────────────────────────────
+   [data-article-root] does not contain the navbar, the footer, or the reading toolbar (the
+   toolbar is portalled to <body> to escape a transformed ancestor). Scoped only to the
+   article root, `paper` left the site logo at pure white on cream -- measured at ~1.1:1,
+   which is invisible -- and the toolbar as a dark blob on a pale page.
+
+   ArticleProvider puts the theme class on <body> as well, and removes it on unmount so it
+   cannot follow a reader onto a route with no article. These are the chrome rules that
+   needed the wider scope; the prose rules above keep theirs. */
+
+body.theme-paper { background-color: #f4f1ea; color: #1c1a17; }
+body.theme-paper .text-white,
+body.theme-paper .text-stone-50,
+body.theme-paper .text-stone-100,
+body.theme-paper .text-stone-200,
+body.theme-paper .text-stone-300 { color: #26231f; }
+body.theme-paper .text-stone-400 { color: #57534e; }
+body.theme-paper .border-edge { border-color: rgb(0 0 0 / 0.14); }
+body.theme-paper .border-edge-faint { border-color: rgb(0 0 0 / 0.07); }
+body.theme-paper .border-edge-strong { border-color: rgb(0 0 0 / 0.28); }
+
+/* The toolbar rail, which is a sibling of everything else under <body>. */
+body.theme-paper .reading-toolbar-trigger {
+  border-color: rgb(0 0 0 / 0.16);
+  background: #ffffff;
+  background: color-mix(in srgb, #ffffff 78%, transparent);
+  color: #26231f;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.12);
+}
+body.theme-paper .reading-toolbar-trigger:hover { color: #12100e; border-color: rgb(0 0 0 / 0.34); }
+body.theme-paper .reader-menu-panel { background: #ffffff; color: #26231f; border-color: rgb(0 0 0 / 0.14); }
+body.theme-paper .reader-menu-panel .text-stone-200,
+body.theme-paper .reader-menu-panel .text-stone-300 { color: #26231f; }
+body.theme-paper .reader-menu-panel .text-stone-400 { color: #57534e; }
+
+/* slate is a dark theme, so only the ground needs to reach the chrome. */
+body.theme-slate { background-color: #16161a; }
+body.theme-terminal { background-color: #0d1117; }
+
+/* The footer keeps its own dark ground by design, so the blanket light-theme overrides above
+   must NOT reach it -- they turned its text dark-on-dark at 1.23:1 and made it unreadable.
+   Caught immediately by measure-themes.mjs once that harness was fixed to walk text nodes
+   instead of childless elements; 25 failures in one region, all of them mine.
+
+   A light page above a dark footer is a normal, deliberate shape, so the fix is to restore
+   the footer's designed palette rather than to lighten it. */
+body.theme-paper footer .text-white { color: #ffffff; }
+body.theme-paper footer .text-stone-50 { color: #fafaf9; }
+body.theme-paper footer .text-stone-100 { color: #f5f5f4; }
+body.theme-paper footer .text-stone-200 { color: #e7e5e4; }
+body.theme-paper footer .text-stone-300 { color: #d6d3d1; }
+body.theme-paper footer .text-stone-400 { color: #a8a29e; }
+body.theme-paper footer .border-edge { border-color: rgb(255 255 255 / 0.10); }
+body.theme-paper footer .border-edge-faint { border-color: rgb(255 255 255 / 0.05); }
+body.theme-paper footer .border-edge-strong { border-color: rgb(255 255 255 / 0.25); }
+
+/* 5.3, "move out of the way when it would collide with content" — implemented, not asserted.
+   Below lg the rail docks bottom-right, which is exactly where this site's toasts appear
+   (sonner, bottom-right). A toast is transient and reports the result of something the
+   reader just did; the toolbar is persistent and optional. So the toolbar yields.
+
+   Found by the Playwright suite rather than by thinking about it: the local "Sanity Live
+   couldn't connect" toast intercepted every click on the trigger at 768 and 390, and two
+   screenshot tests failed. That toast is a local artifact, but the collision it exposed is
+   not — the newsletter form raises a real one in production.
+
+   :has() rather than a MutationObserver: the browser already knows when a toast is on the
+   page, and a CSS answer cannot get out of sync with the DOM the way an observer can. */
+@media (max-width: 1023px) {
+  body:has([data-sonner-toast]) .reading-toolbar {
+    bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+  }
+  .reading-toolbar { transition: bottom 0.25s ease; }
+}
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  .reading-toolbar { transition: none; }
+}
+
+/* ── 5.2's expanded reading controls ──────────────────────────────────────────
+   The four SCALES are consumed above, on the prose rules, via --a11y-lh / -ls / -ws / -ps.
+   These are the three new TOGGLES. */
+
+/* List items follow the prose, or a scaled paragraph sits beside an unscaled bullet. */
+[data-article] li {
+  line-height: calc(1.7 * var(--a11y-lh, 1));
+  letter-spacing: var(--a11y-ls, 0.01em);
+  word-spacing: var(--a11y-ws, 0em);
+}
+
+/* Always underline links. The site's default is an ink-bleed underline that grows on hover,
+   which is a lovely effect and invisible at rest -- so a reader who needs links to be
+   findable without hovering every candidate cannot use it. This turns it solid and static. */
+body.a11y-link-underline [data-article] .article-link {
+  background-image: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+/* A bigger focus ring. The default is a 2px outline at 2px offset, which is fine for most
+   people and thin for anyone tracking focus across a page at low vision. Deliberately
+   !important: FOCUS in lib/ui.ts is spelled as utilities on every control, so a rule that
+   did not outrank them would silently do nothing on all of them. */
+body.a11y-big-focus *:focus-visible {
+  outline-width: 4px !important;
+  outline-offset: 3px !important;
+}
+
+/* "Colour filters" in the brief. This is DESATURATION, not a colour-blindness simulation:
+   a simulation shows a sighted person what someone else sees and helps that someone else
+   not at all. Reducing saturation helps readers with visual stress, for whom saturated
+   colour on a bright ground is tiring. Scoped to the prose so the site's own chrome and the
+   reading toolbar keep their meaning. */
+[data-article-root].a11y-mute-colour [data-article] {
+  filter: saturate(0.4);
+}
+

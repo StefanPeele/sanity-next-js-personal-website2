@@ -55,14 +55,20 @@ is where the reason was; check that FIRST next time rather than polling for sixt
 **Until it clears, batch commits and push once.** Every push burns another build attempt
 against a quota that is already gone.
 
+- **Phase 10 — audited**, `docs/audit/A11Y-AUDIT.md`. 8 findings, 6 fixed, 1 was this audit's
+  own false positive, 1 remains and is CONTENT (the published article's seven section
+  headings are `h5`). `scripts/migrate-heading-levels.mjs` fixes it, dry-run by default, and
+  is deliberately NOT applied because it changes how a published article looks.
+
 ## The single next action
 
-**Phase 10 — the accessibility audit**, which needs no deploy and is the item with the most
-new surface to audit: Phase 8 just added a form, a native radio group, a filter row, a link
-inside a dialog and three removal states, and §10 names comments in its scope explicitly.
-Write `docs/audit/A11Y-AUDIT.md`.
+**9.2 — propose the digest schema.** A Sanity document type Stefan composes by hand, with
+entries that are his posts, external links with a note on why they matter, or neither.
+Then Phase 11.
 
-Then 9.2 (propose the digest schema) and Phase 11.
+The one part of Phase 10 a harness cannot do: **drive the toolbar and the sidenotes with a
+real screen reader.** The audit says so plainly in its own "not covered" section. It is the
+highest-risk claim in the brief and it needs a person.
 
 **Verify Phase 8 on production** as soon as the deploy quota clears — that is blocked, not
 next.
