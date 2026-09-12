@@ -42,7 +42,19 @@ verified.
   comment, the Studio "needs attention" view and one-click block, and promoting a Correction
   into a 3B correction (deliberately deferred).
 
-## Production is CURRENT. An earlier claim in this file that it was not was wrong.
+## Production is at `31475ac`. ONE code change is waiting on a rate limit.
+
+Not deployed: `73610ee`, which makes a comment webhook that names no post revalidate the
+whole `/blog/[slug]` route. Verified two ways this time — the commit status says rate
+limited AND **no deployment record exists at all**, where the earlier (wrong) claim had a
+record showing success.
+
+**The consequence, while it waits:** deleting a comment in the Studio will leave it on the
+article. **Removing one by setting its `status` works fine** — that is the designed path from
+8.5, its payload carries the document, and it revalidates correctly today. So there is a
+working way to moderate; just do not hard-delete until this ships.
+
+## The rest of production is CURRENT. An earlier claim in this file that it was not was wrong.
 
 `/api/health` reports HEAD, and `gh api .../deployments` shows an unbroken run of successful
 Production deploys. Phase 8, 9.1, Phase 10 and Phase 11 are all live and were verified there:
