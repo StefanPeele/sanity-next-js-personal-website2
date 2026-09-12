@@ -1,12 +1,17 @@
 # Blog Overhaul — Progress
 
-Last updated: 2026-09-12T01:40Z
-Current phase: **Every phase in the brief has been worked.** 0-7 complete and live; 8 complete
-but for two documented gaps; 9 answered and proposed; 10 audited and its code findings fixed;
-11 evaluated with two defects found and fixed. Remaining: the production deploy (blocked), a
-real screen-reader pass, and Stefan's decisions on the proposals. 7.1, 7.2, 7.5 and 7.6 shipped, deployed and verified
-live on production; 7.3 and 7.4 are *render the options* items and their options are rendered,
-measured and proposed. Phases 0-6 complete. **Phase 8 (comments) is now unblocked.**
+Last updated: 2026-09-12T02:05Z
+Current phase: **Every phase in the brief has been worked.**
+
+- **0-7 complete and verified LIVE** on production (`a34ebc3`). 7.3 and 7.4 are
+  *render-the-options* items; their options are rendered, measured and proposed.
+- **8 built** but for two documented gaps, and **never deployed**.
+- **9** answered with evidence (9.1) and proposed (9.2-9.5).
+- **10** audited — `A11Y-AUDIT.md`, 8 findings down to 1, and the last one is content.
+- **11** evaluated; two of its eight were defects and are fixed.
+
+Remaining, none of it a phase: the production deploy (**blocked**, Vercel rate limit), a real
+screen-reader pass (needs a person), and Stefan's decisions on `PROPOSALS.md`.
 Session count: 2
 
 ## Shipped
