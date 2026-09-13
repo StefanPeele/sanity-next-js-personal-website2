@@ -21,6 +21,7 @@ export const articleUiQuery = defineQuery(`
       listenLabels{ play, pause, resume, stop, unsupported, voice, speed, systemVoice },
       bookmarkLabels{ save, saved, resume, clear, progressBar, resumeScroll }
     },
+    tour{ enabled, invite, inviteQuestion, acceptLabel, declineLabel, nextLabel, doneLabel, menuLabel, steps[]{ _key, title, body } },
     blocks{
       summaryHeading, tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,
       sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent

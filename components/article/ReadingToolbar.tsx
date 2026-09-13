@@ -46,6 +46,8 @@ export type ReadingToolbarProps = {
   deck?: { filename: string; tsv: string }
   /** 5.1. `index` hides the article-only controls; the physical control is the same. */
   variant?: 'article' | 'index'
+  /** The reader-menu entry that replays the first-visit tour. Article-only. */
+  tourLabel?: string | null
 }
 
 /** Persisted so the collapsed/expanded choice and the dismissal survive a reload. */
@@ -128,7 +130,7 @@ export function ReadingToolbar(props: ReadingToolbarProps) {
   return <ReadingToolbarInner {...props} />
 }
 
-function ReadingToolbarInner({ copy, markdown, deck, variant = 'article' }: ReadingToolbarProps) {
+function ReadingToolbarInner({ copy, markdown, deck, variant = 'article', tourLabel }: ReadingToolbarProps) {
   const { slug, progress, settings, setSetting, resetA11y, scrollTo, headings } = useArticle()
   const reader = useReadAloud()
   const [open, setOpen] = useState(false)
@@ -464,6 +466,16 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article' }: Read
           <Group label={L.groupLabels.toolbar}>
             <Row label={L.toolbarLabels.hide} onClick={hideToolbar} />
             <p className="font-sans text-xs text-stone-400 leading-relaxed pt-1">{L.toolbarLabels.hideHint}</p>
+            {/* The way back into the first-visit tour. A tour worth showing once is worth
+                finding again, and without this the reader who declined it while busy is
+                punished for having been busy. Article-only: the tour describes article
+                furniture, and `tourLabel` is absent on the index. */}
+            {tourLabel && (
+              <Row
+                label={tourLabel}
+                onClick={() => { setOpen(false); window.dispatchEvent(new CustomEvent('sp:show-tour')) }}
+              />
+            )}
           </Group>
         </div>
         </div>

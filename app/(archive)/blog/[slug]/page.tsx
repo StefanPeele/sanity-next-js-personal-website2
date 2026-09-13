@@ -21,6 +21,7 @@ import { ConceptCards } from '@/components/blog/LearningBlocks'
 import { BlogArticleHeader } from '@/components/blog/BlogArticleHeader'
 import { TldrBlock } from '@/components/blog/TldrBlock'
 import { ArticleSummary } from '@/components/blog/ArticleSummary'
+import { ReadingTour } from '@/components/article/ReadingTour'
 import { SeriesBanner } from '@/components/blog/SeriesBanner'
 import { Checkpoint } from '@/components/blog/Checkpoint'
 import { BacklinksSection } from '@/components/blog/Backlinks'
@@ -202,10 +203,11 @@ export default async function BlogPostPage({ params, searchParams }: Props) {
           route, and a saved theme must not leak off the article. */}
       <div data-article-root className="relative min-h-screen text-stone-300 selection:bg-stone-500/30 pb-32">
         <JsonLd data={jsonLd} />
-        <ReadingProgressBar color={lane?.color} />
+        <ReadingTour copy={ui.tour} />
+      <ReadingProgressBar color={lane?.color} />
         {/* Phase 5. Rendered ONCE, here, rather than twice inside the two TOC variants --
             it is a fixed rail now, so two of them would be two rails stacked on each other. */}
-        <ReadingToolbar {...toolbar} variant="article" />
+        <ReadingToolbar {...toolbar} variant="article" tourLabel={ui.tour?.menuLabel} />
 
         <BlogArticleHeader
           title={title}

@@ -63,6 +63,41 @@ export const DEFAULT_ARTICLE_UI = {
     askButton: 'Ask',
     noContent: 'No content yet.',
   },
+  // The first-visit tour. Every sentence has to stand on its own without pointing at a
+  // position on screen, because it is read aloud as often as it is looked at, and "the
+  // control on the right edge" means nothing to someone who cannot see the right edge.
+  tour: {
+    enabled: true,
+    invite: 'This page has a few reading tools most sites do not.',
+    inviteQuestion: 'Want a quick look?',
+    acceptLabel: 'Show me',
+    declineLabel: 'No thanks',
+    nextLabel: 'Next',
+    doneLabel: 'Done',
+    menuLabel: 'Show the reading tips',
+    steps: [
+      {
+        title: 'The reading controls',
+        body: 'This is where you change how the page reads. Text size, width, spacing, theme. Whatever you set is remembered the next time you visit.',
+      },
+      {
+        title: 'Contents',
+        body: 'Every section, with how long each one takes. It follows you as you read, so you always know how much is left.',
+      },
+      {
+        title: 'Status marks',
+        body: 'A mark on a post says whether it has been peer reviewed, fact checked, or is still open to comment. It is a claim about the writing, not decoration.',
+      },
+      {
+        title: 'Sidenotes',
+        body: 'A dotted underline has a note attached. Definitions come from the glossary. The rest are mine.',
+      },
+      {
+        title: 'Corrections',
+        body: 'When something turns out to be wrong it gets marked in place, with credit to whoever caught it. Nothing here is quietly edited.',
+      },
+    ],
+  },
   // Phase 8. Every string a reader sees around the conversation, including the one that
   // matters most: what the email is for. An open comment box that asks for an address and
   // does not say why is asking for a reason not to comment.

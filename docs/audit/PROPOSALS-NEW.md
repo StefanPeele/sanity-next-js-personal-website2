@@ -81,6 +81,20 @@ quiet-link treatment as the series rail.
 
 # 2. The first-visit tour
 
+> **DECIDED AND SHIPPED**, copy as drafted with two lines made plainer.
+>
+> **ONE DEVIATION FROM THIS PROPOSAL, and it is a correction.** I proposed gating the tour
+> behind a pointer-capable check so a screen-reader user would not be walked through a
+> visual highlight sequence. That was the wrong fix: it excludes people from the explanation
+> instead of making the explanation work for them. The tour now runs for everyone, and the
+> requirement it turned into is that **every sentence stands on its own without naming a
+> position on screen** — enforced in the Studio field description, since the copy is
+> editable. The highlight is decoration on top of text that works without it.
+>
+> `docs/audit/measure-tour.mjs` drives all of it: **19/19**, including the two requirements
+> a code review cannot check. Clearing the cookie mid-visit does not resurrect it, and
+> Escape counts as done rather than "ask again".
+
 ## The trigger is the part most tours get wrong
 
 Showing a tour the second someone arrives asks them to learn the furniture of a room they

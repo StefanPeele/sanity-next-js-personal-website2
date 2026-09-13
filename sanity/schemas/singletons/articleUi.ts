@@ -47,6 +47,22 @@ export default defineType({
       obj('listenLabels', 'Read aloud', ['play', 'pause', 'resume', 'stop', 'unsupported', 'voice', 'speed', 'systemVoice'].map((n) => str(n))),
       obj('bookmarkLabels', 'Your place', ['save', 'saved', 'resume', 'clear', 'progressBar', 'resumeScroll'].map((n) => str(n))),
     ], { group: 'menu' }),
+    obj('tour', 'First-visit tour', [
+      defineField({ name: 'enabled', title: 'Show the tour to first-time readers', type: 'boolean' }),
+      str('invite', 'Invitation line'), str('inviteQuestion', 'Invitation question'),
+      str('acceptLabel', 'Accept button'), str('declineLabel', 'Decline button'),
+      str('nextLabel', 'Next button'), str('doneLabel', 'Done button'),
+      str('menuLabel', 'Reader-menu entry'),
+      defineField({
+        name: 'steps', title: 'Steps', type: 'array',
+        description: 'Five is the ceiling. Each sentence must stand on its own without naming a position on screen, because it is read aloud as often as it is looked at.',
+        validation: (r) => r.max(5),
+        of: [{ type: 'object', name: 'tourStep', fields: [
+          defineField({ name: 'title', title: 'Title', type: 'string', validation: (r) => r.required() }),
+          defineField({ name: 'body', title: 'Body', type: 'text', rows: 3, validation: (r) => r.required() }),
+        ], preview: { select: { title: 'title', subtitle: 'body' } } }],
+      }),
+    ]),
     obj('blocks', 'Block headings and labels', [
       str('summaryHeading', 'Summary heading'), str('tldrHeading', 'TL;DR heading'), str('tldrSub', 'TL;DR subheading'),
       str('prerequisitesHeading', 'Prerequisites heading'), str('objectivesHeading', 'Objectives heading'),
