@@ -46,6 +46,8 @@ export const DEFAULT_ARTICLE_UI = {
     },
   },
   blocks: {
+    // 5.6. The panel's own heading. The provenance line beneath it is generated, not copy.
+    summaryHeading: 'Summary',
     tldrHeading: 'TL;DR',
     tldrSub: 'If you read nothing else',
     prerequisitesHeading: 'Before you start',

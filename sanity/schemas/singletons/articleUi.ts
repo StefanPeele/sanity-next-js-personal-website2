@@ -48,7 +48,7 @@ export default defineType({
       obj('bookmarkLabels', 'Your place', ['save', 'saved', 'resume', 'clear', 'progressBar', 'resumeScroll'].map((n) => str(n))),
     ], { group: 'menu' }),
     obj('blocks', 'Block headings and labels', [
-      str('tldrHeading', 'TL;DR heading'), str('tldrSub', 'TL;DR subheading'),
+      str('summaryHeading', 'Summary heading'), str('tldrHeading', 'TL;DR heading'), str('tldrSub', 'TL;DR subheading'),
       str('prerequisitesHeading', 'Prerequisites heading'), str('objectivesHeading', 'Objectives heading'),
       str('checkpointHeading', 'Checkpoint heading'), str('conceptCardsHeading', 'Key terms heading'),
       str('sourcesHeading', 'Sources heading'), str('correctionsHeading', 'Corrections heading'), str('credibilityHeading', 'Credibility heading'),

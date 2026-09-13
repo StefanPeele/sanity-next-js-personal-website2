@@ -20,6 +20,7 @@ import { CredibilitySection } from '@/components/blog/CredibilitySection'
 import { ConceptCards } from '@/components/blog/LearningBlocks'
 import { BlogArticleHeader } from '@/components/blog/BlogArticleHeader'
 import { TldrBlock } from '@/components/blog/TldrBlock'
+import { ArticleSummary } from '@/components/blog/ArticleSummary'
 import { SeriesBanner } from '@/components/blog/SeriesBanner'
 import { Checkpoint } from '@/components/blog/Checkpoint'
 import { BacklinksSection } from '@/components/blog/Backlinks'
@@ -236,6 +237,17 @@ export default async function BlogPostPage({ params, searchParams }: Props) {
 
             {post.series && <SeriesBanner series={post.series} currentSlug={slug} seriesOrder={post.seriesOrder} labels={ui.seriesBanner} />}
 
+            {/* 5.6. Above the TL;DR because they answer different questions in order: the
+                summary is for a reader deciding whether to read the piece, the TL;DR is for
+                one who has decided not to. Renders nothing unless the summary still
+                describes the current body and no correction has overtaken it. */}
+            <ArticleSummary
+              post={post}
+              body={post.body}
+              correctionDates={(post.corrections ?? []).map((c) => c?.date)}
+              formatDate={(iso) => formatDate(iso, 'short') || iso.slice(0, 10)}
+              heading={B.summaryHeading}
+            />
             {(post.tldr?.length ?? 0) > 0 && <TldrBlock items={post.tldr ?? []} articleType={post.articleType} heading={B.tldrHeading} sub={B.tldrSub} />}
 
             {(post.prerequisites?.length ?? 0) > 0 && (

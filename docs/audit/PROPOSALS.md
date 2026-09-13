@@ -508,6 +508,19 @@ round of options rather than being folded in here.
 
 # Phase 5.6 — Summaries. The full proposal.
 
+> **DECIDED AND PARTLY SHIPPED.** Stefan: build the field, the label, the suppression rules
+> and correction-invalidates-summary now, with summaries written by hand. **No generation.**
+>
+> Shipped: the five schema fields, a Studio action that fingerprints a summary against the
+> prose it describes, the reader-facing panel with its provenance line, and both suppression
+> rules. `tests/summary.spec.ts` covers the rules exactly, 13 assertions, including the two
+> that matter most — a correction newer than the summary suppresses it, and re-cropping an
+> image does NOT, because only the writing should be able to invalidate a summary of the
+> writing.
+>
+> NOT shipped, by decision: generation. Everything above is a webhook away from it, which
+> was the point of building in this order.
+
 Written 2026-09-11. Nothing here is built yet; this answers the six questions 5.6 asks,
 with the arithmetic done against the real corpus rather than a guess at it.
 

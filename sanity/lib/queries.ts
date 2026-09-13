@@ -374,6 +374,9 @@ export const postBySlugQuery = defineQuery(`
     // every query below it. See RESUME.md; it has cost this project two sessions.
     mainImage { asset, hotspot, crop },
     body, excerpt, tldr,
+    // 5.6. The summary and everything needed to decide whether it may still be shown. The
+    // body itself is already selected above, so the staleness check costs no extra payload.
+    summary, summarySource, summaryModel, summaryAt, summaryOfHash,
     ${wordCountField},
     "categories": categories[]->title,
     "tags": tags[]->{ _id, title, "slug": slug.current }[defined(_id)],

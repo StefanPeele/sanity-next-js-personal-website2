@@ -138,6 +138,63 @@ export default defineType({
       validation: (rule) => rule.max(5),
     }),
 
+    // ── 5.6 Summaries ────────────────────────────────────────────────────────
+    // The field, the label and the suppression rules ship BEFORE any generation. Write the
+    // summary by hand and it is simply yours: `summarySource` stays 'authored' and no
+    // machine label is shown. When generation lands it becomes a webhook filling in a field
+    // whose every consumer already works.
+    defineField({
+      name: 'summary',
+      title: 'Summary',
+      type: 'text',
+      rows: 4,
+      group: 'content',
+      description:
+        '60-90 words, for a reader deciding whether to read the piece. Different from the TL;DR, which is for someone who will not. Leave empty for no summary panel.',
+      validation: (rule) => rule.max(900),
+    }),
+    defineField({
+      name: 'summarySource',
+      title: 'Written by',
+      type: 'string',
+      group: 'content',
+      initialValue: 'authored',
+      description:
+        'Authored means you wrote it and no machine label is shown. Generated attaches a visible label naming the model and the date. Generation is not built yet, so this stays on Authored.',
+      options: {
+        list: [
+          { title: 'Authored (you wrote it)', value: 'authored' },
+          { title: 'Generated (a model wrote it)', value: 'generated' },
+        ],
+        layout: 'radio',
+      },
+    }),
+    defineField({
+      name: 'summaryModel',
+      title: 'Model',
+      type: 'string',
+      group: 'content',
+      description: 'Only for a generated summary. Named in the visible label, e.g. claude-haiku-4-5.',
+      hidden: ({ parent }) => parent?.summarySource !== 'generated',
+    }),
+    defineField({
+      name: 'summaryAt',
+      title: 'Summary written',
+      type: 'datetime',
+      group: 'content',
+      description:
+        'When the summary was written. This is what a correction is compared against: a correction dated after it suppresses the summary, so that a post carrying a correction can never show a summary restating the thing that was corrected.',
+    }),
+    defineField({
+      name: 'summaryOfHash',
+      title: 'Body fingerprint',
+      type: 'string',
+      group: 'content',
+      readOnly: true,
+      description:
+        'A fingerprint of the prose this summary describes, used to detect staleness rather than assume it. When it stops matching the body the summary is hidden, not shown stale. Set it with the "Fingerprint this summary" action after writing a summary.',
+    }),
+
     defineField({
       name: 'body',
       title: 'Article Content',

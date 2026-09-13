@@ -22,7 +22,7 @@ export const articleUiQuery = defineQuery(`
       bookmarkLabels{ save, saved, resume, clear, progressBar, resumeScroll }
     },
     blocks{
-      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,
+      summaryHeading, tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,
       sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent
     },
     comments{

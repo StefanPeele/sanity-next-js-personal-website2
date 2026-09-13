@@ -4027,6 +4027,13 @@
         "value": {
           "type": "object",
           "attributes": {
+            "summaryHeading": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              },
+              "optional": true
+            },
             "tldrHeading": {
               "type": "objectAttribute",
               "value": {
@@ -9454,6 +9461,51 @@
           "of": {
             "type": "string"
           }
+        },
+        "optional": true
+      },
+      "summary": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "summarySource": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "authored"
+            },
+            {
+              "type": "string",
+              "value": "generated"
+            }
+          ]
+        },
+        "optional": true
+      },
+      "summaryModel": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "summaryAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "summaryOfHash": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       },
