@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { test, type Page } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 import { firstPostSlug } from './helpers'
 // tests/screenshots.spec.ts
 // Visual baseline for the whole site: every route at 1440 / 768 / 390, in each state that
@@ -43,10 +43,37 @@ const SIMPLE_ROUTES: Array<[route: string, name: string]> = [
 
 // -- plumbing ---------------------------------------------------------------
 
-/** Collect page errors, console errors and failed requests; append them to the run log. */
+/**
+ * Collect page errors, console errors and failed requests, log them, and FAIL on the ones
+ * that mean something.
+ *
+ * This used to only append to a file. These 39 captures contained no `expect` at all, so
+ * they could not fail on anything short of a navigation timeout -- and `_errors.log` had
+ * grown to 8,638 lines that nothing read. A harness that records errors and ignores them is
+ * not a guard, and this suite's headline number was counting it as one.
+ *
+ * What is asserted, chosen from what the log actually contained across every run to date:
+ *   - **Zero `pageerror`.** An uncaught exception is unambiguous, and there has never been
+ *     one in any run. Nothing to tune and nothing to go flaky.
+ *   - **No failed request** other than Sanity's live-events stream. All 1,234 logged request
+ *     failures were that one stream and nothing else.
+ *
+ * Console errors are still logged and deliberately NOT asserted: the CORS failure below
+ * emits four messages, one of which is a bare "Failed to load resource: net::ERR_FAILED"
+ * with no URL to attribute it by. Asserting on that shape would mean either a filter broad
+ * enough to hide a real 404, or a flaky test. Logged, visible, and honest about the gap.
+ */
 function watch(page: Page, label: string) {
   const seen = new Set<string>()
-  const ignore = (s: string) => /_vercel\/|va\.vercel-scripts|upgrade-insecure-requests/.test(s)
+  /**
+   * Sanity's live-events SSE stream is CORS-blocked on 127.0.0.1 and ONLY there -- verified
+   * against production, where a preflight from https://stefanpeele.com returns 204 with the
+   * origin allowed. It is a local-harness artifact, it produced every one of the 6,170 noise
+   * lines in the old log, and it is what made that log unreadable enough to stop being read.
+   */
+  const LOCAL_ARTIFACT = /[/]data[/]live[/]events[/]/
+  const ignore = (s: string) =>
+    /_vercel[/]|va[.]vercel-scripts|upgrade-insecure-requests/.test(s) || LOCAL_ARTIFACT.test(s)
   page.on('pageerror', (e) => {
     if (!ignore(e.message)) seen.add(`[pageerror] ${e.message}`)
   })
@@ -58,10 +85,13 @@ function watch(page: Page, label: string) {
     if (!ignore(r.url()) && !/ERR_ABORTED/.test(why)) seen.add(`[request] ${r.url()} - ${why}`)
   })
   return () => {
-    if (!seen.size) return
-    fs.mkdirSync(OUT, { recursive: true })
-    fs.appendFileSync(ERROR_LOG, `\n## ${label}\n${[...seen].join('\n')}\n`)
-    test.info().annotations.push({ type: 'page-errors', description: `${label}: ${seen.size} error(s)` })
+    if (seen.size) {
+      fs.mkdirSync(OUT, { recursive: true })
+      fs.appendFileSync(ERROR_LOG, `\n## ${label}\n${[...seen].join('\n')}\n`)
+      test.info().annotations.push({ type: 'page-errors', description: `${label}: ${seen.size} error(s)` })
+    }
+    const fatal = [...seen].filter((e) => e.startsWith('[pageerror]') || e.startsWith('[request]'))
+    expect(fatal, `${label} raised errors beyond the known local live-events artifact`).toEqual([])
   }
 }
 

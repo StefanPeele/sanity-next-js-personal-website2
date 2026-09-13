@@ -144,12 +144,16 @@ export default async function BlogPage() {
 
               <div className="relative z-20 pt-64 pb-12 px-8 md:px-16 flex flex-col justify-end h-full">
                 <div className="flex gap-3 mb-4 flex-wrap">
-                  {/* Phase 0.2, alignment only -- the kicker rebuild is Phase 2.5.
-                      As a flex item this span stretches to the row's 30px, set by the
-                      taller pills beside it, but its 18px line box stayed at the top of
-                      the stretched box: 4px above, 8px below. inline-flex + items-center
-                      centres the line without changing any box size. */}
-                  <span className="meta-label inline-flex items-center bg-white text-black px-3 py-1 rounded-sm">Featured</span>
+                  {/* The FEATURED badge that used to sit here is GONE, and this is a
+                      subtraction rather than a restyle.
+                      `<h2 className="section-label">{copy.featured.heading}</h2>` renders
+                      "Featured" 40px above this row, so the badge repeated the heading
+                      directly beneath it in a second typographic system -- a 12px mono
+                      label above a 12px mono uppercase white-filled box, carrying no
+                      information the position and the heading did not already carry.
+                      Aeon, Asterisk and Increment all identify the lead story by placement
+                      alone. It was also the one string on this page hardcoded in JSX rather
+                      than read from the blogPage singleton. PROPOSALS 2.5, option 1. */}
                   {featuredMeta && (
                     <span className="font-sans text-xs px-3 py-1.5 rounded-full border backdrop-blur-md" style={{ color: featuredMeta.color, borderColor: `${featuredMeta.color}66`, backgroundColor: featuredMeta.bg }}>
                       {featuredMeta.label}
@@ -172,7 +176,16 @@ export default async function BlogPage() {
                   <time dateTime={formatDate(featuredPost.publishedAt, 'iso')}>{formatDate(featuredPost.publishedAt, 'short', 'Undated')}</time>
                   <span className="text-stone-600" aria-hidden="true">•</span>
                   <span>{readingTime(featuredPost.wordCount ?? 0)} min read</span>
-                  <span className="ml-auto text-white group-hover:translate-x-1 transition-transform inline-block">{copy.featured.readLabel} →</span>
+                  {/* The arrow is its own element so the GLYPH moves on hover rather than
+                      the whole label, and so the gap is `ml-1` rather than a literal space
+                      in the JSX -- which is what put the arrow at text baseline with no
+                      optical adjustment. Deliberately NOT a button: the whole card is
+                      already the link, and a button inside it would nest one interactive
+                      target in another. PROPOSALS 2.4. */}
+                  <span className="ml-auto text-white">
+                    {copy.featured.readLabel}
+                    <span aria-hidden="true" className="ml-1 inline-block transition-transform group-hover:translate-x-0.5">→</span>
+                  </span>
                 </div>
               </div>
             </Link>

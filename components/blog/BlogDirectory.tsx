@@ -305,7 +305,8 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
                 <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
                   <span className="font-sans text-xs text-white bg-black/75 px-5 py-2.5 rounded-sm backdrop-blur-sm border border-edge-strong shadow-lg">
-                    {isRead ? `${L.readAgainLabel} →` : `${L.readLabel} →`}
+                    {isRead ? L.readAgainLabel : L.readLabel}
+                    <span aria-hidden="true" className="ml-1 inline-block">→</span>
                   </span>
                 </div>
               </div>
@@ -340,7 +341,15 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                         <span className="sr-only">{f.label}</span>
                       </span>
                     ))}
-                    <span className="meta-label text-stone-400">{minutes} min</span>
+                    {/* 14px sans sentence case, and the word "read" restored. The hero
+                        says "18 min read" in 14px sans and the cards said "3 MIN" in 12px
+                        mono uppercase -- one figure, two spellings, which PROPOSALS 1.3
+                        recorded as a defect at any size. This moves the card onto the
+                        spelling the hero already uses. The river row below still uses mono,
+                        deliberately: it is a right-aligned column in a dense table where
+                        tabular figures line up, and it is listed for Stefan rather than
+                        changed here. */}
+                    <span className="font-sans text-sm text-stone-400">{minutes} min read</span>
                   </div>
                 </div>
 
@@ -535,7 +544,12 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           <div id="blog-facets" className="space-y-3 rounded-lg border border-edge bg-surface-veil p-4">
             {categories.length > 0 && (
               <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by category">
-                <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.category}</span>
+                {/* The filter-row labels are micro-labels, not taxonomy. They used to
+                    render 12px Inter sentence case -- the identical shape to the pills
+                    sitting beside them -- so a label and a value wore one costume.
+                    `.meta-label` gives them the mono label face at the same 12px, which
+                    separates the row's two jobs without changing any size. PROPOSALS 2.4. */}
+                <span className="meta-label w-16">{L.filterLabels.category}</span>
                 <button type="button" onClick={() => setParam('category', null)} aria-pressed={active === null} className={chip(active === null)}>{L.allLabel}</button>
                 {categories.map((cat) => (
                   <button key={cat} type="button" onClick={() => setParam('category', active === cat ? null : cat)} aria-pressed={active === cat} className={chip(active === cat)}>
@@ -547,7 +561,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
             {allTags.length > 0 && (
               <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by tag">
-                <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.tag}</span>
+                <span className="meta-label w-16">{L.filterLabels.tag}</span>
                 {allTags.map((t) => (
                   <button key={t.slug} type="button" onClick={() => setParam('tag', tag === t.slug ? null : t.slug)} aria-pressed={tag === t.slug} className={chip(tag === t.slug)}>
                     #{t.title} <span className="opacity-60 text-xs">{t.count}</span>
@@ -558,7 +572,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
             {statusFacets.length > 0 && (
               <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by review status">
-                <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.status}</span>
+                <span className="meta-label w-16">{L.filterLabels.status}</span>
                 <button type="button" onClick={() => setParam('status', null)} aria-pressed={status === null} className={chip(status === null)}>{L.allLabel}</button>
                 {statusFacets.map((f) => {
                   const on = status === f.key
@@ -574,7 +588,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
             )}
 
             <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Sort">
-              <span className="font-sans text-xs text-stone-400 w-16">{L.filterLabels.sort}</span>
+              <span className="meta-label w-16">{L.filterLabels.sort}</span>
               {(['newest', 'oldest', 'longest'] as Sort[]).map((s) => (
                 <button key={s} type="button" onClick={() => setParam('sort', s === 'newest' ? null : s)} aria-pressed={sort === s} className={chip(sort === s)}>
                   {L.sortLabels[s]}
