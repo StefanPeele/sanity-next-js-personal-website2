@@ -111,7 +111,12 @@ try {
     check('there are filter labels to check', labels.length > 0, `${labels.length}`)
     check('each wears the mono label face', labels.every((l) => /mono|plex/i.test(l.family)), [...new Set(labels.map((l) => l.family))].join(', '))
     check('each is uppercase', labels.every((l) => l.transform === 'uppercase'))
-    check('each is still 12px — no size was changed', labels.every((l) => l.size === '12px'), [...new Set(labels.map((l) => l.size))].join(', '))
+    // This asserted 12px when the labels were first moved onto `.meta-label`, and that was
+    // correct at the time: 2.4's recommendation was to change the FACE and not the size.
+    // Stefan then overrode the size question separately, taking the brief's 14px meta floor
+    // against the measured 10-15px band, so the floor now supersedes it. Recorded rather
+    // than quietly edited, because a test that changes to match the code is worth a reason.
+    check('each is on the 14px meta floor', labels.every((l) => l.size === '14px'), [...new Set(labels.map((l) => l.size))].join(', '))
     check('none overflows its column', labels.every((l) => l.natural <= l.boxW),
       labels.filter((l) => l.natural > l.boxW).map((l) => `${l.text} ${l.natural}>${l.boxW}`).join(', ') || 'all fit')
     check('none wrapped to a second line', labels.every((l) => l.h <= 20), [...new Set(labels.map((l) => l.h))].join(', '))

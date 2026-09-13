@@ -26,8 +26,8 @@ Deliberately **not** taken, because they are yours: everything that changes how 
 | 1 | **Run `scripts/migrate-heading-levels.mjs`?** | `A11Y-AUDIT.md` | The published article's seven section headings are `h5` while "Responses" and "Contents" are `h2` — the machinery outranks the writing, and a screen-reader user is told the piece has no sections. The fix changes an `h5` at 19/20px into an `h2` at 32/38px, so it changes how a published piece looks. **The only open accessibility item that is a real defect** |
 | 2 | ~~The blog description~~ | 2.2 | **SHIPPED** `88590e0` |
 | 3 | ~~The critique invitation~~ | 2.3 | **SHIPPED** |
-| 4 | **The index hierarchy**: dividers → D, h1 72px → 48px, a real Latest tier | 2.5 | The biggest visual change on the table. Twelve reference sites render no section name larger than their lead story; ours renders "Blog" at 72px above a 60px headline |
-| 5 | **The card treatment** — option C | 2.6 | The "AI-looking" diagnosis. Aesthetic identity |
+| 4 | **The index hierarchy**: dividers → D, h1 72px → 48px, a real Latest tier | 2.5 | Decided by Stefan; shipping in order |
+| 5 | ~~The card treatment~~ | 2.6 | **SHIPPED** — option C, with the 14px meta floor |
 | 6 | **The hero image** — option F | 7.3 | Rendered and measured against the fold |
 | 7 | **The article h1** — option B | 7.4 | Re-measured against the 7.2 layout |
 | 8 | **AI-generated summaries** — build or not | 5.6 | Cost, labelling, and editorial policy. A machine writing in your voice is a decision only you can make |
@@ -191,6 +191,18 @@ Phase 8.8 existing.
 
 ## 2.4 Meta type scale — the audit, before changing anything
 
+> **DECIDED AND SHIPPED.** Stefan took the brief's **14px floor for blog meta**, against the
+> 10-15px band measured below. His call, explicitly overriding the recommendation here.
+>
+> Applied to a re-measured set rather than a remembered one
+> (`docs/audit/measure-meta-floor.mjs`): the card kicker, the card footer date and "Read",
+> the hover overlay, the already-read badge, the four filter-row labels, the river row's date
+> and reading time, and the hero's two pills. **18 sub-14px blog-meta nodes before, 0 after.**
+>
+> Left below the floor on purpose: the skip link, "Search" and "⌘K" (site chrome, not blog
+> meta) and the newsletter fine print, which this section already argued should stay at 12px
+> because fine print is fine print.
+
 The brief asks for the full list of blog-surface text nodes under 14px with proposed sizes,
 **before** any change. Measured against production at 1440 across `/blog`, a full article,
 and `/blog/series` — walking text nodes, recording the rendered shape of each.
@@ -279,6 +291,14 @@ Verified on production by `docs/audit/measure-proposals-shipped.mjs`, 18/18.
 ---
 
 ## 2.6 The "AI-looking" problem — diagnosed
+
+> **DECIDED AND SHIPPED: option C.** 24px w600 title, and the bordered pill row replaced by a
+> single mono kicker above the headline.
+>
+> One resolution this section left open: the kicker is the **category**, not the lane, because
+> the lane already renders as a badge over the card's image and would otherwise appear twice.
+> The lane still lends the kicker its colour, which was already in the data via
+> `articleTypeMeta()`. The series pill is hidden with the rest of the row, per option C.
 
 The brief calls this the single most important aesthetic item, states a theory — *"every
 element on the cards carries similar weight with similar spacing, so nothing leads"* — and

@@ -171,12 +171,12 @@ export default async function BlogPage() {
                       alone. It was also the one string on this page hardcoded in JSX rather
                       than read from the blogPage singleton. PROPOSALS 2.5, option 1. */}
                   {featuredMeta && (
-                    <span className="font-sans text-xs px-3 py-1.5 rounded-full border backdrop-blur-md" style={{ color: featuredMeta.color, borderColor: `${featuredMeta.color}66`, backgroundColor: featuredMeta.bg }}>
+                    <span className="font-sans text-sm px-3 py-1.5 rounded-full border backdrop-blur-md" style={{ color: featuredMeta.color, borderColor: `${featuredMeta.color}66`, backgroundColor: featuredMeta.bg }}>
                       {featuredMeta.label}
                     </span>
                   )}
                   {featuredPost.categories?.filter(Boolean).map((cat) => (
-                    <span key={cat} className="font-sans text-xs px-3 py-1.5 rounded-full border border-edge-strong text-stone-300 backdrop-blur-md bg-black/30">
+                    <span key={cat} className="font-sans text-sm px-3 py-1.5 rounded-full border border-edge-strong text-stone-300 backdrop-blur-md bg-black/30">
                       {cat}
                     </span>
                   ))}

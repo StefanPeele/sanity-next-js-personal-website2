@@ -298,13 +298,13 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                 )}
 
                 {isRead && (
-                  <div className="absolute top-3 right-3 z-20 font-sans text-xs text-stone-300 bg-black/70 px-2 py-1 rounded-sm border border-edge backdrop-blur-sm">
+                  <div className="absolute top-3 right-3 z-20 font-sans text-sm text-stone-300 bg-black/70 px-2 py-1 rounded-sm border border-edge backdrop-blur-sm">
                     Read
                   </div>
                 )}
 
                 <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
-                  <span className="font-sans text-xs text-white bg-black/75 px-5 py-2.5 rounded-sm backdrop-blur-sm border border-edge-strong shadow-lg">
+                  <span className="font-sans text-sm text-white bg-black/75 px-5 py-2.5 rounded-sm backdrop-blur-sm border border-edge-strong shadow-lg">
                     {isRead ? L.readAgainLabel : L.readLabel}
                     <span aria-hidden="true" className="ml-1 inline-block">→</span>
                   </span>
@@ -313,19 +313,25 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
               <div className="flex flex-col flex-grow">
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <div className="flex gap-2 flex-wrap items-center">
-                    {meta && (
-                      <span className="font-sans text-xs px-3 py-1.5 rounded-full border" style={{ color: meta.color, borderColor: `${meta.color}66`, backgroundColor: meta.bg }}>
-                        {meta.label}
-                      </span>
-                    )}
+                  {/* 2.6 option C. The bordered pill row is now a single KICKER.
+                      §1.2 measured kicker / headline / excerpt / footer at 404 Media,
+                      Defector, Ars and NYT, and the pill and the title were competing for
+                      the one place a card needs its title to win. A bordered box directly
+                      above a headline is the thing that made these cards read as generated.
+                      The lane is NOT repeated here: it already sits as a badge over the
+                      image, so the category is the kicker and the lane only lends it its
+                      colour, which is already in the data via articleTypeMeta().
+                      The series pill is hidden with the rest of the row, per option C. A
+                      post in a series still shows it on the article and in the series rail;
+                      if that turns out to be a loss, this is the line to restore. */}
+                  <div className="flex gap-2 flex-wrap items-center min-w-0">
                     {firstCat && (
-                      <span className={`font-sans text-xs px-3 py-1.5 rounded-full border ${firstCat === active ? 'border-stone-300 text-stone-200 bg-surface-fill-strong' : 'border-edge text-stone-400'}`}>
+                      <span
+                        className="meta-label text-sm truncate"
+                        style={meta ? { color: meta.color } : undefined}
+                      >
                         {firstCat}
                       </span>
-                    )}
-                    {post.series?.title && (
-                      <span className="font-sans text-xs px-3 py-1.5 rounded-full border border-orange-300/30 text-orange-300/90 inline-flex items-center gap-1.5"><Icon name="layers" size={12} aria-hidden />{post.series.title}</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
@@ -353,11 +359,15 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                   </div>
                 </div>
 
-                <h3 className="text-xl font-serif text-white group-hover:text-stone-100 transition-colors mb-2 leading-snug">{post.title}</h3>
+                {/* 2.6 option C: 24px w600, not 20px w400. Measured spread 2.00x against the
+                    baseline's 1.67x -- the card's title becomes the largest thing on it.
+                    Not 28px (option D): that is 2.33x, past Quanta and Defector, and at 390
+                    the longer title wraps to five lines where 24px holds at three. */}
+                <h3 className="text-2xl font-serif font-semibold text-white group-hover:text-stone-100 transition-colors mb-2 leading-snug">{post.title}</h3>
 
                 <p className="text-stone-300 text-sm line-clamp-2 mb-4 flex-grow leading-relaxed">{post.excerpt}</p>
 
-                <div className="flex items-center justify-between font-sans text-xs border-t border-edge pt-4">
+                <div className="flex items-center justify-between font-sans text-sm border-t border-edge pt-4">
                   <time dateTime={formatDate(post.publishedAt, 'iso')} className="text-stone-400">{formatDate(post.publishedAt, 'short', 'Undated')}</time>
                   <span className="text-stone-300 group-hover:text-white flex items-center gap-1.5 transition-colors">
                     Read <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform inline-block" aria-hidden="true" />
@@ -385,7 +395,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           onClick={() => post.slug && markPostRead(post.slug)}
           className={`group flex items-baseline gap-3 py-3 rounded-sm ${FOCUS} ${isRead ? 'opacity-60 hover:opacity-100' : ''}`}
         >
-          <time dateTime={formatDate(post.publishedAt, 'iso')} className="font-mono text-xs text-stone-400 shrink-0 w-24">
+          <time dateTime={formatDate(post.publishedAt, 'iso')} className="font-mono text-sm text-stone-400 shrink-0 w-28">
             {formatDate(post.publishedAt, 'short', 'Undated')}
           </time>
           {meta && (
@@ -400,7 +410,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
               <span className="sr-only">{f.label}</span>
             </span>
           ))}
-          <span className="font-mono text-xs text-stone-400 shrink-0 w-14 text-right">{minutes} min</span>
+          <span className="font-mono text-sm text-stone-400 shrink-0 w-16 text-right">{minutes} min</span>
         </Link>
       </li>
     )
@@ -549,7 +559,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
                     sitting beside them -- so a label and a value wore one costume.
                     `.meta-label` gives them the mono label face at the same 12px, which
                     separates the row's two jobs without changing any size. PROPOSALS 2.4. */}
-                <span className="meta-label w-16">{L.filterLabels.category}</span>
+                <span className="meta-label text-sm w-20">{L.filterLabels.category}</span>
                 <button type="button" onClick={() => setParam('category', null)} aria-pressed={active === null} className={chip(active === null)}>{L.allLabel}</button>
                 {categories.map((cat) => (
                   <button key={cat} type="button" onClick={() => setParam('category', active === cat ? null : cat)} aria-pressed={active === cat} className={chip(active === cat)}>
@@ -561,7 +571,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
             {allTags.length > 0 && (
               <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by tag">
-                <span className="meta-label w-16">{L.filterLabels.tag}</span>
+                <span className="meta-label text-sm w-20">{L.filterLabels.tag}</span>
                 {allTags.map((t) => (
                   <button key={t.slug} type="button" onClick={() => setParam('tag', tag === t.slug ? null : t.slug)} aria-pressed={tag === t.slug} className={chip(tag === t.slug)}>
                     #{t.title} <span className="opacity-60 text-xs">{t.count}</span>
@@ -572,7 +582,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
             {statusFacets.length > 0 && (
               <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by review status">
-                <span className="meta-label w-16">{L.filterLabels.status}</span>
+                <span className="meta-label text-sm w-20">{L.filterLabels.status}</span>
                 <button type="button" onClick={() => setParam('status', null)} aria-pressed={status === null} className={chip(status === null)}>{L.allLabel}</button>
                 {statusFacets.map((f) => {
                   const on = status === f.key
@@ -588,7 +598,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
             )}
 
             <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Sort">
-              <span className="meta-label w-16">{L.filterLabels.sort}</span>
+              <span className="meta-label text-sm w-20">{L.filterLabels.sort}</span>
               {(['newest', 'oldest', 'longest'] as Sort[]).map((s) => (
                 <button key={s} type="button" onClick={() => setParam('sort', s === 'newest' ? null : s)} aria-pressed={sort === s} className={chip(sort === s)}>
                   {L.sortLabels[s]}
