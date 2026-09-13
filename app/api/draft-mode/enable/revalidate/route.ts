@@ -47,7 +47,7 @@ const RULES: Record<string, Rule> = {
   servicesPage: { paths: ['/services'] },
 
   // Content documents
-  post: { paths: ['/', '/blog', '/graph', ...FEEDS], withSlug: '/blog/:slug' },
+  post: { paths: ['/', '/blog', '/blog/featured', '/graph', ...FEEDS], withSlug: '/blog/:slug' },
   note: { paths: ['/garden', '/graph', '/sitemap.xml'], withSlug: '/garden/:slug' },
   gallery: { paths: ['/photography', '/photography/albums', '/sitemap.xml'], withSlug: '/photography/:slug' },
   project: { paths: ['/projects', '/sitemap.xml'], withSlug: '/projects/:slug' },

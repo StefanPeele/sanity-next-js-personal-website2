@@ -136,7 +136,12 @@ export default async function BlogPage() {
         {/* ─── HERO FEATURED POST ──────────────────────────────────── */}
         {featuredPost && featuredPost.slug && (
           <>
-            <h2 className="section-label mb-4">{copy.featured.heading}</h2>
+            {/* The section label now leads somewhere. featuredAt gave the highlight a
+                history, and a history nobody can browse is a field, not a feature. */}
+            <div className="mb-4 flex items-baseline justify-between gap-4">
+              <h2 className="section-label">{copy.featured.heading}</h2>
+              <Link href="/blog/featured" className={`font-sans text-sm ${QUIET_LINK}`}>All featured →</Link>
+            </div>
 
             <Link
               href={`/blog/${featuredPost.slug}`}

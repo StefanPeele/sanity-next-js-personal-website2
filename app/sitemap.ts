@@ -17,6 +17,7 @@ const STATIC_ROUTES: Array<[path: string, priority: number, freq: Entry['changeF
   ['/blog',                0.9, 'daily'],
   ['/blog/series',         0.6, 'weekly'],
   ['/blog/digests',        0.5, 'monthly'],
+  ['/blog/featured',       0.5, 'monthly'],
   ['/blog/osi-model',      0.7, 'monthly'],
   ['/garden',              0.8, 'daily'],
   ['/graph',               0.5, 'weekly'],

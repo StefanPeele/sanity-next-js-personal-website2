@@ -6,6 +6,17 @@ Both were decided in principle and both said "propose the shape first". Neither 
 
 # 1. `/blog/featured` — a browsable archive of what I have highlighted
 
+> **DECIDED AND SHIPPED: option B.** Stefan took `featuredAt` + `featuredNote`, replacing
+> the boolean. The note is required whenever `featuredAt` is set, the same discipline the
+> digest applies to its entries.
+>
+> Migrated: the one flagged post carries `featuredAt` = its `publishedAt`, because inventing
+> "now" would stamp today on a decision made in May. **It has no note yet, deliberately** —
+> a migration that wrote one would put words in his mouth on the one page whose entire value
+> is that the words are his. The Studio flags it until he writes it.
+>
+> `isFeatured` is gone from the schema and unset on every document.
+
 **The decision that has to come first, and it is not about the route.**
 
 `isFeatured` is a boolean today, and the schema says "only one post should be featured at a

@@ -11463,10 +11463,17 @@
         },
         "optional": true
       },
-      "isFeatured": {
+      "featuredAt": {
         "type": "objectAttribute",
         "value": {
-          "type": "boolean"
+          "type": "string"
+        },
+        "optional": true
+      },
+      "featuredNote": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       },

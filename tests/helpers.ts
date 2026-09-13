@@ -15,7 +15,7 @@ import type { APIRequestContext } from '@playwright/test'
  */
 export async function firstPostSlug(request: APIRequestContext): Promise<string | null> {
   const xml = await (await request.get('/sitemap.xml')).text()
-  const match = xml.match(/<loc>[^<]*\/blog\/(?!series(?:\/|<)|digests(?:\/|<)|osi-model|feed)([^<\/]+)<\/loc>/)
+  const match = xml.match(/<loc>[^<]*\/blog\/(?!series(?:\/|<)|digests(?:\/|<)|featured(?:\/|<)|osi-model|feed)([^<\/]+)<\/loc>/)
   return match?.[1] ?? null
 }
 
@@ -26,6 +26,6 @@ export async function firstPostSlug(request: APIRequestContext): Promise<string 
  */
 export async function allPostSlugs(request: APIRequestContext): Promise<string[]> {
   const xml = await (await request.get('/sitemap.xml')).text()
-  const re = /<loc>[^<]*\/blog\/(?!series(?:\/|<)|digests(?:\/|<)|osi-model|feed)([^<\/]+)<\/loc>/g
+  const re = /<loc>[^<]*\/blog\/(?!series(?:\/|<)|digests(?:\/|<)|featured(?:\/|<)|osi-model|feed)([^<\/]+)<\/loc>/g
   return [...xml.matchAll(re)].map((m) => m[1])
 }

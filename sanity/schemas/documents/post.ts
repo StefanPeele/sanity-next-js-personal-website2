@@ -30,7 +30,6 @@ export default defineType({
   // New posts start with the archive defaults and an empty TL;DR so the writer
   // sees the summary block right away. Works with Studio initial value templates too.
   initialValue: {
-    isFeatured: false,
     articleType: 'concept-deep-dive',
     recommendedTheme: 'archive',
     confidenceLevel: 'confident',
@@ -75,13 +74,39 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
 
+    // ── Featuring ─────────────────────────────────────────────────────────────
+    // This replaced an `isFeatured` boolean, and the reason is the whole point of
+    // /blog/featured: a boolean cannot have an archive. "Every post I have flagged" meant
+    // "the post that is flagged", so featuring something new erased the last one and there
+    // was no history to browse.
+    //
+    // `featuredAt` is the same move `sentAt` made on the digest: its presence IS "featured",
+    // so there is no second field to disagree with it, and the newest one is the hero.
     defineField({
-      name: 'isFeatured',
-      title: 'Feature this post?',
-      type: 'boolean',
+      name: 'featuredAt',
+      title: 'Featured on',
+      type: 'datetime',
       group: 'content',
-      description: 'Pin this as the hero article at the top of the blog index. Only one post should be featured at a time.',
-      initialValue: false,
+      description: 'Set this to feature the post. The most recent one is the hero on /blog, and every post that has ever carried a date stays in the archive at /blog/featured.',
+    }),
+    defineField({
+      name: 'featuredNote',
+      title: 'Why this one',
+      type: 'text',
+      rows: 3,
+      group: 'content',
+      description: 'One or two sentences on why you featured it, at the time. This is what makes the archive worth reading rather than a second copy of the index.',
+      // Required WHEN FEATURED, the same discipline the digest applies to its entries: the
+      // note is the only part of the page a reader cannot get from the index, so the schema
+      // enforces it rather than trusting anyone to remember.
+      validation: (rule) =>
+        rule.custom((note, context) => {
+          const featuredAt = (context.document as { featuredAt?: string } | undefined)?.featuredAt
+          if (!featuredAt) return true
+          return (note ?? '').toString().trim().length > 0
+            ? true
+            : 'A featured post needs a note saying why. That sentence is the archive.'
+        }),
     }),
 
     defineField({
