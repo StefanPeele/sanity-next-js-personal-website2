@@ -167,6 +167,41 @@ it disagreed — twice. Check that one.
 
 ## EVERY PHASE IN THE BRIEF HAS NOW BEEN WORKED
 
+## 2026-09-13, third run: the last two decisions, and the three lists
+
+`/blog/featured` and the first-visit tour are both built. `isFeatured` is gone: `featuredAt`
+plus a required `featuredNote` replaced it, because a boolean cannot have an archive.
+
+**`/test` is deleted** — the one NEEDS STEFAN item that could be closed from here. Dataset is
+now **515**, not 516.
+
+**Three documents answer everything else:**
+
+- **`HEADING-FIX.md`** — the last open accessibility defect, measured post by post. It is ONE
+  post and seven dropdowns, plus four stray line breaks the script could not have fixed. The
+  other two posts are already correct.
+- **`CONTENT-TO-WRITE.md`** — one ordered list, sorted by what each item turns on per unit of
+  writing. Items 1-5 are under an hour and about a hundred words.
+- **`LAUNCH-CHECKLIST.md`** — everything else, each DONE / NEEDS STEFAN / AT RISK.
+
+**Still Stefan's, and genuinely not closeable from here:** the Sanity webhook (dashboard),
+`DIGEST_SEND_SECRET` (Vercel), a real Resend delivery (a mailbox), the screen-reader pass (a
+person), the heading dropdowns (they change how a published post looks), and the writing.
+
+**Traps this run added:**
+
+- **A featured flag that is a boolean has no history.** Worth checking for the same shape
+  anywhere else: a field that records WHETHER without recording WHEN cannot support an
+  archive, and the fix is always a datetime whose presence is the state.
+- **A migration's verification has to distinguish "migrated" from "never applied".** Mine
+  counted `defined(isFeatured)` and reported two stragglers after a clean run, because two
+  unrelated posts held `false`. It reported a failure that had not happened.
+- **Every new route under `/blog` must be excluded from `tests/helpers.ts` by hand.** That is
+  now twice in one day: `/blog/digests` and `/blog/featured`. When several tests fail on one
+  surface at once, check what they point AT before reading the diff.
+- **Focus on a dialog container is correct and makes Enter do nothing.** A keyboard check has
+  to press Tab first. Testing Enter alone asserts a focus placement nobody should want.
+
 ## 2026-09-13, second run: every PROPOSALS decision shipped
 
 Stefan made every outstanding decision in one message. All of them are shipped or, where he

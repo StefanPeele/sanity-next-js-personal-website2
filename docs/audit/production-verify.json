@@ -1,6 +1,6 @@
 {
   "base": "https://stefanpeele.com",
-  "when": "2026-09-13T20:10:55.817Z",
+  "when": "2026-09-13T21:46:51.345Z",
   "routes": {
     "/": {
       "status": 200,
@@ -21,7 +21,7 @@
       "title": "Blog | Stefan Peele",
       "scroll": 1440,
       "client": 1440,
-      "textLen": 2036,
+      "textLen": 2051,
       "errors": []
     },
     "/garden": {
@@ -178,6 +178,17 @@
       "textLen": 848,
       "errors": []
     },
+    "/blog/featured": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Featured | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 860,
+      "errors": []
+    },
     "/blog/osi-model": {
       "status": 200,
       "h1": 1,
@@ -256,7 +267,7 @@
     },
     "/sitemap.xml": {
       "status": 200,
-      "bytes": 5067
+      "bytes": 5076
     },
     "/robots.txt": {
       "status": 200,
