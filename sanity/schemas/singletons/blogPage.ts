@@ -15,6 +15,16 @@ export default defineType({
   initialValue: DEFAULT_BLOG_PAGE,
   fields: [
     defineField({ name: 'header', title: 'Header', type: 'pageHeader' }),
+    // 2.3. Deliberately a TOP-LEVEL field rather than part of `header`: `header` is the
+    // shared `pageHeader` object type, so adding the invitation there would put it on every
+    // page header on the site. The proposal said blogPage.header; this is the same intent
+    // without the collateral.
+    obj('critiqueInvite', 'Critique invitation', [
+      defineField({ name: 'enabled', title: 'Show this line', type: 'boolean' }),
+      defineField({ name: 'text', title: 'Invitation', type: 'text', rows: 2 }),
+      str('email', 'Email address (optional)'),
+      str('emailLabel', 'Email link label'),
+    ]),
     obj('statsLabels', 'Stats line', [str('posts', '"posts"'), str('series', '"series"'), str('latest', '"Latest"')]),
     obj('featured', 'Featured post', [str('heading', 'Heading'), str('readLabel', 'Read link label')]),
     obj('seriesRail', 'Series rail', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),

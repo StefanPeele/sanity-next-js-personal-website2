@@ -482,6 +482,12 @@ export type BlogPage = {
   _updatedAt: string
   _rev: string
   header?: PageHeader
+  critiqueInvite?: {
+    enabled?: boolean
+    text?: string
+    email?: string
+    emailLabel?: string
+  }
   statsLabels?: {
     posts?: string
     series?: string
@@ -2575,13 +2581,19 @@ export type ArticleUiQueryResult = {
 
 // Source: sanity/lib/queries-article-ui.ts
 // Variable: blogPageQuery
-// Query: *[_type == "blogPage"][0]{    header{ title, lede, metaTitle, metaDescription },    statsLabels{ posts, series, latest },    featured{ heading, readLabel },    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount, findLabel, findPlaceholder, filtersLabel, seeAllLabel, riverHeading },    planned{ enabled, heading, note, label, treatment, items[]{ _key, topic, lane } }  }
+// Query: *[_type == "blogPage"][0]{    header{ title, lede, metaTitle, metaDescription },    critiqueInvite{ enabled, text, email, emailLabel },    statsLabels{ posts, series, latest },    featured{ heading, readLabel },    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount, findLabel, findPlaceholder, filtersLabel, seeAllLabel, riverHeading },    planned{ enabled, heading, note, label, treatment, items[]{ _key, topic, lane } }  }
 export type BlogPageQueryResult = {
   header: {
     title: string | null
     lede: string | null
     metaTitle: string | null
     metaDescription: string | null
+  } | null
+  critiqueInvite: {
+    enabled: boolean | null
+    text: string | null
+    email: string | null
+    emailLabel: string | null
   } | null
   statsLabels: {
     posts: string | null
@@ -5710,7 +5722,7 @@ export type CommentAnchorCountsQueryResult = Array<{
 declare module '@sanity/client' {
   interface SanityQueries {
     '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, revisedLabels{ corrected, clarified, updated }, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },\n    toc{ title, mobileTitle, minutesSuffix, minutesLeftLabel, progressLabel },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, spacing, density, share, listen, position, toolbar },\n      toolbarLabels{ hide, hideHint, restore },\n      themeLabels{ archive, slate, paper, terminal },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset, linkUnderline, bigFocus, muteColour },\n      spacingLabels{ lineHeight, letterSpacing, wordSpacing, paraSpacing },\n      scaleSteps{ less, normal, more },\n      densityLabels{ comfortable, compact },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported, voice, speed, systemVoice },\n      bookmarkLabels{ save, saved, resume, clear, progressBar, resumeScroll }\n    },\n    blocks{\n      tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent\n    },\n    comments{\n      heading, lede, countLabel, empty, formHeading, labelPrompt, namePlaceholder, anonymousLabel,\n      emailPlaceholder, emailHint, bodyPlaceholder, submitLabel, submittingLabel, replyLabel,\n      cancelLabel, allLabel, moreLabel, anonymousName, pendingNote, onSidenoteLabel,\n      respondToNoteLabel, noteResponsesLabel, respondingToNote, respondingToNoteClear\n    },\n    credibility{\n      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, reviewedByLabel, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
-    '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },\n    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount, findLabel, findPlaceholder, filtersLabel, seeAllLabel, riverHeading },\n    planned{ enabled, heading, note, label, treatment, items[]{ _key, topic, lane } }\n  }\n': BlogPageQueryResult
+    '\n  *[_type == "blogPage"][0]{\n    header{ title, lede, metaTitle, metaDescription },\n    critiqueInvite{ enabled, text, email, emailLabel },\n    statsLabels{ posts, series, latest },\n    featured{ heading, readLabel },\n    seriesRail{ enabled, heading, ctaLabel, ctaHref }, readingStrip{ enabled, heading, ctaLabel, ctaHref }, notesStrip{ enabled, heading, ctaLabel, ctaHref },\n    list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount, findLabel, findPlaceholder, filtersLabel, seeAllLabel, riverHeading },\n    planned{ enabled, heading, note, label, treatment, items[]{ _key, topic, lane } }\n  }\n': BlogPageQueryResult
     '\n  *[_type == "knowledgePages"][0]{\n    garden{ header{ title, lede, metaTitle, metaDescription }, stats{ notes, evergreen, tags }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) },\n      note{ plantedLabel, tendedLabel, statusLabel, staleWarning, relatedNotes, relatedPosts, linksHere, citedBy, graphHeading, prevLabel, nextLabel, backLabel, openGraph } },\n    library{ header{ title, lede, metaTitle, metaDescription }, stats{ total, finished, current, changedThinking, influenced }, emptyState{ title, hint }, "relatedNav": relatedNav[]{ _key, label, kind, url, description, icon, newTab, "path": select(kind == "reference" => "/" + reference->slug.current, path) }, filterLabels{ type, status, all, clear } },\n    glossary{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, termsCount },\n    series{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, partsLabel, publishedLabel, updatedLabel, statusLabels{ inProgress, complete, paused } },\n    graph{ header{ title, lede, metaTitle, metaDescription }, emptyState{ title, hint }, backLabel, legendHeading, visibleHeading, nodesLabel, edgesLabel, searchPlaceholder, helpLine, typeLabels{ post, note, tag, library, project, series },\n      legendLabels{ evergreen, growing, seedling, tag, libraryCurrent, libraryFinished, libraryReference, project, series },\n      linesNote, nodeListLabel, openHint, ariaSummary },\n    osi{ header{ title, lede, metaTitle, metaDescription }, breadcrumbLabel, backLabel, packetJourney{ heading, lede, scenario }, quickReference{ heading, columns{ n, layer, pdu, addressing, protocols } } }\n  }\n': KnowledgePagesQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, body, tldr, excerpt\n  }\n': ArticleTextQueryResult
     '\n  *[_type == "post" && slug.current == $slug][0] {\n    title, excerpt, articleType, publishedAt,\n    "categories": categories[]->title,\n    "mainImageUrl": mainImage.asset->url,\n    \n  "wordCount": coalesce(math::sum(body[_type == "block" && defined(children)]{\n    "w": length(string::split(array::join(children[].text, ""), " "))\n  }.w), 0),\n    "series": series->{ title },\n    seriesOrder\n  }\n': ArticleOgQueryResult

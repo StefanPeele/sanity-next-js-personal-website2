@@ -21,7 +21,7 @@ import { getCopy, getTaxonomy } from '@/lib/cms/loaders'
 import { articleUiQuery, blogPageQuery } from '@/sanity/lib/queries-article-ui'
 import { DEFAULT_BLOG_PAGE } from '@/lib/cms/defaults/blogPage'
 import { DEFAULT_ARTICLE_UI } from '@/lib/cms/defaults/articleUi'
-import { FOCUS } from '@/lib/ui'
+import { FOCUS, QUIET_LINK } from '@/lib/ui'
 import { facetKeys } from '@/lib/stega'
 // app/(archive)/blog/page.tsx
 // Supports ?category= ?lane= ?tag= ?sort= (handled client-side in BlogDirectory).
@@ -100,6 +100,22 @@ export default async function BlogPage() {
           <div>
             <h1 className="text-5xl md:text-7xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
             {copy.header.lede && <p className="mt-4 max-w-2xl font-sans text-base text-stone-400 leading-relaxed">{copy.header.lede}</p>}
+            {/* 2.3. The invitation to critique, one line, directly under the lede and above
+                the header's bottom rule. No icon: an icon here would make a sentence look
+                like an alert, and CLAUDE.md rules out decorative glyphs. */}
+            {copy.critiqueInvite?.enabled && copy.critiqueInvite.text && (
+              <p className="mt-3 max-w-2xl font-sans text-sm text-stone-400">
+                {copy.critiqueInvite.text}
+                {copy.critiqueInvite.email && (
+                  <>
+                    {' '}
+                    <a href={`mailto:${copy.critiqueInvite.email}`} className={QUIET_LINK}>
+                      {copy.critiqueInvite.emailLabel || copy.critiqueInvite.email}
+                    </a>
+                  </>
+                )}
+              </p>
+            )}
           </div>
           <div className="font-sans text-sm text-stone-400 text-right">
             {/* The series count is only worth showing once there is one. "0 series" advertised

@@ -24,8 +24,8 @@ Deliberately **not** taken, because they are yours: everything that changes how 
 | # | Decision | Where | Why it is yours |
 | --- | --- | --- | --- |
 | 1 | **Run `scripts/migrate-heading-levels.mjs`?** | `A11Y-AUDIT.md` | The published article's seven section headings are `h5` while "Responses" and "Contents" are `h2` — the machinery outranks the writing, and a screen-reader user is told the piece has no sections. The fix changes an `h5` at 19/20px into an `h2` at 32/38px, so it changes how a published piece looks. **The only open accessibility item that is a real defect** |
-| 2 | **The blog description** — A, B or C | 2.2 | Your voice. Three versions written |
-| 3 | **The critique invitation** — copy and placement | 2.3 | Your voice, and it is the sentence the whole "invite professional critique" framing rests on |
+| 2 | ~~The blog description~~ | 2.2 | **SHIPPED** `88590e0` |
+| 3 | ~~The critique invitation~~ | 2.3 | **SHIPPED** |
 | 4 | **The index hierarchy**: dividers → D, h1 72px → 48px, a real Latest tier | 2.5 | The biggest visual change on the table. Twelve reference sites render no section name larger than their lead story; ours renders "Blog" at 72px above a 60px headline |
 | 5 | **The card treatment** — option C | 2.6 | The "AI-looking" diagnosis. Aesthetic identity |
 | 6 | **The hero image** — option F | 7.3 | Rendered and measured against the fold |
@@ -56,6 +56,19 @@ Ordered by phase. `OVERHAUL-PROGRESS.md` indexes these alongside the research fi
 ---
 
 ## 2.2 The blog description — three versions
+
+> **DECIDED AND SHIPPED (`88590e0`).** Stefan wrote a fourth version rather than picking one
+> of these three, and it is better than all of them because it names the beat first and puts
+> the New Jersey clause in the description instead of leaving it to be discovered:
+>
+> *"A beat on network engineering and the infrastructure industry, written by someone still
+> learning it. I cover it the way I wish someone had covered it for me, including the service
+> providers and MSPs operating here in New Jersey."*
+>
+> Set in the Studio document and in the defaults module behind it. The lede it replaced was
+> itself the pattern now banned by the standing copy rule: "Perspective pieces, deep dives,
+> and lab notes…" is a three-item list describing the site's own taxonomy rather than its
+> subject.
 
 **Current** (`blogPage.header.lede`, live):
 
@@ -116,6 +129,16 @@ banner. For A:
 ---
 
 ## 2.3 The critique invitation
+
+> **DECIDED AND SHIPPED.** Stefan chose the SHORT variant as an inline note under the lede.
+> The copy was reworded to drop the em-dash under the new standing rule:
+> *"Corrections and disagreements are welcome. Anything that changes a post gets credited on
+> it."* plus an "Email me" mailto.
+>
+> One deviation from the shape below, stated rather than buried: the fields are top-level on
+> `blogPage` and not on `blogPage.header`, because `header` is the shared `pageHeader` object
+> type and putting them there would have added a critique invitation to every page header on
+> the site.
 
 The brief asks for an affordance near the header with opening guidelines — tell me where
 I'm wrong, share your perspective, what am I missing — and asks me to choose between an

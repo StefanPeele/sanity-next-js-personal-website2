@@ -7,6 +7,23 @@ export const DEFAULT_BLOG_PAGE = {
     metaTitle: 'Blog',
     metaDescription: "Network engineering and the infrastructure industry, including the service providers and MSPs operating here in New Jersey.",
   },
+  // 2.3. One line under the lede, not a tooltip and not a panel.
+  //
+  // A tooltip hides the invitation behind a hover, which on touch does not exist at all, and
+  // an invitation to critique is the least appropriate thing on the page to gate behind a
+  // hover. A panel is louder than one sentence deserves and would compete with the featured
+  // post directly below it. The fold has the room: 9 links above it against a reference
+  // median of 26, the emptiest of thirteen measured pages.
+  //
+  // The second sentence is the part most sites omit and the part that matters. It tells the
+  // reader what HAPPENS to their correction, which is a promise the corrections system in
+  // Phase 3B already keeps.
+  critiqueInvite: {
+    enabled: true,
+    text: 'Corrections and disagreements are welcome. Anything that changes a post gets credited on it.',
+    email: 'swp9@njit.edu',
+    emailLabel: 'Email me',
+  },
   statsLabels: { posts: 'posts', series: 'series', latest: 'Latest' },
   featured: { heading: 'Featured', readLabel: 'Read' },
   seriesRail: { enabled: true, heading: 'Series', ctaLabel: 'All series', ctaHref: '/blog/series' },

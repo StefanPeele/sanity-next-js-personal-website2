@@ -47,6 +47,7 @@ const header = `title, lede, metaTitle, metaDescription`
 export const blogPageQuery = defineQuery(`
   *[_type == "blogPage"][0]{
     header{ ${header} },
+    critiqueInvite{ enabled, text, email, emailLabel },
     statsLabels{ posts, series, latest },
     featured{ heading, readLabel },
     seriesRail{ ${strip} }, readingStrip{ ${strip} }, notesStrip{ ${strip} },
