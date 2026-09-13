@@ -63,7 +63,9 @@ export const pageStructure = (singletons: DocumentDefinition[]): StructureResolv
       ['Work', ['project', 'experience', 'skill', 'certification', 'education', 'page']],
       ['Photography', ['gallery', 'category', 'testimonial']],
       ['Services', ['servicePackage', 'serviceAddOn']],
-      ['Audience', ['subscriber']],
+      // 9.2. Digests sit with the audience they go to, not with the writing: the thing you
+      // need beside a digest is the subscriber count, not the post archive.
+      ['Audience', ['subscriber', 'digest']],
     ]
     /* ── Phase 8.7. Moderation is a different job from writing ──────────────────
        It happens at a different time, usually in a hurry, and the question is always the

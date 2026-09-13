@@ -151,6 +151,8 @@ export const sitemapQuery = defineQuery(`{
   "pages": *[_type == "page" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },
   "notes": *[_type == "note" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(lastTended, _updatedAt) },
   "series": *[_type == "series" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },
+  // 9.5. Only sent AND archived digests are pages, so only those belong in the sitemap.
+  "digests": *[_type == "digest" && defined(sentAt) && archived == true && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(sentAt, _updatedAt) },
   "glossary": *[_type == "glossaryTerm" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt }
 }`)
 
@@ -618,4 +620,34 @@ export const commentsNeedingAttentionQuery = defineQuery(`
 // renders either.
 export const commentAnchorCountsQuery = defineQuery(`
   *[_type == "comment" && post._ref == $postId && status == "published" && defined(anchor)]{ anchor }
+`)
+
+// ── 9.5 The digest archive ──────────────────────────────────────────────────
+//
+// Only SENT and ARCHIVED digests. A draft is not a page, and `archived` is the per-digest
+// opt-out: most should be public, the occasional one should not have to be.
+//
+// The archive exists for a better reason than SEO, which is the weakest argument available
+// here. It is what makes subscribing a decision rather than a leap: instead of describing
+// what the emails are like, it shows them. Same argument as the corrections page in 3B --
+// showing the record is more persuasive than describing it.
+export const digestsQuery = defineQuery(`
+  *[_type == "digest" && defined(sentAt) && archived == true] | order(sentAt desc) {
+    _id, title, "slug": slug.current, intro, sentAt,
+    "entryCount": count(entries)
+  }
+`)
+
+export const digestBySlugQuery = defineQuery(`
+  *[_type == "digest" && slug.current == $slug && defined(sentAt) && archived == true][0] {
+    _id, title, "slug": slug.current, intro, sentAt,
+    entries[]{
+      _key, _type, note, heading, body, title, url, source,
+      post->{ title, "slug": slug.current, excerpt }
+    }
+  }
+`)
+
+export const digestSlugsQuery = defineQuery(`
+  *[_type == "digest" && defined(sentAt) && archived == true && defined(slug.current)]{ "slug": slug.current }
 `)

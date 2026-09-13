@@ -1551,214 +1551,6 @@ export type MediaItem = {
   highlights?: Array<string>
 }
 
-export type CategoryReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'category'
-}
-
-export type Post = {
-  _id: string
-  _type: 'post'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title?: string
-  slug?: Slug
-  isFeatured?: boolean
-  categories?: Array<
-    {
-      _key: string
-    } & CategoryReference
-  >
-  tags?: Array<
-    {
-      _key: string
-    } & TagReference
-  >
-  publishedAt?: string
-  mainImage?: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    _type: 'image'
-  }
-  excerpt?: string
-  tldr?: Array<string>
-  summary?: string
-  summarySource?: 'authored' | 'generated'
-  summaryModel?: string
-  summaryAt?: string
-  summaryOfHash?: string
-  body?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
-        listItem?: 'bullet' | 'number'
-        markDefs?: Array<
-          | {
-              href?: string
-              _type: 'link'
-              _key: string
-            }
-          | {
-              note?: string
-              _type: 'sidenote'
-              _key: string
-            }
-        >
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | {
-        asset?: SanityImageAssetReference
-        media?: unknown
-        hotspot?: SanityImageHotspot
-        crop?: SanityImageCrop
-        alt?: string
-        caption?: string
-        keepColor?: boolean
-        _type: 'image'
-        _key: string
-      }
-    | ({
-        _key: string
-      } & Code)
-    | ({
-        _key: string
-      } & KnowledgeQuiz)
-    | ({
-        _key: string
-      } & LayerExplorer)
-    | ({
-        _key: string
-      } & PacketAnimator)
-    | ({
-        _key: string
-      } & WiresharkCallout)
-    | ({
-        _key: string
-      } & SectionBreak)
-    | ({
-        _key: string
-      } & FailureNote)
-    | ({
-        _key: string
-      } & WhatIGotWrong)
-    | ({
-        _key: string
-      } & WhatEngineersUse)
-    | ({
-        _key: string
-      } & TheProblemSolved)
-    | ({
-        _key: string
-      } & ConceptStressTest)
-  >
-  sources?: Array<{
-    title?: string
-    url?: string
-    author?: string
-    type?:
-      | 'article'
-      | 'rfc'
-      | 'paper'
-      | 'whitepaper'
-      | 'book'
-      | 'documentation'
-      | 'video'
-      | 'podcast'
-      | 'other'
-    description?: string
-    _type: 'source'
-    _key: string
-  }>
-  articleType?: 'perspective' | 'concept-deep-dive' | 'lab-notes'
-  series?: SeriesReference
-  seriesOrder?: number
-  recommendedTheme?: 'archive' | 'terminal'
-  confidenceLevel?: 'speculative' | 'working-theory' | 'confident'
-  maturityIndicator?: 'fresh' | 'tested' | 'production-proven'
-  cognitiveLoad?: 'light' | 'technical' | 'dense' | 'reference'
-  learningObjectives?: Array<string>
-  prerequisites?: Array<{
-    description?: string
-    post?: PostReference
-    _type: 'prerequisite'
-    _key: string
-  }>
-  priorKnowledgeCheck?: KnowledgeQuiz
-  conceptCards?: Array<{
-    front?: string
-    back?: string
-    _type: 'conceptCard'
-    _key: string
-  }>
-  readNextGoDeeper?: PostReference
-  readNextGoBroader?: PostReference
-  readNextApplyThis?: PostReference
-  reviewStatus?: Array<string>
-  reviewers?: Array<{
-    anonymous?: boolean
-    name?: string
-    role?: string
-    organization?: string
-    quote?: string
-    date?: string
-    linkedIn?: string
-    _type: 'reviewer'
-    _key: string
-  }>
-  corrections?: Array<{
-    anchor?: string
-    kind?: 'correction' | 'clarification' | 'update'
-    was?: string
-    now?: string
-    creditTo?: string
-    creditUrl?: string
-    date?: string
-    sourceComment?: string
-    _type: 'correction'
-    _key: string
-  }>
-  changelog?: Array<{
-    date?: string
-    description?: string
-    _type: 'changelogEntry'
-    _key: string
-  }>
-  responsesFromField?: Array<{
-    title?: string
-    url?: string
-    author?: string
-    platform?: string
-    summary?: string
-    date?: string
-    _type: 'fieldResponse'
-    _key: string
-  }>
-}
-
-export type Series = {
-  _id: string
-  _type: 'series'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title?: string
-  slug?: Slug
-  description?: string
-  status?: 'in-progress' | 'complete' | 'paused'
-}
-
 export type Experience = {
   _id: string
   _type: 'experience'
@@ -1792,6 +1584,13 @@ export type Experience = {
     _type: 'block'
     _key: string
   }>
+}
+
+export type CategoryReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'category'
 }
 
 export type Gallery = {
@@ -2038,6 +1837,243 @@ export type Page = {
     media?: unknown
     _type: 'file'
   }
+}
+
+export type Digest = {
+  _id: string
+  _type: 'digest'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title?: string
+  slug?: Slug
+  intro?: string
+  entries?: Array<
+    | {
+        post?: PostReference
+        note?: string
+        _type: 'postEntry'
+        _key: string
+      }
+    | {
+        title?: string
+        url?: string
+        source?: string
+        note?: string
+        _type: 'linkEntry'
+        _key: string
+      }
+    | {
+        heading?: string
+        body?: string
+        _type: 'noteEntry'
+        _key: string
+      }
+  >
+  archived?: boolean
+  sentAt?: string
+  recipientCount?: number
+}
+
+export type Post = {
+  _id: string
+  _type: 'post'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title?: string
+  slug?: Slug
+  isFeatured?: boolean
+  categories?: Array<
+    {
+      _key: string
+    } & CategoryReference
+  >
+  tags?: Array<
+    {
+      _key: string
+    } & TagReference
+  >
+  publishedAt?: string
+  mainImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  excerpt?: string
+  tldr?: Array<string>
+  summary?: string
+  summarySource?: 'authored' | 'generated'
+  summaryModel?: string
+  summaryAt?: string
+  summaryOfHash?: string
+  body?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<
+          | {
+              href?: string
+              _type: 'link'
+              _key: string
+            }
+          | {
+              note?: string
+              _type: 'sidenote'
+              _key: string
+            }
+        >
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        alt?: string
+        caption?: string
+        keepColor?: boolean
+        _type: 'image'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & Code)
+    | ({
+        _key: string
+      } & KnowledgeQuiz)
+    | ({
+        _key: string
+      } & LayerExplorer)
+    | ({
+        _key: string
+      } & PacketAnimator)
+    | ({
+        _key: string
+      } & WiresharkCallout)
+    | ({
+        _key: string
+      } & SectionBreak)
+    | ({
+        _key: string
+      } & FailureNote)
+    | ({
+        _key: string
+      } & WhatIGotWrong)
+    | ({
+        _key: string
+      } & WhatEngineersUse)
+    | ({
+        _key: string
+      } & TheProblemSolved)
+    | ({
+        _key: string
+      } & ConceptStressTest)
+  >
+  sources?: Array<{
+    title?: string
+    url?: string
+    author?: string
+    type?:
+      | 'article'
+      | 'rfc'
+      | 'paper'
+      | 'whitepaper'
+      | 'book'
+      | 'documentation'
+      | 'video'
+      | 'podcast'
+      | 'other'
+    description?: string
+    _type: 'source'
+    _key: string
+  }>
+  articleType?: 'perspective' | 'concept-deep-dive' | 'lab-notes'
+  series?: SeriesReference
+  seriesOrder?: number
+  recommendedTheme?: 'archive' | 'terminal'
+  confidenceLevel?: 'speculative' | 'working-theory' | 'confident'
+  maturityIndicator?: 'fresh' | 'tested' | 'production-proven'
+  cognitiveLoad?: 'light' | 'technical' | 'dense' | 'reference'
+  learningObjectives?: Array<string>
+  prerequisites?: Array<{
+    description?: string
+    post?: PostReference
+    _type: 'prerequisite'
+    _key: string
+  }>
+  priorKnowledgeCheck?: KnowledgeQuiz
+  conceptCards?: Array<{
+    front?: string
+    back?: string
+    _type: 'conceptCard'
+    _key: string
+  }>
+  readNextGoDeeper?: PostReference
+  readNextGoBroader?: PostReference
+  readNextApplyThis?: PostReference
+  reviewStatus?: Array<string>
+  reviewers?: Array<{
+    anonymous?: boolean
+    name?: string
+    role?: string
+    organization?: string
+    quote?: string
+    date?: string
+    linkedIn?: string
+    _type: 'reviewer'
+    _key: string
+  }>
+  corrections?: Array<{
+    anchor?: string
+    kind?: 'correction' | 'clarification' | 'update'
+    was?: string
+    now?: string
+    creditTo?: string
+    creditUrl?: string
+    date?: string
+    sourceComment?: string
+    _type: 'correction'
+    _key: string
+  }>
+  changelog?: Array<{
+    date?: string
+    description?: string
+    _type: 'changelogEntry'
+    _key: string
+  }>
+  responsesFromField?: Array<{
+    title?: string
+    url?: string
+    author?: string
+    platform?: string
+    summary?: string
+    date?: string
+    _type: 'fieldResponse'
+    _key: string
+  }>
+}
+
+export type Series = {
+  _id: string
+  _type: 'series'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title?: string
+  slug?: Slug
+  description?: string
+  status?: 'in-progress' | 'complete' | 'paused'
 }
 
 export type HomeReference = {
@@ -2378,10 +2414,8 @@ export type AllSanitySchemaTypes =
   | TagReference
   | Note
   | MediaItem
-  | CategoryReference
-  | Post
-  | Series
   | Experience
+  | CategoryReference
   | Gallery
   | Category
   | Project
@@ -2389,6 +2423,9 @@ export type AllSanitySchemaTypes =
   | SkillReference
   | SanityFileAssetReference
   | Page
+  | Digest
+  | Post
+  | Series
   | HomeReference
   | Settings
   | Home
@@ -4258,7 +4295,7 @@ export type SlugsByTypeQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: sitemapQuery
-// Query: {  "posts": *[_type == "post" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(_updatedAt, publishedAt) },  "projects": *[_type == "project" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },  "galleries": *[_type == "gallery" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },  "pages": *[_type == "page" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },  "notes": *[_type == "note" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(lastTended, _updatedAt) },  "series": *[_type == "series" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },  "glossary": *[_type == "glossaryTerm" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt }}
+// Query: {  "posts": *[_type == "post" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(_updatedAt, publishedAt) },  "projects": *[_type == "project" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },  "galleries": *[_type == "gallery" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },  "pages": *[_type == "page" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },  "notes": *[_type == "note" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(lastTended, _updatedAt) },  "series": *[_type == "series" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },  // 9.5. Only sent AND archived digests are pages, so only those belong in the sitemap.  "digests": *[_type == "digest" && defined(sentAt) && archived == true && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(sentAt, _updatedAt) },  "glossary": *[_type == "glossaryTerm" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt }}
 export type SitemapQueryResult = {
   posts: Array<{
     slug: string | null
@@ -4281,6 +4318,10 @@ export type SitemapQueryResult = {
     updated: string
   }>
   series: Array<{
+    slug: string | null
+    updated: string
+  }>
+  digests: Array<{
     slug: string | null
     updated: string
   }>
@@ -5746,6 +5787,75 @@ export type CommentAnchorCountsQueryResult = Array<{
   anchor: string | null
 }>
 
+// Source: sanity/lib/queries.ts
+// Variable: digestsQuery
+// Query: *[_type == "digest" && defined(sentAt) && archived == true] | order(sentAt desc) {    _id, title, "slug": slug.current, intro, sentAt,    "entryCount": count(entries)  }
+export type DigestsQueryResult = Array<{
+  _id: string
+  title: string | null
+  slug: string | null
+  intro: string | null
+  sentAt: string
+  entryCount: number | null
+}>
+
+// Source: sanity/lib/queries.ts
+// Variable: digestBySlugQuery
+// Query: *[_type == "digest" && slug.current == $slug && defined(sentAt) && archived == true][0] {    _id, title, "slug": slug.current, intro, sentAt,    entries[]{      _key, _type, note, heading, body, title, url, source,      post->{ title, "slug": slug.current, excerpt }    }  }
+export type DigestBySlugQueryResult = {
+  _id: string
+  title: string | null
+  slug: string | null
+  intro: string | null
+  sentAt: string | null
+  entries: Array<
+    | {
+        _key: string
+        _type: 'linkEntry'
+        note: string | null
+        heading: null
+        body: null
+        title: string | null
+        url: string | null
+        source: string | null
+        post: null
+      }
+    | {
+        _key: string
+        _type: 'noteEntry'
+        note: null
+        heading: string | null
+        body: string | null
+        title: null
+        url: null
+        source: null
+        post: null
+      }
+    | {
+        _key: string
+        _type: 'postEntry'
+        note: string | null
+        heading: null
+        body: null
+        title: null
+        url: null
+        source: null
+        post: {
+          title: string | null
+          slug: string | null
+          excerpt: string | null
+        } | null
+      }
+  > | null
+} | null
+
+// Source: sanity/lib/queries.ts
+// Variable: digestSlugsQuery
+// Query: *[_type == "digest" && defined(sentAt) && archived == true && defined(slug.current)]{ "slug": slug.current }
+export type DigestSlugsQueryResult = Array<{
+  slug: string | null
+}>
+
 declare module '@sanity/client' {
   interface SanityQueries {
     '\n  *[_type == "articleUi"][0]{\n    header{ backLabel, readTimeLabel, sourcesLabel, revisedLabels{ corrected, clarified, updated }, cardsLabel, reviewBadges{ seekingReview, peerReviewed } },\n    toc{ title, mobileTitle, minutesSuffix, minutesLeftLabel, progressLabel },\n    readerMenu{\n      buttonLabel, closeLabel,\n      groupLabels{ theme, textSize, width, accessibility, spacing, density, share, listen, position, toolbar },\n      toolbarLabels{ hide, hideHint, restore },\n      themeLabels{ archive, slate, paper, terminal },\n      widthLabels{ narrow, standard, wide },\n      a11yLabels{ dyslexia, highContrast, reducedMotion, ruler, reset, linkUnderline, bigFocus, muteColour },\n      spacingLabels{ lineHeight, letterSpacing, wordSpacing, paraSpacing },\n      scaleSteps{ less, normal, more },\n      densityLabels{ comfortable, compact },\n      shareLabels{ copyLink, copyMarkdown, print, studyDeck, share, copied },\n      listenLabels{ play, pause, resume, stop, unsupported, voice, speed, systemVoice },\n      bookmarkLabels{ save, saved, resume, clear, progressBar, resumeScroll }\n    },\n    blocks{\n      summaryHeading, tldrHeading, tldrSub, prerequisitesHeading, objectivesHeading, checkpointHeading, conceptCardsHeading,\n      sourcesHeading, correctionsHeading, credibilityHeading, backlinksHeading, askHeading, askPlaceholder, askButton, noContent\n    },\n    comments{\n      heading, lede, countLabel, empty, formHeading, labelPrompt, namePlaceholder, anonymousLabel,\n      emailPlaceholder, emailHint, bodyPlaceholder, submitLabel, submittingLabel, replyLabel,\n      cancelLabel, allLabel, moreLabel, anonymousName, pendingNote, onSidenoteLabel,\n      respondToNoteLabel, noteResponsesLabel, respondingToNote, respondingToNoteClear\n    },\n    credibility{\n      "maturity": maturity[]{ _key, key, label, short, description, banner, color, dots }, "load": load[]{ _key, key, label, short, description, banner, color, dots },\n      reviewersHeading, reviewedByLabel, responsesHeading, changelogHeading, correctionsLabel, correctionsUrl\n    },\n    seriesBanner{ partLabel, allPartsLabel, prevLabel, nextLabel }\n  }\n': ArticleUiQueryResult
@@ -5765,7 +5875,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "home"][0]{\n    _id,\n    _type,\n    title,\n    profileImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    currently,\n    location,\n    manifesto,\n    aspirations,\n    expertisePillars[]{\n      title,\n      description\n    },\n    showcaseProjects[]{\n      _key,\n      ...@->{\n        _id,\n        _type,\n        coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n        overview,\n        "slug": coalesce(slug.current, ""),\n        tags,\n        title,\n        techStack,\n        githubUrl,\n        liveUrl,\n        outcome,\n        role\n      }\n    },\n    "sections": sections[]{\n      _key, _type, enabled, showNav, currentlyLabel, locationLabel, footnote, ctaLabel, heading,\n      fallbackManifesto, fallbackBio, imagePlaceholder, limit, featuredBadge, recentHeading, readLabel\n    }\n  }\n': HomePageQueryResult
     '{\n  "featuredPost": *[_type == "post" && isFeatured == true] | order(publishedAt desc)[0] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // The card carries the small status mark (Phase 3.3). Without this the index and the\n  // feeds had no status at all while the article had three tiers of it.\n  reviewStatus,\n  // 3.7 + 3B. The newest date across the changelog AND the corrections -- both are material\n  // revisions. Projected as one value rather than the whole arrays: the card needs the date\n  // and the kinds, not twenty revision notes per card.\n  // coalesce(..., []) because null + array is null in GROQ -- and a backtick in this\n  // comment would end the template literal the query lives in, which is how the first\n  // version of this line silently dropped 27 of 40 queries from typegen.\n  // A post with a changelog and no corrections would otherwise project no date at all.\n  "lastRevised": (coalesce(changelog[].date, []) + coalesce(corrections[].date, [])) | order(@ desc)[0],\n  "correctionKinds": corrections[].kind,\n  \n  "wordCount": coalesce(math::sum(body[_type == "block" && defined(children)]{\n    "w": length(string::split(array::join(children[].text, ""), " "))\n  }.w), 0),\n  "series": series->{ title, "slug": slug.current }\n },\n  // Same fix as blogIndexQuery: fetch one extra and drop the featured one in the component.\n  "recentPosts": *[_type == "post"] | order(publishedAt desc)[0...4] { \n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  excerpt,\n  "imageUrl": mainImage.asset->url,\n  "lqip": mainImage.asset->metadata.lqip,\n  "categories": categories[]->title,\n  "tags": tags[]->{ _id, title, "slug": slug.current },\n  articleType,\n  // The card carries the small status mark (Phase 3.3). Without this the index and the\n  // feeds had no status at all while the article had three tiers of it.\n  reviewStatus,\n  // 3.7 + 3B. The newest date across the changelog AND the corrections -- both are material\n  // revisions. Projected as one value rather than the whole arrays: the card needs the date\n  // and the kinds, not twenty revision notes per card.\n  // coalesce(..., []) because null + array is null in GROQ -- and a backtick in this\n  // comment would end the template literal the query lives in, which is how the first\n  // version of this line silently dropped 27 of 40 queries from typegen.\n  // A post with a changelog and no corrections would otherwise project no date at all.\n  "lastRevised": (coalesce(changelog[].date, []) + coalesce(corrections[].date, [])) | order(@ desc)[0],\n  "correctionKinds": corrections[].kind,\n  \n  "wordCount": coalesce(math::sum(body[_type == "block" && defined(children)]{\n    "w": length(string::split(array::join(children[].text, ""), " "))\n  }.w), 0),\n  "series": series->{ title, "slug": slug.current }\n },\n  "currentlyReading": *[_type == "mediaItem" && status == "current"] | order(startedAt desc)[0...3] {\n    _id, title, author, mediaType, progressPercent, "coverUrl": coverImage.asset->url\n  },\n  "recentNotes": *[_type == "note"] | order(coalesce(lastTended, _updatedAt) desc)[0...3] {\n    _id, title, "slug": slug.current, status, "lastTended": coalesce(lastTended, _updatedAt)\n  }\n}': HomeIntelQueryResult
     '\n  *[_type == $type && defined(slug.current)]{"slug": slug.current}\n': SlugsByTypeQueryResult
-    '{\n  "posts": *[_type == "post" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(_updatedAt, publishedAt) },\n  "projects": *[_type == "project" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "galleries": *[_type == "gallery" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "pages": *[_type == "page" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "notes": *[_type == "note" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(lastTended, _updatedAt) },\n  "series": *[_type == "series" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "glossary": *[_type == "glossaryTerm" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt }\n}': SitemapQueryResult
+    '{\n  "posts": *[_type == "post" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(_updatedAt, publishedAt) },\n  "projects": *[_type == "project" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "galleries": *[_type == "gallery" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "pages": *[_type == "page" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  "notes": *[_type == "note" && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(lastTended, _updatedAt) },\n  "series": *[_type == "series" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt },\n  // 9.5. Only sent AND archived digests are pages, so only those belong in the sitemap.\n  "digests": *[_type == "digest" && defined(sentAt) && archived == true && defined(slug.current)]{ "slug": slug.current, "updated": coalesce(sentAt, _updatedAt) },\n  "glossary": *[_type == "glossaryTerm" && defined(slug.current)]{ "slug": slug.current, "updated": _updatedAt }\n}': SitemapQueryResult
     '\n  *[_type == "page" && slug.current == $slug][0] {\n    _id,\n    _type,\n    title,\n    "slug": slug.current,\n    overview,\n    body[]{\n      ...,\n      _type == "skillReference" => {\n        "skill": @->{\n          title,\n          category,\n          description\n        }\n      }\n    },\n    "resumeUrl": resumeFile.asset->url\n  }\n': PagesBySlugQueryResult
     '\n  *[_type == "project"] | order(coalesce(duration.end, duration.start, _createdAt) desc) {\n    _id,\n    title,\n    "slug": coalesce(slug.current, ""),\n    coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    overview,\n    tags,\n    techStack,\n    duration,\n    githubUrl,\n    liveUrl,\n    role,\n    outcome,\n    featured\n  }\n': ProjectsQueryResult
     '\n  *[_type == "project" && slug.current == $slug][0] {\n    _id,\n    _type,\n    _updatedAt,\n    client,\n    coverImage { \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n },\n    description,\n    duration,\n    overview,\n    "slug": coalesce(slug.current, ""),\n    tags,\n    title,\n    techStack,\n    githubUrl,\n    liveUrl,\n    boardUrl,\n    docsUrl,\n    architecture[]{ \n  ...,\n  "url": asset->url,\n  "alt": coalesce(alt, asset->altText, "Image"),\n  "metadata": asset->metadata { lqip, dimensions }\n, caption },\n    role,\n    problem,\n    constraints,\n    approach,\n    outcome,\n    metrics[]{ _key, label, value, note },\n    retrospective,\n    "relatedPosts": relatedPosts[]->{ title, "slug": slug.current, articleType }[defined(slug)],\n    "relatedNotes": relatedNotes[]->{ title, "slug": slug.current, status }[defined(slug)]\n  }\n': ProjectBySlugQueryResult
@@ -5791,5 +5901,8 @@ declare module '@sanity/client' {
     '{\n  "roots": *[_type == "comment" && post._ref == $postId && status != "pending" && status != "spam" && !defined(parent)]\n    | order(coalesce(publishedAt, createdAt) desc)[$from...$to] {\n      \n  _id, label, authorName, anonymous, body, createdAt, publishedAt, status, anchor,\n  "parentId": parent._ref\n,\n      "replies": *[_type == "comment" && parent._ref == ^._id && status != "pending" && status != "spam"]\n        | order(coalesce(publishedAt, createdAt) asc) { \n  _id, label, authorName, anonymous, body, createdAt, publishedAt, status, anchor,\n  "parentId": parent._ref\n }\n    },\n  "total": count(*[_type == "comment" && post._ref == $postId && status != "pending" && status != "spam" && !defined(parent)]),\n  "labelCounts": *[_type == "comment" && post._ref == $postId && status == "published"] { label }\n}': CommentsForPostQueryResult
     '\n  *[_type == "comment" && status == "pending"] | order(createdAt desc)[0...50] {\n    _id, label, authorName, anonymous, body, createdAt, "post": post->title\n  }\n': CommentsNeedingAttentionQueryResult
     '\n  *[_type == "comment" && post._ref == $postId && status == "published" && defined(anchor)]{ anchor }\n': CommentAnchorCountsQueryResult
+    '\n  *[_type == "digest" && defined(sentAt) && archived == true] | order(sentAt desc) {\n    _id, title, "slug": slug.current, intro, sentAt,\n    "entryCount": count(entries)\n  }\n': DigestsQueryResult
+    '\n  *[_type == "digest" && slug.current == $slug && defined(sentAt) && archived == true][0] {\n    _id, title, "slug": slug.current, intro, sentAt,\n    entries[]{\n      _key, _type, note, heading, body, title, url, source,\n      post->{ title, "slug": slug.current, excerpt }\n    }\n  }\n': DigestBySlugQueryResult
+    '\n  *[_type == "digest" && defined(sentAt) && archived == true && defined(slug.current)]{ "slug": slug.current }\n': DigestSlugsQueryResult
   }
 }

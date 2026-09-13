@@ -5,7 +5,9 @@ import * as resolve from '@/sanity/plugins/resolve'
 import {pageStructure, singletonPlugin} from '@/sanity/plugins/settings'
 import { gardenToolPlugin } from '@/sanity/plugins/garden-tool'
 import { blockCommenterPlugin } from '@/sanity/plugins/blockCommenter'
+import { digestSenderPlugin } from '@/sanity/plugins/digestSender'
 import { summaryFingerprintPlugin } from '@/sanity/plugins/summaryFingerprint'
+import digest from '@/sanity/schemas/documents/digest'
 import page from '@/sanity/schemas/documents/page'
 import project from '@/sanity/schemas/documents/project'
 import duration from '@/sanity/schemas/objects/duration'
@@ -79,6 +81,7 @@ export default defineConfig({
       settings,
       // Documents
       duration,
+      digest,
       page,
       project,
       gallery,
@@ -135,6 +138,7 @@ export default defineConfig({
     media(),
     gardenToolPlugin(),
     blockCommenterPlugin(),
+    digestSenderPlugin(),
     summaryFingerprintPlugin(),
   ],
 })

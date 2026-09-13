@@ -53,6 +53,8 @@ const RULES: Record<string, Rule> = {
   project: { paths: ['/projects', '/sitemap.xml'], withSlug: '/projects/:slug' },
   page: { paths: ['/sitemap.xml'], withSlug: '/:slug' },
   series: { paths: ['/blog', '/blog/series', '/graph', '/sitemap.xml'], withSlug: '/blog/series/:slug' },
+  // 9.5. A digest renders at /blog/digests once it is sent and archived.
+  digest: { paths: ['/blog/digests', '/sitemap.xml'], withSlug: '/blog/digests/:slug' },
   tag: { paths: ['/blog', '/garden', '/graph', '/glossary'] },
   glossaryTerm: { paths: ['/glossary', '/graph', '/blog'] },
   category: { paths: ['/blog', '/photography', '/photography/albums'] },

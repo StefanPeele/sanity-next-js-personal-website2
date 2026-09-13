@@ -1041,6 +1041,28 @@ The comment confirm route added in Phase 8 inherits the same behaviour.
 
 # Phase 9.2–9.5 — the digest. Schema, sending, and why the archive is the point.
 
+> **DECIDED AND SHIPPED: 9.2, 9.3 and 9.5, all as proposed.**
+>
+> Schema: one `digest` type, three entry kinds, `note` required on every one, and `sentAt`
+> as the state machine with no separate status field to disagree with it.
+>
+> Sending: a Studio action with the recipient count in the confirm dialog, and a "Send test
+> to me" button that posts to the SAME handler and the SAME renderer, so a preview cannot
+> drift from the real thing.
+>
+> Archive: `/blog/digests` and `/blog/digests/[slug]`, sent-and-archived only.
+>
+> **ONE DESIGN DECISION THIS SECTION DID NOT SETTLE, made here and worth knowing.** The
+> proposal says to write `sentAt` and `recipientCount` "in the same transaction that sends",
+> which is not achievable against a third-party mail API. So `sentAt` is CLAIMED BEFORE the
+> first email goes out and `recipientCount` is written after. The cost is that a send which
+> dies halfway leaves a digest marked sent that only some people received. That is the right
+> trade: an under-sent digest can be finished by hand, and a double-sent one cannot be
+> unsent.
+>
+> **NEEDS STEFAN before the first send:** set `DIGEST_SEND_SECRET` in Vercel. The route
+> returns 500 until it exists, which is the safe direction.
+
 ## 9.2 The schema
 
 One document type, `digest`, composed by hand. Three entry kinds, because the brief names
