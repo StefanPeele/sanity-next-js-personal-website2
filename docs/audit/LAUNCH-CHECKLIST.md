@@ -48,7 +48,7 @@ open items are a dashboard setting, a mailbox, a person with a screen reader, an
 | **NEEDS STEFAN** | **The Sanity webhook does not reach production** | Dashboard → API → Webhooks. Its delivery log settles it: 401s mean the secret, 404s the URL, no attempts means the trigger or filter. Triggers must include **Delete**; filter empty; secret must equal Vercel's `SANITY_REVALIDATE_SECRET`. Both API tokens lack `sanity.project.webhooks/read` and the Vercel CLI is not logged in, so this is unreachable from here. **Not blocking launch** — the 300s floor means content is at worst five minutes stale instead of stale for ever |
 | **NEEDS STEFAN** | **Resend has never delivered to a real mailbox** | Every probe used `@example.invalid`. The full path is exercised — form, rate limit, token, confirm route, unsubscribe on GET and POST — but no real email has been sent. Subscribe with your own address once and confirm the link works |
 | **NEEDS STEFAN** | **No screen-reader pass** | `A11Y-AUDIT.md` names this as the largest remaining gap. Everything there reasons from the accessibility tree, and the tree is not the experience. Highest-risk claim: that the reading toolbar and the sidenotes are usable non-visually. Needs NVDA or VoiceOver and a person |
-| **NEEDS STEFAN** | **`/test` is a live, indexable page** | A `page` document titled "test", slug `test`, created 2026-03-26. Returns 200, carries `robots: index, follow`, listed in `sitemap.xml`. The code is doing exactly what a page document asks — this is content, so deleting it is your call. **Delete it before launch** |
+| **DONE** | ~~`/test` is a live, indexable page~~ | **Closed 2026-09-13, deleted.** Its entire content was `title: "test"`, `overview: "test ttttt"`, `body: "blaeee"` — recorded here so it is restorable, and unambiguously scratch. Dataset 516 → 515 |
 
 | **NEEDS STEFAN** | **`DIGEST_SEND_SECRET` is not set** | Added 2026-09-13 with the digest. The send route returns 500 until the variable exists in Vercel, which is the safe direction, but it means no digest can be sent. Set it, then use "Send test to me" from the Studio action before the first real send |
 
@@ -61,14 +61,14 @@ open items are a dashboard setting, a mailbox, a person with a screen reader, an
 | **DONE** | Focus visible on everything reachable by `Tab` | 89 elements across `/blog` and an article, every one shows a ring |
 | **DONE** | Touch targets ≥ 24×24 (WCAG 2.5.8 AA) | Six links and one label were 20px tall; fixed with `py-1`, nothing moved |
 | **DONE** | Zoom to 200% and 400% | No horizontal scroll, no unreachable controls |
-| **AT RISK** | **Heading levels in the published article** | `/blog/the-field-…` renders `h1` then seven `h5` section headings, while "Responses" and "Contents" are `h2` — the machinery outranks the writing. A screen-reader user navigating by level is told the article has no sections. `scripts/migrate-heading-levels.mjs` fixes it, dry-run by default. **NEEDS STEFAN**: an `h5` renders 19/20px and an `h2` 32/38px, so it changes how a published piece *looks* |
+| **AT RISK** | **Heading levels in the published article** | `/blog/the-field-…` renders `h1` then seven `h5` section headings, while "Responses" and "Contents" are `h2` — the machinery outranks the writing. A screen-reader user navigating by level is told the article has no sections. **`HEADING-FIX.md` is the worklist**, measured post by post: it is ONE post and seven dropdowns, not a migration. The other two posts are already correct. Still yours, because an `h5` renders at 19/20px and an `h2` at 32/38px, so it changes how a published piece looks |
 | **NEEDS STEFAN** | Real screen reader | §3 above |
 
 ## 5. Content — the actual blocker
 
 | | Item | Detail |
 | --- | --- | --- |
-| **AT RISK** | **Most of the site's surface has never rendered for a real post** | Three published posts carry only: title, slug, excerpt, categories, a cover image, and body text. Every other field is null on all three. See **`CONTENT-TO-WRITE.md`** for the complete list and what would exercise each |
+| **AT RISK** | **Most of the site's surface has never rendered for a real post** | Three published posts carry title, slug, excerpt, categories, a cover image, body text, one link and one `featuredAt`. Every other field is empty on all three. **`CONTENT-TO-WRITE.md` is now a single ordered list**, sorted by how much each item turns on per unit of writing. Items 1-5 take under an hour and about a hundred words |
 | **AT RISK** | **Five of the knowledge routes are empty** | `note` 0, `mediaItem` 0, `glossaryTerm` 0, `series` 0, `tag` 0. `/garden`, `/library`, `/glossary`, `/blog/series` all render their empty states correctly — but they render empty |
 | **AT RISK** | `/resume` is thin | 1 `skill` document; `experience`, `certification`, `education` are all 0 |
 | **AT RISK** | `/services` has no testimonials | `testimonial` 0 |
@@ -100,6 +100,10 @@ open items are a dashboard setting, a mailbox, a person with a screen reader, an
 | Eleven custom body blocks | The kitchen-sink fixture | None appears in a published post — see `CONTENT-TO-WRITE.md` |
 | The knowledge graph | Renders | 3 posts, 0 tags, 0 notes, 0 glossary terms — it draws almost nothing |
 | Series presentation | Built: banner, index, prev/next, part numbers | 0 series documents. "Home lab Week 2" exists with no Week 1 |
+| The featured archive | `/blog/featured`, built and live | One entry, and it has **no note yet** — the sentence that is the entire point of the page |
+| The digest | Schema, Studio send action, archive, all built | 0 digests, and `DIGEST_SEND_SECRET` is not set, so none can be sent |
+| The first-visit tour | 19/19 on `measure-tour.mjs` | It runs, but **three of its five steps point at nothing**: no published post has a status, a sidenote or a correction. The steps still teach the vocabulary, which is why a missing target is handled rather than skipped |
+| The summary panel | 13 assertions on the suppression rules | No post has a summary |
 
 **What this means for launch.** None of it is broken; all of it is unproven against anything
 but fixtures. The risk is not that these features fail — it is that the site launches looking

@@ -275,7 +275,7 @@ decision". It has been built since `de6a46e`. **Check the code before believing 
   Anything that writes content a page reads must `revalidatePath`.
 - **Types missing from the webhook's RULES table fall through to a FULL SITE revalidation.**
   `rateBucket` and `blocklist` are in there with empty path lists for exactly that reason.
-- **The dataset is 516 documents.** Every probe that seeds is expected to return it to 516,
+- **The dataset is 515 documents** (it was 516 until the scratch `/test` page was deleted on 2026-09-13). Every probe that seeds is expected to return it to 515,
   and `probe-comment-scale.mjs --delete` cleans up after an interrupted run.
 
 ## What is already true and should not be re-derived

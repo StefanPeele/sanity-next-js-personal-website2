@@ -1,139 +1,186 @@
-# What to write to make the site show what it can do
+# What to write, in order
 
-**Measured 2026-09-13** against the live dataset, not inferred from the schema. Every "never
-used" below is a GROQ count against published documents.
+**One ordered list, sorted by how much it turns on per unit of writing.** Measured against
+the live dataset on 2026-09-13, not inferred from the schema. Work down it.
 
-## The finding, in one paragraph
+## Where the site stands right now
 
-Three posts are published. Between them they carry **title, slug, excerpt, categories, a
-cover image, body text, and one link**. Every other field on the post schema is `null` on all
-three. Eleven custom body blocks, five whole document types, and the entire status,
-credibility, sidenote, correction and series machinery have never rendered for a real reader —
-only for `fixture-kitchen-sink`, which is a draft and invisible in production.
+Three published posts. Between them they carry **title, slug, excerpt, categories, a cover
+image, body text, one link, and one `featuredAt`**. Every other field on the post schema is
+empty on all three:
 
-The site currently presents as a plain three-post blog while carrying the machinery of a much
-more ambitious one. **Most of that gap closes with configuration, not writing.**
+`articleType` 0 · `reviewStatus` 0 · `tags` 0 · `series` 0 · `tldr` 0 · `summary` 0 ·
+`sources` 0 · `reviewers` 0 · `corrections` 0 · `changelog` 0 · `responsesFromField` 0 ·
+`conceptCards` 0 · `learningObjectives` 0 · `prerequisites` 0 · `priorKnowledgeCheck` 0 ·
+`readNext*` 0 · `confidenceLevel` 0 · `maturityIndicator` 0 · `featuredNote` 0
 
----
+Only two block types appear anywhere: `block` and `image`. Eleven custom blocks have never
+rendered for a reader. Eight document types are at zero: `note`, `mediaItem`, `glossaryTerm`,
+`series`, `tag`, `experience`, `certification`, `education`, `testimonial`.
 
-## Tier 1 — no writing at all. Two dropdowns per post.
-
-This is the highest-leverage work on the site and it is about fifteen minutes in the Studio.
-
-### Set `articleType` on each published post
-
-The three lanes, from `lib/cms/defaults/taxonomy.ts`:
-
-| Key | Label | For |
-| --- | --- | --- |
-| `perspective` | Perspective | Opinion and analysis on where the field is going |
-| `concept-deep-dive` | Deep dive | One idea, explained until it clicks |
-| `lab-notes` | Lab Notes | What actually happened in the lab or on the job |
-
-My reading of the three existing posts:
-
-- **"The Field, The Moment…"** → `perspective`. It is an argument about where networking is going.
-- **"Building My Physical Home Lab — Week 2"** → `lab-notes`. It is literally what happened in the lab.
-- **"The Creation of my Personal Portfolio Site"** → `lab-notes`, or `concept-deep-dive` if you want the checkpoint and the learning scaffolding to have somewhere to live (see Tier 2).
-
-**What turns on the moment you do this:** the lane kicker on every card, the lane colour, the
-lane filter row on `/blog`, the lane in the RSS feed, the lane kicker on the Open Graph card,
-and the `?lane=` URL filter. All built, all tested, all currently invisible.
-
-### Set `reviewStatus` on each published post
-
-It is an array — a post can carry more than one. From `lib/status.ts`:
-
-`peer-reviewed` · `fact-checked` · `seeking-review` · `open-to-comment`
-
-Honest defaults for work that has not been through review: **`seeking-review`** and
-**`open-to-comment`**. That is the truthful status for a personal blog inviting critique, and
-it is the status the whole Phase 2 "invite professional critique" framing was built around.
-
-**What turns on:** the status badges on cards, the status aura, the "Checked" facet row on
-`/blog` (which currently does not render at all because no post has a status), the
-credibility section on the article, and the plain-text status vocabulary in the RSS feed.
-
-### Add `tags` to each published post
-
-Zero `tag` documents exist. Three or four per post — "OSPF", "home lab", "career",
-"documentation" — turns on the Topic/Tag facet row and gives the **knowledge graph edges to
-draw**. Right now `/graph` renders three unconnected nodes.
+**The site currently presents as a plain three-post blog while carrying the machinery of a
+much more ambitious one.** Items 1 to 5 below close most of that gap and involve almost no
+writing.
 
 ---
 
-## Tier 2 — one post that exercises the article machinery
+# The list
 
-Everything below lives inside a single post's body or its fields. **One deliberately
-full-featured post exercises more of this site than three ordinary ones.** The natural
-candidate is a Deep dive — the lane the machinery was designed for.
+## 1. Set `articleType` on the three posts
+**Writing: none. Six dropdowns.**
 
-| What | Field / block | What content exercises it |
-| --- | --- | --- |
-| **Sidenotes and the whole margin column** | `sidenote` mark | **Zero sidenotes exist in production.** All of Phase 6 — the margin column, the mobile expansion window, the print fallback, sidenote-anchored comments — has only ever rendered for a fixture. Three or four asides in one long post: the caveat you did not want in the main line, the "this is why it is actually called that", the thing you had to look up |
-| **Sources** | `sources[]` | Any post that cites a spec, a vendor doc or a paper. The RFC, the Cisco doc, the Julia Evans post. Also fixes the one thing `11.4` could not check: whether sources survive into RSS |
-| **TL;DR** | `tldr[]` | Three bullets at the top of the long one. The 24,000-word post is the obvious place |
-| **Learning objectives / prerequisites** | `learningObjectives[]`, `prerequisites[]` | "By the end you will be able to…" and "you should already know what a subnet is." Deep dives only |
-| **Prior-knowledge checkpoint** | `priorKnowledgeCheck` | Needs `articleType: concept-deep-dive` **and** a question with **more than one option** — it will not render otherwise. One multiple-choice question before the deep part |
-| **Concept cards** | `conceptCards[]` | Front/back pairs for the terms the post introduces. These also feed the Anki deck export |
-| **Read next** | `readNextGoDeeper`, `readNextGoBroader`, `readNextApplyThis` | References to other posts. **Three posts is already enough** — point the portfolio post at the home lab post and back |
-| **Changelog** | `changelog[]` | The moment you meaningfully revise any post, add a dated line. Surfaces in the Contents column |
-| **Corrections** | `corrections[]` | Cannot be manufactured honestly — it needs a real error. When one arrives, this is the system that renders it in place with credit. Phase 3B, 27/27 tested, never used |
-| **Responses from the field** | `responsesFromField[]` | When someone replies on LinkedIn or in a comment and it is worth keeping, this is where it goes |
-| **Reviewers** | `reviewers[]` | Ask one person to read a post before publishing and credit them. This also exercises the **anonymity contract** — an anonymous reviewer's name must never enter the RSC payload — which has only ever been proven against a fixture |
-| **Confidence / maturity / cognitive load** | three enums | One dropdown each. They render in the credibility section |
-
-### The eleven body blocks that have never rendered for a reader
-
-Only `block` and `image` appear in production. These exist, are styled, and are tested
-against the kitchen-sink fixture:
-
-| Block | What content exercises it |
+| Post | Set it to |
 | --- | --- |
-| `code` | **The most glaring omission.** Not one line of code renders anywhere on a networking engineer's site. A config snippet, an `ip route` output, a Python script |
-| `sectionBreak` | A long post that changes subject. The 24,000-word one |
-| `failureNote` | "This is where I broke it." The home lab series is made of these |
-| `whatIGotWrong` | An honest retrospective on an earlier assumption |
-| `whatEngineersUse` | "In practice nobody does it that way — here is what is actually run" |
-| `theProblemSolved` | The framing block for a deep dive: what problem does this protocol exist to solve |
-| `conceptStressTest` | "Here is a case where the simple model breaks" |
-| `knowledgeQuiz` | A few questions at the end of a deep dive |
-| `layerExplorer` | Anything about the OSI/TCP-IP layers — you already have `/blog/osi-model` |
-| `packetAnimator` | A packet walkthrough. Handshake, traceroute, ARP |
-| `wiresharkCallout` | A capture with the interesting bytes pointed at. This is the single most "only Stefan can write this" block on the site |
+| The Field, The Moment… | **Perspective** |
+| Building My Physical Home Lab, Week 2 | **Lab Notes** |
+| The Creation of my Personal Portfolio Site | **Lab Notes** |
+
+**Unlocks:** the lane kicker on every card, the lane colour, the **FEATURED badge on the hero**
+(which renders nothing at all today because it shows the lane), the lane filter row on `/blog`,
+the `?lane=` URL filter, the lane in the RSS feed, and the lane kicker on the Open Graph card.
+
+**Best return on the list by a wide margin.** Seven surfaces, no sentences.
+
+## 2. Set `reviewStatus` on the three posts
+**Writing: none. Three multi-selects.**
+
+Honest values for work that has not been through review: **Seeking peer review** and **Open to
+comment**. That is the truthful status for a blog whose whole framing is inviting critique.
+
+**Unlocks:** status badges on cards, the status aura, the **"Checked" facet row** on `/blog`
+(which does not render at all today because no post has a status), the credibility section on
+the article, the status vocabulary in the RSS feed, and step 3 of the first-visit tour, which
+currently describes something a reader cannot see.
+
+## 3. Write the `featuredNote` on "The Field, The Moment…"
+**Writing: one or two sentences.**
+
+The post is featured and the Studio is flagging it, because a featured post now requires a
+note saying why. Until you write it, `/blog/featured` lists the post with no reason under it,
+which is the one thing that page exists to show.
+
+**Unlocks:** `/blog/featured` becomes a curated entry point rather than a list.
+
+## 4. Add tags to the three posts
+**Writing: none. Three or four words per post.**
+
+Create them as you go: "OSPF", "home lab", "documentation", "careers", "GNS3", "New Jersey".
+
+**Unlocks:** the Topic and Tag facet rows, and **the knowledge graph**, which today draws
+three unconnected dots because tags are the edges between posts.
+
+## 5. Write a `summary` for the long post
+**Writing: 60 to 90 words.**
+
+Then press **"Fingerprint this summary"** in the Studio, which records that the summary
+describes the post as it now stands. Without that press the panel stays hidden by design.
+
+**Unlocks:** the summary panel, and the whole 5.6 suppression system gets its first real
+subject. Leave "Written by" on **Authored** — there is no generation, and the machine label
+only appears for a machine.
 
 ---
 
-## Tier 3 — the five empty document types
+## 6. Twenty glossary terms
+**Writing: a sentence or two each. An hour, maybe two.**
 
-| Route | Type | Count | What fills it |
-| --- | --- | --- | --- |
-| `/glossary` | `glossaryTerm` | **0** | **The best return in Tier 3.** Terms are short — a sentence or two each. And glossary terms auto-link *inside every article body*, so twenty terms quietly enrich every post you have already written and every one you write later |
-| `/garden` | `note` | **0** | Short, unfinished, dated notes. Lower bar than a post on purpose — the thing you learned this week that is not an essay |
-| `/library` | `mediaItem` | **0** | What you are reading and watching, with a line on why. Also feeds `/now` and the graph |
-| `/blog/series` | `series` | **0** | **Home lab Week 2 exists and Week 1 does not.** Writing Week 1 and grouping them turns on the series banner, part numbering, prev/next, and the series index — all built, waiting |
-| `/blog` facets | `tag` | **0** | See Tier 1 |
+**The best return in the whole list after items 1 and 2, and the only one that improves posts
+you have already written.** A glossary term auto-links the first time it appears in any
+article body, so twenty terms quietly enrich all three existing posts and every future one.
 
-And two on the portfolio side:
+Obvious first twenty from your own beat: OSPF, BGP, VLAN, subnet, MTU, latency, jitter, MPLS,
+SD-WAN, MSP, PoP, peering, transit, dark fibre, GNS3, packet capture, broadcast domain,
+default gateway, NAT, DNS resolver.
 
-- `/resume` — 1 `skill`, and **0** `experience`, `certification`, `education`. The resume page is built for all four.
-- `/services` — **0** `testimonial`.
+**Unlocks:** `/glossary` stops being an empty page, glossary marks appear in every article,
+the margin column gets its first real content, the graph gains another node type, and step 4
+of the tour becomes true.
 
----
+## 7. One deliberately full Deep dive
+**Writing: one real post, but it exercises more machinery than the other three combined.**
 
-## What cannot be exercised by writing
+Write it as `articleType: Deep dive` and use, in the body:
 
-| Feature | Why |
+| Block | What it is for |
 | --- | --- |
-| **Comments and reactions** | Needs a reader. Verified end to end with probe comments on production, then cleaned up. It will stay an empty thread until someone writes in it |
-| **The newsletter** | Needs a real subscriber. Subscribe with your own address once — that is the only untested link in the chain |
-| **Corrections** | Needs a real error. Manufacturing one would be dishonest |
-| **The "start here" affordance** | Needs enough posts that the index stops fitting one screen. Measured today: it still fits |
+| `code` | **The most glaring gap on the site.** Not one line of code renders anywhere on a network engineer's blog. A config snippet, an `ip route` output |
+| `wiresharkCallout` | A capture with the interesting bytes pointed at. The single most "only Stefan can write this" block you have |
+| `packetAnimator` | A packet walkthrough: a handshake, a traceroute, an ARP exchange |
+| `layerExplorer` | Anything touching the OSI layers. You already have `/blog/osi-model` to link to |
+| `theProblemSolved` | The framing block: what problem does this protocol exist to solve |
+| `sectionBreak` | Where the piece changes subject |
+
+And in the fields: `tldr` (three bullets), `sources` (the RFC, the vendor doc), two or three
+**sidenotes** (the caveat you did not want in the main line), `learningObjectives`,
+`prerequisites`, `priorKnowledgeCheck` (needs more than one option or it will not render),
+`conceptCards` (they also feed the Anki export), and `readNextGoDeeper` pointing at another
+post.
+
+**Unlocks:** six of the eleven custom blocks, **the entire sidenote and margin-note system**
+(Phase 6, thirty passing assertions, never once rendered for a reader), the learning
+scaffolding, the checkpoint, the concept cards, the Anki deck export, and the sources list in
+both the article and the RSS feed.
+
+## 8. Home Lab Week 1, and group it as a series
+**Writing: one post, and it is the one your existing content most obviously implies.**
+
+Week 2 exists and Week 1 does not. Write it, create a `series` document, and add both posts to
+it with `seriesOrder` 1 and 2.
+
+**Unlocks:** the series banner, part numbering, previous/next navigation, `/blog/series`
+stops being empty, and the series rail appears on the index. All built, all waiting on one
+document.
+
+Use `failureNote` and `whatIGotWrong` in it. A home lab write-up is made of those, and both
+blocks have never rendered.
+
+## 9. Ten garden notes
+**Writing: a paragraph each. Deliberately a lower bar than a post.**
+
+The thing you learned this week that is not an essay.
+
+**Unlocks:** `/garden`, the "recently tended" strip on the blog index, and a second node type
+in the graph.
+
+## 10. Ten library items
+**Writing: one line each on why it mattered.**
+
+**Unlocks:** `/library`, the "currently reading" strip on the index, and `/now`.
+
+## 11. Fill in the résumé
+**Writing: none that is really writing.**
+
+`experience`, `certification` and `education` are all at zero and `skill` has one entry.
+`/resume` is built for all four and currently shows almost nothing. **This is the page a
+recruiter opens.**
+
+## 12. Send the first digest
+**Writing: an intro and a note per entry.**
+
+Needs `DIGEST_SEND_SECRET` set in Vercel first. Use "Send test to me" before the real send.
+
+**Unlocks:** `/blog/digests`, and it is the first thing that makes the newsletter form worth
+filling in, because an archive shows what someone is signing up for instead of describing it.
 
 ---
 
-## If you only do three things
+# What no amount of writing can exercise
 
-1. **Tier 1 in full.** Fifteen minutes in the Studio, no writing, and it turns on more of the site than any single post could.
-2. **Twenty glossary terms.** They are short, and they enrich every article body retroactively.
-3. **One deliberately full Deep dive** using sidenotes, sources, code, a checkpoint and two or three of the custom blocks — so the machinery has been seen working once by a real reader, on a real page, before you rely on it.
+| Feature | What it actually needs |
+| --- | --- |
+| **Comments and reactions** | A reader. Verified end to end with probe comments and then cleaned up, but it will render an empty thread until someone writes in it |
+| **The newsletter** | A real subscriber. Subscribe with your own address once: it is the only untested link in that chain |
+| **Corrections** | A real error. Manufacturing one would be dishonest, and the system's whole value is that it is not |
+| **Reviewer attribution** | Someone to review a post. It also exercises the anonymity contract, which has only ever been proven against a fixture |
+| **A "start here" page** | Enough posts that the index stops fitting one screen. Measured today: it still fits |
+
+---
+
+# If you only do one evening
+
+**Items 1 to 5 take well under an hour and involve about a hundred words of writing.** They
+turn on the lane system, the status system, the facet rows, the knowledge graph, the featured
+archive and the summary panel. That is most of what the site can currently do but does not
+show.
+
+Then item 6, because glossary terms are short and they improve everything already published.
