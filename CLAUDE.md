@@ -32,7 +32,16 @@
 - Motion: tokens in `lib/motion.ts`; Tailwind classes `motion-safe:animate-fade-up|fade-in|draw|page-enter`, `ease-out-expo`, `duration-fast|base|slow`. Always gate animations with `motion-safe:`. framer-motion is wrapped in `MotionConfig reducedMotion="user"`.
 - Exactly one `<h1>` per page. Every page needs an element with `id="content"` for the skip link.
 - Never import `CustomPortableText` (or other server-only components) from a client component.
-- Real copy only — no lorem ipsum, no fake telemetry or metrics.
+- Real copy only. No lorem ipsum, no fake telemetry or metrics.
+- **Copy voice, standing rule from Stefan (2026-09-13): no em-dashes, no three-item lists used
+  as a rhetorical device, nothing that reads as machine-written. Plain sentences.** The triad
+  is the tell, and the blog lede used to be one ("Perspective pieces, deep dives, and lab
+  notes"). This applies to every string that reaches a reader: Studio defaults, empty states,
+  button labels, error copy, email bodies, meta descriptions.
+- **Editorial identity:** the blog is trade press and explanatory journalism about network
+  engineering, with a New Jersey angle covering service providers, MSPs and what the state is
+  doing. Where a design choice is ambiguous, pick the one that makes the site read as a
+  publication with a beat rather than a personal blog with posts.
 - Copy lives in Studio, never in JSX: any new heading, label, empty state, button or optional section goes into the owning singleton's defaults module + schema + query, and the component takes it as a prop. Sections that can be hidden carry an `enabled` boolean.
 - No eyebrow mini-headers or archive jargon (`Directory /`, `// Archive`, `Transmission`). Section headings are plain words in `.section-label` (sans, small) or serif `h2`. Icons are lucide via `lib/cms/icons.tsx`, never emoji.
 - Article page keeps exactly: top progress bar, one TOC per breakpoint, the reader menu, in-body learning blocks, read-next, newsletter, Ask, comments + reactions. Do not add floating widgets.

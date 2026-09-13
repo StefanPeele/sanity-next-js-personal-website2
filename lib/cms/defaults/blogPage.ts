@@ -3,9 +3,9 @@
 export const DEFAULT_BLOG_PAGE = {
   header: {
     title: 'Blog',
-    lede: 'Perspective pieces, deep dives, and lab notes on network engineering, infrastructure, and the work of learning it.',
+    lede: "A beat on network engineering and the infrastructure industry, written by someone still learning it. I cover it the way I wish someone had covered it for me, including the service providers and MSPs operating here in New Jersey.",
     metaTitle: 'Blog',
-    metaDescription: 'Perspective pieces, concept deep dives, and lab notes on network engineering, infrastructure, and the work of learning it.',
+    metaDescription: "Network engineering and the infrastructure industry, including the service providers and MSPs operating here in New Jersey.",
   },
   statsLabels: { posts: 'posts', series: 'series', latest: 'Latest' },
   featured: { heading: 'Featured', readLabel: 'Read' },
