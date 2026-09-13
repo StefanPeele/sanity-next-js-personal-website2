@@ -65,25 +65,26 @@ verified.
   OUTPUT, not the source: the config can be present and still not reach the routes. Its
   negative control was run.
 
-## Production is at `1f0af58`. Every code change is live; one docs commit is not.
+## Production tracks `main`. Everything from this program is live.
 
-**The one test that settles this, and the only one worth running:**
+At the close of this session: `16ea16d` live, `/api/health` agreeing, HEAD's own commit status
+`success`, nothing undeployed.
+
+**The one test worth running, rather than reading a deployment record:**
 
 ```
 git merge-base --is-ancestor <sha> <the sha /api/health reports>
 ```
 
-If it is an ancestor, its content is live — whether or not it has a deployment record of its
-own. Git history is cumulative and Vercel skips superseded commits, so "no deployment record"
-and "not deployed" are different statements.
+Ancestor means its content is live, with or without a deployment record of its own. Git
+history is cumulative and Vercel skips superseded commits, so "no deployment record" and "not
+deployed" are different statements.
 
-| Commit | | |
-| --- | --- | --- |
-| `dd56ff7` the revalidate floor | ancestor of live | comment created in Sanity appeared in **17s**, deleted disappeared in **308s** |
-| `368342d` the service-worker cap | ancestor of live | live `/sw.js` carries `MAX_STATIC`, 6893 bytes |
-| `4c38d0e` the caching guard + sweep | ancestor of live | 17 routes and 5 feeds healthy |
-| `74a642d` `ccb6237` `c0bdf23` `1f0af58` | ancestor of live | docs, harness, test spec |
-| `b4ff8f3` this correction | **NOT live** | docs only — no production surface |
+| Commit | Verified on production |
+| --- | --- |
+| `dd56ff7` the revalidate floor | comment created in Sanity appeared in **17s**, deleted disappeared in **308s** |
+| `368342d` the service-worker cap | live `/sw.js` carries `MAX_STATIC`, 6893 bytes |
+| `4c38d0e` the caching guard + sweep | 17 routes and 5 feeds healthy |
 
 A third, independent confirmation that `dd56ff7` works — live response headers rather than the
 build manifest:
@@ -93,22 +94,15 @@ build manifest:
 /blog/feed.xml  Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400
 ```
 
-**`b4ff8f3` is genuinely deploy-blocked**: it is HEAD, not a superseded intermediate, its own
-commit status is `failure — "Deployment rate limited — retry in 24 hours"`, and no deployment
-record exists for it. It is documentation; nothing a reader touches is waiting on it.
+**A "Deployment rate limited — retry in 24 hours" status is not reliable, in either
+direction.** This section was rewritten three times in half an hour and was wrong twice. It
+called two SUPERSEDED commits blocked — the two-agreeing-sources method of artifact #30 was
+used correctly but read for the wrong shas, while the tip had deployed four seconds after the
+push. Then it said nothing was blocked, which went false three minutes later when the quota
+genuinely was reached. Then that commit deployed anyway, so the block was transient too.
 
-**THE MISTAKE THIS SECTION MADE TWICE, in opposite directions, inside twenty minutes.** First
-it declared the quota exhausted and named `ccb6237`/`c0bdf23` as blocked. The method was
-artifact #30's — demand two agreeing sources, never trust the commit-status message alone —
-and both sources did agree. **Both were read for SUPERSEDED shas, which correctly have no
-record**, while the tip had deployed successfully four seconds after the push. Then it was
-corrected to "nothing is blocked", and three minutes later that became false too, because the
-quota really was reached at 20:04:56Z — `1f0af58` deployed at 20:01:50Z.
-
-Both readings were true when taken and wrong when written down. The lesson is not "check two
-sources"; that was already being done. It is: **run the ancestry test against what
-`/api/health` reports, and re-measure after the last push rather than restating an earlier
-observation.** See artifact #37.
+**Do not write down a deploy state you have not measured since your last push, and measure it
+with the ancestry test above.** See artifact #37.
 
 ## THE SANITY WEBHOOK DOES NOT REACH PRODUCTION. It is Stefan's to fix, and it is the one open defect.
 
