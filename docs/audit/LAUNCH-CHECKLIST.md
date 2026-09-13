@@ -22,6 +22,7 @@ open items are a dashboard setting, a mailbox, a person with a screen reader, an
 | **DONE** | Suite green | **131 passing** — 92 chromium + 39 screenshots |
 | **DONE** | The suite can actually fail | `tests/screenshots.spec.ts` had **no `expect` at all** until today; 39 of the 131 could not fail. It now fails on any uncaught exception or unexpected failed request. See §7 |
 | **DONE** | No content route is cached without an expiry | `tests/caching.spec.ts`, asserted against the build manifest, negative control run |
+| **DONE** | The per-phase harnesses still pass, re-run today | `measure-themes` 15/15 · `measure-toolbar` 50/50 · `measure-corrections` 27/27 · `measure-reading-controls` 22/22 · `measure-article-layout` no problems · `verify-fixture-render` **41/41**, which is the only proof the anonymity contract holds |
 
 ## 2. Production health
 
