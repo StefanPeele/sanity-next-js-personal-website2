@@ -4,8 +4,14 @@
 each marked **DONE**, **NEEDS STEFAN**, or **AT RISK**. It replaces the accumulation of
 per-phase claims in `OVERHAUL-PROGRESS.md` with one statement you can check.
 
-**Measured 2026-09-13 against `b38d9ce`, live on production.** Everything below with a number
-in it was re-run today; nothing is carried forward from an earlier phase's write-up.
+**Measured 2026-09-13.** Everything below with a number in it was re-run on the day; nothing
+is carried forward from an earlier phase’s write-up. The code measured was `b38d9ce`, which
+was live at the time; every commit after it is documentation only, so these numbers describe
+what is running now. To re-check that claim rather than trust it:
+
+```
+git merge-base --is-ancestor b38d9ce $(curl -s https://stefanpeele.com/api/health | grep -o '"commit":"[^"]*"' | cut -d'"' -f4)
+```
 
 **The short version.** The code is shippable. The content is not, and that is the only thing
 standing between this site and launch. There are **no AT RISK items in the code** — the four
