@@ -4,7 +4,7 @@ import { articleTypeMeta } from '@/lib/site'
 import { ArrowLeft } from 'lucide-react'
 import { DEFAULT_ARTICLE_UI, type ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 import type { VocabEntry } from '@/lib/cms/defaults/taxonomy'
-import { heroImageUrl } from '@/components/article/heroImage'
+import { HERO_HEIGHT, HERO_WIDTH, heroCropUrl, heroImageUrl } from '@/components/article/heroImage'
 import { FOCUS } from '@/lib/ui'
 import { reviewFlags, type RevisionFlag } from '@/lib/status'
 // components/blog/BlogArticleHeader.tsx
@@ -30,6 +30,8 @@ interface BlogArticleHeaderProps {
   categories: string[]
   articleType?: string | null
   mainImageUrl?: string | null
+  /** 7.3 F. The RAW image object, so Sanity can crop to 21:9 from the editor's hotspot. */
+  mainImage?: Parameters<typeof heroCropUrl>[0]
   mainImageAlt?: string | null
   lqip?: string | null
   sourceCount?: number
@@ -47,6 +49,7 @@ export function BlogArticleHeader({
   categories,
   articleType,
   mainImageUrl,
+  mainImage,
   mainImageAlt,
   lqip,
   sourceCount = 0,
@@ -65,6 +68,9 @@ export function BlogArticleHeader({
   const reviewBadge = headerFlag
     ? { label: headerFlag.label, className: `${headerFlag.color} ${headerFlag.bg.split(' ')[0]}` }
     : null
+
+  // 7.3 F. undefined when the post has no image object or no asset reference.
+  const heroCrop = heroCropUrl(mainImage)
 
   const metaItems = [
     publishDate,
@@ -94,6 +100,12 @@ export function BlogArticleHeader({
           title deliberately overhangs the prose on both sides; it does not share its left
           edge, and a future change that expects it to will be wrong. */}
       <div className="relative max-w-[80rem] mx-auto px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12">
+        {/* 7.3 F and 7.4 B. This wrapper is the FULL reading column (964px at 1440). The
+            title and the hero now sit on it, and everything else stays on the 52rem `wide`
+            tier inside it. Header and prose stay concentric rather than flush: the 52rem
+            blocks are centred in this column, so the title overhangs the prose by 66px on
+            each side deliberately. */}
+        <div className="w-full">
         <div className="w-full max-w-[52rem] mx-auto">
         <Link
           href="/blog"
@@ -125,17 +137,19 @@ export function BlogArticleHeader({
           </div>
         )}
 
-        {/* D4 gave the h1 an explicit `lg:w-[52rem]` so it could break out of a 36rem parent
-            -- 576px is too narrow for a display title at 48px and `text-wrap: balance` can
-            only pick better breaks inside the width it is given. 7.2 widened the parent to
-            that same 52rem, so the override is now a restatement of its own container and
-            is gone. The title keeps the width it was measured at (4 lines/192px -> 3
-            lines/144px at 1440); it simply inherits it now. 7.4 re-renders the h1 options
-            against this layout. */}
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-white mb-5 leading-tight tracking-tight">
+        </div>
+
+        {/* 7.4 option B. The title joins the full reading column instead of the 52rem tier.
+            B sets a 43-character title on one line where the current width breaks it across
+            two, which is the clearest wrapping defect on the page, and saves a line on the
+            77-character title as well. It never costs a line on any of the three measured.
+            Rejected: C, flush with the prose measure, which costs a line on the two longer
+            titles and reads as a title that ran out of room rather than one that was set. */}
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-white mb-5 leading-tight tracking-tight text-balance">
           {title}
         </h1>
 
+        <div className="w-full max-w-[52rem] mx-auto">
         <div className="flex items-center gap-3 font-sans text-sm text-stone-400 flex-wrap">
           {metaItems.map((item, i) => (
             <span key={item} className="flex items-center gap-3">
@@ -145,16 +159,23 @@ export function BlogArticleHeader({
           ))}
         </div>
 
-        {mainImageUrl && (
+        </div>
+
+        {/* 7.3 option F. Full reading column at 21:9, cropped by Sanity from the editor's
+            hotspot. No object-fit and no fixed-height container: the URL already carries the
+            aspect, so `w-full h-auto` renders exactly the bytes that were fetched.
+            heroCrop falls back to the uncropped 16:9 URL when a post has no image object,
+            which keeps older callers working. */}
+        {(heroCrop || mainImageUrl) && (
           <figure className="mt-8">
             <Image
-              src={heroImageUrl(mainImageUrl)}
+              src={heroCrop ?? heroImageUrl(mainImageUrl!)}
               alt={mainImageAlt ?? ''}
-              width={1600}
-              height={900}
+              width={HERO_WIDTH}
+              height={heroCrop ? HERO_HEIGHT : 900}
               priority
               unoptimized
-              sizes="(min-width: 768px) 52rem, 100vw"
+              sizes="(min-width: 1024px) 60rem, 100vw"
               placeholder={lqip ? 'blur' : 'empty'}
               blurDataURL={lqip ?? undefined}
               className="w-full h-auto rounded-lg border border-edge"

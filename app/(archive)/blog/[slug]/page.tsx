@@ -212,6 +212,7 @@ export default async function BlogPostPage({ params, searchParams }: Props) {
           categories={categories}
           articleType={post.articleType}
           mainImageUrl={post.mainImageUrl}
+          mainImage={post.mainImage}
           mainImageAlt={post.mainImageAlt}
           lqip={post.lqip}
           sourceCount={post.sources?.length ?? 0}

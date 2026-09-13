@@ -744,6 +744,9 @@ The margin text is the complete note; the window holds what will not fit.
 
 # Phase 7.1 — the prose measure. Measured, not predicted.
 
+> **DECIDED AND SHIPPED.** 51ch / 56ch / 64ch, confirmed by Stefan and already live —
+> they went in with 7.2 in `b8a1621` and are `styles/article.css` lines 116-118.
+
 `docs/audit/measure-prose-width.mjs`, run 2026-09-11. Method is §1.5's, so these numbers are
 comparable with the five reference sites: **real characters ÷ real lines**, per paragraph,
 median over 58 qualifying paragraphs. Lines are counted from client rects rather than
@@ -820,6 +823,14 @@ Standard moves from 57.2 to **67.1** — squarely mid-band, and stable across ev
 ---
 
 # Phase 7.3 — the hero image. The fold decides it, not the width.
+
+> **DECIDED AND SHIPPED: option F.** Full reading column at 21:9, cropped by Sanity from the
+> editor's hotspot rather than by CSS object-fit. The raw image object is now projected in
+> `postBySlugQuery` so hotspot and crop survive the query, and the URL carries a `rect=`.
+>
+> **Measured after shipping, against F's own predicted table.** First line of prose:
+> 1440 **886** (predicted 885), 768 **1093** (predicted 1092), 390 **961** (predicted 960).
+> Within a pixel at every breakpoint. Hero renders 964px wide at a 2.33 ratio.
 
 `docs/audit/render-hero-h1-options.mjs`, run 2026-09-12 against the shipped 7.2 layout.
 Seven options, synthesised in the page rather than shipped as code, measured at 1440 / 768 /
@@ -905,6 +916,9 @@ first paragraph.
 ---
 
 # Phase 7.4 — the h1, re-measured against the 7.2 layout
+
+> **DECIDED AND SHIPPED: option B.** The title joins the full reading column. Measured after:
+> h1 964px wide at 1440, up from 832, and the 77-character title now sets in **2 lines**.
 
 **The originals are superseded.** `decisions/README.md` Decision 1 chose option C,
 `lg:w-[52rem] lg:max-w-none`, to let the h1 escape a 36rem parent. 7.2 made that parent

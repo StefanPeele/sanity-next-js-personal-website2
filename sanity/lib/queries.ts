@@ -365,6 +365,14 @@ export const postBySlugQuery = defineQuery(`
     "mainImageUrl": mainImage.asset->url,
     "mainImageAlt": coalesce(mainImage.alt, mainImage.asset->altText),
     "lqip": mainImage.asset->metadata.lqip,
+    // 7.3 option F. The RAW image object, asset reference and all, because the hero is
+    // cropped to 21:9 by Sanity from the editor's hotspot rather than by CSS object-fit.
+    // The projection above flattens to a URL string and loses hotspot and crop with it, so
+    // a second projection is the only way to keep them. @sanity/image-url reads hotspot and
+    // crop off this shape and computes the rect.
+    // NO BACKTICKS IN THIS COMMENT: one ends the template literal and silently truncates
+    // every query below it. See RESUME.md; it has cost this project two sessions.
+    mainImage { asset, hotspot, crop },
     body, excerpt, tldr,
     ${wordCountField},
     "categories": categories[]->title,
