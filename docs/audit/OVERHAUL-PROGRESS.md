@@ -624,3 +624,31 @@ all, so 39 of the 131 "passing" tests could not fail, while `_errors.log` grew t
 nothing read — all of it one local-only CORS artifact. It now fails on any uncaught exception
 or unexpected failed request. It is still not a pixel-diff, and RESUME.md no longer calls it a
 visual guard.
+
+## 2026-09-13, second run — every PROPOSALS decision shipped
+
+Stefan decided everything outstanding in one message. Shipped in order, one commit per item,
+each marked in `PROPOSALS.md`: the blog description and critique invitation (2.2, 2.3), the
+14px meta floor (2.4, his call against the measured band), card option C (2.6), the whole
+index hierarchy (2.5: dividers D, the FEATURED badge as the lane, h1 to 48px, the Latest
+strip), the article hero and title on the full column (7.3 F, 7.4 B), the summary field with
+both suppression rules and no generation (5.6), the digest end to end (9.2, 9.3, 9.5), and
+reading-toolbar variant A of three rendered.
+
+Verified rather than assumed: 6.2 and 6.4 were already shipped, 7.1 was already live, and the
+toolbar's persistence already used localStorage for all seventeen settings, so that arrived as
+a guard rather than a fix.
+
+**Numbers that confirm the intent.** The index ladder is hero 60 / h1 48 / card 24, so the
+lead story is finally the largest thing on the page. The article hero lands within one pixel
+of 7.3's own predicted fold table at all three breakpoints. Suite 144, production sweep 72/72.
+
+**Two proposals written instead of built, as asked**: `/blog/featured` and the first-visit
+tour, both in `PROPOSALS-NEW.md`. The featured archive has a real decision in front of it —
+`isFeatured` is a boolean, so featuring something new erases the last one, and there is no
+archive to browse until `featuredAt` replaces it.
+
+**A regression caught by the suite, caused here:** adding `/blog/digests` to the sitemap made
+`tests/helpers.ts` return "digests" as the newest post, so three article tests navigated to
+the digest archive and reported an article with no progress bar, no TOC and no reader menu.
+The page was fine; the helper was pointing at the wrong one.

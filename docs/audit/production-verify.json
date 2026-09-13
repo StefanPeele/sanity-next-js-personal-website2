@@ -1,6 +1,6 @@
 {
   "base": "https://stefanpeele.com",
-  "when": "2026-09-13T18:01:11.025Z",
+  "when": "2026-09-13T20:10:55.817Z",
   "routes": {
     "/": {
       "status": 200,
@@ -21,7 +21,7 @@
       "title": "Blog | Stefan Peele",
       "scroll": 1440,
       "client": 1440,
-      "textLen": 1819,
+      "textLen": 2036,
       "errors": []
     },
     "/garden": {
@@ -167,6 +167,17 @@
       "textLen": 758,
       "errors": []
     },
+    "/blog/digests": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Digests | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 848,
+      "errors": []
+    },
     "/blog/osi-model": {
       "status": 200,
       "h1": 1,
@@ -245,7 +256,7 @@
     },
     "/sitemap.xml": {
       "status": 200,
-      "bytes": 4904
+      "bytes": 5067
     },
     "/robots.txt": {
       "status": 200,

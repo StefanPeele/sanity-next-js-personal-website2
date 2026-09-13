@@ -50,6 +50,8 @@ open items are a dashboard setting, a mailbox, a person with a screen reader, an
 | **NEEDS STEFAN** | **No screen-reader pass** | `A11Y-AUDIT.md` names this as the largest remaining gap. Everything there reasons from the accessibility tree, and the tree is not the experience. Highest-risk claim: that the reading toolbar and the sidenotes are usable non-visually. Needs NVDA or VoiceOver and a person |
 | **NEEDS STEFAN** | **`/test` is a live, indexable page** | A `page` document titled "test", slug `test`, created 2026-03-26. Returns 200, carries `robots: index, follow`, listed in `sitemap.xml`. The code is doing exactly what a page document asks — this is content, so deleting it is your call. **Delete it before launch** |
 
+| **NEEDS STEFAN** | **`DIGEST_SEND_SECRET` is not set** | Added 2026-09-13 with the digest. The send route returns 500 until the variable exists in Vercel, which is the safe direction, but it means no digest can be sent. Set it, then use "Send test to me" from the Studio action before the first real send |
+
 ## 4. Accessibility
 
 | | Item | Evidence |

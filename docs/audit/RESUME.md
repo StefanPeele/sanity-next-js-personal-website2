@@ -167,6 +167,62 @@ it disagreed — twice. Check that one.
 
 ## EVERY PHASE IN THE BRIEF HAS NOW BEEN WORKED
 
+## 2026-09-13, second run: every PROPOSALS decision shipped
+
+Stefan made every outstanding decision in one message. All of them are shipped or, where he
+asked for a proposal first, proposed. One commit per item, each marked in `PROPOSALS.md`.
+
+| Item | What |
+| --- | --- |
+| 2.2 | The blog description, his own fourth version, set in Studio and in the defaults behind it |
+| 2.3 | The critique invitation, short variant, one line under the lede |
+| 2.4 | The **14px meta floor**, his call against the measured 10-15px band. 18 sub-14px blog-meta nodes before, 0 after |
+| 2.6 | Card option C: 24px w600 title, the bordered pill row replaced by one kicker |
+| 2.5 | Dividers D, the FEATURED badge as the lane (option 3), h1 to 48px, and the Latest strip |
+| 7.1 | Already live (51ch / 56ch / 64ch) |
+| 7.3 | Hero option F: 21:9 on the full column, cropped by Sanity from the hotspot |
+| 7.4 | h1 option B: the title on the full column |
+| 5.6 | The summary field, label and both suppression rules. **No generation**, by decision |
+| 6.2 · 6.4 | Both already shipped; verified rather than assumed |
+| 9.2 · 9.3 · 9.5 | The digest: schema, Studio send action, archive at `/blog/digests` |
+| Toolbar | Variant A of three rendered. Persistence needed no code and got a guard |
+
+**Measured after:** the index type ladder is now hero 60 / h1 48 / card 24, so the lead story
+is the largest thing on the page. The article hero lands within **one pixel** of 7.3's
+predicted fold table at all three breakpoints (886/1093/961 against 885/1092/960).
+
+**Suite is 144** (105 chromium + 39 screenshots). Production sweep **72/72**.
+
+## What Stefan needs to do next
+
+1. **Set `DIGEST_SEND_SECRET` in Vercel.** The send route returns 500 until it exists, which
+   is the safe direction, but it means the digest cannot be sent yet.
+2. **Read the two proposals in `PROPOSALS-NEW.md`.** `/blog/featured` has a real decision in
+   front of it: `isFeatured` is a boolean, so featuring something new erases the last one,
+   and the archive is only a record if `featuredAt` replaces it. The tour's copy should be
+   read in his own voice before it ships.
+3. **The heading migration** is still the only open accessibility defect.
+4. The four items in `LAUNCH-CHECKLIST.md` §3 are unchanged.
+
+## Traps this run added
+
+- **A backtick inside a double-quoted bash string is command substitution.** Writing
+  markdown through `node -e "..."` ran a test file as a shell command and silently deleted a
+  filename from the text it was writing. Same shape as the GROQ backtick trap, different
+  language. Use a quoted heredoc for anything containing backticks.
+- **Adding a route under `/blog` broke a test helper by pointing it at the wrong page.**
+  `tests/helpers.ts` reads "the newest post" out of the sitemap and excludes `series`,
+  `osi-model` and `feed` by hand. `/blog/digests` was not in that list, so three article
+  tests navigated to the digest archive and reported that an article had no progress bar, no
+  TOC and no reader menu. **The page was fine.** When several tests fail on one surface at
+  once, check what they are pointing AT before reading the diff.
+- **A dead `next start` reports as a failing site.** One suite run said 46 failures and the
+  next said 3, with no code between them. `page.goto` returning `ERR_CONNECTION_REFUSED` was
+  the tell. Confirm the server answers `/api/health` before believing any suite result.
+- **A flaky guard is worse than no guard.** The first toolbar-persistence harness compared
+  every `sp_*` key, and two of them are reading STATE rather than settings, so it failed once
+  and passed the next time. Filter explicitly, then run it three times before committing.
+
 ## Start here: three documents, written 2026-09-13
 
 - **`LAUNCH-CHECKLIST.md`** — everything that must be true before launch, each DONE /
