@@ -145,6 +145,21 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
     return [...map.entries()].map(([slug, v]) => ({ slug, ...v })).sort((a, b) => b.count - a.count || a.title.localeCompare(b.title))
   }, [posts])
 
+  // 2.5. The second tier. Deliberately NOT filtered by the facets below: this is a fixed
+  // "newest N" band that fills the missing middle of the page's type ladder, not another
+  // view of the archive.
+  //
+  // Guarded on COUNT as well as `enabled`, and that guard is the whole reason it is honest:
+  // with three posts on the site, a "Latest" row above "All posts" is the same two cards
+  // printed twice. It only becomes a tier once the archive has outgrown it.
+  const latestLimit = copy.latestStrip?.limit ?? 3
+  const latest = useMemo(() => {
+    if (posts.length <= latestLimit) return []
+    return [...posts]
+      .sort((a, b) => (b.publishedAt ?? '').localeCompare(a.publishedAt ?? ''))
+      .slice(0, latestLimit)
+  }, [posts, latestLimit])
+
   const needle = q.trim().toLowerCase()
 
   const filtered = useMemo(() => {
@@ -419,9 +434,19 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
   return (
     <>
 
+      {/* ── Latest: the real second tier (2.5) ────────────────────── */}
+      {copy.latestStrip?.enabled && latest.length > 0 && (
+        <section className="mb-20" aria-labelledby="latest-strip">
+          <h2 id="latest-strip" className="section-label mb-4">{copy.latestStrip.heading}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {latest.map(renderCard)}
+          </div>
+        </section>
+      )}
+
       {/* ── Series rail ───────────────────────────────────────────── */}
       {copy.seriesRail.enabled && series.length > 0 && (
-        <section className="mb-12" aria-labelledby="series-rail">
+        <section className="mb-20" aria-labelledby="series-rail">
           <div className="mb-4 flex items-center justify-between">
             <h2 id="series-rail" className="section-label">{copy.seriesRail.heading}</h2>
             <Link href={copy.seriesRail.ctaHref || '/blog/series'} className={`font-sans text-sm ${QUIET_LINK}`}>{copy.seriesRail.ctaLabel} →</Link>
@@ -445,7 +470,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
 
       {/* ── Currently reading + Recently tended ───────────────────── */}
       {((copy.readingStrip.enabled && currentlyReading.length > 0) || (copy.notesStrip.enabled && recentNotes.length > 0)) && (
-        <div className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="mb-20 grid grid-cols-1 md:grid-cols-2 gap-6">
           {copy.readingStrip.enabled && currentlyReading.length > 0 && (
             <section className="rounded-lg border border-edge bg-surface-veil p-5" aria-labelledby="reading-strip">
               <div className="mb-3 flex items-center justify-between">
@@ -509,7 +534,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
               They fold into the search row instead of standing as three more chip rows.
           The global Cmd-K search was not the place to fold them into: it searches every
           content type and navigates away, where this narrows the list in front of you. */}
-      <div ref={archiveRef} className="mb-6 border-b border-edge pb-5 scroll-mt-24">
+      <div ref={archiveRef} className="mb-8 scroll-mt-24">
         <div className="flex items-end justify-between gap-4 flex-wrap">
           <h2 className="text-2xl font-serif font-bold text-white">{activeLabel || L.heading}</h2>
           <span className="font-sans text-sm text-stone-400" aria-live="polite">
@@ -631,8 +656,8 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
           {/* 4.1 SECTIONS. One per lane with enough posts to be a section rather than a
               list with a heading. Each shows its newest few and links to the rest. */}
           {laneSections.map((s) => (
-            <section key={s.key} className="mb-14" aria-labelledby={`lane-${s.key}`}>
-              <div className="mb-5 flex items-end justify-between gap-4 border-b border-edge pb-3">
+            <section key={s.key} className="mb-20" aria-labelledby={`lane-${s.key}`}>
+              <div className="mb-5 flex items-end justify-between gap-4">
                 <div className="min-w-0">
                   <h3 id={`lane-${s.key}`} className="text-xl font-serif font-bold" style={{ color: s.color }}>{s.label}</h3>
                   {s.description && <p className="font-sans text-sm text-stone-400 mt-1">{s.description}</p>}
@@ -651,7 +676,7 @@ export function BlogDirectory({ copy = DEFAULT_BLOG_PAGE, lanes, mediaTypes, pos
               cards. */}
           {river.length > 0 && (
             <section className="mb-4" aria-labelledby="river-heading">
-              <h3 id="river-heading" className="section-label mb-4 border-b border-edge pb-3">{L.riverHeading}</h3>
+              <h3 id="river-heading" className="section-label mb-4">{L.riverHeading}</h3>
               <ul className="list-none m-0 p-0 divide-y divide-edge">
                 {river.map(renderRiverRow)}
               </ul>

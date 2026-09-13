@@ -499,10 +499,10 @@ round of options rather than being folded in here.
 
 | Item | State |
 | --- | --- |
-| Dividers → space + mono section labels (D) | **Rendered, recommended, NOT applied** — it changes how the index looks, so it is Stefan's |
-| Drop the duplicate FEATURED badge | **SHIPPED 2026-09-13, `b38d9ce`.** Subtraction, one element. Verified on production: "Featured" now appears exactly once on `/blog` |
-| h1 72px → 48px | **Not rendered.** Needs its own options round |
-| Latest strip as a real second tier | **Not designed.** Depends on the h1 decision |
+| Dividers → space + mono section labels (D) | **SHIPPED.** Section rules out, 5rem of space in, `.section-label` restyled as a mono label — scoped to `[data-blog-index]` so /garden, /library and the rest keep their serif headings. Bordered blocks in `main` went 16 → 6 |
+| The FEATURED badge | **SHIPPED as option 3, superseding option 1.** `b38d9ce` deleted the badge; Stefan chose "keep both and make them different things" instead, so it is back as the **lane**, filled in the lane's colour. It renders nothing today because no published post has an `articleType` |
+| h1 72px → 48px | **SHIPPED**, no options round. Measured after: h1 48, hero headline 60, card title 24. The lead story is now the largest thing on the page, which is what all twelve reference sites do |
+| Latest strip as a real second tier | **SHIPPED.** `latestStrip` in Studio, newest N as cards between the hero and the archive, guarded on count so it cannot become the same cards printed twice |
 
 ---
 

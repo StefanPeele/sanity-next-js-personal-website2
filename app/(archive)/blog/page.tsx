@@ -3,6 +3,7 @@
 // 3000px down the page, and every control in the menu -- including the accessibility
 // toggles -- set a class that nothing implemented.
 import '@/styles/reader.css'
+import '@/styles/blog-index.css'
 import { Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -64,7 +65,7 @@ export default async function BlogPage() {
     // land on. The provider's article props are omitted: there is no slug, no title and no
     // word count here, and nothing that would use them is rendered.
     <ArticleProvider>
-    <div data-article-root className="relative min-h-screen text-stone-300 selection:bg-stone-500/30">
+    <div data-blog-index data-article-root className="relative min-h-screen text-stone-300 selection:bg-stone-500/30">
       <ReadingToolbar copy={ui.readerMenu} markdown="" variant="index" />
       <JsonLd
         data={[
@@ -96,9 +97,13 @@ export default async function BlogPage() {
 
       <main id="content" className="relative max-w-7xl mx-auto px-6 pt-32 pb-24">
         {/* ─── HEADER ─────────────────────────────────────────────── */}
-        <header className="mb-12 border-b border-edge-faint pb-8 flex flex-col md:flex-row justify-between items-end gap-6">
+        <header className="mb-20 flex flex-col md:flex-row justify-between items-end gap-6">
           <div>
-            <h1 className="text-5xl md:text-7xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
+            {/* 2.5. 48px, down from 72px. Of twelve reference indexes, NONE renders its own section
+                name larger than its lead story; ours rendered "Blog" at 72px above a 60px
+                headline. At 48px the hero headline becomes the largest thing on the page and
+                the ladder reads 60 / 48 / 24 instead of 72 / 60 / nothing / 24. */}
+            <h1 className="text-5xl font-serif font-bold tracking-tight text-white leading-none">{copy.header.title}</h1>
             {copy.header.lede && <p className="mt-4 max-w-2xl font-sans text-base text-stone-400 leading-relaxed">{copy.header.lede}</p>}
             {/* 2.3. The invitation to critique, one line, directly under the lede and above
                 the header's bottom rule. No icon: an icon here would make a sentence look
@@ -109,7 +114,9 @@ export default async function BlogPage() {
                 {copy.critiqueInvite.email && (
                   <>
                     {' '}
-                    <a href={`mailto:${copy.critiqueInvite.email}`} className={QUIET_LINK}>
+                    {/* nowrap so the label cannot break across lines. Without it "Email me"
+                        split at the measure and left "me" alone on its own line. */}
+                    <a href={`mailto:${copy.critiqueInvite.email}`} className={`whitespace-nowrap ${QUIET_LINK}`}>
                       {copy.critiqueInvite.emailLabel || copy.critiqueInvite.email}
                     </a>
                   </>
@@ -160,18 +167,22 @@ export default async function BlogPage() {
 
               <div className="relative z-20 pt-64 pb-12 px-8 md:px-16 flex flex-col justify-end h-full">
                 <div className="flex gap-3 mb-4 flex-wrap">
-                  {/* The FEATURED badge that used to sit here is GONE, and this is a
-                      subtraction rather than a restyle.
-                      `<h2 className="section-label">{copy.featured.heading}</h2>` renders
-                      "Featured" 40px above this row, so the badge repeated the heading
-                      directly beneath it in a second typographic system -- a 12px mono
-                      label above a 12px mono uppercase white-filled box, carrying no
-                      information the position and the heading did not already carry.
-                      Aeon, Asterisk and Increment all identify the lead story by placement
-                      alone. It was also the one string on this page hardcoded in JSX rather
-                      than read from the blogPage singleton. PROPOSALS 2.5, option 1. */}
+                  {/* PROPOSALS 2.5, option 3.
+                      A hardcoded "Featured" badge used to sit here, repeating the
+                      `section-label` heading 40px above it in a second typographic system:
+                      a mono label above a mono uppercase white-filled box, carrying nothing
+                      the heading and the position did not already carry.
+                      Option 1 deleted it. Stefan chose option 3 instead, which is better:
+                      keep both and make them different things. The heading says FEATURED,
+                      the badge says the LANE, filled in the lane's own colour. A flag for
+                      status and a kicker for section, never the same word twice.
+                      Nothing renders when a post has no lane, which is true of all three
+                      published posts until articleType is set. */}
                   {featuredMeta && (
-                    <span className="font-sans text-sm px-3 py-1.5 rounded-full border backdrop-blur-md" style={{ color: featuredMeta.color, borderColor: `${featuredMeta.color}66`, backgroundColor: featuredMeta.bg }}>
+                    <span
+                      className="meta-label text-sm inline-flex items-center px-3 py-1 rounded-sm text-black font-medium"
+                      style={{ backgroundColor: featuredMeta.color }}
+                    >
                       {featuredMeta.label}
                     </span>
                   )}

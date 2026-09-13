@@ -27,6 +27,11 @@ export default defineType({
     ]),
     obj('statsLabels', 'Stats line', [str('posts', '"posts"'), str('series', '"series"'), str('latest', '"Latest"')]),
     obj('featured', 'Featured post', [str('heading', 'Heading'), str('readLabel', 'Read link label')]),
+    obj('latestStrip', 'Latest strip', [
+      defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }),
+      str('heading', 'Heading'),
+      defineField({ name: 'limit', title: 'How many posts', type: 'number', validation: (r) => r.min(1).max(6) }),
+    ]),
     obj('seriesRail', 'Series rail', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),
     obj('readingStrip', 'Currently reading strip', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),
     obj('notesStrip', 'Recently tended strip', [str('heading', 'Heading'), defineField({ name: 'enabled', title: 'Show this section', type: 'boolean' }), str('ctaLabel', 'Link label'), str('ctaHref', 'Link path')]),

@@ -50,6 +50,7 @@ export const blogPageQuery = defineQuery(`
     critiqueInvite{ enabled, text, email, emailLabel },
     statsLabels{ posts, series, latest },
     featured{ heading, readLabel },
+    latestStrip{ enabled, heading, limit },
     seriesRail{ ${strip} }, readingStrip{ ${strip} }, notesStrip{ ${strip} },
     list{ heading, filterLabels{ lane, category, tag, sort, status }, sortLabels{ newest, oldest, longest }, allLabel, readLabel, readAgainLabel, emptyState, clearLabel, postCount, findLabel, findPlaceholder, filtersLabel, seeAllLabel, riverHeading },
     planned{ enabled, heading, note, label, treatment, items[]{ _key, topic, lane } }

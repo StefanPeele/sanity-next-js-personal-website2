@@ -1,0 +1,34 @@
+/* styles/blog-index.css — PROPOSALS 2.5, option D. Imported only by app/(archive)/blog/page.tsx.
+ *
+ * "Rules out, space in, small mono section labels."
+ *
+ * §1.1 counted bordered blocks wider than 200px on every measured index and found two camps
+ * that map exactly onto publication type. News density: Verge 89, FT 51, Atlantic 50,
+ * Defector 23, Guardian 23. Essay and magazine: Increment 0, Asterisk 2, Aeon 2, Ars 2,
+ * 404 Media 3, Quanta 4. Ours was 16. Every site this one wants to resemble is in the second
+ * camp, so the rules come out and 5rem of space does their work.
+ *
+ * Once the rule under a heading is gone, something has to mark where a section starts, and
+ * §1.2 measured that the answer at every comparable site is a small mono label rather than a
+ * line. That is the whole of option D: the work moves from a border to a word.
+ *
+ * SCOPED, not global. `.section-label` is used on /garden, /library, /glossary, /services and
+ * the home page, where it is a serif heading and should stay one. This restyle applies only
+ * inside [data-blog-index].
+ *
+ * ONE DEVIATION, stated rather than buried. Option D specified a 12px mono kicker. It ships
+ * at 14px, because 2.4's meta floor — decided in the same breath — puts the card kicker at
+ * 14px, and a section heading rendering SMALLER than the kicker inside the cards beneath it
+ * inverts the hierarchy the option exists to create. 14px keeps D's intent, which is the mono
+ * label face instead of a rule. Changing it back is this one declaration.
+ */
+
+[data-blog-index] .section-label {
+  font-family: var(--font-mono), 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a8a29e;
+}

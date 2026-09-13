@@ -26,6 +26,14 @@ export const DEFAULT_BLOG_PAGE = {
   },
   statsLabels: { posts: 'posts', series: 'series', latest: 'Latest' },
   featured: { heading: 'Featured', readLabel: 'Read' },
+  // 2.5. The real second tier. §1.1 measured this page's type ladder as 72 / 60 / nothing /
+  // 24 -- a missing middle, which is the specific thing that made it read as unedited rather
+  // than as a publication. Featured fills the top, this fills the middle.
+  //
+  // `limit` is also the guard. The strip only renders when there are MORE posts than it
+  // would show, because with three posts on the site a "Latest" row above "All posts" is the
+  // same two cards printed twice. It becomes a tier the moment the archive outgrows it.
+  latestStrip: { enabled: true, heading: 'Latest', limit: 3 },
   seriesRail: { enabled: true, heading: 'Series', ctaLabel: 'All series', ctaHref: '/blog/series' },
   readingStrip: { enabled: true, heading: 'Currently reading', ctaLabel: 'Library', ctaHref: '/library' },
   notesStrip: { enabled: true, heading: 'Recently tended notes', ctaLabel: 'Garden', ctaHref: '/garden' },
