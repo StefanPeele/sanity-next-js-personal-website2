@@ -19,6 +19,18 @@ Verified on production: `docs/audit/measure-proposals-shipped.mjs`, **18/18**.
 Deliberately **not** taken, because they are yours: everything that changes how the site
 *looks* rather than fixing an inconsistency.
 
+## Waiting on you, and nothing else is
+
+Two items were decided with "propose the shape before building it", and both proposals are
+written: **`docs/audit/PROPOSALS-NEW.md`**.
+
+| | Needs from you |
+| --- | --- |
+| **`/blog/featured`** | One decision before any code: `isFeatured` is a boolean, so "every post I have flagged" currently means "the post that is flagged", and featuring something new erases the last one. The proposal recommends replacing it with `featuredAt` plus a `featuredNote`, which is what turns the page from a filter into a record of editorial judgement |
+| **The first-visit tour** | The shape, the trigger and the five sentences of copy are all drafted. Read the copy in your own voice before it ships |
+| **`DIGEST_SEND_SECRET`** | Set it in Vercel before the first digest send. The route refuses until it exists |
+| **The heading migration** | Still the only open accessibility defect. See the table below |
+
 ## What actually needs your judgement, in the order I would read them
 
 | # | Decision | Where | Why it is yours |
