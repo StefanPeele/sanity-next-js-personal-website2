@@ -265,7 +265,7 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article' }: Read
         onClick={() => setOpen((v) => !v)}
         className={`reading-toolbar-trigger ${FOCUS}`}
       >
-        <Settings2 size={18} aria-hidden />
+        <Settings2 size={22} aria-hidden />
         <span className="sr-only">{L.buttonLabel}</span>
       </button>
 

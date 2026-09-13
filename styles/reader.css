@@ -323,9 +323,11 @@ html.sp-reduced-motion *::after {
 .reading-toolbar {
   position: fixed;
   z-index: 1001;
-  /* Mobile first: bottom-right corner, clear of the safe area on notched devices. */
-  right: 1rem;
-  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  /* Mobile first: bottom-right corner, clear of the safe area on notched devices.
+     1.5rem rather than 1rem (variant A): 16px put a 44px control 16px from the edge of a
+     390px screen, which reads as pinned to the edge rather than placed. */
+  right: 1.5rem;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 @media (min-width: 1024px) {
@@ -333,7 +335,10 @@ html.sp-reduced-motion *::after {
     /* The margin to the right of the prose column. Vertically centred so it is in the same
        place whatever the scroll position -- a control that moves is a control you have to
        look for. */
-    right: 1.25rem;
+    /* 2rem, up from 1.25rem. Measured at 1440 that is 32px of clearance, and it still
+       clears the Contents column -- which is exactly what ruled out the labelled-pill
+       variant, at 129px wide it overlapped the table of contents. */
+    right: 2rem;
     bottom: auto;
     top: 50%;
     transform: translateY(-50%);
@@ -344,21 +349,28 @@ html.sp-reduced-motion *::after {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* 44px: the smallest reliable touch target, and the collapsed state is the DEFAULT, so
-     this is the size that matters most. */
-  width: 44px;
-  height: 44px;
+  /* 52px, up from 44. 44 is the smallest RELIABLE touch target, not a size to aim for, and
+     the collapsed state is the default, so this is the size that matters most. */
+  width: 52px;
+  height: 52px;
   border-radius: 9999px;
   border: 1px solid var(--edge);
   /* Solid first, then the glass. A browser without color-mix() drops the second declaration
      and keeps the first; without the fallback it would drop to `transparent` and the one
      control on the page would be an outline with an icon floating in it. */
   background: var(--surface-raised);
-  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  /* 88%, up from 72%. At 72% the prose showed through the one control on the page, which is
+     the opposite of what a control should do. */
+  background: color-mix(in srgb, var(--surface-raised) 88%, transparent);
   -webkit-backdrop-filter: blur(10px) saturate(1.2);
           backdrop-filter: blur(10px) saturate(1.2);
-  color: #d6d3d1;
-  box-shadow: 0 6px 20px rgb(0 0 0 / 0.35);
+  /* White, up from #d6d3d1, and a stronger edge and shadow with it. Stefan's brief: it
+     should be findable without being told it is there. Contrast is the cheap half of that.
+     The other half is the first-visit tour, because no icon-only button explains itself
+     however loud it gets. */
+  color: #ffffff;
+  border-color: var(--edge-strong);
+  box-shadow: 0 8px 26px rgb(0 0 0 / 0.5);
   transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 .reading-toolbar-trigger:hover {
