@@ -167,6 +167,18 @@ it disagreed — twice. Check that one.
 
 ## EVERY PHASE IN THE BRIEF HAS NOW BEEN WORKED
 
+## Start here: three documents, written 2026-09-13
+
+- **`LAUNCH-CHECKLIST.md`** — everything that must be true before launch, each DONE /
+  NEEDS STEFAN / AT RISK, all re-measured on the day. **There are no AT RISK items in the
+  code.** The blockers are a dashboard setting, a mailbox, a person with a screen reader,
+  and writing.
+- **`CONTENT-TO-WRITE.md`** — every article section, learning block and feature that renders
+  for no published post, with what content would exercise each. Measured against the live
+  dataset, not inferred from the schema.
+- **`PROPOSALS.md`** — now opens with a decision index: four items were decided and shipped
+  (`b38d9ce`), and the ten that need Stefan are listed in the order to read them.
+
 ## The single next action
 
 Nothing in the brief is unworked. Four things remain and **every one of them needs Stefan**:
@@ -247,11 +259,22 @@ Run with a server on `127.0.0.1:3000` serving the build you mean (check the CSS 
 | `docs/audit/measure-sidenotes-margin.mjs` | 30: margin placement, the three 6.3 edge cases, the 6.5 window's focus trap, both 6.4 mobile options. **Not** `measure-sidenotes.mjs`, which is Phase 1.5 research on other sites |
 
 Suite: `npx playwright test` — **131 passing** across both projects. The split is
-deliberate, not an accident: `npm run test:e2e` runs only the chromium project (92) because
+deliberate: `npm run test:e2e` runs only the chromium project (92) because
 `playwright.config.ts` has it `testIgnore` the visual baseline to stay fast, and
 `npm run screenshot` is the other half (39). Run BOTH before claiming the suite is green —
 a report of 92 is the fast half, not the whole.
 
+**Until 2026-09-13 the screenshots half asserted NOTHING.** `tests/screenshots.spec.ts`
+contained no `expect` at all, so 39 of the 131 could not fail on anything short of a
+navigation timeout, while `_errors.log` grew to 8,638 lines that nothing read. Every line of
+it was one local-only artifact — Sanity's live-events stream is CORS-blocked on `127.0.0.1`
+and allow-listed in production. That artifact is now ignored and an uncaught exception or any
+other failed request FAILS the capture. **It is still not a pixel-diff**, and calling it a
+"visual guard" was overstating it: it proves the pages render without errors, not that they
+look right.
+
+| `docs/audit/verify-production.mjs` | ONE consolidated statement of live health: 21 routes × 1440/768/390 + 6 machine surfaces, in a real browser, asserting status, one h1, one main, `#content`, no overflow, and no uncaught exception, failed request or CSP violation. **69/69 on `b38d9ce`** |
+| `docs/audit/measure-proposals-shipped.mjs` | The four PROPOSALS items shipped without Stefan, verified on the rendered page rather than in the diff. 18/18 on production |
 | `docs/audit/measure-sw-cache.mjs` | Drives the REAL service worker in a real browser: takes the static cache past the cap and watches one further fetch trim it back, with the newest entry surviving. A unit test of a copy of the function would prove nothing about the file that ships |
 
 Two harnesses added this session:

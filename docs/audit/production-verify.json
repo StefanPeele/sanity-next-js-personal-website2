@@ -1,0 +1,263 @@
+{
+  "base": "https://stefanpeele.com",
+  "when": "2026-09-13T18:01:11.025Z",
+  "routes": {
+    "/": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Stefan Peele | Network engineering, infrastructure, and photography",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 3024,
+      "errors": []
+    },
+    "/blog": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Blog | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 1819,
+      "errors": []
+    },
+    "/garden": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Garden | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 977,
+      "errors": []
+    },
+    "/library": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Library | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 944,
+      "errors": []
+    },
+    "/glossary": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Glossary | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 792,
+      "errors": []
+    },
+    "/graph": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Knowledge graph | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 566,
+      "errors": []
+    },
+    "/projects": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Projects | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 1516,
+      "errors": []
+    },
+    "/resume": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Resume | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 1075,
+      "errors": []
+    },
+    "/photography": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Photography | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 1135,
+      "errors": []
+    },
+    "/photography/albums": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Albums | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 998,
+      "errors": []
+    },
+    "/services": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Photography services | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 6867,
+      "errors": []
+    },
+    "/contact": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Let's talk. | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 1327,
+      "errors": []
+    },
+    "/now": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "What I'm doing now | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 1009,
+      "errors": []
+    },
+    "/uses": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "What I use | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 2042,
+      "errors": []
+    },
+    "/blog/series": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Series | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 758,
+      "errors": []
+    },
+    "/blog/osi-model": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "OSI model | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 1977,
+      "errors": []
+    },
+    "/blog/the-field-the-moment-and-what-it-means-for-us-networking-industry": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "The Field, The Moment, and What it Means for Us (Networking Industry) | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 25935,
+      "errors": []
+    },
+    "/blog/the-creation-of-my-personal-portfolio-site": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "The Creation of my Personal Portfolio Site! | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 4743,
+      "errors": []
+    },
+    "/blog/building-my-physical-home-lab-week-2-documentation-and-extensive-researching": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Building My Physical Home Lab — Week 2: Documentation & Extensive Researching | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 6394,
+      "errors": []
+    },
+    "/projects/my-digital-archive-a-high-performance-headless-portfolio": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "My Digital Archive: A High Performance Headless Portfolio | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 3392,
+      "errors": []
+    },
+    "/photography/headshots": {
+      "status": 200,
+      "h1": 1,
+      "content": true,
+      "main": 1,
+      "title": "Headshots | Stefan Peele",
+      "scroll": 1440,
+      "client": 1440,
+      "textLen": 1587,
+      "errors": []
+    }
+  },
+  "nonHtml": {
+    "/blog/feed.xml": {
+      "status": 200,
+      "bytes": 38048
+    },
+    "/blog/feed.json": {
+      "status": 200,
+      "bytes": 37827
+    },
+    "/sitemap.xml": {
+      "status": 200,
+      "bytes": 4904
+    },
+    "/robots.txt": {
+      "status": 200,
+      "bytes": 149
+    },
+    "/api/health": {
+      "status": 200,
+      "bytes": 155
+    },
+    "/manifest.webmanifest": {
+      "status": 200,
+      "bytes": 494
+    }
+  }
+}

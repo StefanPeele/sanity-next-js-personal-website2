@@ -589,3 +589,38 @@ test by name.
   it under `app/(archive)/`, and that line is now wrong.
 
 **One content finding:** `/test` is live and indexable. Left for Stefan; see `RESUME.md`.
+
+## 2026-09-13 — close-out: one consolidated verification, two new documents, four decisions taken
+
+**Re-verified end to end rather than carried forward.** `npm run check` zero warnings, clean
+`npm run build` from an empty `.next`, suite **131**, `verify-fixture-render.mjs` **41/41**,
+and a new `verify-production.mjs` at **69/69** — 21 routes × 1440/768/390 + 6 machine
+surfaces, asserting status, one h1, one main, `#content`, no overflow, and no uncaught
+exception, failed request or CSP violation on any of them.
+
+**`LAUNCH-CHECKLIST.md`** replaces the accumulation of per-phase claims with one statement,
+each item DONE / NEEDS STEFAN / AT RISK. There are no AT RISK items in the code. The four
+blockers are the Sanity webhook (a dashboard setting), a real Resend delivery (a mailbox), a
+screen-reader pass (a person), and `/test` being live and indexable (content).
+
+**`CONTENT-TO-WRITE.md`** answers what the site cannot currently show. Measured against the
+live dataset: the three published posts carry title, slug, excerpt, categories, a cover image,
+body text and one link — **every other field is null on all three**. Eleven custom body blocks,
+five document types and the whole status, credibility, sidenote, correction and series
+machinery have never rendered for a real reader. Most of that gap closes with configuration
+rather than writing: setting `articleType` and `reviewStatus` on three existing posts turns on
+the lane kickers, the lane filter, the status badges, the aura, the "Checked" facet row, the
+credibility section, the RSS status vocabulary and the OG kicker.
+
+**Four PROPOSALS items decided and shipped** (`b38d9ce`), each small, reversible and a defect
+fix rather than a taste call: the duplicate FEATURED badge deleted, card reading time unified
+onto the hero's spelling, filter-row labels moved off the taxonomy pills' costume, and the
+"Read →" arrow given a CSS gap instead of a literal space. `measure-proposals-shipped.mjs`
+verifies all four on production, 18/18. `PROPOSALS.md` now opens with a decision index naming
+the ten that genuinely need Stefan, in reading order.
+
+**And a real gap in the suite itself:** `tests/screenshots.spec.ts` contained no `expect` at
+all, so 39 of the 131 "passing" tests could not fail, while `_errors.log` grew to 8,638 lines
+nothing read — all of it one local-only CORS artifact. It now fails on any uncaught exception
+or unexpected failed request. It is still not a pixel-diff, and RESUME.md no longer calls it a
+visual guard.

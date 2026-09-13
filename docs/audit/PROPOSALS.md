@@ -1,8 +1,55 @@
 # Proposals awaiting Stefan
 
-Everything here is written and committed but **not applied**. The brief says: produce the
-proposal, commit it, continue. Each entry says what I would do and why, so a yes is one
-word and a no costs nothing.
+**Read this header and you can skip the rest until you want the reasoning.**
+
+## Already decided and shipped — `b38d9ce`, live. Nothing to read unless you disagree.
+
+Four items were small, reversible, and defect fixes rather than taste calls, so they were
+decided here rather than left waiting. Each is one revert away if you disagree.
+
+| Item | What changed | Revert |
+| --- | --- | --- |
+| **2.5** duplicate FEATURED badge | Deleted. `<h2 class="section-label">Featured</h2>` already sits 40px above the hero; the badge repeated it inside the card in a second typographic system | Restore one `<span>` in `app/(archive)/blog/page.tsx` |
+| **2.4** card reading time | `3 MIN` (12px mono upper) → **`3 min read`** (14px sans), matching the hero, which was already the target. 1.3 recorded the split as a defect at any size | One class + one string in `BlogDirectory.tsx` |
+| **2.4** filter-row labels | Given `.meta-label` so they stop wearing the same costume as the taxonomy pills beside them. **Same 12px** — no size changed | Four classes in `BlogDirectory.tsx` |
+| **2.4** the "Read →" arrow | Its own element with `ml-1` instead of a literal space; the glyph moves on hover instead of dragging the label. Deliberately **not** a button, against the brief | Two small blocks |
+
+Verified on production: `docs/audit/measure-proposals-shipped.mjs`, **18/18**.
+
+Deliberately **not** taken, because they are yours: everything that changes how the site
+*looks* rather than fixing an inconsistency.
+
+## What actually needs your judgement, in the order I would read them
+
+| # | Decision | Where | Why it is yours |
+| --- | --- | --- | --- |
+| 1 | **Run `scripts/migrate-heading-levels.mjs`?** | `A11Y-AUDIT.md` | The published article's seven section headings are `h5` while "Responses" and "Contents" are `h2` — the machinery outranks the writing, and a screen-reader user is told the piece has no sections. The fix changes an `h5` at 19/20px into an `h2` at 32/38px, so it changes how a published piece looks. **The only open accessibility item that is a real defect** |
+| 2 | **The blog description** — A, B or C | 2.2 | Your voice. Three versions written |
+| 3 | **The critique invitation** — copy and placement | 2.3 | Your voice, and it is the sentence the whole "invite professional critique" framing rests on |
+| 4 | **The index hierarchy**: dividers → D, h1 72px → 48px, a real Latest tier | 2.5 | The biggest visual change on the table. Twelve reference sites render no section name larger than their lead story; ours renders "Blog" at 72px above a 60px headline |
+| 5 | **The card treatment** — option C | 2.6 | The "AI-looking" diagnosis. Aesthetic identity |
+| 6 | **The hero image** — option F | 7.3 | Rendered and measured against the fold |
+| 7 | **The article h1** — option B | 7.4 | Re-measured against the 7.2 layout |
+| 8 | **AI-generated summaries** — build or not | 5.6 | Cost, labelling, and editorial policy. A machine writing in your voice is a decision only you can make |
+| 9 | **The digest** — build or not | 9.2–9.5 | A whole feature, and **sending is the first irreversible action on this site** |
+| 10 | **Two §8 items**: a commenter withdrawing their own comment; promoting a Correction into the record | `PHASE-8-COMMENTS.md` | Both are policy about how your comment section behaves |
+
+Items **1–3 are the ones I would do today**; 1 is a defect, 2 and 3 are short.
+
+## Already answered, no action needed
+
+11.1 reading time as a cost (done by 7.5) · 11.2 changelog (done twice, by 3.7 and 3B) ·
+11.3 print (was broken, fixed) · 11.4 RSS (good, leave it) · 11.8 Open Graph (was showing the
+wrong number, fixed) · 11.5 reading position sync (**no** — it needs an identity, which turns
+a local convenience into an account system) · 11.6 "start here" (**not yet** — the trigger is
+the index no longer fitting one screen at 1440; measured today, it still fits) · 11.7 series
+(**not yet** — the presentation is built; the trigger is writing Week 1).
+
+---
+
+Everything below is **not applied** unless the table above says otherwise. The brief says:
+produce the proposal, commit it, continue. Each entry says what I would do and why, so a yes
+is one word and a no costs nothing.
 
 Ordered by phase. `OVERHAUL-PROGRESS.md` indexes these alongside the research findings.
 
@@ -193,8 +240,18 @@ hover the card already has, and set the gap in CSS rather than as a literal spac
 time on 14px sans sentence case, move the filter-row labels onto `.meta-label` so they stop
 impersonating taxonomy pills, and fix the arrow's spacing rather than making it a button.**
 
-Not applied — the brief says report first, and two of these depend on 2.5's decisions about
-the pills and the kicker.
+**SHIPPED 2026-09-13 in `b38d9ce`**, except the part that genuinely depends on 2.5.
+
+- Reading time unified on 14px sans sentence case, "3 min read" — **done**.
+- Filter-row labels moved onto `.meta-label` — **done**. Measured: nothing overflows the
+  64px column, nothing wrapped, no size changed.
+- The arrow's spacing fixed rather than made a button — **done**.
+- Taxonomy pills **left at 12px**, which was the recommendation: 13px is not a Tailwind step
+  and would reintroduce a bracketed size that `dab10fe` removed.
+- The kicker's 12px mono colour is the one item still waiting, because it does not exist
+  until 2.5 decides the kicker.
+
+Verified on production by `docs/audit/measure-proposals-shipped.mjs`, 18/18.
 
 ---
 
@@ -399,8 +456,8 @@ round of options rather than being folded in here.
 
 | Item | State |
 | --- | --- |
-| Dividers → space + mono section labels (D) | **Rendered, recommended, not applied** |
-| Drop the duplicate FEATURED badge | **Recommended, not applied** — subtraction, one line |
+| Dividers → space + mono section labels (D) | **Rendered, recommended, NOT applied** — it changes how the index looks, so it is Stefan's |
+| Drop the duplicate FEATURED badge | **SHIPPED 2026-09-13, `b38d9ce`.** Subtraction, one element. Verified on production: "Featured" now appears exactly once on `/blog` |
 | h1 72px → 48px | **Not rendered.** Needs its own options round |
 | Latest strip as a real second tier | **Not designed.** Depends on the h1 decision |
 
