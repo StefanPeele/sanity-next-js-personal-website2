@@ -687,6 +687,17 @@ Written 2026-09-11, against the code as it stands rather than from the brief alo
 
 ## 6.2 — the recommendation: **hybrid, and it is already written**
 
+> **DECIDED, AND ALREADY SHIPPED.** Stefan confirmed: unify the presentation, keep the hybrid
+> matching exactly as it is. Both halves are live and were re-verified today rather than
+> assumed. `styles/article.css` records it in place: *".glossary-term is gone: 6.2 unified the
+> two annotation systems, so a glossary match is a sidenote now and uses .sidenote-mark with
+> its own colour."* One margin column, two sources, told apart by a label ("Definition" vs
+> the note label) and a border colour — amber for hand-authored, sky for glossary-derived.
+>
+> Still open from this section, and NOT part of the decision: the matcher does not skip
+> proper nouns, so "The Field" in a title and "the field" as a concept are the same string
+> to it. No published post has a glossary term yet, so nothing is mis-marked today.
+
 `lib/glossary.ts` marks **the first prose occurrence of each term per article**, case-insensitively, longest term first, and never inside a heading, a code span, a link, another glossary mark or a sidenote. That is precisely the brief's third option:
 
 > *Hybrid: first occurrence per article is automatic, subsequent ones are not.*
@@ -717,6 +728,12 @@ They differ by a label and a colour, not by a mechanism. That answers "without m
 **A note longer than the space available → it truncates with a "more" affordance that opens 6.5's window.** Not a scrolling margin box: a scroll region in the margin is a second scrollable thing on the page and readers do not find it. Cap at roughly 12 lines.
 
 ## 6.4 — mobile, both designed, one recommended
+
+> **DECIDED: option A, and it is already shipped.** Verified today rather than taken on
+> trust, including the mitigation this section attaches to A: `.sidenote-inline` is
+> `display: block` with a top margin, so the note opens BELOW the current line rather than
+> at the tapped word, which is the whole reason A's reflow is tolerable.
+> `measure-sidenotes-margin.mjs` 30/30, and it synthesises option B at 390 for comparison.
 
 At 390px there is no margin, so:
 
