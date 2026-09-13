@@ -23,7 +23,7 @@ const BREAKPOINTS = [1440, 768, 390]
 const ROUTES = [
   '/', '/blog', '/garden', '/library', '/glossary', '/graph', '/projects', '/resume',
   '/photography', '/photography/albums', '/services', '/contact', '/now', '/uses',
-  '/blog/series', '/blog/osi-model',
+  '/blog/series', '/blog/digests', '/blog/osi-model',
   '/blog/the-field-the-moment-and-what-it-means-for-us-networking-industry',
   '/blog/the-creation-of-my-personal-portfolio-site',
   '/blog/building-my-physical-home-lab-week-2-documentation-and-extensive-researching',
