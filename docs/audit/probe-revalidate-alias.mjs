@@ -11,6 +11,10 @@
 //   node docs/audit/probe-revalidate-alias.mjs                    # a local `next start`
 //   BASE=https://stefanpeele.com node ...                         # needs the production secret
 //
+// .env.local's SANITY_REVALIDATE_SECRET is NOT production's -- a signed request built from it
+// is accepted locally and refused with 401 by production, measured 2026-09-12. So the signed
+// half of this probe is local-only until Vercel's Production value is pasted into .env.local.
+//
 // A SIGNED probe really does revalidate the paths it names -- it is exactly what a publish
 // does -- so it is safe, but it is not free against production. The default is local.
 //

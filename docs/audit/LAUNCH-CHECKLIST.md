@@ -39,10 +39,10 @@ writing.
 
 | | Item | Evidence |
 | --- | --- | --- |
-| **DONE** | Every public route renders at every breakpoint | **69/69** — 21 routes × 1440/768/390 + 6 machine surfaces. `docs/audit/verify-production.mjs`, raw in `production-verify.json` |
-| **DONE** | One `<h1>`, one `<main>`, `#content` on every route | Part of the 69 |
-| **DONE** | No horizontal overflow at any breakpoint | Part of the 69 |
-| **DONE** | No uncaught exception, failed request or CSP violation on any route | Part of the 69. The only error the harnesses ever see is Sanity's live-events stream CORS-blocked on `127.0.0.1`, which is allow-listed in production — verified by preflight returning 204 |
+| **DONE** | Every public route renders at every breakpoint | **78/78, re-run 2026-09-14 against `4a43a49`** — 23 routes × 1440/768/390 + 6 machine surfaces + 3 webhook probes. `docs/audit/verify-production.mjs`, raw in `production-verify.json` |
+| **DONE** | One `<h1>`, one `<main>`, `#content` on every route | Part of the 78 |
+| **DONE** | No horizontal overflow at any breakpoint | Part of the 78 |
+| **DONE** | No uncaught exception, failed request or CSP violation on any route | Part of the 78. The only error the harnesses ever see is Sanity's live-events stream CORS-blocked on `127.0.0.1`, which is allow-listed in production — verified by preflight returning 204 |
 | **DONE** | Feeds, sitemap, robots, manifest, health all valid | 6/6. `feed.xml` and `feed.json` 37KB each with full `content:encoded` |
 | **DONE** | Content changes reach the live site | Comment created in Sanity appeared in **17s**, deleted disappeared in **308s** — the 300s floor. Those numbers were measured with **no working webhook**, which is the worst case; with the webhook repaired (§3) a publish reaches the page in seconds |
 | **DONE** | **The webhook target itself is checked** | An unsigned POST to `/api/revalidate` must return **401**, not 404. In `docs/audit/verify-production.mjs` after a deploy and `tests/smoke.spec.ts` before one, each with a control probe of a route that does not exist. This is the check that did not exist for the week the webhook was dead |

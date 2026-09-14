@@ -1,6 +1,6 @@
 {
   "base": "https://stefanpeele.com",
-  "when": "2026-09-13T21:46:51.345Z",
+  "when": "2026-09-14T08:35:03.581Z",
   "routes": {
     "/": {
       "status": 200,
@@ -275,11 +275,26 @@
     },
     "/api/health": {
       "status": 200,
-      "bytes": 155
+      "bytes": 154
     },
     "/manifest.webmanifest": {
       "status": 200,
       "bytes": 494
+    }
+  },
+  "webhook": {
+    "/api/revalidate": {
+      "status": 401,
+      "note": "canonical",
+      "why": "signature enforced"
+    },
+    "/api/draft-mode/enable/revalidate": {
+      "status": 401,
+      "note": "alias, delete once the webhook is repointed",
+      "why": "signature enforced"
+    },
+    "control": {
+      "status": 404
     }
   }
 }

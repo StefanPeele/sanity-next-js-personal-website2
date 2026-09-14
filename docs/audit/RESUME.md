@@ -1,6 +1,8 @@
 # Resume state
 
 Written: 2026-09-12, at the end of a session that worked every phase in the brief.
+**Updated 2026-09-14: the webhook is fixed and the newsletter is confirmed. Read the
+2026-09-14 section first; the older sections below are kept as the record, not as the state.**
 Why the session ended: **every remaining item needs Stefan** — the Sanity webhook is a
 dashboard setting, a real Resend delivery needs a mailbox, the screen-reader pass needs a
 person, and the proposals are his calls about his own published writing. Nothing is blocked
@@ -104,7 +106,29 @@ genuinely was reached. Then that commit deployed anyway, so the block was transi
 **Do not write down a deploy state you have not measured since your last push, and measure it
 with the ancestry test above.** See artifact #37.
 
-## THE SANITY WEBHOOK DOES NOT REACH PRODUCTION. It is Stefan's to fix, and it is the one open defect.
+## THE SANITY WEBHOOK IS FIXED, 2026-09-14. It was the URL. What follows is the record of the week it was not.
+
+**The cause, found by Stefan:** the webhook in Sanity was configured with `/api/revalidate`.
+The handler was at `/api/draft-mode/enable/revalidate`. Every delivery from **7 September**
+was a 404 against a path that did not exist. He repointed the webhook; the handler has since
+moved to `/api/revalidate` (`4a43a49`) with the old path kept as a delegating alias.
+
+**The measurement below that did NOT survive the cause being known** is the third one. A
+signed request was accepted locally and rejected by production with 401, and this file
+concluded that production's secret is a different value. That conclusion is still the most
+likely reading, since a 401 came back from the path that did exist, but it was not what was
+breaking the webhook and it was written here as though it might be. **The first two
+measurements were right and the diagnosis drawn from them was wrong:** they proved deliveries
+were not arriving, not that the secret was to blame. Nobody checked whether the URL in the
+dashboard matched the route in the repo, and the one aside in `PROPOSALS.md` that noticed the
+path was strange filed it as tidiness rather than as a suspect.
+
+Still worth doing: **`.env.local`'s `SANITY_REVALIDATE_SECRET` does not match production's**,
+which is why `docs/audit/probe-revalidate-alias.mjs` only runs against a local server. Paste
+Vercel's Production value into `.env.local` and a signed probe can be run against the live
+site too.
+
+The original record follows.
 
 Measured three independent ways on 2026-09-12:
 
@@ -123,7 +147,8 @@ Measured three independent ways on 2026-09-12:
 Which failure it is cannot be determined from here: both API tokens return
 `401 — requires grant sanity.project.webhooks/read`, and the Vercel CLI is not logged in.
 
-**What Stefan needs to check**, Sanity dashboard → API → Webhooks:
+**What Stefan needed to check**, Sanity dashboard → API → Webhooks. Item 1 is the one that
+was wrong, and item 2 would have found it at a glance:
 
 1. Does a webhook exist, is it **enabled**, and does its URL end
    `/api/draft-mode/enable/revalidate` on `stefanpeele.com`?
@@ -133,9 +158,10 @@ Which failure it is cannot be determined from here: both API tokens return
 4. Its secret must equal Vercel's `SANITY_REVALIDATE_SECRET` for the Production environment.
    If either is regenerated, update `.env.local` to match so local probes stay meaningful.
 
-**It is no longer urgent, and that is the whole point of `dd56ff7`.** Until that commit a
-webhook that never arrived meant content was stale *for ever*. It now has a five-minute
-floor. The webhook is the fast path, not the only path.
+**It was never urgent, and that is the whole point of `dd56ff7`.** Until that commit a
+webhook that never arrived meant content was stale *for ever*. It has a five-minute floor
+now. The webhook is the fast path, not the only path, which is also why a week of 404s was
+survivable and why nobody noticed.
 
 ## The rest of production is CURRENT. An earlier claim in this file that it was not was wrong.
 
@@ -166,6 +192,46 @@ it disagreed — twice. Check that one.
   the article since 0.1. Two more were already done by earlier phases.
 
 ## EVERY PHASE IN THE BRIEF HAS NOW BEEN WORKED
+
+## 2026-09-14: the webhook, the route move, and the check that was missing
+
+Stefan fixed the webhook by correcting its URL in Sanity, and confirmed the newsletter end to
+end against a real mailbox: subscribe, confirm, unsubscribe. Two of the four NEEDS STEFAN
+items in `LAUNCH-CHECKLIST.md` closed in one message.
+
+**Shipped here (`4a43a49`, live, verified):**
+
+- The handler moved to `app/api/revalidate/route.ts`. It had nothing to do with enabling
+  draft mode; it was nested under that route because the Sanity starter nests it there.
+- `/api/draft-mode/enable/revalidate` stays as an alias that **delegates in process** rather
+  than redirecting: a 307 only survives a client that follows redirects and re-sends the body
+  byte for byte, and Sanity's webhook delivery is not documented to do either. It sets
+  `x-revalidate-alias: deprecated` and logs a warning, so the Vercel log says when the old
+  URL has gone quiet. **Delete it once the webhook is repointed.**
+- Two checks, because there were none: `tests/smoke.spec.ts` before a deploy and
+  `docs/audit/verify-production.mjs` after one. Both POST unsigned and require **401**: 404
+  means the route moved, 500 means the secret is unset, 200 means the signature check is
+  gone. Both carry a **control probe** of a route that does not exist, so a 401 cannot pass
+  by accident.
+- `docs/audit/probe-revalidate-alias.mjs` proves the alias is the same handler and not a
+  copy: under a real signature both paths revalidate the identical eight paths. 8/8 local.
+
+**Measured.** Production before the move: `POST /api/revalidate` **404**, alias **401**.
+After: **401 and 401**, control 404, and the alias carries its header. Suite **106 chromium**,
+up one. Production sweep **78/78** against `4a43a49`.
+
+**The trap this added, and it is the useful one.** A week-long outage went unnoticed because
+every check the project had asks the SITE whether it is healthy, and the site was healthy. It
+served what it had been told to serve, which happened to be old. Nothing asked the
+INTEGRATION whether it was reachable. The general form: for anything that reaches this site
+from outside it, probe the URL the outside thing was given, not the behaviour expected from
+it. A webhook, an OAuth callback, a payment hook: each degrades silently to "unchanged", and
+unchanged is the one failure that looks exactly like success.
+
+**Second trap, smaller.** `PROPOSALS.md` recorded the odd path on 2026-09-11 as an aside
+worth tidying "but not as part of this". It was the bug, three days before it was found. An
+observation that something is *misleading* is a report that a reader could be misled, and a
+webhook URL is written by a reader.
 
 ## 2026-09-13, third run: the last two decisions, and the three lists
 
@@ -272,23 +338,27 @@ predicted fold table at all three breakpoints (886/1093/961 against 885/1092/960
 
 ## The single next action
 
-Nothing in the brief is unworked. Four things remain and **every one of them needs Stefan**:
+**Stefan repoints the Sanity webhook at `https://stefanpeele.com/api/revalidate` and says so.
+Then `app/api/draft-mode/enable/revalidate/route.ts` is deleted**, along with its line in
+`WEBHOOK_ROUTES` in `tests/smoke.spec.ts`, its entry in `verify-production.mjs`, and the
+alias assertions in `probe-revalidate-alias.mjs`. Both URLs work until then; the alias exists
+only so that sentence is true.
 
-1. **Fix the Sanity webhook** (the section above). Until then every content change takes up
-   to five minutes to appear instead of seconds.
-2. **A real Resend delivery to a real mailbox.** Every probe used `@example.invalid`. The
-   email path is exercised end to end but has never actually delivered to anyone.
-3. **Drive the toolbar and the sidenotes with a real screen reader.** `A11Y-AUDIT.md` names
+After that, what remains needs Stefan and nothing else:
+
+1. **`DIGEST_SEND_SECRET` in Vercel.** The send route returns 500 until it exists, which is
+   the safe direction, but no digest can be sent.
+2. **Drive the toolbar and the sidenotes with a real screen reader.** `A11Y-AUDIT.md` names
    this as the largest remaining gap in Phase 10; it needs a person, not a harness.
-4. **`/test` is a live, indexable page.** A `page` document titled "test", slug `test`,
-   created 2026-03-26 and still published. It returns 200, carries `robots: index, follow`
-   and is listed in `sitemap.xml`. It is CONTENT, not a defect — the code is doing exactly
-   what a page document asks for — so it is left for Stefan to delete rather than deleted
-   here. The other five `page` documents (`blog`, `resume`, `projects`, `photography`,
-   `services`) duplicate real routes and are correctly inert: the schema now rejects
-   reserved slugs, `[slug]` 404s them and the sitemap filters them out.
-5. **Decisions on `PROPOSALS.md`** — 2.2–2.6, 7.3, 7.4, the digest, and whether to run
-   `scripts/migrate-heading-levels.mjs`, which changes how a published article *looks*.
+3. **The heading migration**, `HEADING-FIX.md`. One post and seven dropdowns. It changes how
+   a published piece looks, so it is his.
+4. **The writing**, `CONTENT-TO-WRITE.md`, items 1-5 first.
+5. **Two §8 decisions**: a commenter withdrawing their own comment, and promoting a
+   Correction into a 3B correction.
+
+**Closed since this section was first written:** the webhook (2026-09-14, above), a real
+Resend delivery (2026-09-14, confirmed by Stefan: subscribe, confirm, unsubscribe), `/test`
+(deleted 2026-09-13), and every decision in `PROPOSALS.md`.
 
 **The comment system is now verified on production, including the case that failed all
 session.** A comment created in Sanity appears on the live article and one deleted in Sanity
@@ -349,11 +419,12 @@ Run with a server on `127.0.0.1:3000` serving the build you mean (check the CSS 
 | `docs/audit/measure-prose-width.mjs` | Real CPL for every candidate width × three text sizes × three breakpoints. Prints a table and writes `prose-width.json` |
 | `docs/audit/measure-sidenotes-margin.mjs` | 30: margin placement, the three 6.3 edge cases, the 6.5 window's focus trap, both 6.4 mobile options. **Not** `measure-sidenotes.mjs`, which is Phase 1.5 research on other sites |
 
-Suite: `npx playwright test` — **131 passing** across both projects. The split is
-deliberate: `npm run test:e2e` runs only the chromium project (92) because
+Suite: `npx playwright test` — **145** across both projects (106 + 39; the chromium half was
+re-run 2026-09-14, the screenshots half last on 2026-09-13). The split is
+deliberate: `npm run test:e2e` runs only the chromium project because
 `playwright.config.ts` has it `testIgnore` the visual baseline to stay fast, and
 `npm run screenshot` is the other half (39). Run BOTH before claiming the suite is green —
-a report of 92 is the fast half, not the whole.
+a report of 106 is the fast half, not the whole.
 
 **Until 2026-09-13 the screenshots half asserted NOTHING.** `tests/screenshots.spec.ts`
 contained no `expect` at all, so 39 of the 131 could not fail on anything short of a
@@ -364,7 +435,8 @@ other failed request FAILS the capture. **It is still not a pixel-diff**, and ca
 "visual guard" was overstating it: it proves the pages render without errors, not that they
 look right.
 
-| `docs/audit/verify-production.mjs` | ONE consolidated statement of live health: 21 routes × 1440/768/390 + 6 machine surfaces, in a real browser, asserting status, one h1, one main, `#content`, no overflow, and no uncaught exception, failed request or CSP violation. **69/69 on `b38d9ce`** |
+| `docs/audit/verify-production.mjs` | ONE consolidated statement of live health: 23 routes × 1440/768/390 + 6 machine surfaces + the 3 webhook probes, in a real browser, asserting status, one h1, one main, `#content`, no overflow, and no uncaught exception, failed request or CSP violation. **78/78 on `4a43a49`** |
+| `docs/audit/probe-revalidate-alias.mjs` | That `/api/draft-mode/enable/revalidate` and `/api/revalidate` are the SAME handler: unsigned both refuse with 401, signed both revalidate the identical eight paths. 8/8 local. Needs the LOCAL secret, which is not production's |
 | `docs/audit/measure-proposals-shipped.mjs` | The four PROPOSALS items shipped without Stefan, verified on the rendered page rather than in the diff. 18/18 on production |
 | `docs/audit/measure-sw-cache.mjs` | Drives the REAL service worker in a real browser: takes the static cache past the cap and watches one further fetch trim it back, with the newest entry surviving. A unit test of a copy of the function would prove nothing about the file that ships |
 

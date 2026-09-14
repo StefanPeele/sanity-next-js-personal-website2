@@ -158,7 +158,7 @@ try {
 }
 
 fs.writeFileSync(path.join('docs', 'audit', 'production-verify.json'), JSON.stringify(report, null, 2))
-console.log(`\n${pass} passed, ${fail} failed  (${ROUTES.length} routes × ${BREAKPOINTS.length} breakpoints + ${NON_HTML.length} machine surfaces)`)
+console.log(`\n${pass} passed, ${fail} failed  (${ROUTES.length} routes × ${BREAKPOINTS.length} breakpoints + ${NON_HTML.length} machine surfaces + 3 webhook probes)`)
 if (failures.length) { console.log('\nFAILURES:'); failures.forEach((f) => console.log('  ' + f)) }
 console.log('\nraw: docs/audit/production-verify.json')
 process.exit(fail ? 1 : 0)

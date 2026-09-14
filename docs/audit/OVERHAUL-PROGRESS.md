@@ -652,3 +652,50 @@ archive to browse until `featuredAt` replaces it.
 `tests/helpers.ts` return "digests" as the newest post, so three article tests navigated to
 the digest archive and reported an article with no progress bar, no TOC and no reader menu.
 The page was fine; the helper was pointing at the wrong one.
+
+## 2026-09-14 - the webhook was a path, and nothing was watching the path
+
+Stefan found the cause of the dead webhook and it was neither the secret nor the trigger: the
+webhook in Sanity was configured with `/api/revalidate`, and the handler was at
+`/api/draft-mode/enable/revalidate`. Every delivery from 7 September was a 404. He repointed
+the webhook, and separately confirmed the newsletter end to end against a real mailbox -
+subscribe, confirm, unsubscribe - which closes the second of the four NEEDS STEFAN items.
+
+**Shipped, `4a43a49`:** the handler moved to `app/api/revalidate/route.ts`; the old path stays
+as an alias that delegates to it in process and is deleted once the webhook is repointed; and
+the route is now probed before a deploy (`tests/smoke.spec.ts`) and after one
+(`docs/audit/verify-production.mjs`), each with a control probe of a route that does not
+exist. `docs/audit/probe-revalidate-alias.mjs` proves the alias is the same handler rather
+than a copy - under a real signature both paths revalidate the identical eight paths.
+
+**Measured.** Production before the move: `POST /api/revalidate` 404, alias 401. After: 401
+and 401, control 404, `x-revalidate-alias: deprecated` on the alias only. Suite 106 chromium,
+up one. Production sweep 78/78 on `4a43a49`.
+
+**The premise that turned out wrong.** This log and `RESUME.md` both carried a diagnosis built
+on three measurements taken 2026-09-12. Two of them - the CDN `age` header never resetting,
+and an excerpt edit never reaching the article - were right about the symptom and said nothing
+about the cause. The third, that a locally-signed request is accepted locally and refused by
+production, was read as "production's secret is a different value", which is probably true and
+was not the fault. **The diagnosis narrowed to the secret because the secret was the part that
+had a measurement attached to it.** Nobody compared the URL in the dashboard with the route in
+the repo, which needed no instrumentation at all.
+
+**Judgement calls made without Stefan.** The alias delegates rather than redirecting, because
+a 307 only survives a client that follows redirects and re-sends the body byte for byte and
+Sanity's webhook delivery is not documented to do either. The probes require 401 rather than
+"not 404", because 401 is the only status that proves the route exists AND the secret is set
+AND the signature check is live, and 200 would be a security defect. Both probes carry a
+control, because a check that cannot fail is the trap this project has logged most often.
+
+**The trap.** Every check this project had asks the SITE whether it is healthy, and for a week
+the site was healthy: it served exactly what it had been told to serve, which happened to be
+old. Nothing asked the INTEGRATION whether it was reachable. For anything that reaches this
+site from outside - a webhook, an OAuth callback, a payment hook - probe the URL the outside
+party was given, not the behaviour expected from it. Silent degradation to "unchanged" is the
+one failure mode that looks exactly like success.
+
+**The smaller trap.** `PROPOSALS.md`, 2026-09-11, noticed the path was misleading and filed it
+as tidiness: "worth moving to `/api/revalidate` with a redirect, but not as part of this". It
+was the bug, three days early. An observation that something is misleading is a report that
+someone could be misled, and a webhook URL is written by a person reading exactly that.
