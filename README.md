@@ -39,7 +39,8 @@ Personal site for Stefan Peele — network engineer associate (intern), NJIT stu
 | `/api/health` | JSON uptime probe (pings Sanity); linked from the footer "Status" |
 | `/api/subscribe/confirm`, `/api/subscribe/unsubscribe` | Newsletter double opt-in endpoints |
 | `/api/draft-mode/enable` | Sanity Presentation preview entry |
-| `/api/draft-mode/enable/revalidate` | Sanity webhook target (on-demand ISR) |
+| `/api/revalidate` | Sanity webhook target (on-demand ISR) |
+| `/api/draft-mode/enable/revalidate` | Temporary alias for the above; delete once the webhook is repointed |
 | `/api/airtable/status` | Airtable → site status webhook |
 | `/studio` | Sanity Studio |
 
@@ -130,11 +131,15 @@ Vercel, production branch `main`. Every push runs `.github/workflows/ci.yml` (ty
 
 Sanity → API → Webhooks → Add:
 
-- URL: `https://stefanpeele.com/api/draft-mode/enable/revalidate`
+- URL: `https://stefanpeele.com/api/revalidate`
 - Dataset: `production`; trigger on create, update, delete; no filter
 - Secret: the value of `SANITY_REVALIDATE_SECRET`
 
-The handler is table-driven (`RULES` in `app/api/draft-mode/enable/revalidate/route.ts`): each document type maps to the paths it renders on (post → `/blog`, `/blog/[slug]`, `/graph`, sitemap and feeds; `settings`/`navigation`/`taxonomy`/`articleUi`/`errorPages` → whole layout; `blogPage` → `/blog`; `personalPages` → the six personal routes; and so on). Unknown types revalidate the whole layout.
+The handler is table-driven (`RULES` in `app/api/revalidate/route.ts`): each document type maps to the paths it renders on (post → `/blog`, `/blog/[slug]`, `/graph`, sitemap and feeds; `settings`/`navigation`/`taxonomy`/`articleUi`/`errorPages` → whole layout; `blogPage` → `/blog`; `personalPages` → the six personal routes; and so on). Unknown types revalidate the whole layout.
+
+The route was at `/api/draft-mode/enable/revalidate` until 2026-09-14. That path still answers, as an alias that delegates to the handler and logs a warning, so the webhook survived the move; delete `app/api/draft-mode/enable/revalidate/route.ts` once the webhook URL is `/api/revalidate`.
+
+A webhook that 404s is silent from inside the site: pages just go stale. So the route is probed by `tests/smoke.spec.ts` before a deploy and by `docs/audit/verify-production.mjs` after one. Both send an unsigned POST and require **401** — 404 means the route moved, 500 means `SANITY_REVALIDATE_SECRET` is unset, 200 would mean the signature check is gone.
 
 ## Feeds
 

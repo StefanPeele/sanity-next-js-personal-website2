@@ -13,9 +13,14 @@ what is running now. To re-check that claim rather than trust it:
 git merge-base --is-ancestor b38d9ce $(curl -s https://stefanpeele.com/api/health | grep -o '"commit":"[^"]*"' | cut -d'"' -f4)
 ```
 
+**Updated 2026-09-14.** Two of the four open items closed. The newsletter delivered to a real
+mailbox end to end, and the webhook's cause turned out to be a path rather than a credential:
+see §3. Numbers dated 2026-09-13 below were not re-run on the 14th and say so.
+
 **The short version.** The code is shippable. The content is not, and that is the only thing
-standing between this site and launch. There are **no AT RISK items in the code** — the four
-open items are a dashboard setting, a mailbox, a person with a screen reader, and writing.
+standing between this site and launch. There are **no AT RISK items in the code** — what is
+open is one Vercel variable, one webhook URL to repoint, a person with a screen reader, and
+writing.
 
 ---
 
@@ -25,7 +30,7 @@ open items are a dashboard setting, a mailbox, a person with a screen reader, an
 | --- | --- | --- |
 | **DONE** | `npm run check` exits 0 with **zero warnings** | Re-run today. Zero eslint output, typegen clean: 43 queries, 84 schema types |
 | **DONE** | `npm run build` succeeds from a clean `.next` | Re-run today after `rm -rf .next` |
-| **DONE** | Suite green | **131 passing** — 92 chromium + 39 screenshots |
+| **DONE** | Suite green | **145** — 106 chromium, re-run 2026-09-14, plus 39 screenshots last run 2026-09-13. The chromium count grew by the webhook probe below |
 | **DONE** | The suite can actually fail | `tests/screenshots.spec.ts` had **no `expect` at all** until today; 39 of the 131 could not fail. It now fails on any uncaught exception or unexpected failed request. See §7 |
 | **DONE** | No content route is cached without an expiry | `tests/caching.spec.ts`, asserted against the build manifest, negative control run |
 | **DONE** | The per-phase harnesses still pass, re-run today | `measure-themes` 15/15 · `measure-toolbar` 50/50 · `measure-corrections` 27/27 · `measure-reading-controls` 22/22 · `measure-article-layout` no problems · `verify-fixture-render` **41/41**, which is the only proof the anonymity contract holds |
@@ -39,14 +44,16 @@ open items are a dashboard setting, a mailbox, a person with a screen reader, an
 | **DONE** | No horizontal overflow at any breakpoint | Part of the 69 |
 | **DONE** | No uncaught exception, failed request or CSP violation on any route | Part of the 69. The only error the harnesses ever see is Sanity's live-events stream CORS-blocked on `127.0.0.1`, which is allow-listed in production — verified by preflight returning 204 |
 | **DONE** | Feeds, sitemap, robots, manifest, health all valid | 6/6. `feed.xml` and `feed.json` 37KB each with full `content:encoded` |
-| **DONE** | Content changes reach the live site | Comment created in Sanity appeared in **17s**, deleted disappeared in **308s** — the 300s floor |
+| **DONE** | Content changes reach the live site | Comment created in Sanity appeared in **17s**, deleted disappeared in **308s** — the 300s floor. Those numbers were measured with **no working webhook**, which is the worst case; with the webhook repaired (§3) a publish reaches the page in seconds |
+| **DONE** | **The webhook target itself is checked** | An unsigned POST to `/api/revalidate` must return **401**, not 404. In `docs/audit/verify-production.mjs` after a deploy and `tests/smoke.spec.ts` before one, each with a control probe of a route that does not exist. This is the check that did not exist for the week the webhook was dead |
 
-## 3. The four things only you can do
+## 3. The things only you can do
 
 | | Item | Why it is yours |
 | --- | --- | --- |
-| **NEEDS STEFAN** | **The Sanity webhook does not reach production** | Dashboard → API → Webhooks. Its delivery log settles it: 401s mean the secret, 404s the URL, no attempts means the trigger or filter. Triggers must include **Delete**; filter empty; secret must equal Vercel's `SANITY_REVALIDATE_SECRET`. Both API tokens lack `sanity.project.webhooks/read` and the Vercel CLI is not logged in, so this is unreachable from here. **Not blocking launch** — the 300s floor means content is at worst five minutes stale instead of stale for ever |
-| **NEEDS STEFAN** | **Resend has never delivered to a real mailbox** | Every probe used `@example.invalid`. The full path is exercised — form, rate limit, token, confirm route, unsubscribe on GET and POST — but no real email has been sent. Subscribe with your own address once and confirm the link works |
+| **DONE** | ~~The Sanity webhook does not reach production~~ | **Cause found by Stefan 2026-09-14, and it was the URL, not the secret.** The webhook was configured with `/api/revalidate`; the handler lived at `/api/draft-mode/enable/revalidate`. Every publish from **7 September** 404d, silently, because a dead webhook does not break a page — it leaves the page as it was. Measured before the fix: `POST /api/revalidate` **404**, `POST /api/draft-mode/enable/revalidate` **401**. Stefan repointed the webhook; the handler then moved to `/api/revalidate`, where it belongs, with the old path kept as a delegating alias so nothing broke during the deploy |
+| **NEEDS STEFAN** | **Repoint the webhook at `/api/revalidate`, then tell me** | The last step of the fix above, and a one-field edit in the same dashboard. Both URLs work today; the alias exists only so that is true. Once it is repointed, `app/api/draft-mode/enable/revalidate/route.ts` gets deleted — it logs a warning on every hit, so a quiet Vercel log confirms nothing is left on the old URL |
+| **DONE** | ~~Resend has never delivered to a real mailbox~~ | **Confirmed end to end 2026-09-14, by Stefan, against a real mailbox: subscribe, confirm, unsubscribe.** Every probe before this used `@example.invalid` and could prove the code path but never delivery. What is still unproven is a *digest* send, which is a different route and needs the variable below |
 | **NEEDS STEFAN** | **No screen-reader pass** | `A11Y-AUDIT.md` names this as the largest remaining gap. Everything there reasons from the accessibility tree, and the tree is not the experience. Highest-risk claim: that the reading toolbar and the sidenotes are usable non-visually. Needs NVDA or VoiceOver and a person |
 | **DONE** | ~~`/test` is a live, indexable page~~ | **Closed 2026-09-13, deleted.** Its entire content was `title: "test"`, `overview: "test ttttt"`, `body: "blaeee"` — recorded here so it is restorable, and unambiguously scratch. Dataset 516 → 515 |
 
@@ -96,7 +103,7 @@ open items are a dashboard setting, a mailbox, a person with a screen reader, an
 | Sidenotes and the margin column (all of Phase 6) | `measure-sidenotes-margin.mjs` 30/30 | **No published post contains a single `sidenote` mark.** The only mark used anywhere in production is one `link` |
 | Corrections in place (Phase 3B) | `measure-corrections.mjs` 27/27 | No post has ever been corrected |
 | Comments, reactions, moderation (Phase 8) | 58/58 local, verified on production with probe comments | **Zero real comments exist.** Every article renders an empty thread |
-| The newsletter | 20/21 checks | No real subscriber, no real send |
+| The newsletter | 20/21 checks, and **delivery to a real mailbox confirmed 2026-09-14** (subscribe, confirm, unsubscribe) | Still no real *digest* send, and no subscriber but Stefan |
 | Eleven custom body blocks | The kitchen-sink fixture | None appears in a published post — see `CONTENT-TO-WRITE.md` |
 | The knowledge graph | Renders | 3 posts, 0 tags, 0 notes, 0 glossary terms — it draws almost nothing |
 | Series presentation | Built: banner, index, prev/next, part numbers | 0 series documents. "Home lab Week 2" exists with no Week 1 |
@@ -124,9 +131,10 @@ like a plain three-post blog while carrying the machinery of a much more ambitio
 
 ## The order I would do it in
 
-1. **Delete `/test`.** One minute, and it is currently indexable.
-2. **Set `articleType` + `reviewStatus` on the three posts.** No writing; turns on the most surface for the least work.
-3. **Add tags to the three posts.** Turns on the facet row and gives the graph edges to draw.
-4. **Answer the webhook question** in the Sanity dashboard.
-5. **Subscribe yourself** and confirm the email arrives.
-6. Then write — in the order `CONTENT-TO-WRITE.md` argues for.
+1. ~~Delete `/test`.~~ Done 2026-09-13.
+2. ~~Answer the webhook question.~~ Done 2026-09-14 — it was the URL. One field left: repoint it at `/api/revalidate`.
+3. ~~Subscribe yourself and confirm the email arrives.~~ Done 2026-09-14, end to end.
+4. **Set `articleType` + `reviewStatus` on the three posts.** No writing; turns on the most surface for the least work.
+5. **Add tags to the three posts.** Turns on the facet row and gives the graph edges to draw.
+6. **Set `DIGEST_SEND_SECRET`** in Vercel, then send a test digest to yourself.
+7. Then write — in the order `CONTENT-TO-WRITE.md` argues for.

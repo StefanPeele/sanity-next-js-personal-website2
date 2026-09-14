@@ -62,7 +62,7 @@ async function fireWebhook(doc) {
   const body = JSON.stringify(doc)
   const ts = Date.now()
   const sig = createHmac('sha256', secret).update(`${ts}.${body}`).digest('base64url')
-  const res = await fetch(`${BASE}/api/draft-mode/enable/revalidate`, {
+  const res = await fetch(`${BASE}/api/revalidate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'sanity-webhook-signature': `t=${ts},v1=${sig}` },
     body,

@@ -5,7 +5,8 @@ import { allPostSlugs, firstPostSlug } from './helpers'
 // tests/smoke.spec.ts
 // Every reserved route returns 200 with exactly one <h1> and a #content landmark; unknown slugs 404
 // with the Studio-editable copy; feeds/sitemap/robots parse; the article page has one TOC, one progress
-// bar and the reader menu; no CSP violations are reported; axe finds no critical/serious issues.
+// bar and the reader menu; the revalidate webhook target answers with 401 rather than 404;
+// no CSP violations are reported; axe finds no critical/serious issues.
 
 const PAGES = [
   '/', '/blog', '/blog/series', '/blog/osi-model', '/garden', '/graph', '/library', '/glossary',
@@ -75,6 +76,30 @@ test('health endpoint reports status', async ({ request }) => {
   const res = await request.get('/api/health')
   const json = await res.json()
   expect(['operational', 'degraded']).toContain(json.status)
+})
+
+// The Sanity webhook target. A 404 here is invisible from inside the site: the pages still
+// render, they just render what they rendered last time, so every other test in this file
+// passes on stale content. That is how /api/revalidate stayed dead from 7 to 14 September
+// 2026. An unsigned POST reads the whole state of the endpoint in one status code:
+//   401 route present, secret set, signature enforced -- the only pass
+//   404 the route moved out from under the webhook
+//   500 SANITY_REVALIDATE_SECRET is not set
+//   200 the signature check is gone
+// The second entry is the temporary alias; delete the line with the route file it names.
+const WEBHOOK_ROUTES = ['/api/revalidate', '/api/draft-mode/enable/revalidate']
+
+test('the revalidate webhook target answers and enforces its signature', async ({ request }) => {
+  for (const route of WEBHOOK_ROUTES) {
+    const res = await request.post(route, { data: {}, maxRedirects: 0, failOnStatusCode: false })
+    expect(res.status(), `${route}: 404 moved, 500 no secret, 200 signature check gone`).toBe(401)
+  }
+  // Control. The assertions above prove nothing unless a route that does not exist reads
+  // differently from one that does.
+  const control = await request.post('/api/revalidate-control-does-not-exist', {
+    data: {}, maxRedirects: 0, failOnStatusCode: false,
+  })
+  expect(control.status(), 'a missing route must 404, or the probe above cannot detect one').toBe(404)
 })
 
 test('security headers are present', async ({ request }) => {

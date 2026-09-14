@@ -549,6 +549,13 @@ with the arithmetic done against the real corpus rather than a guess at it.
   to do with enabling draft mode. Worth moving to `/api/revalidate` with a redirect, but not
   as part of this.)*
 
+  **RESOLVED 2026-09-14, and the aside turned out to be the bug.** The webhook in Sanity was
+  configured with `/api/revalidate` — the path this aside says the route ought to have and did
+  not — so every publish from 7 September 404d. Stefan found it and repointed the webhook at
+  the nested path. The handler now lives at `app/api/revalidate/route.ts`, the old path is a
+  delegating alias to be deleted once the webhook is repointed again, and the route is probed
+  by the smoke suite and the production sweep so a 404 here can never again be silent.
+
 ## 1. When does it generate?
 
 **At publish time, from the existing webhook. Stored in Sanity.** Not at build time, not on
