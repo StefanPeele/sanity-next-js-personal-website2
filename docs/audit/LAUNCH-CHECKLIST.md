@@ -30,7 +30,7 @@ writing.
 | --- | --- | --- |
 | **DONE** | `npm run check` exits 0 with **zero warnings** | Re-run today. Zero eslint output, typegen clean: 43 queries, 84 schema types |
 | **DONE** | `npm run build` succeeds from a clean `.next` | Re-run today after `rm -rf .next` |
-| **DONE** | Suite green | **145** — 106 chromium, re-run 2026-09-14, plus 39 screenshots last run 2026-09-13. The chromium count grew by the webhook probe below |
+| **DONE** | Suite green | **146** — 107 chromium, re-run 2026-09-14, plus 39 screenshots last run 2026-09-13. Two new guards today: the revalidate webhook probe and the progress bar reaching 100% at the end of the article |
 | **DONE** | The suite can actually fail | `tests/screenshots.spec.ts` had **no `expect` at all** until today; 39 of the 131 could not fail. It now fails on any uncaught exception or unexpected failed request. See §7 |
 | **DONE** | No content route is cached without an expiry | `tests/caching.spec.ts`, asserted against the build manifest, negative control run |
 | **DONE** | The per-phase harnesses still pass, re-run today | `measure-themes` 15/15 · `measure-toolbar` 50/50 · `measure-corrections` 27/27 · `measure-reading-controls` 22/22 · `measure-article-layout` no problems · `verify-fixture-render` **41/41**, which is the only proof the anonymity contract holds |
@@ -45,6 +45,7 @@ writing.
 | **DONE** | No uncaught exception, failed request or CSP violation on any route | Part of the 78. The only error the harnesses ever see is Sanity's live-events stream CORS-blocked on `127.0.0.1`, which is allow-listed in production — verified by preflight returning 204 |
 | **DONE** | Feeds, sitemap, robots, manifest, health all valid | 6/6. `feed.xml` and `feed.json` 37KB each with full `content:encoded` |
 | **DONE** | Content changes reach the live site | Comment created in Sanity appeared in **17s**, deleted disappeared in **308s** — the 300s floor. Those numbers were measured with **no working webhook**, which is the worst case; with the webhook repaired (§3) a publish reaches the page in seconds |
+| **DONE** | **Reading progress means the article** | The bar reaches 100% when the last line of the prose meets the fold, with 2,339px of apparatus and footer still below it on the longest post, and "0 min left" at the same moment. Guarded in `tests/smoke.spec.ts` and `docs/audit/measure-progress-readout.mjs` 28/28 |
 | **DONE** | **The webhook target itself is checked** | An unsigned POST to `/api/revalidate` must return **401**, not 404. In `docs/audit/verify-production.mjs` after a deploy and `tests/smoke.spec.ts` before one, each with a control probe of a route that does not exist. This is the check that did not exist for the week the webhook was dead |
 
 ## 3. The things only you can do
@@ -68,7 +69,7 @@ writing.
 | **DONE** | Focus visible on everything reachable by `Tab` | 89 elements across `/blog` and an article, every one shows a ring |
 | **DONE** | Touch targets ≥ 24×24 (WCAG 2.5.8 AA) | Six links and one label were 20px tall; fixed with `py-1`, nothing moved |
 | **DONE** | Zoom to 200% and 400% | No horizontal scroll, no unreachable controls |
-| **AT RISK** | **Heading levels in the published article** | `/blog/the-field-…` renders `h1` then seven `h5` section headings, while "Responses" and "Contents" are `h2` — the machinery outranks the writing. A screen-reader user navigating by level is told the article has no sections. **`HEADING-FIX.md` is the worklist**, measured post by post: it is ONE post and seven dropdowns, not a migration. The other two posts are already correct. Still yours, because an `h5` renders at 19/20px and an `h2` at 32/38px, so it changes how a published piece looks |
+| **AT RISK** | **Heading levels in the published article** | `/blog/the-field-…` renders `h1` then seven `h5` section headings, while "Responses" and "Contents" are `h2` — the machinery outranks the writing. A screen-reader user navigating by level is told the article has no sections. **`HEADING-FIX.md` is the worklist**, measured post by post: it is ONE post and seven dropdowns, not a migration. The other two posts are already correct. Still yours, because an `h5` renders at 19/20px and an `h2` at 32/38px, so it changes how a published piece looks. **The CAUSE is fixed as of 2026-09-14:** the editor offered Heading 1-6 with no indication of what any of them did, and now offers Section / Subsection / Minor heading, so the next post cannot be written this way |
 | **NEEDS STEFAN** | Real screen reader | §3 above |
 
 ## 5. Content — the actual blocker
@@ -90,6 +91,7 @@ writing.
 | **DONE** | Offline reading works and does not serve stale articles | Network-first for article navigations, cache-first only for content-hashed assets |
 | **DONE** | CSP enforced, no violations | Asserted in the suite and re-checked across all 21 routes today |
 | **DONE** | `robots.txt` and `noindex` correct | `/studio`, `/api`, `/_next` disallowed; `/studio` and `/offline` `noindex` |
+| **DONE** | The expanded reading toolbar is legible | Nothing in the open panel under 14px, group headings 14px semibold above 14px controls, every text node at or above 7.49:1 composited. `docs/audit/measure-toolbar-legibility.mjs` 30/30 at 1440, 1024 and 390. One thing it reports and does not fix: at 1024 the open panel overlaps the prose by 106px, pre-existing, see the harness comment |
 | **DONE** | Secrets are not in the client bundle | `SANITY_API_WRITE_TOKEN`, `RESEND_API_KEY`, `SANITY_REVALIDATE_SECRET` are all server-only |
 
 ## 7. Things that are shipped but have never been exercised by real content

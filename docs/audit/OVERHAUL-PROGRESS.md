@@ -699,3 +699,102 @@ one failure mode that looks exactly like success.
 as tidiness: "worth moving to `/api/revalidate` with a redirect, but not as part of this". It
 was the bug, three days early. An observation that something is misleading is a report that
 someone could be misled, and a webhook URL is written by a person reading exactly that.
+
+## 2026-09-14, later - five things Stefan asked for after reading the site
+
+All five were reports from actually using it, which is a different and better source of work
+than an audit.
+
+### 1. The progress bar measured the page, not the piece
+
+`ArticleProvider` divided `window.scrollY` by the DOCUMENT's scroll height, so the bar filled
+at the bottom of the footer. Measured on the longest post: the article ends at scroll 12299
+and the document at 14638, so **2,339px of sources, corrections, credibility apparatus,
+comment thread, newsletter form and site chrome were counted as article**. A reader who had
+finished the piece was shown roughly three quarters and told they had minutes left, and
+`minutesLeft` is derived from the same fraction while being computed from the BODY's word
+count, so the two numbers disagreed by construction.
+
+`lib/articleScroll.ts` now holds one definition of where the article ends -- the moment its
+last line reaches the bottom of the viewport -- and five call sites use it: the bar, the
+saved reading position, the restore, the bookmark's "go to my place", and the tour's
+25%-in trigger. Those last four mattered more than they look: a place saved at 90% of the
+article used to come back somewhere in the comment thread, because it was stored as a
+fraction of one thing and restored as a fraction of another.
+
+Measured after: **100% with 2,339px of page still below**, "0 min left - 100% read" at the
+same moment, and 50% at the midpoint of the article rather than of the page.
+
+### 2. The blog subtitle was editable and looked like it was not
+
+"A beat on network engineering and the infrastructure industry..." has been a Studio field
+since 2.2 shipped, at Blog index -> Header -> Intro. The field was labelled **Intro**, with no
+description, in an object shared by five singletons, so nothing in the Studio connected that
+label to the sentence on the page. Renamed to **Subtitle**, with a description naming where
+it appears, and every field in `pageHeader` now says what it does; each singleton's header
+field says which page it belongs to. No code change -- the gap was entirely in the labelling.
+
+### 3. The Contents list, and who writes it
+
+Stefan asked whether he typed the table of contents or whether it generated itself. **He
+typed it**: `collectHeadings` walks the rendered article for h2-h6 and lists what it finds,
+in order, with each section's own reading time. Nothing else feeds it.
+
+The useful half of the question was the one underneath. The editor offered Sanity's default
+style menu, Heading 1 through Heading 6, with nothing to say what any of them did on the
+page -- which is exactly how one post came to be written in seven H5s and another with an H1
+inside its body. The menu now reads Normal / **Section** / **Subsection** / **Minor heading**
+/ Quote, named for what they do, with the three old levels kept only so existing blocks still
+have a name in the dropdown. The body field's description says the Contents list is built
+from them. `HEADING-FIX.md` is rewritten against the new menu: seven blocks, Legacy H5 ->
+Section.
+
+### 4. The tour badge
+
+The step counter was `1 / 5` in 12px grey above the card's title, which reads as a timestamp
+rather than as "you are one step into five". It is a pill now -- amber ring, amber fill at
+10%, the same amber as the highlight ring the tour draws around what it is describing. The
+invite bar's top rule went from a 1px `border-edge` hairline, which every panel on the site
+has, to 2px amber at 40%: the bar is asking a question and had the visual weight of furniture.
+The two buttons stay exactly as equal as they were -- that decision was deliberate and is not
+mine to undo -- and they now go through `buttonClass` instead of a third hand-rolled copy of
+the same padding and radius.
+
+### 5. The expanded toolbar, measured before and after
+
+`docs/audit/measure-toolbar-legibility.mjs` reads every text node in the open panel with its
+size, weight and composited contrast. **Before:** nine group headings at 12px, weight 400,
+stone-400 at 7.49:1, sitting above controls at 14px, weight 400, at 12.68:1 -- the heading was
+smaller, lighter AND dimmer than its own contents, and every one of the 65 nodes in the panel
+was weight 400. Two sub-labels inside Read aloud were 12px while their siblings elsewhere were
+14px, and the one sentence in the panel was 12px as well.
+
+**After:** nothing in the panel under 14px, group headings 14px semibold at stone-100, three
+ranks out of two sizes and two weights (panel title serif 16.8px > group heading 14px w600 >
+control 14px w400), rows and switches one step brighter, and the panel 384px wide at xl where
+there is over 500px of margin to put it in. 30/30 at 1440, 1024 and 390.
+
+**Found and NOT fixed, reported rather than asserted away:** at 1024 the open panel overlaps
+the prose by 106px. Phase 5.4 claimed the rail "can never overlap prose"; that holds from 1280
+up. At 1024 the margin is ~310px, the rail takes ~56 and the panel is 320, so it has always
+covered the end of every line while open. It is behind a scrim and closes on the next click,
+which is why nobody noticed. It is pre-existing -- the panel is the same width there as it was
+-- and the fix is to keep the bottom sheet until xl rather than switching to a dropdown at lg,
+which is a bigger change than a legibility pass should make on its own.
+
+### Traps this run added
+
+- **A harness that measures one range and asserts about another.** The resume check divided the
+  restored scroll position by the DOCUMENT while the code stores a fraction of the ARTICLE, and
+  reported "restored to 45% against a stored 54%". The restore was correct; the ruler was not.
+  Both halves of a round trip have to use the same unit, and a harness is one of the halves.
+- **A box-intersection test that passes for a reason that evaporates on the first scroll.** The
+  panel-versus-prose check passed at the top of the page only because the article starts below
+  the fold. It also compared against `[data-article]`, which is 964px wide at 1440 against
+  ~600px of actual text. Scroll into the content first, and measure against the TEXT.
+- **Two Playwright harnesses against one local server contend enough to look like a bug.**
+  `measure-toolbar.mjs` reported the rail missing and crashed; run alone against the same
+  build it passed. Before believing a harness that says a component vanished, run it alone.
+- **`\n` and `\b` inside a heredoc lose a backslash.** A regex written as `\b0 min left` was
+  written to disk as a literal backspace character. Same family as the backtick trap already
+  logged; `scripts/migrate-featured.mjs` splits on `String.fromCharCode(10)` for this reason.

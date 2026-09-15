@@ -165,3 +165,105 @@ needs to be four, cut 2.
 Progress dots, a step counter, a "skip tour" link separate from declining, or any second
 appearance after an update. A tour that returns to announce a new feature is a newsletter
 nobody subscribed to.
+
+---
+
+# 3. The reading toolbar covers the prose at 1024, and Phase 5.4 says it never does
+
+**Asked for as a proposal, not a build, 2026-09-14.** Measured by
+`docs/audit/measure-toolbar-legibility.mjs`, which reports it as a NOTE rather than asserting
+it, so that widening an assertion cannot quietly bury it.
+
+## The measurement
+
+At 1024x900, with an article open and the panel open:
+
+| | x range | width |
+| --- | --- | --- |
+| The prose | ends at **714** | measure is ~600px of a 708px column |
+| The open panel | **608 to 928** | 320px (`lg:w-80`) |
+| The rail behind it | 928 to ~984 | ~56px |
+
+**The panel covers the last 106px of every line.** The margin to the right of the text at
+1024 is about 310px; the rail takes 56 of it; the panel is 320. It has never fitted. At 1280
+and up there is over 500px of margin and the same panel clears the text with room to spare,
+which is the case Phase 5.4 was measured in.
+
+This is pre-existing. The 2026-09-14 legibility pass widened the panel only at `xl` and
+above, specifically to avoid making this worse.
+
+## Why it has gone unnoticed
+
+The panel opens over a scrim and closes on the next click outside it, so the overlap lasts
+exactly as long as a reader is changing a setting. Nobody reads and adjusts at the same time.
+The cost is real but it is small and brief, which is worth saying plainly before proposing to
+spend anything on it.
+
+## Option A: keep the bottom sheet until xl
+
+Move the breakpoint at which the panel stops being a bottom sheet from `lg` (1024) to `xl`
+(1280). Between 1024 and 1279 a reader gets the same bottom sheet as a phone.
+
+**What it costs.**
+
+- The sheet is `inset-x-4 bottom-4 max-h-[75vh]`. At 1024 that is a 992px-wide panel holding
+  controls designed for a 320px column, so every group becomes a very short row in a very
+  wide box. It would need a two- or three-column layout at that width to not look broken,
+  which is new layout rather than a moved breakpoint.
+- A sheet covers the BOTTOM of the viewport, including the prose behind it. It trades
+  106px of horizontal overlap for roughly 500px of vertical overlap. Whether that is better
+  is genuinely arguable; it is not obviously better.
+- `docs/audit/measure-toolbar.mjs` asserts the lg dropdown's geometry in several of its 50
+  checks, and `.reader-menu-anchor` is `display: contents` below lg in CSS. Both move.
+- Tablet landscape is a real reading width for this site. It would be the only width where
+  the toolbar behaves like a phone while the article behaves like a desktop.
+
+**What it buys:** the 5.4 claim becomes true at every width.
+
+## Option B: narrow the panel at lg only
+
+`lg:w-64` (256px) clears the prose by exactly 2px at 1024. It also puts the text-size chips
+(seven of them) and the spacing rows into a column narrower than they were designed for, so
+they wrap. Chips wrapping mid-row is the thing the legibility pass just measured away. **Not
+recommended, and listed because it is the obvious idea and it does not survive contact with
+the numbers.**
+
+## Option C, the third option: let the panel push the column instead of covering it
+
+At lg only, when the panel is open, shift the article column left by the overlap. One class
+toggled on `[data-article-root]`, a transform of about -110px with a transition, reverted on
+close.
+
+**Why this is worth considering.** The reader keeps every line of text AND the panel; nothing
+is hidden by anything. It is also the honest reading of what a settings panel is for: the
+reader is adjusting the text, so the text moving in response is feedback rather than
+disruption.
+
+**What it costs.** A transform on an ancestor of the prose makes that element a containing
+block for `position: fixed` descendants -- the exact trap that cost this project the reading
+rail once already and is documented at length in `ReadingToolbar.tsx`. The rail is portalled
+to `<body>` so it is out of reach, but sidenotes, the progress bar and the TOC would all need
+checking. It also has to be gated behind `motion-safe:`, and the reduced-motion path then
+needs an answer that is not "move it instantly", which is worse than not moving it.
+
+## Option D: do nothing, and say so in the record
+
+Change Phase 5.4's claim from "can never overlap prose" to what is actually true: "clears the
+prose from 1280 up; at 1024 the panel covers the last ~100px of the measure while open,
+behind a scrim". The harness already reports the number on every run.
+
+**What it costs:** nothing, and a slightly less impressive sentence in the design record.
+
+## Recommendation
+
+**D now, C if it ever becomes annoying in use.**
+
+The overlap exists only while a panel is open that a reader opens for a few seconds every few
+articles, and every option that removes it spends more than it saves: A trades a small
+horizontal overlap for a large vertical one plus a new layout, B undoes a legibility fix, and
+C touches the one CSS property this codebase has already been bitten by. What the situation
+actually deserves is an accurate claim rather than an inaccurate one plus a fix.
+
+The one thing that would change this: if you find at tablet width that you use the panel
+while reading rather than before reading. That is a question about your own habit, which is
+why it is the check I asked you to make yourself.

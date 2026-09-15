@@ -193,6 +193,46 @@ it disagreed — twice. Check that one.
 
 ## EVERY PHASE IN THE BRIEF HAS NOW BEEN WORKED
 
+## 2026-09-14, later: five things Stefan asked for after using the site
+
+All five came from reading his own site rather than from an audit, which is why four of them
+were invisible to every harness here.
+
+1. **The progress bar measured the page, not the piece.** It divided by the document's scroll
+   height, so it filled at the bottom of the footer: 2,339px of sources, corrections,
+   credibility apparatus, comments, newsletter form and chrome counted as article on the
+   longest post. `lib/articleScroll.ts` is now the single definition of where the article
+   ends, used by the bar, the saved position, the restore, the bookmark and the tour trigger.
+   **A saved place at 90% of the article used to come back in the comment thread**, because it
+   was stored as a fraction of one thing and restored as a fraction of another. Measured:
+   100% with 2,339px still below, "0 min left - 100% read" at the same moment.
+2. **The blog subtitle was always editable and did not look it.** Blog index -> Header, and the
+   field was called "Intro" with no description, in an object five singletons share. It is
+   **Subtitle** now and every field in `pageHeader` says where it lands. No code changed.
+3. **The Contents list is generated FROM the headings he types**, nothing else feeds it. The
+   real problem was the style menu: Sanity's default Heading 1-6, with nothing to say what any
+   of them did, which is how one post came to be written in seven H5s. It now reads Normal /
+   Section / Subsection / Minor heading / Quote, with the three old levels kept only so
+   existing blocks keep a name. `HEADING-FIX.md` is rewritten against the new menu.
+4. **The tour badge.** The step counter is a pill in the tour's own amber instead of grey text
+   above the title, and the invite bar's top rule is 2px amber instead of the same hairline
+   every panel on the site has. The two buttons stay equal; that decision was deliberate.
+5. **The expanded toolbar, measured before and after.** Before: nine group headings at 12px
+   w400 stone-400 sitting above 14px w400 controls -- the heading smaller, lighter and dimmer
+   than its own contents, and all 65 nodes at weight 400. After: nothing under 14px, headings
+   14px semibold, three ranks out of two sizes and two weights, 384px wide at xl.
+   `docs/audit/measure-toolbar-legibility.mjs` 30/30.
+
+**Found and deliberately not fixed:** at 1024 the open toolbar panel overlaps the prose by
+106px. Phase 5.4's claim that the rail "can never overlap prose" holds from 1280 up; at 1024
+the margin is ~310px and the panel is 320. Pre-existing, behind a scrim, closes on the next
+click. The fix is to keep the bottom sheet until xl rather than switching to a dropdown at lg,
+which is more than a legibility pass should decide on its own. **It is reported by the harness
+as a NOTE rather than asserted, so widening an assertion cannot quietly bury it.**
+
+Suite **146** (107 chromium + 39 screenshots). `measure-toolbar` 50/50, `measure-tour` 19/19,
+`measure-progress-readout` 28/28, `measure-toolbar-legibility` 30/30.
+
 ## 2026-09-14: the webhook, the route move, and the check that was missing
 
 Stefan fixed the webhook by correcting its URL in Sanity, and confirmed the newsletter end to
@@ -344,7 +384,9 @@ Then `app/api/draft-mode/enable/revalidate/route.ts` is deleted**, along with it
 alias assertions in `probe-revalidate-alias.mjs`. Both URLs work until then; the alias exists
 only so that sentence is true.
 
-After that, what remains needs Stefan and nothing else:
+After that, what remains needs Stefan and nothing else. **The heading item is now seven
+dropdowns against a menu that finally names them** -- Legacy H5 to Section, per
+`HEADING-FIX.md` -- and the cause behind it is fixed, so no future post can repeat it:
 
 1. **`DIGEST_SEND_SECRET` in Vercel.** The send route returns 500 until it exists, which is
    the safe direction, but no digest can be sent.
@@ -419,12 +461,12 @@ Run with a server on `127.0.0.1:3000` serving the build you mean (check the CSS 
 | `docs/audit/measure-prose-width.mjs` | Real CPL for every candidate width × three text sizes × three breakpoints. Prints a table and writes `prose-width.json` |
 | `docs/audit/measure-sidenotes-margin.mjs` | 30: margin placement, the three 6.3 edge cases, the 6.5 window's focus trap, both 6.4 mobile options. **Not** `measure-sidenotes.mjs`, which is Phase 1.5 research on other sites |
 
-Suite: `npx playwright test` — **145** across both projects (106 + 39; the chromium half was
+Suite: `npx playwright test` — **146** across both projects (107 + 39; the chromium half was
 re-run 2026-09-14, the screenshots half last on 2026-09-13). The split is
 deliberate: `npm run test:e2e` runs only the chromium project because
 `playwright.config.ts` has it `testIgnore` the visual baseline to stay fast, and
 `npm run screenshot` is the other half (39). Run BOTH before claiming the suite is green —
-a report of 106 is the fast half, not the whole.
+a report of 107 is the fast half, not the whole.
 
 **Until 2026-09-13 the screenshots half asserted NOTHING.** `tests/screenshots.spec.ts`
 contained no `expect` at all, so 39 of the 131 could not fail on anything short of a
@@ -436,6 +478,7 @@ other failed request FAILS the capture. **It is still not a pixel-diff**, and ca
 look right.
 
 | `docs/audit/verify-production.mjs` | ONE consolidated statement of live health: 23 routes × 1440/768/390 + 6 machine surfaces + the 3 webhook probes, in a real browser, asserting status, one h1, one main, `#content`, no overflow, and no uncaught exception, failed request or CSP violation. **78/78 on `4a43a49`** |
+| `docs/audit/measure-toolbar-legibility.mjs` | 30: every text node in the OPEN toolbar panel with its size, weight and composited contrast, at 1440 / 1024 / 390. Reports the 1024 prose overlap rather than asserting it |
 | `docs/audit/probe-revalidate-alias.mjs` | That `/api/draft-mode/enable/revalidate` and `/api/revalidate` are the SAME handler: unsigned both refuse with 401, signed both revalidate the identical eight paths. 8/8 local. Needs the LOCAL secret, which is not production's |
 | `docs/audit/measure-proposals-shipped.mjs` | The four PROPOSALS items shipped without Stefan, verified on the rendered page rather than in the diff. 18/18 on production |
 | `docs/audit/measure-sw-cache.mjs` | Drives the REAL service worker in a real browser: takes the static cache past the cap and watches one further fetch trim it back, with the newest entry surviving. A unit test of a copy of the function would prove nothing about the file that ships |
