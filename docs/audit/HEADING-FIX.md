@@ -5,6 +5,23 @@ than "the heading migration" made it sound: **one post, seven headings, one drop
 
 Nothing here needs a decision. Work down the list.
 
+**The dropdown changed on 2026-09-14, and it is the reason this happened.** The editor used
+to offer Sanity's defaults -- Heading 1 through Heading 6, with nothing to say what any of
+them did on the page -- so picking Heading 5 for a section was a reasonable guess at a menu
+that gave no help. It now reads:
+
+| The editor offers | What it is |
+| --- | --- |
+| **Section** | A chapter. It gets an entry in the article's Contents list |
+| **Subsection** | A part of a section. Indented under it in Contents |
+| **Minor heading** | A heading with no Contents entry |
+| Quote, Normal | unchanged |
+| *Legacy H1 / H5 / H6* | only so the blocks below still have a name. Do not pick them |
+
+So the seven changes in the table below are now **Heading 5 -> Section**, and once they are
+made the three Legacy entries can be deleted from the schema. The table keeps the old names
+in the "Now" column because that is still what the blocks say.
+
 ---
 
 ## What is actually wrong, in one paragraph
@@ -25,20 +42,20 @@ wondering about them.
 ### "The Field, The Moment, and What it Means for Us (Networking Industry)"
 
 Open it in the Studio, Content tab, in the body. For each of these seven blocks, click the
-style dropdown (it currently reads **Heading 5**) and choose **Heading 2**.
+style dropdown (it currently reads **Legacy H5**) and choose **Section**.
 
 | # | Heading text | Now | Change to |
 | --- | --- | --- | --- |
-| 1 | The First Transmission | Heading 5 | **Heading 2** |
-| 2 | Laying The Foundation | Heading 5 | **Heading 2** |
-| 3 | What The Numbers Actually Say | Heading 5 | **Heading 2** |
-| 4 | Where $725 Billion Is Going | Heading 5 | **Heading 2** |
-| 5 | Why The Pipeline Can't Keep Up | Heading 5 | **Heading 2** |
-| 6 | The Part Nobody Else Can Write | Heading 5 | **Heading 2** |
-| 7 | Test Yourself | Heading 5 | **Heading 2** |
+| 1 | The First Transmission | Legacy H5 | **Section** |
+| 2 | Laying The Foundation | Legacy H5 | **Section** |
+| 3 | What The Numbers Actually Say | Legacy H5 | **Section** |
+| 4 | Where $725 Billion Is Going | Legacy H5 | **Section** |
+| 5 | Why The Pipeline Can't Keep Up | Legacy H5 | **Section** |
+| 6 | The Part Nobody Else Can Write | Legacy H5 | **Section** |
+| 7 | Test Yourself | Legacy H5 | **Section** |
 
-All seven are siblings. None of them is a subsection of another, so they all become Heading 2
-and none becomes Heading 3.
+All seven are siblings. None of them is a subsection of another, so they all become
+**Section** and none becomes Subsection.
 
 **While you are in each one:** four of these headings begin with a stray line break, which is
 why they sit lower than the others. Put the cursor at the very start of the heading text and

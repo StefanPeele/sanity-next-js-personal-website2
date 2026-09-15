@@ -225,10 +225,34 @@ export default defineType({
       title: 'Article Content',
       type: 'array',
       group: 'content',
-      description: 'The article body. Use Section Breaks to divide major acts. Use Sidenotes to annotate without interrupting. Use Failure Notes and What I Got Wrong blocks to be honest.',
+      description: 'The article body. THE CONTENTS LIST ON THE ARTICLE IS BUILT FROM THE HEADINGS HERE: every Section and Subsection becomes an entry, in order, with its own reading time. Nothing else generates it and nothing else can be added to it. Use Section Breaks to divide major acts. Use Sidenotes to annotate without interrupting. Use Failure Notes and What I Got Wrong blocks to be honest.',
       of: [
         {
           type: 'block',
+          // THE CHAPTER LIST. Without this the editor offers Sanity's defaults, which are
+          // H1 through H6 with no indication of what any of them does on the page -- and
+          // that is exactly how one post came to be written entirely in H5. H5 renders at
+          // 19px against 18px body text, so its seven sections read as emphasis rather than
+          // as structure, and the heading outline jumped from the title straight to level 5.
+          //
+          // Named for what they DO rather than for their level. A section heading is the
+          // unit a reader navigates by, so it is called Section, and the field description
+          // says where it turns up.
+          //
+          // The three legacy entries exist ONLY so blocks already written in those styles
+          // keep a name in the dropdown instead of reading as an unknown style. Delete them
+          // once scripts/migrate-heading-levels.mjs has run and no block uses them:
+          //   groq: count(*[_type == "post" && count(body[style in ["h1","h5","h6"]]) > 0])
+          styles: [
+            { title: 'Normal', value: 'normal' },
+            { title: 'Section', value: 'h2' },
+            { title: 'Subsection', value: 'h3' },
+            { title: 'Minor heading', value: 'h4' },
+            { title: 'Quote', value: 'blockquote' },
+            { title: 'Legacy H1 (use Section)', value: 'h1' },
+            { title: 'Legacy H5 (use Section)', value: 'h5' },
+            { title: 'Legacy H6 (use Minor heading)', value: 'h6' },
+          ],
           marks: {
             annotations: [
               {
