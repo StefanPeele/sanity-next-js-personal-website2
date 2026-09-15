@@ -111,6 +111,42 @@ test('security headers are present', async ({ request }) => {
 })
 
 test.describe('article page', () => {
+  // The bar measured the DOCUMENT, so it filled at the bottom of the footer: the sources,
+  // the corrections, the credibility block, the comment thread, the newsletter form and the
+  // site chrome all counted as article. A reader who had finished the piece was shown about
+  // three quarters and told they had minutes left. It measures the article now, and this is
+  // the guard on that, in the suite rather than only in a phase harness because it is a
+  // one-line regression: any future `document.documentElement.scrollHeight` in the scroll
+  // handler brings it straight back.
+  test('the progress bar fills at the end of the article, not at the footer', async ({ page, request }) => {
+    const slug = await firstPostSlug(request)
+    test.skip(!slug, 'no blog posts published yet')
+    await page.goto(`/blog/${slug}`)
+    await page.waitForTimeout(1200)
+
+    const range = await page.evaluate(() => {
+      const el = document.querySelector('[data-article]')
+      return {
+        articleEnd: el ? Math.round(el.getBoundingClientRect().bottom + window.scrollY - window.innerHeight) : null,
+        documentEnd: Math.round(document.documentElement.scrollHeight - window.innerHeight),
+      }
+    })
+    // Precondition. If the article ended where the document ends, this test could not tell a
+    // fixed bar from a broken one and would pass on both.
+    expect(range.articleEnd).not.toBeNull()
+    expect(range.documentEnd - (range.articleEnd as number)).toBeGreaterThan(300)
+
+    await page.evaluate((y: number) => window.scrollTo({ top: y, behavior: 'instant' }), range.articleEnd as number)
+    await page.waitForTimeout(600)
+    const atArticleEnd = await page.locator('[role="progressbar"]').getAttribute('aria-valuenow')
+    expect(Number(atArticleEnd)).toBeGreaterThanOrEqual(99)
+
+    await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }))
+    await page.waitForTimeout(400)
+    const atPageEnd = await page.locator('[role="progressbar"]').getAttribute('aria-valuenow')
+    expect(Number(atPageEnd)).toBe(100)
+  })
+
   test('keeps one TOC per breakpoint, one progress bar and the reader menu', async ({ page, request }) => {
     const slug = await firstPostSlug(request)
     test.skip(!slug, 'no blog posts published yet')

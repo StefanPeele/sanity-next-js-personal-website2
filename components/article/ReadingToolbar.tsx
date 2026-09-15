@@ -6,6 +6,7 @@ import { Check, Pause, Play, Settings2, Square, X } from 'lucide-react'
 import { useArticle, useArticleOptional } from '@/components/article/ArticleProvider'
 import { useReadAloud } from '@/components/article/useReadAloud'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
+import { readingRangeEnd } from '@/lib/articleScroll'
 import { clearBookmark, readBookmark, writeBookmark } from '@/lib/articleStorage'
 import { ARTICLE_THEMES, ARTICLE_WIDTHS, FONT_SIZES, READING_SCALES, READING_SCALE_KEYS, THEME_OPTIONS } from '@/lib/articleThemeStyles'
 import { FOCUS, buttonClass } from '@/lib/ui'
@@ -219,8 +220,10 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article', tourLa
   const goToPlace = () => {
     const b = readBookmark(slug)
     if (!b) return
-    const max = document.documentElement.scrollHeight - window.innerHeight
-    window.scrollTo({ top: max * b.pct, behavior: settings.reducedMotion ? 'auto' : 'smooth' })
+    // Against the ARTICLE's range, the same one the bar fills and the same one the bookmark
+    // was written from. Divided by the document instead, a place saved at 90% of the article
+    // came back somewhere in the comment thread.
+    window.scrollTo({ top: readingRangeEnd() * b.pct, behavior: settings.reducedMotion ? 'auto' : 'smooth' })
     setOpen(false)
   }
   const clearPlace = () => { clearBookmark(slug); setHasBookmark(false) }

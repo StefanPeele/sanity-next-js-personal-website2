@@ -4,6 +4,7 @@ import {
   createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode,
 } from 'react'
 import { useReducedMotion } from 'framer-motion'
+import { readingFraction, readingRangeEnd } from '@/lib/articleScroll'
 import { slugify } from '@/lib/reading'
 import {
   ARTICLE_THEMES, DEFAULT_FONT_SIZE_INDEX, FONT_SIZES, READING_SCALES, READING_SCALE_KEYS,
@@ -257,6 +258,7 @@ export function ArticleProvider({
   const elsRef = useRef<HTMLElement[]>([])
   const offsetsRef = useRef<number[]>([])
   const rafRef = useRef(0)
+  const rangeRef = useRef(0)
   const lastRef = useRef({ activeId: '', progress: -1 })
 
   // ── Load persisted settings once on the client ─────────────────
@@ -274,6 +276,10 @@ export function ArticleProvider({
     const measure = () => {
       const scrollY = window.scrollY
       offsetsRef.current = elsRef.current.map((el) => el.getBoundingClientRect().top + scrollY)
+      // The reading range is re-measured by the same three triggers as the heading offsets --
+      // resize, a ResizeObserver on the article, and once more after fonts and images settle --
+      // because it moves for exactly the same reasons and by the same amount.
+      rangeRef.current = readingRangeEnd()
     }
 
     const { headings: found, els } = collectHeadings(root)
@@ -307,8 +313,11 @@ export function ArticleProvider({
       rafRef.current = 0
       const scrollY = window.scrollY
       const vh = window.innerHeight
-      const max = document.documentElement.scrollHeight - vh
-      const pct = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0
+      // Cached rather than measured per frame: this runs on every rAF while scrolling, and
+      // `readingRangeEnd` reads layout. The fallback covers the first frames, before the
+      // measure effect has run.
+      const end = rangeRef.current || readingRangeEnd()
+      const pct = readingFraction(scrollY, end)
       const rounded = Math.round(pct * 1000) / 1000
       if (rounded !== lastRef.current.progress) {
         lastRef.current.progress = rounded
@@ -365,9 +374,12 @@ export function ArticleProvider({
     let moved = false
     const save = () => {
       if (!moved) return
-      const max = document.documentElement.scrollHeight - window.innerHeight
-      if (max <= 0) return
-      writePosition(slug, Math.min(1, Math.max(0, window.scrollY / max)))
+      // The SAME range the bar uses. A stored position and a shown percentage have to be the
+      // same number, or "resume where you stopped" lands somewhere the reader was never
+      // told they had reached.
+      const end = readingRangeEnd()
+      if (end <= 0) return
+      writePosition(slug, readingFraction(window.scrollY, end))
     }
     const onScroll = () => {
       moved = true
@@ -400,9 +412,9 @@ export function ArticleProvider({
     restoredRef.current = slug
     const t = window.setTimeout(() => {
       if (window.scrollY > 8) return
-      const max = document.documentElement.scrollHeight - window.innerHeight
-      if (max <= 0) return
-      window.scrollTo({ top: Math.round(frac * max), behavior: 'instant' })
+      const end = readingRangeEnd()
+      if (end <= 0) return
+      window.scrollTo({ top: Math.round(frac * end), behavior: 'instant' })
     }, 900)
     return () => window.clearTimeout(t)
   }, [hydrated, slug, settings.resumeScroll])

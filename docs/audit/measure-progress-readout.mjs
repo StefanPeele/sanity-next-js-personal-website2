@@ -71,8 +71,54 @@ try {
   check(bar?.height === 4, 'the bar is 4px, not 2px', `measured ${bar?.height}px`)
   check(bar?.position === 'fixed', 'and still fixed to the viewport')
 
-  // Scroll to the middle and read the same element again.
-  await page.evaluate(() => window.scrollTo({ top: Math.round((document.documentElement.scrollHeight - window.innerHeight) * 0.5), behavior: 'instant' }))
+  // ── WHAT "100%" MEANS ──────────────────────────────────────────────────────────
+  //
+  // The bar used to divide by the document, so it filled at the bottom of the FOOTER: the
+  // sources, the corrections, the credibility block, the comment thread, the newsletter form
+  // and the site chrome all counted as article. It now divides by the article.
+  //
+  // PRECONDITION, and without it everything below is vacuous: the two definitions have to
+  // actually differ on this page. If the article ended at the bottom of the document, a
+  // harness could not tell a fixed bar from a broken one.
+  const range = await page.evaluate(() => {
+    const el = document.querySelector('[data-article]')
+    const docEnd = document.documentElement.scrollHeight - window.innerHeight
+    const artEnd = el ? el.getBoundingClientRect().bottom + window.scrollY - window.innerHeight : null
+    return { docEnd: Math.round(docEnd), artEnd: artEnd === null ? null : Math.round(artEnd) }
+  })
+  check(range.artEnd !== null && range.docEnd - range.artEnd > 400,
+    'the page continues well past the end of the article, so the two definitions differ',
+    `article ends at ${range.artEnd}, document at ${range.docEnd}, ${range.docEnd - range.artEnd}px of apparatus below`)
+
+  // At the end of the prose: full.
+  await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), range.artEnd)
+  await page.waitForTimeout(700)
+  const atEnd = await page.evaluate((t) => {
+    const f = new Function('el', `return (${t})(el)`)
+    const el = document.querySelector('[role="progressbar"]')
+    return {
+      now: Number(el?.getAttribute('aria-valuenow')),
+      toc: f(document.querySelector('[data-toc="sidebar"]')),
+      below: Math.round(document.documentElement.scrollHeight - window.innerHeight - window.scrollY),
+    }
+  }, textOf.toString())
+  check(atEnd.now >= 99, 'the bar is full when the last line of the article reaches the fold',
+    `aria-valuenow=${atEnd.now} with ${atEnd.below}px of page still below`)
+  check(atEnd.below > 400, 'and it got there BEFORE the footer, which is the whole point',
+    `${atEnd.below}px below the fold at 100%`)
+  const NL = String.fromCharCode(10)
+  const leftAtEnd = (atEnd.toc.split(NL).find((l) => /min left/i.test(l)) || '')
+  check(/(^|[^0-9])0 min left/i.test(leftAtEnd) || !/min left/i.test(leftAtEnd),
+    'and the time remaining has run out at the same moment', leftAtEnd || '(no "min left" line)')
+
+  // At the very bottom of the document: still full, not overflowing.
+  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }))
+  await page.waitForTimeout(500)
+  const atBottom = await page.evaluate(() => Number(document.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')))
+  check(atBottom === 100, 'the bar stays at 100 through the footer rather than passing it', `aria-valuenow=${atBottom}`)
+
+  // Scroll to the middle OF THE ARTICLE and read the same element again.
+  await page.evaluate((y) => window.scrollTo({ top: Math.round(y * 0.5), behavior: 'instant' }), range.artEnd)
   await page.waitForTimeout(700)
   const mid = await page.evaluate((t) => {
     const f = new Function('el', `return (${t})(el)`)
@@ -86,7 +132,7 @@ try {
   const pct = Number((readout.match(/(\d+)%/) || [])[1])
   check(Math.abs(pct - mid.now) <= 2, 'the readout and the progressbar agree on the same number',
     `readout ${pct}% vs aria-valuenow ${mid.now}`)
-  check(pct >= 45 && pct <= 60, 'and the number is right for a scroll to the middle', `${pct}%`)
+  check(pct >= 45 && pct <= 60, 'and the number is right for a scroll to the middle OF THE ARTICLE', `${pct}%`)
   await page.screenshot({ path: path.join(OUT, 'readout-mid-1440.jpg'), type: 'jpeg', quality: 80 })
 
   // ── the off switch ─────────────────────────────────────────────
@@ -165,7 +211,17 @@ try {
   await page.evaluate(() => { try { localStorage.setItem('sp_resume_scroll', 'true') } catch { /* ignore */ } })
   await returnToArticle()
   await page.waitForTimeout(3200)
-  const yOn = await page.evaluate(() => ({ y: Math.round(window.scrollY), max: Math.round(document.documentElement.scrollHeight - window.innerHeight) }))
+  // AGAINST THE ARTICLE, not the document. The stored fraction is a fraction OF THE ARTICLE,
+  // and dividing the restored scrollY by the document's height reported 45% against a stored
+  // 54% -- a harness measuring one thing and asserting about another. The restore was
+  // correct; the ruler was not.
+  const yOn = await page.evaluate(() => {
+    const el = document.querySelector('[data-article]')
+    const end = el
+      ? el.getBoundingClientRect().bottom + window.scrollY - window.innerHeight
+      : document.documentElement.scrollHeight - window.innerHeight
+    return { y: Math.round(window.scrollY), max: Math.round(end) }
+  })
   const frac = yOn.max > 0 ? yOn.y / yOn.max : 0
   check(Math.abs(frac - Number(stored)) < 0.06, 'with it ON the reader is returned to the same fraction',
     `restored to ${Math.round(frac * 100)}% against a stored ${Math.round(Number(stored) * 100)}%`)

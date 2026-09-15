@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { readingFraction } from '@/lib/articleScroll'
 import { FOCUS } from '@/lib/ui'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 // components/article/ReadingTour.tsx
@@ -80,8 +81,11 @@ export function ReadingTour({ copy }: { copy: ArticleUiCopy['tour'] }) {
       clearTimeout(timer)
     }
     const onScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight
-      if (max > 0 && window.scrollY / max >= SCROLL_TRIGGER) open()
+      // A quarter of the ARTICLE, not a quarter of the page. Measured against the document
+      // the trigger fired later on posts with long comment threads and newsletter blocks
+      // below them, which is precisely backwards: the more page there is under the piece,
+      // the further into the reading the reader would have to be before being offered help.
+      if (readingFraction(window.scrollY) >= SCROLL_TRIGGER) open()
     }
     const timer = setTimeout(open, TIME_TRIGGER_MS)
     window.addEventListener('scroll', onScroll, { passive: true })
