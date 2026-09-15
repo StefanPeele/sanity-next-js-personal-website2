@@ -56,10 +56,24 @@ const TOOLBAR_STORAGE = { open: 'sp_toolbar_open', hidden: 'sp_toolbar_hidden' }
 /** Milliseconds of no pointer movement and no scrolling before the rail fades back. */
 const SETTLE_MS = 2600
 
+/**
+ * A group of controls, under its heading.
+ *
+ * MEASURED BEFORE THE CHANGE, every text node in the open panel at 1440: the nine group
+ * headings were 12px, weight 400, stone-400 at 7.49:1, and the controls beneath them were
+ * 14px, weight 400, stone-300 at 12.68:1. The heading was smaller, lighter AND dimmer than
+ * its own contents, so nine groups read as one undifferentiated column of switches and the
+ * eye had nothing to stop at. Everything in the panel was weight 400.
+ *
+ * The fix is a ladder, not a bigger number: the panel title stays `.section-label` (serif,
+ * 16.8px), the group heading becomes 14px semibold at stone-100, and the controls stay 14px
+ * regular. Three ranks out of two sizes, one face change and two weights, so nothing grows
+ * and the scroll length of the panel is unchanged.
+ */
 function Group({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <section className="py-3 border-b border-edge last:border-b-0">
-      <h3 className="text-xs font-sans text-stone-400 mb-2">{label}</h3>
+    <section className="py-3.5 border-b border-edge last:border-b-0">
+      <h3 className="text-sm font-sans font-semibold text-stone-100 mb-2.5">{label}</h3>
       {children}
     </section>
   )
@@ -82,7 +96,7 @@ function Chip({ active, onClick, children, role = 'radio' }: { active: boolean; 
 function Switch({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
   return (
     <button type="button" role="switch" aria-checked={checked} onClick={onChange}
-      className={`w-full flex items-center justify-between py-2 text-sm font-sans rounded-sm ${FOCUS} ${checked ? 'text-white' : 'text-stone-300'}`}>
+      className={`w-full flex items-center justify-between py-2.5 text-sm font-sans rounded-sm ${FOCUS} ${checked ? 'text-white' : 'text-stone-200'}`}>
       <span>{label}</span>
       <span aria-hidden="true" className={`w-9 h-5 rounded-full border flex items-center px-0.5 transition-colors ${checked ? 'bg-white/20 border-edge-strong' : 'bg-surface-fill border-edge'}`}>
         <span className={`w-4 h-4 rounded-full transition-transform ${checked ? 'bg-white translate-x-4' : 'bg-stone-500'}`} />
@@ -93,7 +107,7 @@ function Switch({ label, checked, onChange }: { label: string; checked: boolean;
 
 function Row({ label, onClick, done }: { label: string; onClick: () => void; done?: boolean }) {
   return (
-    <button type="button" onClick={onClick} className={`w-full flex items-center justify-between py-2 text-sm font-sans text-stone-300 hover:text-white rounded-sm ${FOCUS}`}>
+    <button type="button" onClick={onClick} className={`w-full flex items-center justify-between py-2.5 text-sm font-sans text-stone-200 hover:text-white rounded-sm ${FOCUS}`}>
       <span>{label}</span>
       {done && <Check size={14} aria-hidden />}
     </button>
@@ -309,7 +323,11 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article', tourLa
           // block -- and sits to the rail's LEFT, opening into the margin rather than off the
           // right edge. `lg:absolute` is load-bearing: left as `fixed`, `right-full` resolves
           // against the VIEWPORT and puts the panel entirely off the left of the screen.
-          className="reader-menu-panel fixed inset-x-4 bottom-4 max-h-[75vh] lg:static lg:inset-auto lg:w-80 lg:max-h-[80vh] overflow-y-auto z-[1002] rounded-xl border border-edge bg-surface-raised shadow-2xl p-4 text-stone-200"
+          // `xl:w-96` and not `lg:w-96`. At 1024 the margin beside the prose is barely wider
+          // than the panel already is, so a wider panel there would open over the text it is
+          // meant to be setting. At 1280 and up there is over 500px of margin and the extra
+          // 64px stops the size and spacing chips wrapping mid-row.
+          className="reader-menu-panel fixed inset-x-4 bottom-4 max-h-[75vh] lg:static lg:inset-auto lg:w-80 xl:w-96 lg:max-h-[80vh] overflow-y-auto z-[1002] rounded-xl border border-edge bg-surface-raised shadow-2xl p-4 text-stone-200"
         >
           <div className="flex items-center justify-between mb-1">
             <span className="section-label">{L.buttonLabel}</span>
@@ -370,7 +388,7 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article', tourLa
           <Group label={L.groupLabels.spacing}>
             {READING_SCALE_KEYS.map((k) => (
               <div key={k} className="flex items-center justify-between gap-3 py-1.5">
-                <span className="font-sans text-sm text-stone-300">{L.spacingLabels[k]}</span>
+                <span className="font-sans text-sm text-stone-200">{L.spacingLabels[k]}</span>
                 <div role="radiogroup" aria-label={L.spacingLabels[k]} className="flex gap-1.5 shrink-0">
                   {READING_SCALES[k].values.map((_, i) => (
                     <Chip key={i} active={settings[k] === i} onClick={() => setSetting(k, i)}>
@@ -425,7 +443,7 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article', tourLa
             {reader.supported && reader.voices.length > 0 && (
               <div className="mt-3 space-y-2.5">
                 <label className="block">
-                  <span className="block font-sans text-xs text-stone-400 mb-1">{L.listenLabels.voice}</span>
+                  <span className="block font-sans text-sm text-stone-300 mb-1">{L.listenLabels.voice}</span>
                   <select
                     value={reader.voiceURI ?? ''}
                     onChange={(e) => reader.setVoice(e.target.value || null)}
@@ -438,7 +456,7 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article', tourLa
                   </select>
                 </label>
                 <div>
-                  <span className="block font-sans text-xs text-stone-400 mb-1">{L.listenLabels.speed}</span>
+                  <span className="block font-sans text-sm text-stone-300 mb-1">{L.listenLabels.speed}</span>
                   <div role="radiogroup" aria-label={L.listenLabels.speed} className="flex gap-1.5">
                     {reader.rateSteps.map((r) => (
                       <Chip key={r} active={reader.rate === r} onClick={() => reader.setRate(r)}>{r}&times;</Chip>
@@ -468,7 +486,10 @@ function ReadingToolbarInner({ copy, markdown, deck, variant = 'article', tourLa
               on the page. A stub is the chrome the reader just asked to be rid of. */}
           <Group label={L.groupLabels.toolbar}>
             <Row label={L.toolbarLabels.hide} onClick={hideToolbar} />
-            <p className="font-sans text-xs text-stone-400 leading-relaxed pt-1">{L.toolbarLabels.hideHint}</p>
+            {/* The only sentence in the panel, and the only thing a reader has to READ rather
+                than scan. It was the same 12px as the group headings; a sentence is the last
+                thing that should sit at the floor. */}
+            <p className="font-sans text-sm text-stone-400 leading-relaxed pt-1">{L.toolbarLabels.hideHint}</p>
             {/* The way back into the first-visit tour. A tour worth showing once is worth
                 finding again, and without this the reader who declined it while busy is
                 punished for having been busy. Article-only: the tour describes article
