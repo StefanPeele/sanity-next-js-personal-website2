@@ -1,6 +1,6 @@
 {
   "base": "https://stefanpeele.com",
-  "when": "2026-09-15T20:26:10.572Z",
+  "when": "2026-09-15T21:11:35.986Z",
   "routes": {
     "/": {
       "status": 200,
@@ -289,9 +289,8 @@
       "why": "signature enforced"
     },
     "/api/draft-mode/enable/revalidate": {
-      "status": 401,
-      "note": "alias, delete once the webhook is repointed",
-      "why": "signature enforced"
+      "status": 404,
+      "note": "retired 2026-09-15"
     },
     "control": {
       "status": 404

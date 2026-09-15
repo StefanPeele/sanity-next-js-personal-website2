@@ -204,6 +204,12 @@ A `blogPage` mutation (the meta description, appended with a space and reverted 
 run) replaced the CDN entry for `/blog` **about 4 seconds later** — age fell from a rising 20s
 to 6s at the +10s sample. Four seconds is a delivery. The 300s floor would have shown at 300.
 
+**Re-run AFTER the alias was deleted, which is the measurement that actually settles it:** age
+66s → **0 with `x-vercel-cache: REVALIDATED`, eleven seconds after the mutation**. The first
+run could not tell which URL the webhook was using, because both answered; this one can,
+because only one of them exists. `REVALIDATED` is Vercel stating an on-demand revalidation
+happened rather than a TTL expiring.
+
 **The old path is asserted GONE rather than dropped from the checks.** `tests/smoke.spec.ts`
 and `docs/audit/verify-production.mjs` both require `/api/draft-mode/enable/revalidate` to
 404 now, beside the canonical route's 401 and the control probe. A retired route that quietly
