@@ -1,8 +1,8 @@
 # Resume state
 
 Written: 2026-09-12, at the end of a session that worked every phase in the brief.
-**Updated 2026-09-14: the webhook is fixed and the newsletter is confirmed. Read the
-2026-09-14 section first; the older sections below are kept as the record, not as the state.**
+**Updated 2026-09-15: the webhook is repointed and the alias is gone. Read the 2026-09-15
+section first; the older sections below are kept as the record, not as the state.**
 Why the session ended: **every remaining item needs Stefan** — the Sanity webhook is a
 dashboard setting, a real Resend delivery needs a mailbox, the screen-reader pass needs a
 person, and the proposals are his calls about his own published writing. Nothing is blocked
@@ -193,6 +193,35 @@ it disagreed — twice. Check that one.
 
 ## EVERY PHASE IN THE BRIEF HAS NOW BEEN WORKED
 
+## 2026-09-15: the alias is gone, and the webhook is measured rather than assumed
+
+Stefan repointed the Sanity webhook at `/api/revalidate`. The alias, its route directory and
+its three references are deleted.
+
+**How the repoint was verified from here, since no token in this project can read the webhook
+config.** Artifact #35: for a prerendered page the CDN `age` header witnesses invalidation.
+A `blogPage` mutation (the meta description, appended with a space and reverted in the same
+run) replaced the CDN entry for `/blog` **about 4 seconds later** — age fell from a rising 20s
+to 6s at the +10s sample. Four seconds is a delivery. The 300s floor would have shown at 300.
+
+**The old path is asserted GONE rather than dropped from the checks.** `tests/smoke.spec.ts`
+and `docs/audit/verify-production.mjs` both require `/api/draft-mode/enable/revalidate` to
+404 now, beside the canonical route's 401 and the control probe. A retired route that quietly
+comes back is a second front door nobody is watching, and it would answer real webhook traffic
+without anyone deciding that it should. `probe-revalidate-alias.mjs` is now
+`probe-revalidate-route.mjs`, with its alias assertions inverted: 8/8.
+
+**`/api/draft-mode/enable` itself is untouched** — 405 on POST, which is correct for a GET-only
+route. Only the `revalidate` subdirectory was removed, so Presentation preview still works.
+
+**The 1024 overlap: option D, decided by Stefan.** He uses the toolbar before reading rather
+than during it, so the overlap costs him nothing. The 5.4 claim is corrected in the three
+places it lived — `ReadingToolbar.tsx`, `styles/reader.css` and the brief — from "can never
+overlap prose" to what is true: the RAIL never does at any width, the OPEN PANEL clears the
+prose from 1280 up and covers the last 106px of every line at 1024. **Option C is logged as
+the fallback where someone would reach for it**, with the containing-block trap named, and
+the trigger for revisiting it stated: his habit changing.
+
 ## 2026-09-14, later: five things Stefan asked for after using the site
 
 All five came from reading his own site rather than from an audit, which is why four of them
@@ -378,16 +407,15 @@ predicted fold table at all three breakpoints (886/1093/961 against 885/1092/960
 
 ## The single next action
 
-**Stefan repoints the Sanity webhook at `https://stefanpeele.com/api/revalidate` and says so.
-Then `app/api/draft-mode/enable/revalidate/route.ts` is deleted**, along with its line in
-`WEBHOOK_ROUTES` in `tests/smoke.spec.ts`, its entry in `verify-production.mjs`, and the
-alias assertions in `probe-revalidate-alias.mjs`. Both URLs work until then; the alias exists
-only so that sentence is true.
+**There is no open defect in the code.** The webhook was the last one and it was closed on
+2026-09-15. What remains needs Stefan and nothing else, and only the first of these gates the
+site — `LAUNCH-CHECKLIST.md` opens with the same list and says what each one blocks. **The
+heading item is now seven dropdowns against a menu that finally names them**, Legacy H5 to
+Section per `HEADING-FIX.md`, and the cause behind it is fixed, so no future post can repeat
+it:
 
-After that, what remains needs Stefan and nothing else. **The heading item is now seven
-dropdowns against a menu that finally names them** -- Legacy H5 to Section, per
-`HEADING-FIX.md` -- and the cause behind it is fixed, so no future post can repeat it:
-
+0. **The writing.** `CONTENT-TO-WRITE.md`, items 1-5 first. This is the only item here that
+   gates the launch; everything else is built and waiting for content.
 1. **`DIGEST_SEND_SECRET` in Vercel.** The send route returns 500 until it exists, which is
    the safe direction, but no digest can be sent.
 2. **Drive the toolbar and the sidenotes with a real screen reader.** `A11Y-AUDIT.md` names
@@ -479,7 +507,7 @@ look right.
 
 | `docs/audit/verify-production.mjs` | ONE consolidated statement of live health: 23 routes × 1440/768/390 + 6 machine surfaces + the 3 webhook probes, in a real browser, asserting status, one h1, one main, `#content`, no overflow, and no uncaught exception, failed request or CSP violation. **78/78 on `4a43a49`** |
 | `docs/audit/measure-toolbar-legibility.mjs` | 30: every text node in the OPEN toolbar panel with its size, weight and composited contrast, at 1440 / 1024 / 390. Reports the 1024 prose overlap rather than asserting it |
-| `docs/audit/probe-revalidate-alias.mjs` | That `/api/draft-mode/enable/revalidate` and `/api/revalidate` are the SAME handler: unsigned both refuse with 401, signed both revalidate the identical eight paths. 8/8 local. Needs the LOCAL secret, which is not production's |
+| `docs/audit/probe-revalidate-route.mjs` | The webhook target end to end: unsigned 401, signed revalidates the right eight paths including the article and the feeds, and the retired `/api/draft-mode/enable/revalidate` 404s. 8/8 local. Needs the LOCAL secret, which is not production's |
 | `docs/audit/measure-proposals-shipped.mjs` | The four PROPOSALS items shipped without Stefan, verified on the rendered page rather than in the diff. 18/18 on production |
 | `docs/audit/measure-sw-cache.mjs` | Drives the REAL service worker in a real browser: takes the static cache past the cap and watches one further fetch trim it back, with the newest entry surviving. A unit test of a copy of the function would prove nothing about the file that ships |
 

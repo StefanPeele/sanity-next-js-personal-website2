@@ -952,6 +952,10 @@ different one appeared.
 ## 5.4 Position
 
 - **Outside the reading measure.** It must never overlap prose.
+  - *Shipped, and the claim needs one qualifier: the RAIL never does, at any width. The OPEN
+    PANEL clears the prose from 1280 up and covers the last 106px of every line at 1024,
+    measured 2026-09-14. Left as it is by decision on 2026-09-15; see PROPOSALS-NEW.md
+    section 3 for the four options and what each costs.*
 - At 390px there is no margin. It must either fit within available space or **force the
   layout to make room.** Propose which, with rendered options.
 - Consider: right edge, left edge, floating with position memory.

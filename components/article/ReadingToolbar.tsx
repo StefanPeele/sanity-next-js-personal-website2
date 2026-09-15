@@ -20,7 +20,29 @@ import { FOCUS, buttonClass } from '@/lib/ui'
 //
 // 5.4 POSITION — a fixed rail on the right edge, vertically centred, OUTSIDE the reading
 // measure. The prose column is max-w-[36rem] inside a max-w-6xl container, so at 1440 there
-// is ~530px to the right of it; the rail lives there and can never overlap prose.
+// is ~530px to the right of it; the rail lives there and does not overlap prose.
+//
+// WHAT THAT CLAIM IS ACTUALLY WORTH, measured 2026-09-14 rather than reasoned:
+//
+//   1440  prose ends x 922, open panel starts x 960   clears it
+//   1024  prose ends x 714, open panel starts x 608   COVERS the last 106px of every line
+//
+// This comment used to say "can never overlap prose", full stop. That was true of the RAIL
+// and not of the open PANEL, and only above 1280. At 1024 the margin is ~310px, the rail
+// takes 56 and the panel is 320, so it has never fitted there. Stefan's call, 2026-09-15:
+// leave it. The overlap lasts exactly as long as a panel that is opened for a few seconds
+// before reading, not during it, and it sits behind a scrim that closes on the next click.
+//
+// THE FALLBACK, if that ever stops being true: shift the article column left while the panel
+// is open, so nothing is hidden by anything. Do not reach for it casually. A transform on an
+// ancestor of the prose makes that element a containing block for every `position: fixed`
+// descendant -- the trap documented at length further down this file, which silently
+// un-stuck this very rail once. The rail is portalled to <body> and out of reach, but
+// sidenotes, the progress bar and the TOC would all need re-checking, and reduced motion
+// needs an answer better than "jump". Written up as PROPOSALS-NEW.md §3, option C.
+//
+// `docs/audit/measure-toolbar-legibility.mjs` prints the 1024 number on every run as a NOTE
+// rather than an assertion, so the compromise stays visible instead of being argued away.
 //
 // At narrow widths there is no margin to live in, and 5.4 asks which of "fit within the
 // available space" or "force the layout to make room" applies. It FITS: the collapsed

@@ -170,6 +170,18 @@ nobody subscribed to.
 
 # 3. The reading toolbar covers the prose at 1024, and Phase 5.4 says it never does
 
+> **DECIDED 2026-09-15: option D.** Stefan: "I use the toolbar before reading, not during, so
+> the overlap costs me nothing." The 5.4 claim is corrected in `ReadingToolbar.tsx`,
+> `styles/reader.css` and the brief to what is actually true: the RAIL never overlaps prose at
+> any width; the OPEN PANEL clears it from 1280 up and covers the last 106px of every line at
+> 1024, behind a scrim, for as long as the panel is open.
+>
+> **Option C is logged as the fallback**, with its risk stated where someone would reach for
+> it: a transform on an ancestor of the prose makes that element a containing block for every
+> `position: fixed` descendant, which is the trap that silently un-stuck this project's own
+> reading rail once. The trigger for revisiting it is Stefan's habit changing -- using the
+> panel WHILE reading rather than before.
+
 **Asked for as a proposal, not a build, 2026-09-14.** Measured by
 `docs/audit/measure-toolbar-legibility.mjs`, which reports it as a NOTE rather than asserting
 it, so that widening an assertion cannot quietly bury it.

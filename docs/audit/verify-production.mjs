@@ -122,10 +122,7 @@ try {
   // different URL than the webhook uses, which is the same class of mistake as the original.
   console.log(`
 ── the Sanity webhook target ${'─'.repeat(41)}`)
-  const WEBHOOK = [
-    ['/api/revalidate', 'canonical'],
-    ['/api/draft-mode/enable/revalidate', 'alias, delete once the webhook is repointed'],
-  ]
+  const WEBHOOK = [['/api/revalidate', 'canonical']]
   for (const [route, note] of WEBHOOK) {
     const res = await fetch(`${BASE}${route}`, {
       method: 'POST',
@@ -144,6 +141,17 @@ try {
     console.log(`  ${res.status === 401 ? 'ok  ' : 'BAD '} ${res.status} ${route}${why ? '  ' + why : ''}`)
     report.webhook[route] = { status: res.status, note, why: why || 'signature enforced' }
   }
+
+  // The retired alias. It delegated to the canonical route for one day while the webhook was
+  // repointed, and it is asserted GONE rather than dropped from the list above: a route that
+  // quietly comes back is a second front door nobody is watching, and it would answer real
+  // webhook traffic without anyone deciding that it should.
+  const retired = await fetch(`${BASE}/api/draft-mode/enable/revalidate`, {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}', redirect: 'manual',
+  })
+  check('webhook /api/draft-mode/enable/revalidate is retired', retired.status === 404, `status=${retired.status}`)
+  console.log(`  ${retired.status === 404 ? 'ok  ' : 'BAD '} ${retired.status} /api/draft-mode/enable/revalidate  (retired: must be 404)`)
+  report.webhook['/api/draft-mode/enable/revalidate'] = { status: retired.status, note: 'retired 2026-09-15' }
 
   // Positive control. Without it a 401 proves nothing: if this harness could not tell a live
   // route from a dead one, both lines above would still read "ok".

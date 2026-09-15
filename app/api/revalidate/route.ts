@@ -20,9 +20,10 @@ import { client } from '@/sanity/lib/client'
 // 500 means SANITY_REVALIDATE_SECRET is missing, and 200 would mean anyone could trigger a
 // revalidation. Only 401 proves the route is there AND still checking signatures.
 //
-// /api/draft-mode/enable/revalidate still answers, as an alias that delegates here, so the
-// webhook survives the deploy window. DELETE THE ALIAS once the webhook points at this
-// route. It logs a warning on every hit, so the Vercel log says when it has gone quiet.
+// The old path answered for one day as a delegating alias, so the webhook survived the move;
+// Stefan repointed it and the alias was deleted on 2026-09-15. /api/draft-mode/enable/
+// revalidate now 404s, which both checks below assert deliberately: an alias that outlives
+// its purpose is a second front door nobody is watching.
 //
 // Setup in Sanity:
 //   Dashboard → API → Webhooks → Add webhook

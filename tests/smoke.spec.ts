@@ -86,14 +86,21 @@ test('health endpoint reports status', async ({ request }) => {
 //   404 the route moved out from under the webhook
 //   500 SANITY_REVALIDATE_SECRET is not set
 //   200 the signature check is gone
-// The second entry is the temporary alias; delete the line with the route file it names.
-const WEBHOOK_ROUTES = ['/api/revalidate', '/api/draft-mode/enable/revalidate']
+const WEBHOOK_ROUTES = ['/api/revalidate']
+// The path the handler used to live at. It answered as a delegating alias for one day while
+// the webhook was repointed, and it is asserted GONE rather than simply removed from the
+// list: a deleted route that quietly comes back is a second front door nobody is watching.
+const RETIRED_WEBHOOK_ROUTE = '/api/draft-mode/enable/revalidate'
 
 test('the revalidate webhook target answers and enforces its signature', async ({ request }) => {
   for (const route of WEBHOOK_ROUTES) {
     const res = await request.post(route, { data: {}, maxRedirects: 0, failOnStatusCode: false })
     expect(res.status(), `${route}: 404 moved, 500 no secret, 200 signature check gone`).toBe(401)
   }
+  // The retired alias must be gone, and this is the same probe reading a different answer.
+  const retired = await request.post(RETIRED_WEBHOOK_ROUTE, { data: {}, maxRedirects: 0, failOnStatusCode: false })
+  expect(retired.status(), `${RETIRED_WEBHOOK_ROUTE} should be gone, not answering`).toBe(404)
+
   // Control. The assertions above prove nothing unless a route that does not exist reads
   // differently from one that does.
   const control = await request.post('/api/revalidate-control-does-not-exist', {

@@ -1,14 +1,15 @@
-// docs/audit/probe-revalidate-alias.mjs
+// docs/audit/probe-revalidate-route.mjs
 //
-// Proves that /api/draft-mode/enable/revalidate and /api/revalidate are the SAME handler,
-// not two copies of one, and that both still refuse an unsigned caller.
+// The Sanity webhook target, end to end: it refuses an unsigned caller, it revalidates the
+// right paths under a real signature, and the path it used to live at is gone.
 //
-// Why it exists: the alias is temporary, and the argument for deleting it is that the
-// webhook can be repointed without changing behaviour. That argument is only worth
-// anything if someone measured it once. Run this before repointing the webhook, and again
-// after deleting the alias (the alias lines then correctly report 404).
+// It began as probe-revalidate-alias.mjs, proving that /api/draft-mode/enable/revalidate and
+// /api/revalidate were the SAME handler rather than two copies -- the argument for deleting
+// the alias, measured once rather than asserted. That was verified 8/8 on 2026-09-14, the
+// webhook was repointed, and the alias was deleted on 2026-09-15. The alias assertions are
+// now the reverse: the old path must 404.
 //
-//   node docs/audit/probe-revalidate-alias.mjs                    # a local `next start`
+//   node docs/audit/probe-revalidate-route.mjs                    # a local `next start`
 //   BASE=https://stefanpeele.com node ...                         # needs the production secret
 //
 // .env.local's SANITY_REVALIDATE_SECRET is NOT production's -- a signed request built from it
@@ -23,7 +24,7 @@ import fs from 'node:fs'
 
 const BASE = process.env.BASE || 'http://127.0.0.1:3000'
 const CANONICAL = '/api/revalidate'
-const ALIAS = '/api/draft-mode/enable/revalidate'
+const RETIRED = '/api/draft-mode/enable/revalidate'
 const CONTROL = '/api/revalidate-control-does-not-exist'
 
 // The secret lives in .env.local for a local server; Vercel holds the production one.
@@ -55,30 +56,28 @@ const post = async (path, { signed = false, payload = {} } = {}) => {
 }
 
 console.log(`\n── unsigned: the endpoint must exist and must refuse ─────────────────`)
-for (const path of [CANONICAL, ALIAS]) {
-  const r = await post(path)
-  check(`${path} refuses an unsigned POST with 401`, r.status === 401, `status=${r.status}`)
-}
+const unsigned = await post(CANONICAL)
+check(`${CANONICAL} refuses an unsigned POST with 401`, unsigned.status === 401, `status=${unsigned.status}`)
+
+const retired = await post(RETIRED)
+check(`${RETIRED} is retired and 404s`, retired.status === 404, `status=${retired.status}`)
+
 const control = await post(CONTROL)
 check('a route that does not exist reads as 404 (control)', control.status === 404, `status=${control.status}`)
 
-console.log(`\n── signed: the alias must do the same work as the canonical route ────`)
+console.log(`\n── signed: the route does the work it claims ─────────────────────────`)
 // A `post` payload with a slug exercises the widest branch of RULES: fixed paths, feeds and
-// the slug template. If the alias were a stale copy, this is where the two would diverge.
+// the slug template.
 const payload = { _type: 'post', slug: { current: 'osi-model' } }
 const a = await post(CANONICAL, { signed: true, payload })
-const b = await post(ALIAS, { signed: true, payload })
 
 check(`${CANONICAL} revalidates`, a.status === 200 && a.json?.revalidated === true, `status=${a.status}`)
-check(`${ALIAS} revalidates`, b.status === 200 && b.json?.revalidated === true, `status=${b.status}`)
+const paths = a.json?.paths ?? []
+check('and names the paths it revalidated', paths.length >= 8, `${paths.length} paths`)
+check('including the article the payload named', paths.includes('/blog/osi-model'), paths.join(', '))
+check('and the feeds, which a publish has to move', paths.includes('/blog/feed.xml') && paths.includes('/sitemap.xml'))
+check('nothing answers with the retired alias header any more', a.alias === null, `x-revalidate-alias=${a.alias}`)
 
-const pathsA = JSON.stringify(a.json?.paths ?? null)
-const pathsB = JSON.stringify(b.json?.paths ?? null)
-check('both revalidate exactly the same paths', pathsA === pathsB && pathsA !== 'null',
-  `${(a.json?.paths ?? []).length} paths`)
-check('the alias is labelled as one', b.alias === 'deprecated', `x-revalidate-alias=${b.alias}`)
-check('the canonical route is not labelled as an alias', a.alias === null, `x-revalidate-alias=${a.alias}`)
-
-console.log(`\n  paths: ${(a.json?.paths ?? []).join(', ')}`)
+console.log(`\n  paths: ${paths.join(', ')}`)
 console.log(`\n${pass} passed, ${fail} failed  (${BASE})`)
 process.exit(fail ? 1 : 0)

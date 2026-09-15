@@ -4,23 +4,38 @@
 each marked **DONE**, **NEEDS STEFAN**, or **AT RISK**. It replaces the accumulation of
 per-phase claims in `OVERHAUL-PROGRESS.md` with one statement you can check.
 
-**Measured 2026-09-13.** Everything below with a number in it was re-run on the day; nothing
-is carried forward from an earlier phase’s write-up. The code measured was `b38d9ce`, which
-was live at the time; every commit after it is documentation only, so these numbers describe
-what is running now. To re-check that claim rather than trust it:
+**Most numbers below were measured 2026-09-13 against `b38d9ce`; the ones re-measured since
+carry their own date.** There has been real code since — the revalidate route move, the
+progress fix, the style menu, the tour badge and the toolbar legibility pass — so this file
+no longer claims that everything after `b38d9ce` is documentation only. To check what is
+actually live rather than trust any of it:
 
 ```
-git merge-base --is-ancestor b38d9ce $(curl -s https://stefanpeele.com/api/health | grep -o '"commit":"[^"]*"' | cut -d'"' -f4)
+curl -s https://stefanpeele.com/api/health
 ```
 
-**Updated 2026-09-14.** Two of the four open items closed. The newsletter delivered to a real
-mailbox end to end, and the webhook's cause turned out to be a path rather than a credential:
-see §3. Numbers dated 2026-09-13 below were not re-run on the 14th and say so.
+**Updated 2026-09-15. The webhook is repointed at `/api/revalidate`, the alias is deleted,
+and deliveries were measured arriving in about 4 seconds.** That was the last open defect.
+Numbers dated 2026-09-13 below were not re-run since and say so.
 
-**The short version.** The code is shippable. The content is not, and that is the only thing
-standing between this site and launch. There are **no AT RISK items in the code** — what is
-open is one Vercel variable, one webhook URL to repoint, a person with a screen reader, and
-writing.
+## What remains, and what it blocks
+
+**Nothing in the code blocks launch.** Four things are open and here is what each one
+actually holds up:
+
+| | What | Blocks |
+| --- | --- | --- |
+| 1 | **The writing.** `CONTENT-TO-WRITE.md`, items 1-5 first, each under an hour | **The launch itself.** Everything else is ready for content that is not there yet. This is the only item on the list that gates the site |
+| 2 | **`articleType` + `reviewStatus` on the three posts.** Two dropdowns per post, no writing | Nothing, but it is the highest-leverage twenty minutes available: it turns on the lane kickers, the status badges and aura, the credibility section, the "Checked" facet row, the RSS status vocabulary and the OG kicker, all of which are built and currently invisible |
+| 3 | **The heading fix.** `HEADING-FIX.md`, seven dropdowns, Legacy H5 to Section | Nothing, but it is a live accessibility defect on a published post: a screen-reader user is told that article has no sections. The CAUSE is fixed, so it cannot recur |
+| 4 | **`DIGEST_SEND_SECRET` in Vercel** | Only sending a digest. The route returns 500 until it exists, which is the safe direction |
+
+**One thing that is open and is not a task:** the screen-reader pass. `A11Y-AUDIT.md` reasons
+from the accessibility tree, and the tree is not the experience. It needs a person with NVDA
+or VoiceOver, and it blocks a *claim* rather than a launch.
+
+**Two decisions, neither blocking:** whether a commenter may withdraw their own comment, and
+whether a Correction can be promoted into a 3B correction.
 
 ---
 
@@ -28,7 +43,7 @@ writing.
 
 | | Item | Evidence |
 | --- | --- | --- |
-| **DONE** | `npm run check` exits 0 with **zero warnings** | Re-run today. Zero eslint output, typegen clean: 43 queries, 84 schema types |
+| **DONE** | `npm run check` exits 0 with **zero warnings** | Re-run 2026-09-15. Zero eslint output, typegen clean: **47 queries, 85 schema types** |
 | **DONE** | `npm run build` succeeds from a clean `.next` | Re-run today after `rm -rf .next` |
 | **DONE** | Suite green | **146** — 107 chromium, re-run 2026-09-14, plus 39 screenshots last run 2026-09-13. Two new guards today: the revalidate webhook probe and the progress bar reaching 100% at the end of the article |
 | **DONE** | The suite can actually fail | `tests/screenshots.spec.ts` had **no `expect` at all** until today; 39 of the 131 could not fail. It now fails on any uncaught exception or unexpected failed request. See §7 |
@@ -44,7 +59,7 @@ writing.
 | **DONE** | No horizontal overflow at any breakpoint | Part of the 78 |
 | **DONE** | No uncaught exception, failed request or CSP violation on any route | Part of the 78. The only error the harnesses ever see is Sanity's live-events stream CORS-blocked on `127.0.0.1`, which is allow-listed in production — verified by preflight returning 204 |
 | **DONE** | Feeds, sitemap, robots, manifest, health all valid | 6/6. `feed.xml` and `feed.json` 37KB each with full `content:encoded` |
-| **DONE** | Content changes reach the live site | Comment created in Sanity appeared in **17s**, deleted disappeared in **308s** — the 300s floor. Those numbers were measured with **no working webhook**, which is the worst case; with the webhook repaired (§3) a publish reaches the page in seconds |
+| **DONE** | Content changes reach the live site | **About 4 seconds, measured 2026-09-15** with the webhook repointed: a `blogPage` mutation replaced the CDN entry for `/blog` that fast. The older figures — a comment appearing in 17s and a deletion clearing in 308s — were taken with **no working webhook at all** and are the worst case, not the normal one |
 | **DONE** | **Reading progress means the article** | The bar reaches 100% when the last line of the prose meets the fold, with 2,339px of apparatus and footer still below it on the longest post, and "0 min left" at the same moment. Guarded in `tests/smoke.spec.ts` and `docs/audit/measure-progress-readout.mjs` 28/28 |
 | **DONE** | **The webhook target itself is checked** | An unsigned POST to `/api/revalidate` must return **401**, not 404. In `docs/audit/verify-production.mjs` after a deploy and `tests/smoke.spec.ts` before one, each with a control probe of a route that does not exist. This is the check that did not exist for the week the webhook was dead |
 
@@ -53,7 +68,7 @@ writing.
 | | Item | Why it is yours |
 | --- | --- | --- |
 | **DONE** | ~~The Sanity webhook does not reach production~~ | **Cause found by Stefan 2026-09-14, and it was the URL, not the secret.** The webhook was configured with `/api/revalidate`; the handler lived at `/api/draft-mode/enable/revalidate`. Every publish from **7 September** 404d, silently, because a dead webhook does not break a page — it leaves the page as it was. Measured before the fix: `POST /api/revalidate` **404**, `POST /api/draft-mode/enable/revalidate` **401**. Stefan repointed the webhook; the handler then moved to `/api/revalidate`, where it belongs, with the old path kept as a delegating alias so nothing broke during the deploy |
-| **NEEDS STEFAN** | **Repoint the webhook at `/api/revalidate`, then tell me** | The last step of the fix above, and a one-field edit in the same dashboard. Both URLs work today; the alias exists only so that is true. Once it is repointed, `app/api/draft-mode/enable/revalidate/route.ts` gets deleted — it logs a warning on every hit, so a quiet Vercel log confirms nothing is left on the old URL |
+| **DONE** | ~~Repoint the webhook at `/api/revalidate`~~ | **Done by Stefan 2026-09-15**, and the alias is deleted. Verified by behaviour rather than by the dashboard, which no token here can read: a `blogPage` mutation replaced the CDN entry for `/blog` **about 4 seconds later**, measured through the `age` header, which is a delivery and not the 300s floor. The old path now returns 404, asserted in `tests/smoke.spec.ts` and `verify-production.mjs` rather than merely dropped from them |
 | **DONE** | ~~Resend has never delivered to a real mailbox~~ | **Confirmed end to end 2026-09-14, by Stefan, against a real mailbox: subscribe, confirm, unsubscribe.** Every probe before this used `@example.invalid` and could prove the code path but never delivery. What is still unproven is a *digest* send, which is a different route and needs the variable below |
 | **NEEDS STEFAN** | **No screen-reader pass** | `A11Y-AUDIT.md` names this as the largest remaining gap. Everything there reasons from the accessibility tree, and the tree is not the experience. Highest-risk claim: that the reading toolbar and the sidenotes are usable non-visually. Needs NVDA or VoiceOver and a person |
 | **DONE** | ~~`/test` is a live, indexable page~~ | **Closed 2026-09-13, deleted.** Its entire content was `title: "test"`, `overview: "test ttttt"`, `body: "blaeee"` — recorded here so it is restorable, and unambiguously scratch. Dataset 516 → 515 |

@@ -40,7 +40,6 @@ Personal site for Stefan Peele — network engineer associate (intern), NJIT stu
 | `/api/subscribe/confirm`, `/api/subscribe/unsubscribe` | Newsletter double opt-in endpoints |
 | `/api/draft-mode/enable` | Sanity Presentation preview entry |
 | `/api/revalidate` | Sanity webhook target (on-demand ISR) |
-| `/api/draft-mode/enable/revalidate` | Temporary alias for the above; delete once the webhook is repointed |
 | `/api/airtable/status` | Airtable → site status webhook |
 | `/studio` | Sanity Studio |
 
@@ -137,7 +136,7 @@ Sanity → API → Webhooks → Add:
 
 The handler is table-driven (`RULES` in `app/api/revalidate/route.ts`): each document type maps to the paths it renders on (post → `/blog`, `/blog/[slug]`, `/graph`, sitemap and feeds; `settings`/`navigation`/`taxonomy`/`articleUi`/`errorPages` → whole layout; `blogPage` → `/blog`; `personalPages` → the six personal routes; and so on). Unknown types revalidate the whole layout.
 
-The route was at `/api/draft-mode/enable/revalidate` until 2026-09-14. That path still answers, as an alias that delegates to the handler and logs a warning, so the webhook survived the move; delete `app/api/draft-mode/enable/revalidate/route.ts` once the webhook URL is `/api/revalidate`.
+The route was at `/api/draft-mode/enable/revalidate` until 2026-09-14, nested there only because the Sanity starter nests it. It answered for one day as a delegating alias so the webhook survived the move, and was deleted on 2026-09-15 once the webhook was repointed. That path now 404s, and both checks below assert that deliberately.
 
 A webhook that 404s is silent from inside the site: pages just go stale. So the route is probed by `tests/smoke.spec.ts` before a deploy and by `docs/audit/verify-production.mjs` after one. Both send an unsigned POST and require **401** — 404 means the route moved, 500 means `SANITY_REVALIDATE_SECRET` is unset, 200 would mean the signature check is gone.
 

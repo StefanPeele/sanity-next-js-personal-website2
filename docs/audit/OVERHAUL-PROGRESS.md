@@ -798,3 +798,40 @@ which is a bigger change than a legibility pass should make on its own.
 - **`\n` and `\b` inside a heredoc lose a backslash.** A regex written as `\b0 min left` was
   written to disk as a literal backspace character. Same family as the backtick trap already
   logged; `scripts/migrate-featured.mjs` splits on `String.fromCharCode(10)` for this reason.
+
+## 2026-09-15 - the alias is retired, and the 5.4 claim is corrected
+
+Stefan repointed the Sanity webhook at `/api/revalidate`. The alias route, its directory and
+its three references are gone.
+
+**The repoint was verified by behaviour, because no token in this project can read the webhook
+config.** Artifact #35 is the method: for a prerendered page the CDN `age` header witnesses
+invalidation. A `blogPage` mutation - the meta description, appended with a space and reverted
+in the same run, chosen because it renders in a `<meta>` tag and nowhere a reader looks -
+replaced the CDN entry for `/blog` about **4 seconds** later. Age fell from a rising 20s to 6s
+at the +10s sample. Four seconds is a delivery; the 300s floor would have shown at 300.
+
+**The retired path is ASSERTED GONE rather than removed from the checks.** Both the smoke test
+and the production sweep now require `/api/draft-mode/enable/revalidate` to 404, next to the
+canonical route's 401 and the control probe. Deleting a route and deleting its check together
+leaves nothing watching the door: a route that quietly comes back would answer real webhook
+traffic without anyone deciding that it should. `probe-revalidate-alias.mjs` became
+`probe-revalidate-route.mjs` with its alias assertions inverted, 8/8.
+
+**`/api/draft-mode/enable` is untouched and still answers**, 405 on POST for a GET-only route.
+Only the `revalidate` subdirectory went, so Presentation preview is unaffected. Worth stating
+because the obvious way to do this deletion - removing the enclosing directory - would have
+taken the preview entry point with it.
+
+**The 1024 overlap: option D, Stefan's call.** He uses the toolbar before reading rather than
+during it. The 5.4 claim is corrected in all three places it lived - `ReadingToolbar.tsx`,
+`styles/reader.css`, `BLOG-OVERHAUL-BRIEF.md` - from "can never overlap prose" to what is
+true: the RAIL never does at any width; the OPEN PANEL clears the prose from 1280 up and
+covers the last 106px of every line at 1024, behind a scrim. Option C is logged as the
+fallback at the place someone would reach for it, with the containing-block trap named.
+
+**A trap worth the line.** `npm run check` failed after deleting the route with
+`Cannot find module '../../app/api/draft-mode/enable/revalidate/route.js'` - from
+`.next/types/validator.ts`, a file the PREVIOUS build generated. The source was fine. A stale
+generated validator will fail a typecheck for a file you correctly deleted; rebuild, then
+re-check.

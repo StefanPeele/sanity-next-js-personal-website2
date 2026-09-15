@@ -309,7 +309,13 @@ html.sp-reduced-motion *::after {
 
    5.4 POSITION. A fixed rail on the right edge, vertically centred, OUTSIDE the reading
    measure. The prose column is max-w-[36rem] inside max-w-6xl, so at 1440 there is ~530px
-   to the right of the text; the rail occupies 56px of it and can never overlap prose.
+   to the right of the text and the rail occupies 56px of it.
+
+   The rail never overlaps prose. The OPEN PANEL clears it from 1280 up and does not at
+   1024: measured 2026-09-14, the prose ends at x 714 and the panel starts at x 608, so it
+   covers the last 106px of every line while open. Left as it is by decision -- the panel is
+   opened for a few seconds before reading and sits behind a scrim. See ReadingToolbar.tsx
+   and PROPOSALS-NEW.md section 3.
 
    At narrow widths there is no margin, and 5.4 asks which of "fit" or "force the layout to
    make room" applies. It FITS: the trigger docks to the bottom-right corner and the panel
