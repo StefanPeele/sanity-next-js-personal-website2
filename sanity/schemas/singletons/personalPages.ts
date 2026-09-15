@@ -7,7 +7,7 @@ const str = (name: string, title = name) => defineField({ name, title, type: 'st
 const text = (name: string, title = name) => defineField({ name, title, type: 'text', rows: 3 })
 const obj = (name: string, title: string, fields: ReturnType<typeof defineField>[], extra: Record<string, unknown> = {}) =>
   defineField({ name, title, type: 'object', fields, ...extra })
-const header = defineField({ name: 'header', title: 'Header', type: 'pageHeader' })
+const header = defineField({ name: 'header', title: 'Header', type: 'pageHeader', description: 'The title and subtitle at the top of each page in this group.' })
 const strs = (names: string[]) => names.map((n) => str(n))
 
 export default defineType({

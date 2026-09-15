@@ -14,7 +14,7 @@ export default defineType({
   icon: BookIcon,
   initialValue: DEFAULT_BLOG_PAGE,
   fields: [
-    defineField({ name: 'header', title: 'Header', type: 'pageHeader' }),
+    defineField({ name: 'header', title: 'Header', type: 'pageHeader', description: 'The title and subtitle at the top of /blog.' }),
     // 2.3. Deliberately a TOP-LEVEL field rather than part of `header`: `header` is the
     // shared `pageHeader` object type, so adding the invitation there would put it on every
     // page header on the site. The proposal said blogPage.header; this is the same intent

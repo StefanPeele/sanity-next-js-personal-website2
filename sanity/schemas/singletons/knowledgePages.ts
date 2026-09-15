@@ -7,7 +7,7 @@ import { navLinksField } from '@/sanity/schemas/objects/site'
 const str = (name: string, title = name) => defineField({ name, title, type: 'string' })
 const obj = (name: string, title: string, fields: ReturnType<typeof defineField>[], extra: Record<string, unknown> = {}) =>
   defineField({ name, title, type: 'object', fields, ...extra })
-const header = defineField({ name: 'header', title: 'Header', type: 'pageHeader' })
+const header = defineField({ name: 'header', title: 'Header', type: 'pageHeader', description: 'The title and subtitle at the top of each knowledge page.' })
 const empty = obj('emptyState', 'Empty state', [str('title', 'Title'), str('hint', 'Hint')])
 
 export default defineType({

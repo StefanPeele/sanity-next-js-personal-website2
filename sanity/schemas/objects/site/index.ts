@@ -71,15 +71,26 @@ export const navLink = defineType({
   },
 })
 
+// Every field here is named for WHERE IT APPEARS, not for what it is called in a CMS.
+// "Intro" was the label on the line that reads "A beat on network engineering and the
+// infrastructure industry..." at the top of /blog, and nothing in the Studio connected the
+// two, so the sentence on the page looked like something only a deploy could change. It is
+// the subtitle; the label says so, and the description names the page it sits on.
 export const pageHeader = defineType({
   name: 'pageHeader',
   title: 'Page header',
   type: 'object',
   fields: [
-    defineField({ name: 'title', title: 'Title', type: 'string' }),
-    defineField({ name: 'lede', title: 'Intro', type: 'text', rows: 3 }),
+    defineField({ name: 'title', title: 'Title', type: 'string', description: 'The large heading at the top of the page.' }),
+    defineField({
+      name: 'lede',
+      title: 'Subtitle',
+      type: 'text',
+      rows: 3,
+      description: 'The paragraph directly under the title. This is the sentence a reader meets first.',
+    }),
     defineField({ name: 'metaTitle', title: 'SEO title', type: 'string', description: 'Browser tab and search result title. Falls back to Title.' }),
-    defineField({ name: 'metaDescription', title: 'SEO description', type: 'text', rows: 2, validation: (r) => r.max(160) }),
+    defineField({ name: 'metaDescription', title: 'SEO description', type: 'text', rows: 2, validation: (r) => r.max(160), description: 'The one-line summary search engines and link previews show. Not used on the page itself.' }),
   ],
 })
 
