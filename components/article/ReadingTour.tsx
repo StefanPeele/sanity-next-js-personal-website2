@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { readingFraction } from '@/lib/articleScroll'
-import { FOCUS } from '@/lib/ui'
+import { buttonClass } from '@/lib/ui'
 import type { ArticleUiCopy } from '@/lib/cms/defaults/articleUi'
 // components/article/ReadingTour.tsx
 //
@@ -161,23 +161,30 @@ export function ReadingTour({ copy }: { copy: ArticleUiCopy['tour'] }) {
 
   if (phase === 'invite') {
     return (
+      /* The top rule is amber rather than the default hairline, and 2px rather than 1.
+         At `border-edge` (white at 10%) the bar had the same edge as every panel on the
+         site and read as furniture that had always been there; the reader has to notice
+         it is being ASKED something. Amber is not a new colour here -- it is the tour's
+         own highlight ring and the reading ruler -- so the bar and the thing it opens
+         now look like one feature. Still one rule and one sentence: no icon, no shadow,
+         no animation, and the two buttons stay exactly as equal as they were. */
       <div
         role="region"
         aria-label={copy.invite}
         data-print-hide
-        className="fixed inset-x-0 bottom-0 z-[1003] border-t border-edge bg-surface-raised/95 backdrop-blur-md px-6 py-4"
+        className="fixed inset-x-0 bottom-0 z-[1003] border-t-2 border-amber-300/40 bg-surface-raised/95 backdrop-blur-md px-6 py-4"
       >
         <div className="max-w-3xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <p className="font-sans text-sm text-stone-200 m-0">
+          <p className="font-sans text-sm text-stone-100 m-0">
             {copy.invite} {copy.inviteQuestion}
           </p>
           {/* Same size, same row, neither styled as the primary. Declining must cost no more
               than accepting, and there is no third option. */}
           <div className="flex gap-2 shrink-0">
-            <button type="button" onClick={finish} className={`font-sans text-sm px-4 py-2 rounded-lg border border-edge text-stone-300 hover:text-white ${FOCUS}`}>
+            <button type="button" onClick={finish} className={`font-sans text-sm ${buttonClass({ variant: 'secondary' })}`}>
               {copy.declineLabel}
             </button>
-            <button type="button" onClick={accept} className={`font-sans text-sm px-4 py-2 rounded-lg border border-edge text-stone-300 hover:text-white ${FOCUS}`}>
+            <button type="button" onClick={accept} className={`font-sans text-sm ${buttonClass({ variant: 'secondary' })}`}>
               {copy.acceptLabel}
             </button>
           </div>
@@ -209,16 +216,25 @@ export function ReadingTour({ copy }: { copy: ArticleUiCopy['tour'] }) {
         aria-labelledby="tour-title"
         tabIndex={-1}
         data-print-hide
-        className="fixed inset-x-4 bottom-4 md:inset-x-auto md:right-6 md:bottom-6 md:w-96 z-[1004] rounded-xl border border-edge bg-surface-raised shadow-2xl p-5"
+        className="fixed inset-x-4 bottom-4 md:inset-x-auto md:right-6 md:bottom-6 md:w-96 z-[1004] rounded-xl border border-amber-300/25 bg-surface-raised shadow-2xl p-5"
       >
-        <p className="meta-label text-sm mb-2">{step + 1} / {steps.length}</p>
+        {/* A pill, not a line of grey text. "1 / 5" sitting bare above the title was the
+            one thing on the card that answered "how much of this is left", and at
+            stone-400 with no enclosure it read as a timestamp. The enclosure is what makes
+            it a badge; the amber ties it to the ring highlighting the thing being
+            described. */}
+        <p className="mb-3 m-0">
+          <span className="meta-label inline-flex items-center rounded-full border border-amber-300/40 bg-amber-300/10 px-2.5 py-1 text-amber-200/90">
+            {step + 1} / {steps.length}
+          </span>
+        </p>
         <h2 id="tour-title" className="font-serif text-xl text-white mb-2">{current?.title}</h2>
         <p className="font-sans text-sm text-stone-300 leading-relaxed m-0">{current?.body}</p>
         <div className="mt-5 flex justify-end gap-2">
           <button
             type="button"
             onClick={() => (last ? finish() : setStep((s) => s + 1))}
-            className={`font-sans text-sm px-4 py-2 rounded-lg border border-edge text-stone-200 hover:text-white ${FOCUS}`}
+            className={`font-sans text-sm ${buttonClass({ variant: 'secondary' })}`}
           >
             {last ? copy.doneLabel : copy.nextLabel}
           </button>
